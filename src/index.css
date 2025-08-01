@@ -8,35 +8,54 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Magit Brand Colors - Warm, Trustworthy, Modern */
+    --background: 35 15% 98%;
+    --foreground: 20 8% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 35 20% 99%;
+    --card-foreground: 20 8% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 35 20% 99%;
+    --popover-foreground: 20 8% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary: Warm Clay Grey - Professional yet approachable */
+    --primary: 25 12% 28%;
+    --primary-foreground: 35 20% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary: Sandy Beige - Warm and inviting */
+    --secondary: 35 25% 92%;
+    --secondary-foreground: 25 12% 28%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted: Soft warm tones */
+    --muted: 35 20% 95%;
+    --muted-foreground: 25 8% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent: Muted Turquoise - Trust and clarity */
+    --accent: 180 25% 88%;
+    --accent-foreground: 25 12% 28%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 65% 51%;
+    --destructive-foreground: 35 20% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 35 15% 90%;
+    --input: 35 15% 94%;
+    --ring: 25 12% 28%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Magit Brand Specific Colors */
+    --magit-warm: 35 30% 85%;
+    --magit-trust: 180 30% 75%;
+    --magit-success: 150 35% 65%;
+    --magit-warning: 45 85% 70%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(35 25% 96%) 0%, hsl(180 20% 94%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(35 20% 99%) 0%, hsl(35 15% 97%) 100%);
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(25 12% 28% / 0.1);
+    --shadow-warm: 0 8px 32px -8px hsl(35 25% 60% / 0.15);
 
     --sidebar-background: 0 0% 98%;
 
