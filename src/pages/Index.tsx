@@ -3,6 +3,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MagitLogo } from "@/components/MagitLogo"
 import { FeatureCard } from "@/components/FeatureCard"
+import { PropertyCard } from "@/components/PropertyCard"
+import { MapSection } from "@/components/MapSection"
 import { Shield, Home, Calculator, MapPin, Users, CheckCircle } from "lucide-react"
 
 const Index = () => {
@@ -42,16 +44,20 @@ const Index = () => {
               Discover verified homes with honest, interest-free financing. 
               Your path to homeownership without compromise.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Button size="lg" className="text-lg px-8 py-6 shadow-warm">
                 <MapPin className="mr-2 h-5 w-5" />
-                Explore Homes
+                Explore Homes Now
               </Button>
-              <Button variant="warm" size="lg" className="text-lg px-8 py-6">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6">
                 <Calculator className="mr-2 h-5 w-5" />
                 Calculate Financing
               </Button>
             </div>
+            
+            <p className="text-sm text-muted-foreground mb-6">
+              Start browsing verified homes immediately — no signup required
+            </p>
             
             {/* Trust Indicators */}
             <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
@@ -68,6 +74,71 @@ const Index = () => {
                 Halal Certified
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Map Section */}
+      <MapSection />
+
+      {/* Featured Properties Section */}
+      <section className="py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <Badge variant="success" className="mb-4">
+              ✓ Live Listings
+            </Badge>
+            <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
+              Featured verified properties
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Real homes from verified sellers, available right now with Halal financing options.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8">
+            <PropertyCard
+              id="1"
+              title="Modern 3-room apartment"
+              location="Chilonzor, Tashkent"
+              price="$52,000"
+              bedrooms={3}
+              bathrooms={2}
+              area={85}
+              imageUrl="https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=300&fit=crop"
+              isVerified={true}
+              isHalalFinanced={true}
+            />
+            <PropertyCard
+              id="2"
+              title="Family apartment with garden"
+              location="Yunusobod, Tashkent"
+              price="$47,000"
+              bedrooms={2}
+              bathrooms={1}
+              area={72}
+              imageUrl="https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=300&fit=crop"
+              isVerified={true}
+              isHalalFinanced={false}
+            />
+            <PropertyCard
+              id="3"
+              title="Renovated 4-room home"
+              location="Shaykhontohur, Tashkent"
+              price="$68,000"
+              bedrooms={4}
+              bathrooms={2}
+              area={110}
+              imageUrl="https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=300&fit=crop"
+              isVerified={true}
+              isHalalFinanced={true}
+            />
+          </div>
+          
+          <div className="text-center">
+            <Button size="lg" variant="outline" className="shadow-soft">
+              View All 1,500+ Properties
+            </Button>
           </div>
         </div>
       </section>
