@@ -309,34 +309,39 @@ const ListProperty = () => {
               </div>
               
               <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
-                <div className="flex items-start gap-3">
-                  <Calendar className="w-5 h-5 text-blue-600 mt-0.5" />
+                <div className="flex items-start gap-3 mb-4">
+                  <input
+                    type="checkbox"
+                    id="premiumVerified"
+                    className="mt-1"
+                  />
                   <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100">
+                    <label htmlFor="premiumVerified" className="font-semibold cursor-pointer text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
                       Premium Verified Field Agent Visit
-                    </h4>
-                    <p className="text-sm text-blue-700 dark:text-blue-200 mt-1 mb-3">
+                    </label>
+                    <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
                       Our certified agent will visit your property within 2-3 business days 
                       to verify details, take professional photos, and award your Premium Verified Badge.
                     </p>
-                    
-                    <div className="flex items-start gap-3 mt-3 p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
-                      <input
-                        type="checkbox"
-                        id="premiumPhotos"
-                        className="mt-1"
-                      />
-                      <div className="flex-1">
-                        <label htmlFor="premiumPhotos" className="font-semibold cursor-pointer text-blue-900 dark:text-blue-100">
-                          Professional 3D Photos & Virtual Tour
-                        </label>
-                        <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
-                          Upgrade to immersive 3D photography and virtual touring experience for maximum buyer engagement.
-                        </p>
-                        <div className="mt-2">
-                          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Additional fee: 300,000 UZS</span>
-                        </div>
-                      </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                  <input
+                    type="checkbox"
+                    id="premiumPhotos"
+                    className="mt-1"
+                  />
+                  <div className="flex-1">
+                    <label htmlFor="premiumPhotos" className="font-semibold cursor-pointer text-blue-900 dark:text-blue-100">
+                      Professional 3D Photos & Virtual Tour
+                    </label>
+                    <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
+                      Upgrade to immersive 3D photography and virtual touring experience for maximum buyer engagement.
+                    </p>
+                    <div className="mt-2">
+                      <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Additional fee: 300,000 UZS</span>
                     </div>
                   </div>
                 </div>
