@@ -5,7 +5,11 @@ import { MagitLogo } from "@/components/MagitLogo"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 
-export const Footer = () => {
+interface FooterProps {
+  isHalalMode?: boolean
+}
+
+export const Footer = ({ isHalalMode = false }: FooterProps) => {
   const { theme, setTheme } = useTheme()
 
   // Auto theme based on time
@@ -71,6 +75,7 @@ export const Footer = () => {
             <Switch
               checked={theme === "dark"}
               onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+              className={isHalalMode ? "data-[state=checked]:bg-magit-trust" : "data-[state=checked]:bg-primary"}
             />
             <Moon className="h-4 w-4 text-muted-foreground" />
             <Label className="text-sm text-muted-foreground">Auto Dark Mode</Label>
