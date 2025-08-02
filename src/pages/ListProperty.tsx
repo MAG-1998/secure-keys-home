@@ -1,35 +1,23 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Separator } from "@/components/ui/separator"
-import { MagitLogo } from "@/components/MagitLogo"
-import { PaymentMethods } from "@/components/PaymentMethods"
-import { Footer } from "@/components/Footer"
-import { useTranslation } from "@/hooks/useTranslation"
-import { 
-  Home, 
-  Upload, 
-  FileText, 
-  Shield, 
-  Calendar, 
-  CheckCircle, 
-  ArrowRight, 
-  MapPin,
-  Camera,
-  User,
-  Phone,
-  Mail
-} from "lucide-react"
-
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { MagitLogo } from "@/components/MagitLogo";
+import { PaymentMethods } from "@/components/PaymentMethods";
+import { Footer } from "@/components/Footer";
+import { useTranslation } from "@/hooks/useTranslation";
+import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail } from "lucide-react";
 const ListProperty = () => {
-  const { t } = useTranslation()
-  const [currentStep, setCurrentStep] = useState(1)
+  const {
+    t
+  } = useTranslation();
+  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // Property Details
     propertyType: "",
@@ -41,35 +29,31 @@ const ListProperty = () => {
     customBathrooms: "",
     area: "",
     description: "",
-    
     // Documents
     documents: [] as File[],
     photos: [] as File[]
-  })
-
-  const totalSteps = 5
-
+  });
+  const totalSteps = 5;
   const nextStep = () => {
     if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1)
+      setCurrentStep(currentStep + 1);
     }
-  }
-
+  };
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
+      setCurrentStep(currentStep - 1);
     }
-  }
-
+  };
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
-
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return (
-          <Card>
+        return <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Home className="w-5 h-5" />
@@ -79,7 +63,7 @@ const ListProperty = () => {
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="propertyType">Property Type</Label>
-                <Select value={formData.propertyType} onValueChange={(value) => handleInputChange("propertyType", value)}>
+                <Select value={formData.propertyType} onValueChange={value => handleInputChange("propertyType", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select property type" />
                   </SelectTrigger>
@@ -94,34 +78,17 @@ const ListProperty = () => {
               
               <div>
                 <Label htmlFor="address">Property Address</Label>
-                <Input 
-                  id="address"
-                  placeholder="Enter full address in Tashkent"
-                  value={formData.address}
-                  onChange={(e) => handleInputChange("address", e.target.value)}
-                />
+                <Input id="address" placeholder="Enter full address in Tashkent" value={formData.address} onChange={e => handleInputChange("address", e.target.value)} />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="price">Price (USD)</Label>
-                  <Input 
-                    id="price"
-                    type="number"
-                    placeholder="0"
-                    value={formData.price}
-                    onChange={(e) => handleInputChange("price", e.target.value)}
-                  />
+                  <Input id="price" type="number" placeholder="0" value={formData.price} onChange={e => handleInputChange("price", e.target.value)} />
                 </div>
                 <div>
                   <Label htmlFor="area">Area (m²)</Label>
-                  <Input 
-                    id="area"
-                    type="number"
-                    placeholder="0"
-                    value={formData.area}
-                    onChange={(e) => handleInputChange("area", e.target.value)}
-                  />
+                  <Input id="area" type="number" placeholder="0" value={formData.area} onChange={e => handleInputChange("area", e.target.value)} />
                 </div>
               </div>
               
@@ -129,73 +96,43 @@ const ListProperty = () => {
                 <div>
                   <Label htmlFor="bedrooms">Bedrooms</Label>
                   <div className="space-y-2">
-                    <Select value={formData.bedrooms} onValueChange={(value) => handleInputChange("bedrooms", value)}>
+                    <Select value={formData.bedrooms} onValueChange={value => handleInputChange("bedrooms", value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select bedrooms" />
                       </SelectTrigger>
                       <SelectContent>
-                        {[0, 1, 2, 3, 4, 5, 6].map(num => (
-                          <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? 'bedroom' : 'bedrooms'}</SelectItem>
-                        ))}
+                        {[0, 1, 2, 3, 4, 5, 6].map(num => <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? 'bedroom' : 'bedrooms'}</SelectItem>)}
                         <SelectItem value="custom">Other (enter custom number)</SelectItem>
                       </SelectContent>
                     </Select>
-                    {formData.bedrooms === "custom" && (
-                      <Input 
-                        type="number"
-                        placeholder="Enter number of bedrooms"
-                        min="0"
-                        value={formData.customBedrooms}
-                        autoFocus
-                        onChange={(e) => handleInputChange("customBedrooms", e.target.value)}
-                      />
-                    )}
+                    {formData.bedrooms === "custom" && <Input type="number" placeholder="Enter number of bedrooms" min="0" value={formData.customBedrooms} autoFocus onChange={e => handleInputChange("customBedrooms", e.target.value)} />}
                   </div>
                 </div>
                 <div>
                   <Label htmlFor="bathrooms">Bathrooms</Label>
                   <div className="space-y-2">
-                    <Select value={formData.bathrooms} onValueChange={(value) => handleInputChange("bathrooms", value)}>
+                    <Select value={formData.bathrooms} onValueChange={value => handleInputChange("bathrooms", value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select bathrooms" />
                       </SelectTrigger>
                       <SelectContent>
-                        {[1, 2, 3, 4, 5].map(num => (
-                          <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? 'bathroom' : 'bathrooms'}</SelectItem>
-                        ))}
+                        {[1, 2, 3, 4, 5].map(num => <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? 'bathroom' : 'bathrooms'}</SelectItem>)}
                         <SelectItem value="custom">Other (enter custom number)</SelectItem>
                       </SelectContent>
                     </Select>
-                    {formData.bathrooms === "custom" && (
-                      <Input 
-                        type="number"
-                        placeholder="Enter number of bathrooms"
-                        min="1"
-                        value={formData.customBathrooms}
-                        autoFocus
-                        onChange={(e) => handleInputChange("customBathrooms", e.target.value)}
-                      />
-                    )}
+                    {formData.bathrooms === "custom" && <Input type="number" placeholder="Enter number of bathrooms" min="1" value={formData.customBathrooms} autoFocus onChange={e => handleInputChange("customBathrooms", e.target.value)} />}
                   </div>
                 </div>
               </div>
               
               <div>
                 <Label htmlFor="description">Property Description</Label>
-                <Textarea 
-                  id="description"
-                  placeholder="Describe your property's features, condition, and highlights..."
-                  value={formData.description}
-                  onChange={(e) => handleInputChange("description", e.target.value)}
-                  rows={4}
-                />
+                <Textarea id="description" placeholder="Describe your property's features, condition, and highlights..." value={formData.description} onChange={e => handleInputChange("description", e.target.value)} rows={4} />
               </div>
             </CardContent>
-          </Card>
-        )
+          </Card>;
       case 2:
-        return (
-          <Card>
+        return <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Camera className="w-5 h-5" />
@@ -224,12 +161,9 @@ const ListProperty = () => {
                 </ul>
               </div>
             </CardContent>
-          </Card>
-        )
-
+          </Card>;
       case 3:
-        return (
-          <Card>
+        return <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5" />
@@ -279,9 +213,7 @@ const ListProperty = () => {
                 <div className="flex items-start gap-3">
                   <Checkbox id="virtualTour" />
                   <div className="flex-1">
-                    <Label htmlFor="virtualTour" className="font-semibold text-sm text-blue-900 dark:text-blue-100 cursor-pointer">
-                      Professional Virtual Tour (+$300)
-                    </Label>
+                    <Label htmlFor="virtualTour" className="font-semibold text-sm text-blue-900 dark:text-blue-100 cursor-pointer">Professional Virtual Tour (+300,000 UZS)</Label>
                     <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
                       Our certified agent will visit your property within 2-3 business days 
                       to verify details and create professional virtual tour photos.
@@ -290,12 +222,9 @@ const ListProperty = () => {
                 </div>
               </div>
             </CardContent>
-          </Card>
-        )
-
+          </Card>;
       case 4:
-        return (
-          <Card>
+        return <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
@@ -322,19 +251,13 @@ const ListProperty = () => {
                 </div>
               </div>
               
-              <PaymentMethods 
-                amount={300} 
-                onPaymentSuccess={() => {
-                  setCurrentStep(5)
-                }}
-              />
+              <PaymentMethods amount={300} onPaymentSuccess={() => {
+              setCurrentStep(5);
+            }} />
             </CardContent>
-          </Card>
-        )
-
+          </Card>;
       case 5:
-        return (
-          <Card>
+        return <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
@@ -382,16 +305,12 @@ const ListProperty = () => {
                 Submit Application
               </Button>
             </CardContent>
-          </Card>
-        )
-
+          </Card>;
       default:
-        return null
+        return null;
     }
-  }
-
-  return (
-    <div className="min-h-screen bg-background">
+  };
+  return <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50 bg-background/95">
         <div className="container mx-auto px-4 py-4">
@@ -423,13 +342,12 @@ const ListProperty = () => {
             <div className="max-w-2xl mx-auto">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Step {currentStep} of {totalSteps}</span>
-                <span className="text-sm text-muted-foreground">{Math.round((currentStep / totalSteps) * 100)}% Complete</span>
+                <span className="text-sm text-muted-foreground">{Math.round(currentStep / totalSteps * 100)}% Complete</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
-                <div 
-                  className="bg-primary h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-                />
+                <div className="bg-primary h-2 rounded-full transition-all duration-300" style={{
+                width: `${currentStep / totalSteps * 100}%`
+              }} />
               </div>
             </div>
           </div>
@@ -444,25 +362,17 @@ const ListProperty = () => {
             
             {/* Navigation Buttons */}
             <div className="flex items-center justify-between mt-8">
-              <Button 
-                variant="outline" 
-                onClick={prevStep}
-                disabled={currentStep === 1}
-              >
+              <Button variant="outline" onClick={prevStep} disabled={currentStep === 1}>
                 Previous
               </Button>
               
-              {currentStep < totalSteps ? (
-                <Button onClick={nextStep} className="flex items-center gap-2">
+              {currentStep < totalSteps ? <Button onClick={nextStep} className="flex items-center gap-2">
                   Next Step
                   <ArrowRight className="w-4 h-4" />
-                </Button>
-              ) : (
-                <Button variant="success" className="flex items-center gap-2">
+                </Button> : <Button variant="success" className="flex items-center gap-2">
                   Complete Application
                   <CheckCircle className="w-4 h-4" />
-                </Button>
-              )}
+                </Button>}
             </div>
           </div>
         </div>
@@ -512,8 +422,6 @@ const ListProperty = () => {
       </section>
 
       <Footer isHalalMode={false} t={t} />
-    </div>
-  )
-}
-
-export default ListProperty
+    </div>;
+};
+export default ListProperty;
