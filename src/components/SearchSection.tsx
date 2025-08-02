@@ -39,7 +39,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
               isHalalMode ? 'bg-magit-trust/10' : 'bg-background'
             }`}
             style={{
-              transform: `scale(${1 + scrollProgress * 1.0})`,
+              transform: `scale(${1 + scrollProgress * 0.1})`,
               padding: isHalalMode ? '16px' : '12px'
             }}
           >
@@ -83,7 +83,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
           <Card 
             className="bg-background/80 backdrop-blur-sm border-0 shadow-warm transition-all duration-500"
             style={{
-              transform: `translateX(${scrollProgress * 200}px)`
+              transform: `translateX(${scrollProgress * 20}px)`
             }}
           >
             <CardContent className="p-6">
@@ -111,7 +111,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
               <div 
                 className="flex flex-wrap gap-2 mb-4 transition-all duration-500"
                 style={{
-                  transform: `translateX(${-scrollProgress * 150}px)`
+                  transform: `translateX(${-scrollProgress * 15}px)`
                 }}
               >
                 <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
