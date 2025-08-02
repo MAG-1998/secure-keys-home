@@ -4,9 +4,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { MagitLogo } from "@/components/MagitLogo"
-import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
-import { LogOut, Home, Search, ArrowRight } from "lucide-react"
+import { supabase } from "@/integrations/supabase/client"
+import { useTranslation } from "@/hooks/useTranslation"
+import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import type { User } from "@supabase/supabase-js"
 
@@ -84,11 +85,11 @@ const Dashboard = () => {
             <div className="flex items-center space-x-4">
               {user && (
                 <button 
-                  className="flex items-center space-x-3 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer"
-                  onClick={() => {/* TODO: Navigate to profile */}}
+                  className="flex items-center space-x-3 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer text-left"
+                  onClick={() => navigate('/profile')}
                 >
                   <Avatar>
-                    <AvatarFallback className="bg-primary text-primary-foreground">
+                    <AvatarFallback className="bg-muted text-foreground">
                       {user.email?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
