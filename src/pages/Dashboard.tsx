@@ -184,28 +184,28 @@ const Dashboard = () => {
             <div className="h-full bg-white">
               <CardContent className="p-8 h-full flex flex-col justify-center text-center min-h-[400px] text-black">
                 <div className="mb-6">
-                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Search className="w-8 h-8 text-foreground" />
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="w-8 h-8 text-black" />
                   </div>
-                  <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-4">
+                  <h2 className="font-heading font-bold text-2xl md:text-3xl text-black mb-4">
                     Find Your Dream Home
                   </h2>
-                  <p className="text-lg text-muted-foreground mb-6">
+                  <p className="text-lg text-gray-600 mb-6">
                     Discover verified properties with transparent pricing and halal financing options
                   </p>
                 </div>
                 
                 <div className="space-y-3 mb-8">
-                  <div className="flex items-center justify-center text-sm text-muted-foreground">
-                    <span className="w-2 h-2 bg-foreground rounded-full mr-2"></span>
+                  <div className="flex items-center justify-center text-sm text-gray-600">
+                    <span className="w-2 h-2 bg-black rounded-full mr-2"></span>
                     Verified property listings
                   </div>
-                  <div className="flex items-center justify-center text-sm text-muted-foreground">
-                    <span className="w-2 h-2 bg-foreground rounded-full mr-2"></span>
+                  <div className="flex items-center justify-center text-sm text-gray-600">
+                    <span className="w-2 h-2 bg-black rounded-full mr-2"></span>
                     Halal financing available
                   </div>
-                  <div className="flex items-center justify-center text-sm text-muted-foreground">
-                    <span className="w-2 h-2 bg-foreground rounded-full mr-2"></span>
+                  <div className="flex items-center justify-center text-sm text-gray-600">
+                    <span className="w-2 h-2 bg-black rounded-full mr-2"></span>
                     AI-powered matching
                   </div>
                 </div>
