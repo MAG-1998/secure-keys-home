@@ -13,21 +13,6 @@ interface FooterProps {
 export const Footer = ({ isHalalMode = false, t }: FooterProps) => {
   const { theme, setTheme } = useTheme()
 
-  // Auto theme based on time
-  useEffect(() => {
-    const setAutoTheme = () => {
-      const hour = new Date().getHours()
-      const isDarkTime = hour < 7 || hour >= 19 // Dark mode between 7PM and 7AM
-      setTheme(isDarkTime ? "dark" : "light")
-    }
-
-    // Set initial theme
-    setAutoTheme()
-
-    // Update every hour
-    const interval = setInterval(setAutoTheme, 3600000)
-    return () => clearInterval(interval)
-  }, [setTheme])
 
   return (
     <footer className="border-t border-border/50 bg-background/80 py-12">
