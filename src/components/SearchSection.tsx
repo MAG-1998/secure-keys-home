@@ -30,10 +30,12 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
       <div className="container mx-auto px-4">
         {/* Halal Mode Toggle */}
         <div className="flex justify-center mb-8">
-          <Card className={`p-4 border-0 shadow-soft transition-all duration-300 ${
-            isHalalMode ? 'bg-magit-trust/10' : 'bg-background'
+          <Card className={`border-0 shadow-soft transition-all duration-300 ${
+            isHalalMode ? 'bg-magit-trust/10 p-4' : 'bg-background p-3'
           }`}>
-            <div className="flex items-center space-x-4 min-w-[320px]">
+            <div className={`flex items-center space-x-4 transition-all duration-300 ${
+              isHalalMode ? 'min-w-[380px]' : 'min-w-[240px]'
+            }`}>
               <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap">
                 Halal Financing Mode
               </Label>
@@ -44,12 +46,12 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
                   onCheckedChange={onHalalModeChange}
                   className="data-[state=checked]:bg-magit-trust flex-shrink-0"
                 />
-                <div className="w-28 flex justify-start">
-                  {isHalalMode && (
-                    <Badge variant="trust" className="text-xs animate-fade-in whitespace-nowrap">
-                      ✓ Sharia Compliant
-                    </Badge>
-                  )}
+                <div className={`flex justify-start transition-all duration-300 ${
+                  isHalalMode ? 'w-32 opacity-100' : 'w-0 opacity-0 overflow-hidden'
+                }`}>
+                  <Badge variant="trust" className="text-xs whitespace-nowrap">
+                    ✓ Sharia Compliant
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -62,10 +64,10 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
             <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-2">
               {isHalalMode ? "Find Halal-Financed Homes" : "Search Verified Properties"}
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground whitespace-nowrap">
               {isHalalMode 
-                ? "Discover homes with Sharia-compliant financing options"
-                : "AI-powered search across 1,500+ verified properties"
+                ? "Discover verified homes with Sharia-compliant financing options across Tashkent"
+                : "Scam-free marketplace with 1,500+ verified properties across Tashkent"
               }
             </p>
           </div>
@@ -125,7 +127,9 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
                       <Wallet className="h-4 w-4 mr-2" />
                       Your Financial Profile
                     </h3>
-                    <div className="grid md:grid-cols-3 gap-4 mb-4">
+                    <div className={`grid md:grid-cols-3 gap-4 mb-4 transition-all duration-300 ${
+                      showAllProperties ? 'blur-sm pointer-events-none' : ''
+                    }`}>
                       <div>
                         <Label className="text-sm font-medium mb-2 block">Cash Available ($)</Label>
                         <Input
@@ -133,6 +137,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
                           value={cashAmount}
                           onChange={(e) => setCashAmount(e.target.value)}
                           className="h-10"
+                          disabled={showAllProperties}
                         />
                       </div>
                       <div>
@@ -142,6 +147,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
                           value={monthlyPayment}
                           onChange={(e) => setMonthlyPayment(e.target.value)}
                           className="h-10"
+                          disabled={showAllProperties}
                         />
                       </div>
                       <div>
@@ -151,6 +157,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
                           value={monthlySalary}
                           onChange={(e) => setMonthlySalary(e.target.value)}
                           className="h-10"
+                          disabled={showAllProperties}
                         />
                       </div>
                     </div>
