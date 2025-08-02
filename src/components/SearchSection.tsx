@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Search, MapPin, Bed, DollarSign, Sparkles, Filter } from "lucide-react"
+import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp } from "lucide-react"
 
 interface SearchSectionProps {
   isHalalMode: boolean
@@ -16,6 +16,10 @@ interface SearchSectionProps {
 export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionProps) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [showFilters, setShowFilters] = useState(false)
+  const [showAllProperties, setShowAllProperties] = useState(false)
+  const [cashAmount, setCashAmount] = useState("")
+  const [monthlyPayment, setMonthlyPayment] = useState("")
+  const [monthlySalary, setMonthlySalary] = useState("")
 
   return (
     <section className={`py-12 transition-all duration-500 ${
@@ -24,14 +28,14 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
         : 'bg-gradient-to-br from-background/50 to-muted/20'
     }`}>
       <div className="container mx-auto px-4">
-        {/* Halal Mode Toggle */}
-        <div className="flex justify-center mb-8">
-          <Card className={`p-4 border-0 shadow-soft transition-all duration-500 ${
+        {/* Halal Mode Toggle - Fixed Position */}
+        <div className="fixed top-4 right-4 z-50">
+          <Card className={`p-3 border-0 shadow-soft transition-all duration-500 ${
             isHalalMode ? 'bg-magit-trust/10' : 'bg-background'
           }`}>
-            <div className="flex items-center space-x-3">
-              <Label htmlFor="halal-mode" className="text-sm font-medium">
-                Halal Financing Mode
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="halal-mode" className="text-xs font-medium whitespace-nowrap">
+                Halal Mode
               </Label>
               <Switch
                 id="halal-mode"
@@ -41,7 +45,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
               />
               {isHalalMode && (
                 <Badge variant="trust" className="text-xs animate-fade-in">
-                  ✓ Sharia Compliant
+                  ✓ Halal
                 </Badge>
               )}
             </div>
@@ -109,10 +113,67 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
                 )}
               </div>
 
+              {/* Halal Financing Inputs */}
+              {isHalalMode && (
+                <div className="border-t pt-4 mb-4 animate-fade-in">
+                  <div className="bg-magit-trust/5 p-4 rounded-lg">
+                    <h3 className="font-medium text-sm mb-3 flex items-center">
+                      <Wallet className="h-4 w-4 mr-2" />
+                      Your Financial Profile
+                    </h3>
+                    <div className="grid md:grid-cols-3 gap-4 mb-4">
+                      <div>
+                        <Label className="text-sm font-medium mb-2 block">Cash Available ($)</Label>
+                        <Input
+                          placeholder="e.g., 15,000"
+                          value={cashAmount}
+                          onChange={(e) => setCashAmount(e.target.value)}
+                          className="h-10"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium mb-2 block">Monthly Payment ($)</Label>
+                        <Input
+                          placeholder="e.g., 500"
+                          value={monthlyPayment}
+                          onChange={(e) => setMonthlyPayment(e.target.value)}
+                          className="h-10"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium mb-2 block">Monthly Salary ($)</Label>
+                        <Input
+                          placeholder="e.g., 2,000"
+                          value={monthlySalary}
+                          onChange={(e) => setMonthlySalary(e.target.value)}
+                          className="h-10"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Switch
+                        id="show-all"
+                        checked={showAllProperties}
+                        onCheckedChange={setShowAllProperties}
+                      />
+                      <Label htmlFor="show-all" className="text-sm">
+                        Show all properties (not just what I can afford)
+                      </Label>
+                      {!showAllProperties && cashAmount && monthlyPayment && (
+                        <Badge variant="trust" className="text-xs">
+                          <TrendingUp className="h-3 w-3 mr-1" />
+                          Smart Match
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Advanced Filters */}
               {showFilters && (
                 <div className="border-t pt-4 animate-fade-in">
-                  <div className="grid md:grid-cols-3 gap-4">
+                  <div className="grid md:grid-cols-4 gap-4">
                     <div>
                       <Label className="text-sm font-medium mb-2 block">District</Label>
                       <Select>
@@ -139,6 +200,21 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
                           <SelectItem value="40-50">$40k - $50k</SelectItem>
                           <SelectItem value="50-70">$50k - $70k</SelectItem>
                           <SelectItem value="70+">$70k+</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">Square Meters</Label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Size" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="30-50">30-50 m²</SelectItem>
+                          <SelectItem value="50-70">50-70 m²</SelectItem>
+                          <SelectItem value="70-100">70-100 m²</SelectItem>
+                          <SelectItem value="100+">100+ m²</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
