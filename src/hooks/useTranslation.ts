@@ -383,6 +383,83 @@ const translations: Translations = {
     en: 'Learn More',
     ru: 'Узнать больше',
     uz: 'Batafsil'
+  },
+
+  // Footer
+  'footer.tagline': {
+    en: 'Verified homes. Honest financing. Peace of mind.',
+    ru: 'Проверенные дома. Честное финансирование. Спокойствие.',
+    uz: 'Tekshirilgan uylar. Halol moliya. Xotirjamlik.'
+  },
+  'footer.platform': {
+    en: 'Platform',
+    ru: 'Платформа',
+    uz: 'Platforma'
+  },
+  'footer.browseHomes': {
+    en: 'Browse Homes',
+    ru: 'Просмотр домов',
+    uz: 'Uylarni koʻrish'
+  },
+  'footer.financing': {
+    en: 'Financing',
+    ru: 'Финансирование',
+    uz: 'Moliyalashtirish'
+  },
+  'footer.howItWorks': {
+    en: 'How it Works',
+    ru: 'Как это работает',
+    uz: 'Qanday ishlaydi'
+  },
+  'footer.support': {
+    en: 'Support',
+    ru: 'Поддержка',
+    uz: 'Yordam'
+  },
+  'footer.helpCenter': {
+    en: 'Help Center',
+    ru: 'Центр помощи',
+    uz: 'Yordam markazi'
+  },
+  'footer.contactUs': {
+    en: 'Contact Us',
+    ru: 'Связаться с нами',
+    uz: 'Biz bilan aloqa'
+  },
+  'footer.safety': {
+    en: 'Safety',
+    ru: 'Безопасность',
+    uz: 'Xavfsizlik'
+  },
+  'footer.company': {
+    en: 'Company',
+    ru: 'Компания',
+    uz: 'Kompaniya'
+  },
+  'footer.about': {
+    en: 'About',
+    ru: 'О нас',
+    uz: 'Biz haqimizda'
+  },
+  'footer.privacy': {
+    en: 'Privacy',
+    ru: 'Конфиденциальность',
+    uz: 'Maxfiylik'
+  },
+  'footer.terms': {
+    en: 'Terms',
+    ru: 'Условия',
+    uz: 'Shartlar'
+  },
+  'footer.copyright': {
+    en: '© 2024 Magit. All rights reserved. Made with care for families in Uzbekistan.',
+    ru: '© 2024 Magit. Все права защищены. Сделано с заботой для семей в Узбекистане.',
+    uz: '© 2024 Magit. Barcha huquqlar himoyalangan. Oʻzbekistondagi oilalar uchun g\'amxoʻrlik bilan yaratilgan.'
+  },
+  'footer.autoDarkMode': {
+    en: 'Auto Dark Mode',
+    ru: 'Авто темная тема',
+    uz: 'Avto qora rejim'
   }
 };
 

@@ -7,9 +7,10 @@ import { useTheme } from "next-themes"
 
 interface FooterProps {
   isHalalMode?: boolean
+  t: (key: string) => string
 }
 
-export const Footer = ({ isHalalMode = false }: FooterProps) => {
+export const Footer = ({ isHalalMode = false, t }: FooterProps) => {
   const { theme, setTheme } = useTheme()
 
   // Auto theme based on time
@@ -35,31 +36,31 @@ export const Footer = ({ isHalalMode = false }: FooterProps) => {
           <div>
             <MagitLogo size="md" className="mb-4" />
             <p className="text-muted-foreground text-sm">
-              Verified homes. Honest financing. Peace of mind.
+              {t('footer.tagline')}
             </p>
           </div>
           <div>
-            <h3 className="font-heading font-semibold text-foreground mb-3">Platform</h3>
+            <h3 className="font-heading font-semibold text-foreground mb-3">{t('footer.platform')}</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground transition-colors">Browse Homes</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Financing</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">How it Works</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.browseHomes')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.financing')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.howItWorks')}</a></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-heading font-semibold text-foreground mb-3">Support</h3>
+            <h3 className="font-heading font-semibold text-foreground mb-3">{t('footer.support')}</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Safety</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.helpCenter')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.contactUs')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.safety')}</a></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-heading font-semibold text-foreground mb-3">Company</h3>
+            <h3 className="font-heading font-semibold text-foreground mb-3">{t('footer.company')}</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground transition-colors">About</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Privacy</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Terms</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.about')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.privacy')}</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.terms')}</a></li>
             </ul>
           </div>
         </div>
@@ -67,7 +68,7 @@ export const Footer = ({ isHalalMode = false }: FooterProps) => {
         {/* Dark Mode Toggle */}
         <div className="border-t border-border/50 pt-8 flex justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            &copy; 2024 Magit. All rights reserved. Made with care for families in Uzbekistan.
+            {t('footer.copyright')}
           </p>
           
           <div className="flex items-center space-x-3">
@@ -78,7 +79,7 @@ export const Footer = ({ isHalalMode = false }: FooterProps) => {
               className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust [&>span]:data-[state=unchecked]:bg-magit-trust" : "data-[state=checked]:bg-primary data-[state=checked]:border-primary"}
             />
             <Moon className="h-4 w-4 text-muted-foreground" />
-            <Label className="text-sm text-muted-foreground">Auto Dark Mode</Label>
+            <Label className="text-sm text-muted-foreground">{t('footer.autoDarkMode')}</Label>
           </div>
         </div>
       </div>

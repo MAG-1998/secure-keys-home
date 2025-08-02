@@ -232,7 +232,7 @@ const Index = () => {
         </div>
       </section>
 
-      <Footer isHalalMode={isHalalMode} />
+      <Footer isHalalMode={isHalalMode} t={t} />
     </div>
   );
 };
