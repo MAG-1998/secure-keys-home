@@ -75,7 +75,7 @@ export const Footer = ({ isHalalMode = false }: FooterProps) => {
             <Switch
               checked={theme === "dark"}
               onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-              className={isHalalMode ? "data-[state=checked]:bg-magit-trust" : "data-[state=checked]:bg-primary"}
+              className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust" : ""}
             />
             <Moon className="h-4 w-4 text-muted-foreground" />
             <Label className="text-sm text-muted-foreground">Auto Dark Mode</Label>
