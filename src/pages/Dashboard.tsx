@@ -182,7 +182,7 @@ const Dashboard = () => {
             onClick={handleBuyProperty}
           >
             <div className="h-full bg-gradient-to-br from-muted/50 via-muted/30 to-background">
-              <CardContent className="p-8 h-full flex flex-col justify-center text-center min-h-[400px] bg-card text-card-foreground">
+              <CardContent className="p-8 h-full flex flex-col justify-center text-center min-h-[400px]">
                 <div className="mb-6">
                   <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                     <Search className="w-8 h-8 text-foreground" />
