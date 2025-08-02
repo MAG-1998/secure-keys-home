@@ -124,31 +124,33 @@ const Dashboard = () => {
           {/* List Property - Orange Theme */}
           <Card className="group cursor-pointer border-0 overflow-hidden shadow-warm hover:shadow-lg transition-all duration-300 hover:scale-105" onClick={handleListProperty}>
             <div className="h-full bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10">
-              <CardContent className="p-8 h-full flex flex-col justify-center text-center min-h-[400px]">
-                <div className="mb-6">
-                  <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Home className="w-8 h-8 text-primary" />
+              <CardContent className="p-8 h-full flex flex-col justify-between text-center min-h-[400px]">
+                <div className="flex-1 flex flex-col justify-center">
+                  <div className="mb-6">
+                    <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Home className="w-8 h-8 text-primary" />
+                    </div>
+                    <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-4">
+                      List Your Property
+                    </h2>
+                    <p className="text-lg text-muted-foreground mb-6">
+                      Showcase your property to thousands of potential buyers with our verified listing platform
+                    </p>
                   </div>
-                  <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-4">
-                    List Your Property
-                  </h2>
-                  <p className="text-lg text-muted-foreground mb-6">
-                    Showcase your property to thousands of potential buyers with our verified listing platform
-                  </p>
-                </div>
-                
-                <div className="space-y-3 mb-8">
-                  <div className="flex items-center justify-center text-sm text-muted-foreground">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Professional photography included
-                  </div>
-                  <div className="flex items-center justify-center text-sm text-muted-foreground">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Verified buyer connections
-                  </div>
-                  <div className="flex items-center justify-center text-sm text-muted-foreground">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                    Zero upfront costs
+                  
+                  <div className="space-y-3 mb-8">
+                    <div className="flex items-center justify-center text-sm text-muted-foreground">
+                      <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                      Professional photography included
+                    </div>
+                    <div className="flex items-center justify-center text-sm text-muted-foreground">
+                      <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                      Verified buyer connections
+                    </div>
+                    <div className="flex items-center justify-center text-sm text-muted-foreground">
+                      <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                      Zero upfront costs
+                    </div>
                   </div>
                 </div>
 
@@ -163,7 +165,8 @@ const Dashboard = () => {
           {/* Buy Property */}
           <Card className="group cursor-pointer border-0 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" onClick={handleBuyProperty}>
             <div className="h-full bg-white">
-              <CardContent className="p-8 h-full flex flex-col justify-center text-center min-h-[400px] text-black">
+              <CardContent className="p-8 h-full flex flex-col justify-between text-center min-h-[400px] text-black">
+                <div className="flex-1 flex flex-col justify-center">
                 <div className="mb-6">
                   <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Search className="w-8 h-8 text-black" />
@@ -190,8 +193,9 @@ const Dashboard = () => {
                     AI-powered matching
                   </div>
                 </div>
+                </div>
 
-                <Button variant="outline" size="lg" className="w-full group-hover:shadow-lg transition-all duration-300 border-black hover:bg-black text-base text-slate-50">
+                <Button variant="outline" size="lg" className="w-full group-hover:shadow-lg transition-all duration-300 border-black hover:bg-black hover:text-white text-black">
                   Start Browsing
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
