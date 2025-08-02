@@ -529,6 +529,7 @@ export const useTranslation = () => {
   const [language, setLanguage] = useState<Language>('en');
 
   const t = useCallback((key: string): string => {
+    console.log('Translation request:', key, 'Language:', language, 'Result:', translations[key]?.[language] || key);
     return translations[key]?.[language] || key;
   }, [language]);
 
