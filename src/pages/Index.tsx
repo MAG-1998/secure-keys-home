@@ -8,14 +8,14 @@ import { FeatureCard } from "@/components/FeatureCard"
 import { PropertyCard } from "@/components/PropertyCard"
 import { MapSection } from "@/components/MapSection"
 import { SearchSection } from "@/components/SearchSection"
-
 import { Footer } from "@/components/Footer"
 import { useScroll } from "@/hooks/use-scroll"
+import { useTranslation } from "@/hooks/useTranslation"
 import { Shield, Home, Calculator, MapPin, Users, CheckCircle, Languages } from "lucide-react"
 
 const Index = () => {
   const [isHalalMode, setIsHalalMode] = useState(false)
-  const [language, setLanguage] = useState("en")
+  const { language, setLanguage, t } = useTranslation()
   const { scrollY, isScrolled } = useScroll()
 
   // Apply global design changes based on Halal mode
@@ -41,14 +41,14 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <MagitLogo size="md" />
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#search" className="text-muted-foreground hover:text-foreground transition-colors">Search</a>
+              <a href="#search" className="text-muted-foreground hover:text-foreground transition-colors">{t('nav.search')}</a>
               <a href="#map" className="text-muted-foreground hover:text-foreground transition-colors">Map</a>
               <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
               <a href="#financing" className="text-muted-foreground hover:text-foreground transition-colors">Financing</a>
             </div>
             <div className="flex items-center space-x-3">
               {/* Language Selector */}
-              <Select value={language} onValueChange={setLanguage}>
+              <Select value={language} onValueChange={(value) => setLanguage(value as any)}>
                 <SelectTrigger className="w-[80px]">
                   <SelectValue placeholder={language === "en" ? "ENG" : language === "ru" ? "RU" : "UZ"} />
                 </SelectTrigger>
@@ -58,8 +58,8 @@ const Index = () => {
                   <SelectItem value="uz">UZ</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="ghost">Sign In</Button>
-              <Button variant={isHalalMode ? "trust" : "default"}>Get Started</Button>
+              <Button variant="ghost">{t('nav.signIn')}</Button>
+              <Button variant={isHalalMode ? "trust" : "default"}>{t('nav.getStarted')}</Button>
             </div>
           </div>
         </div>
@@ -82,17 +82,10 @@ const Index = () => {
               {isHalalMode ? "✓ Sharia-Compliant Platform" : "✓ Verified Marketplace"}
             </Badge>
             <h1 className={`font-heading font-bold text-3xl md:text-5xl text-foreground mb-4 leading-tight transition-all duration-500 ${isScrolled ? 'scale-95' : ''}`}>
-              {isHalalMode ? (
-                <>Find your home. <span className="text-primary">Stay Halal.</span></>
-              ) : (
-                <>Buy smart. <span className="text-primary">Pay fair.</span></>
-              )}
+              {t('hero.title')}
             </h1>
             <p className={`text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed transition-all duration-500 ${isScrolled ? 'opacity-60' : ''}`}>
-              {isHalalMode 
-                ? "Discover verified homes with Sharia-compliant financing options across Tashkent."
-                : "Discover verified homes with honest, interest-free financing options."
-              }
+              {t('hero.subtitle')}
             </p>
             
             {/* Trust Indicators */}
@@ -119,6 +112,7 @@ const Index = () => {
         <SearchSection 
           isHalalMode={isHalalMode} 
           onHalalModeChange={setIsHalalMode} 
+          t={t}
         />
       </div>
 
@@ -213,15 +207,14 @@ const Index = () => {
           <Card className="max-w-4xl mx-auto bg-gradient-card border-0 shadow-warm">
             <CardContent className="p-8 md:p-12 text-center">
               <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
-                Ready to find your perfect home?
+                {t('cta.title')}
               </h2>
               <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Join thousands of families who've found their dream homes through our verified marketplace 
-                with honest, Halal financing options.
+                {t('cta.subtitle')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" className="text-lg px-8 py-6 shadow-warm">
-                  Start Your Journey
+                  {t('cta.button')}
                 </Button>
                 <Button variant="outline" size="lg" className="text-lg px-8 py-6">
                   Learn More

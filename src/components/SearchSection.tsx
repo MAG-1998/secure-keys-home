@@ -12,9 +12,10 @@ import { useScroll } from "@/hooks/use-scroll"
 interface SearchSectionProps {
   isHalalMode: boolean
   onHalalModeChange: (enabled: boolean) => void
+  t: (key: string) => string
 }
 
-export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionProps) => {
+export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSectionProps) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [showFilters, setShowFilters] = useState(false)
   const [showAllProperties, setShowAllProperties] = useState(false)
@@ -46,7 +47,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
               isHalalMode ? 'w-[360px]' : 'w-[220px]'
             }`}>
               <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap">
-                Halal Financing Mode
+                {t('search.halalMode')}
               </Label>
               <div className="flex items-center space-x-3 ml-auto">
                 <Switch
