@@ -37,7 +37,7 @@ const Index = () => {
       <nav className={`border-b border-border/50 backdrop-blur-sm sticky top-0 z-50 transition-all duration-500 ${
         isHalalMode ? 'bg-magit-trust' : 'bg-background'
       }`}>
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4 text-white">
           <div className="flex items-center justify-between">
             <MagitLogo size="md" />
             <div className="hidden md:flex items-center space-x-8">
