@@ -176,43 +176,43 @@ const Dashboard = () => {
             </div>
           </Card>
 
-          {/* Buy Property - Dark Theme */}
+          {/* Buy Property */}
           <Card 
             className="group cursor-pointer border-0 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             onClick={handleBuyProperty}
           >
-            <div className="h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+            <div className="h-full bg-gradient-to-br from-secondary/20 via-secondary/10 to-muted/20">
               <CardContent className="p-8 h-full flex flex-col justify-center text-center min-h-[400px]">
                 <div className="mb-6">
-                  <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Search className="w-8 h-8 text-white" />
+                  <div className="w-16 h-16 bg-secondary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="w-8 h-8 text-secondary-foreground" />
                   </div>
-                  <h2 className="font-heading font-bold text-2xl md:text-3xl text-white mb-4">
+                  <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-4">
                     Find Your Dream Home
                   </h2>
-                  <p className="text-lg text-slate-300 mb-6">
+                  <p className="text-lg text-muted-foreground mb-6">
                     Discover verified properties with transparent pricing and halal financing options
                   </p>
                 </div>
                 
                 <div className="space-y-3 mb-8">
-                  <div className="flex items-center justify-center text-sm text-slate-400">
-                    <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
+                  <div className="flex items-center justify-center text-sm text-muted-foreground">
+                    <span className="w-2 h-2 bg-secondary rounded-full mr-2"></span>
                     Verified property listings
                   </div>
-                  <div className="flex items-center justify-center text-sm text-slate-400">
-                    <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
+                  <div className="flex items-center justify-center text-sm text-muted-foreground">
+                    <span className="w-2 h-2 bg-secondary rounded-full mr-2"></span>
                     Halal financing available
                   </div>
-                  <div className="flex items-center justify-center text-sm text-slate-400">
-                    <span className="w-2 h-2 bg-white rounded-full mr-2"></span>
+                  <div className="flex items-center justify-center text-sm text-muted-foreground">
+                    <span className="w-2 h-2 bg-secondary rounded-full mr-2"></span>
                     AI-powered matching
                   </div>
                 </div>
 
                 <Button 
-                  variant="outline" 
-                  className="w-full border-white/20 text-white hover:bg-white/10 group-hover:border-white/30 transition-all duration-300"
+                  variant="secondary" 
+                  className="w-full group-hover:shadow-lg transition-all duration-300"
                   size="lg"
                 >
                   Start Browsing
