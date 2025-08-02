@@ -35,7 +35,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
         {/* Halal Mode Toggle */}
         <div className="flex justify-center mb-8">
           <Card 
-            className={`border-0 shadow-soft transition-colors duration-300 ${
+            className={`border-0 shadow-soft transition-colors duration-300 max-w-fit mx-auto ${
               isHalalMode ? 'bg-magit-trust/30' : 'bg-muted/60'
             }`}
             style={{
@@ -43,7 +43,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
             }}
           >
             <div className={`flex items-center space-x-4 transition-all duration-300 ${
-              isHalalMode ? 'w-[380px]' : 'w-[280px]'
+              isHalalMode ? 'w-[300px]' : 'w-[220px]'
             }`}>
               <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap">
                 Halal Financing Mode
