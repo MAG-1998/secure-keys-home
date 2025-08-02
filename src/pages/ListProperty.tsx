@@ -311,35 +311,32 @@ const ListProperty = () => {
               <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
                 <div className="flex items-start gap-3">
                   <Calendar className="w-5 h-5 text-blue-600 mt-0.5" />
-                  <div>
+                  <div className="flex-1">
                     <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100">
                       Field Agent Visit
                     </h4>
-                    <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
+                    <p className="text-sm text-blue-700 dark:text-blue-200 mt-1 mb-3">
                       Our certified agent will visit your property within 2-3 business days 
                       to verify details and take professional photos.
                     </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="border rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    id="verifiedProperty"
-                    className="mt-1"
-                  />
-                  <div className="flex-1">
-                    <label htmlFor="verifiedProperty" className="font-semibold cursor-pointer">
-                      Premium Verified Property Badge
-                    </label>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Get a premium verified badge for your property listing. This includes enhanced verification, 
-                      priority placement, and increased buyer trust.
-                    </p>
-                    <div className="mt-2">
-                      <span className="text-sm font-medium text-primary">Additional fee: 50,000 UZS</span>
+                    
+                    <div className="flex items-start gap-3 mt-3 p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                      <input
+                        type="checkbox"
+                        id="verifiedProperty"
+                        className="mt-1"
+                      />
+                      <div className="flex-1">
+                        <label htmlFor="verifiedProperty" className="font-semibold cursor-pointer text-blue-900 dark:text-blue-100">
+                          Premium Verified Property Badge
+                        </label>
+                        <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
+                          Get enhanced verification, priority placement, and increased buyer trust.
+                        </p>
+                        <div className="mt-2">
+                          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Additional fee: 50,000 UZS</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
