@@ -49,14 +49,13 @@ const Index = () => {
             <div className="flex items-center space-x-3">
               {/* Language Selector */}
               <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="w-[120px]">
-                  <Languages className="w-4 h-4 mr-2" />
-                  <SelectValue />
+                <SelectTrigger className="w-[80px]">
+                  <SelectValue placeholder={language === "en" ? "ENG" : language === "ru" ? "RU" : "UZ"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="ru">Русский</SelectItem>
-                  <SelectItem value="uz">O'zbek</SelectItem>
+                  <SelectItem value="en">ENG</SelectItem>
+                  <SelectItem value="ru">RU</SelectItem>
+                  <SelectItem value="uz">UZ</SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="ghost">Sign In</Button>
