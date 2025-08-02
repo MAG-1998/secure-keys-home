@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { MagitLogo } from "@/components/MagitLogo"
+import { ThemeToggle } from "@/components/ThemeToggle"
 import { FeatureCard } from "@/components/FeatureCard"
 import { PropertyCard } from "@/components/PropertyCard"
 import { MapSection } from "@/components/MapSection"
@@ -58,6 +59,7 @@ const Index = () => {
                   <SelectItem value="uz">UZ</SelectItem>
                 </SelectContent>
               </Select>
+              <ThemeToggle />
               <Button 
                 variant="ghost" 
                 onClick={() => window.location.href = '/auth'}

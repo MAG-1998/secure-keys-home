@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { MagitLogo } from "@/components/MagitLogo"
+import { ThemeToggle } from "@/components/ThemeToggle"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { Eye, EyeOff, ArrowLeft } from "lucide-react"
@@ -104,14 +105,17 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Back to home button */}
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/")}
-          className="mb-6 text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Home
-        </Button>
+        <div className="flex justify-between items-center mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/")}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
+          </Button>
+          <ThemeToggle />
+        </div>
 
         <Card className="shadow-warm border-0">
           <CardHeader className="text-center pb-6">

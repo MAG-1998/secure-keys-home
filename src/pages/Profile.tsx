@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { MagitLogo } from "@/components/MagitLogo"
+import { ThemeToggle } from "@/components/ThemeToggle"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { 
@@ -127,10 +128,13 @@ const Profile = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <MagitLogo size="md" />
-            <Button variant="ghost" onClick={() => navigate('/dashboard')}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
-            </Button>
+            <div className="flex items-center space-x-3">
+              <ThemeToggle />
+              <Button variant="ghost" onClick={() => navigate('/dashboard')}>
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </div>
           </div>
         </div>
       </nav>
