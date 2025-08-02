@@ -460,6 +460,68 @@ const translations: Translations = {
     en: 'Auto Dark Mode',
     ru: 'Авто темная тема',
     uz: 'Avto qora rejim'
+  },
+
+  // Map Section
+  'map.halalMarketplace': {
+    en: 'Halal Marketplace',
+    ru: 'Халяль платформа',
+    uz: 'Halol bozor'
+  },
+  'map.liveMarketplace': {
+    en: 'Live Marketplace',
+    ru: 'Живая платформа',
+    uz: 'Jonli bozor'
+  },
+  'map.title': {
+    en: 'Find your perfect home on the map',
+    ru: 'Найдите идеальный дом на карте',
+    uz: 'Xaritada mukammal uyingizni toping'
+  },
+  'map.description': {
+    en: 'Browse 1,500+ verified properties across Tashkent. Filter by price, financing options, and neighborhood preferences.',
+    ru: 'Просматривайте 1,500+ проверенных объектов по Ташкенту. Фильтруйте по цене, финансированию и районам.',
+    uz: 'Toshkent bo\'ylab 1,500+ tekshirilgan uylarni ko\'ring. Narx, moliya va mahalla bo\'yicha filtrlang.'
+  },
+  'map.halalFinancing': {
+    en: 'Halal Financing Available',
+    ru: 'Халяль финансирование',
+    uz: 'Halol moliyalashtirish'
+  },
+  'map.yunusobodDistrict': {
+    en: 'Yunusobod District',
+    ru: 'Юнусабадский район',
+    uz: 'Yunusobod tumani'
+  },
+  'map.bedrooms': {
+    en: '2-3 Bedrooms',
+    ru: '2-3 комнаты',
+    uz: '2-3 xonali'
+  },
+  'map.openMap': {
+    en: 'Open Interactive Map',
+    ru: 'Открыть интерактивную карту',
+    uz: 'Interaktiv xaritani ochish'
+  },
+  'map.liveProperties': {
+    en: 'Live Properties',
+    ru: 'Актуальные объекты',
+    uz: 'Jonli e\'lonlar'
+  },
+  'map.clickMarkers': {
+    en: 'Click markers to view details',
+    ru: 'Нажмите на маркеры для деталей',
+    uz: 'Tafsilotlar uchun belgilarni bosing'
+  },
+  'map.availableNow': {
+    en: 'Available Now',
+    ru: 'Доступно сейчас',
+    uz: 'Hozir mavjud'
+  },
+  'map.realTimeUpdates': {
+    en: 'Real-time Updates',
+    ru: 'Обновления в реальном времени',
+    uz: 'Real vaqt yangilanishlari'
   }
 };
 

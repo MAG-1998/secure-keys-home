@@ -6,9 +6,10 @@ import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps'
 
 interface MapSectionProps {
   isHalalMode?: boolean
+  t: (key: string) => string
 }
 
-export const MapSection = ({ isHalalMode = false }: MapSectionProps) => {
+export const MapSection = ({ isHalalMode = false, t }: MapSectionProps) => {
   return (
     <section className={`py-16 transition-colors duration-500 ${
       isHalalMode ? 'bg-magit-trust/5' : 'bg-background/50'
@@ -18,33 +19,32 @@ export const MapSection = ({ isHalalMode = false }: MapSectionProps) => {
           {/* Left: Text Content */}
           <div>
             <Badge variant={isHalalMode ? "trust" : "warning"} className="mb-4">
-              {isHalalMode ? "Halal Marketplace" : "Live Marketplace"}
+              {isHalalMode ? t('map.halalMarketplace') : t('map.liveMarketplace')}
             </Badge>
             <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
-              Find your perfect home on the map
+              {t('map.title')}
             </h2>
             <p className="text-lg text-muted-foreground mb-6">
-              Browse 1,500+ verified properties across Tashkent. Filter by price, 
-              financing options, and neighborhood preferences.
+              {t('map.description')}
             </p>
             
             <div className="flex flex-wrap gap-3 mb-6">
               <Button variant="outline" size="sm">
                 <Filter className="h-4 w-4 mr-2" />
-                Halal Financing Available
+                {t('map.halalFinancing')}
               </Button>
               <Button variant="outline" size="sm">
                 <MapPin className="h-4 w-4 mr-2" />
-                Yunusobod District
+                {t('map.yunusobodDistrict')}
               </Button>
               <Button variant="outline" size="sm">
-                2-3 Bedrooms
+                {t('map.bedrooms')}
               </Button>
             </div>
             
             <Button size="lg" className="shadow-warm">
               <Search className="h-5 w-5 mr-2" />
-              Open Interactive Map
+              {t('map.openMap')}
             </Button>
           </div>
           
@@ -131,14 +131,14 @@ export const MapSection = ({ isHalalMode = false }: MapSectionProps) => {
                 {/* Property info overlay */}
                 <Card className="absolute bottom-4 left-4 w-48 shadow-lg bg-background/95 backdrop-blur-sm">
                   <CardContent className="p-3">
-                    <div className="text-sm font-semibold">Live Properties</div>
-                    <div className="text-xs text-muted-foreground">Click markers to view details</div>
+                    <div className="text-sm font-semibold">{t('map.liveProperties')}</div>
+                    <div className="text-xs text-muted-foreground">{t('map.clickMarkers')}</div>
                     <div className="flex items-center mt-2 text-xs">
                       <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-                      <span>Available Now</span>
+                      <span>{t('map.availableNow')}</span>
                     </div>
                     <Badge variant={isHalalMode ? "trust" : "warning"} className="text-xs mt-1">
-                      Real-time Updates
+                      {t('map.realTimeUpdates')}
                     </Badge>
                   </CardContent>
                 </Card>
