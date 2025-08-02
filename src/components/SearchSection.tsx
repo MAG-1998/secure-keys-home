@@ -35,15 +35,16 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
         {/* Halal Mode Toggle */}
         <div className="flex justify-center mb-8">
           <Card 
-            className={`border-0 shadow-soft transition-all duration-500 ${
-              isHalalMode ? 'bg-magit-trust/10' : 'bg-background'
+            className={`border-0 shadow-soft transition-colors duration-300 ${
+              isHalalMode ? 'bg-magit-trust/20' : 'bg-background'
             }`}
             style={{
-              transform: `scale(${1 + scrollProgress * 0.1})`,
               padding: isHalalMode ? '16px' : '12px'
             }}
           >
-            <div className="flex items-center space-x-4 w-[380px]">
+            <div className={`flex items-center space-x-4 transition-all duration-300 ${
+              isHalalMode ? 'w-[380px]' : 'w-[300px]'
+            }`}>
               <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap">
                 Halal Financing Mode
               </Label>
@@ -81,10 +82,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
           </div>
 
           <Card 
-            className="bg-background/80 backdrop-blur-sm border-0 shadow-warm transition-all duration-500"
-            style={{
-              transform: `translateX(${scrollProgress * 20}px)`
-            }}
+            className="bg-background/80 backdrop-blur-sm border-0 shadow-warm"
           >
             <CardContent className="p-6">
               {/* Main Search Bar */}
@@ -108,12 +106,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
               </div>
 
               {/* Quick Filters */}
-              <div 
-                className="flex flex-wrap gap-2 mb-4 transition-all duration-500"
-                style={{
-                  transform: `translateX(${-scrollProgress * 15}px)`
-                }}
-              >
+              <div className="flex flex-wrap gap-2 mb-4">
                 <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
                   <Filter className="h-4 w-4 mr-2" />
                   Filters

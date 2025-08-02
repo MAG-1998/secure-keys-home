@@ -7,6 +7,7 @@ import { FeatureCard } from "@/components/FeatureCard"
 import { PropertyCard } from "@/components/PropertyCard"
 import { MapSection } from "@/components/MapSection"
 import { SearchSection } from "@/components/SearchSection"
+import { Header } from "@/components/Header"
 import { useScroll } from "@/hooks/use-scroll"
 import { Shield, Home, Calculator, MapPin, Users, CheckCircle } from "lucide-react"
 
@@ -28,6 +29,7 @@ const Index = () => {
     <div className={`min-h-screen transition-all duration-500 ${
       isHalalMode ? 'bg-gradient-to-br from-magit-trust/5 to-primary/5' : 'bg-gradient-hero'
     }`}>
+      <Header />
       {/* Navigation */}
       <nav className={`border-b border-border/50 backdrop-blur-sm sticky top-0 z-50 transition-all duration-500 ${
         isHalalMode ? 'bg-magit-trust/10' : 'bg-background/80'
