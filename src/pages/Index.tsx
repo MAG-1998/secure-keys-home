@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { MagitLogo } from "@/components/MagitLogo"
 import { FeatureCard } from "@/components/FeatureCard"
 import { PropertyCard } from "@/components/PropertyCard"
@@ -10,10 +11,11 @@ import { SearchSection } from "@/components/SearchSection"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { useScroll } from "@/hooks/use-scroll"
-import { Shield, Home, Calculator, MapPin, Users, CheckCircle } from "lucide-react"
+import { Shield, Home, Calculator, MapPin, Users, CheckCircle, Languages } from "lucide-react"
 
 const Index = () => {
   const [isHalalMode, setIsHalalMode] = useState(false)
+  const [language, setLanguage] = useState("en")
   const { scrollY, isScrolled } = useScroll()
 
   // Apply global design changes based on Halal mode
@@ -45,6 +47,18 @@ const Index = () => {
               <a href="#financing" className="text-muted-foreground hover:text-foreground transition-colors">Financing</a>
             </div>
             <div className="flex items-center space-x-3">
+              {/* Language Selector */}
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className="w-[120px]">
+                  <Languages className="w-4 h-4 mr-2" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="ru">Русский</SelectItem>
+                  <SelectItem value="uz">O'zbek</SelectItem>
+                </SelectContent>
+              </Select>
               <Button variant="ghost">Sign In</Button>
               <Button variant={isHalalMode ? "trust" : "default"}>Get Started</Button>
             </div>
