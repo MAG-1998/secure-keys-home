@@ -181,11 +181,11 @@ const Dashboard = () => {
             className="group cursor-pointer border-0 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             onClick={handleBuyProperty}
           >
-            <div className="h-full bg-gradient-to-br from-secondary/20 via-secondary/10 to-muted/20">
+            <div className="h-full bg-gradient-to-br from-muted/50 via-muted/30 to-background">
               <CardContent className="p-8 h-full flex flex-col justify-center text-center min-h-[400px]">
                 <div className="mb-6">
-                  <div className="w-16 h-16 bg-secondary/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Search className="w-8 h-8 text-secondary-foreground" />
+                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="w-8 h-8 text-foreground" />
                   </div>
                   <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-4">
                     Find Your Dream Home
@@ -197,21 +197,21 @@ const Dashboard = () => {
                 
                 <div className="space-y-3 mb-8">
                   <div className="flex items-center justify-center text-sm text-muted-foreground">
-                    <span className="w-2 h-2 bg-secondary rounded-full mr-2"></span>
+                    <span className="w-2 h-2 bg-foreground rounded-full mr-2"></span>
                     Verified property listings
                   </div>
                   <div className="flex items-center justify-center text-sm text-muted-foreground">
-                    <span className="w-2 h-2 bg-secondary rounded-full mr-2"></span>
+                    <span className="w-2 h-2 bg-foreground rounded-full mr-2"></span>
                     Halal financing available
                   </div>
                   <div className="flex items-center justify-center text-sm text-muted-foreground">
-                    <span className="w-2 h-2 bg-secondary rounded-full mr-2"></span>
+                    <span className="w-2 h-2 bg-foreground rounded-full mr-2"></span>
                     AI-powered matching
                   </div>
                 </div>
 
                 <Button 
-                  variant="secondary" 
+                  variant="outline" 
                   className="w-full group-hover:shadow-lg transition-all duration-300"
                   size="lg"
                 >
