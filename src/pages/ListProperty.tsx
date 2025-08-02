@@ -45,7 +45,6 @@ const ListProperty = () => {
     // Owner Details
     ownerName: "",
     ownerPhone: "",
-    ownerEmail: "",
     
     // Documents
     documents: [] as File[],
@@ -233,17 +232,6 @@ const ListProperty = () => {
                     onChange={(e) => handleInputChange("ownerPhone", e.target.value)}
                   />
                 </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="ownerEmail">Email Address</Label>
-                <Input 
-                  id="ownerEmail"
-                  type="email"
-                  placeholder="your.email@example.com"
-                  value={formData.ownerEmail}
-                  onChange={(e) => handleInputChange("ownerEmail", e.target.value)}
-                />
               </div>
               
               <div className="bg-muted/50 p-4 rounded-lg">
