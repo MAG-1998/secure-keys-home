@@ -18,6 +18,7 @@ const Auth = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [fullName, setFullName] = useState("")
+  const [phone, setPhone] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -36,7 +37,7 @@ const Auth = () => {
   }, [navigate])
 
   const handleSignUp = async () => {
-    if (!email || !password || !fullName) {
+    if (!email || !password || !fullName || !phone) {
       setError("Please fill in all fields")
       return
     }
@@ -50,7 +51,8 @@ const Auth = () => {
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
         data: {
-          full_name: fullName
+          full_name: fullName,
+          phone: phone
         }
       }
     })
@@ -130,17 +132,37 @@ const Auth = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input
-                    id="fullName"
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Enter your full name"
-                    required={!isLogin}
-                  />
-                </div>
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Enter your full name"
+                      required={!isLogin}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none">
+                        +998
+                      </span>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="90 123 45 67"
+                        className="pl-16"
+                        required={!isLogin}
+                      />
+                    </div>
+                  </div>
+                </>
               )}
 
               <div className="space-y-2">
@@ -208,6 +230,7 @@ const Auth = () => {
                     setIsLogin(!isLogin)
                     setError("")
                     setFullName("")
+                    setPhone("")
                   }}
                   className="text-primary hover:text-primary/80 transition-colors"
                 >

@@ -42,16 +42,12 @@ const ListProperty = () => {
     area: "",
     description: "",
     
-    // Owner Details
-    ownerName: "",
-    ownerPhone: "",
-    
     // Documents
     documents: [] as File[],
     photos: [] as File[]
   })
 
-  const totalSteps = 6
+  const totalSteps = 5
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
@@ -197,60 +193,7 @@ const ListProperty = () => {
             </CardContent>
           </Card>
         )
-
       case 2:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5" />
-                Owner Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="ownerName">Full Name</Label>
-                <Input 
-                  id="ownerName"
-                  placeholder="Enter your full name"
-                  value={formData.ownerName}
-                  onChange={(e) => handleInputChange("ownerName", e.target.value)}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="ownerPhone">Phone Number</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none">
-                    +998
-                  </span>
-                  <Input 
-                    id="ownerPhone"
-                    placeholder="90 123 45 67"
-                    className="pl-16"
-                    value={formData.ownerPhone}
-                    onChange={(e) => handleInputChange("ownerPhone", e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              <div className="bg-muted/50 p-4 rounded-lg">
-                <div className="flex items-start gap-3">
-                  <Shield className="w-5 h-5 text-magit-success mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-sm">Verification Required</h4>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      We'll verify your identity and property ownership for the safety of all users. 
-                      This helps maintain our 95% trust rating.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )
-
-      case 3:
         return (
           <Card>
             <CardHeader>
@@ -284,7 +227,7 @@ const ListProperty = () => {
           </Card>
         )
 
-      case 4:
+      case 3:
         return (
           <Card>
             <CardHeader>
@@ -337,7 +280,7 @@ const ListProperty = () => {
                   <Checkbox id="virtualTour" />
                   <div className="flex-1">
                     <Label htmlFor="virtualTour" className="font-semibold text-sm text-blue-900 dark:text-blue-100 cursor-pointer">
-                      Professional Virtual Tour (+300,000 UZS)
+                      Professional Virtual Tour (+$300)
                     </Label>
                     <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
                       Our certified agent will visit your property within 2-3 business days 
@@ -350,7 +293,7 @@ const ListProperty = () => {
           </Card>
         )
 
-      case 5:
+      case 4:
         return (
           <Card>
             <CardHeader>
@@ -370,26 +313,26 @@ const ListProperty = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Professional Virtual Tour:</span>
-                    <span>300,000 UZS</span>
+                    <span>$300</span>
                   </div>
                   <div className="border-t pt-2 flex justify-between font-semibold">
                     <span>Total:</span>
-                    <span>300,000 UZS</span>
+                    <span>$300</span>
                   </div>
                 </div>
               </div>
               
               <PaymentMethods 
-                amount={300000} 
+                amount={300} 
                 onPaymentSuccess={() => {
-                  setCurrentStep(6)
+                  setCurrentStep(5)
                 }}
               />
             </CardContent>
           </Card>
         )
 
-      case 6:
+      case 5:
         return (
           <Card>
             <CardHeader>
@@ -413,11 +356,7 @@ const ListProperty = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Price:</span>
-                    <span>{formData.price ? `${formData.price} UZS` : "Not specified"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Owner:</span>
-                    <span>{formData.ownerName || "Not specified"}</span>
+                    <span>{formData.price ? `$${formData.price}` : "Not specified"}</span>
                   </div>
                 </div>
               </div>
