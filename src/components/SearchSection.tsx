@@ -28,14 +28,14 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
         : 'bg-gradient-to-br from-background/50 to-muted/20'
     }`}>
       <div className="container mx-auto px-4">
-        {/* Halal Mode Toggle - Fixed Position */}
-        <div className="fixed top-4 right-4 z-50">
-          <Card className={`p-3 border-0 shadow-soft transition-all duration-500 ${
+        {/* Halal Mode Toggle */}
+        <div className="flex justify-center mb-8">
+          <Card className={`p-4 border-0 shadow-soft transition-all duration-300 ${
             isHalalMode ? 'bg-magit-trust/10' : 'bg-background'
           }`}>
-            <div className="flex items-center space-x-2">
-              <Label htmlFor="halal-mode" className="text-xs font-medium whitespace-nowrap">
-                Halal Mode
+            <div className="flex items-center space-x-3">
+              <Label htmlFor="halal-mode" className="text-sm font-medium">
+                Halal Financing Mode
               </Label>
               <Switch
                 id="halal-mode"
@@ -45,7 +45,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
               />
               {isHalalMode && (
                 <Badge variant="trust" className="text-xs animate-fade-in">
-                  ✓ Halal
+                  ✓ Sharia Compliant
                 </Badge>
               )}
             </div>
