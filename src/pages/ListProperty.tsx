@@ -38,6 +38,7 @@ const ListProperty = () => {
     bedrooms: "",
     customBedrooms: "",
     bathrooms: "",
+    customBathrooms: "",
     area: "",
     description: "",
     
@@ -158,16 +159,29 @@ const ListProperty = () => {
                 </div>
                 <div>
                   <Label htmlFor="bathrooms">Bathrooms</Label>
-                  <Select value={formData.bathrooms} onValueChange={(value) => handleInputChange("bathrooms", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="0" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[1, 2, 3, 4, 5].map(num => (
-                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="space-y-2">
+                    <Select value={formData.bathrooms} onValueChange={(value) => handleInputChange("bathrooms", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select bathrooms" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[1, 2, 3, 4, 5].map(num => (
+                          <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? 'bathroom' : 'bathrooms'}</SelectItem>
+                        ))}
+                        <SelectItem value="custom">Other (enter custom number)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {formData.bathrooms === "custom" && (
+                      <Input 
+                        type="number"
+                        placeholder="Enter number of bathrooms"
+                        min="1"
+                        value={formData.customBathrooms}
+                        autoFocus
+                        onChange={(e) => handleInputChange("customBathrooms", e.target.value)}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
               
