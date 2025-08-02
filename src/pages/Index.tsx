@@ -8,6 +8,7 @@ import { PropertyCard } from "@/components/PropertyCard"
 import { MapSection } from "@/components/MapSection"
 import { SearchSection } from "@/components/SearchSection"
 import { Header } from "@/components/Header"
+import { Footer } from "@/components/Footer"
 import { useScroll } from "@/hooks/use-scroll"
 import { Shield, Home, Calculator, MapPin, Users, CheckCircle } from "lucide-react"
 
@@ -218,46 +219,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 bg-background/80 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <MagitLogo size="md" className="mb-4" />
-              <p className="text-muted-foreground text-sm">
-                Verified homes. Honest financing. Peace of mind.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-heading font-semibold text-foreground mb-3">Platform</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Browse Homes</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Financing</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">How it Works</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-heading font-semibold text-foreground mb-3">Support</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Contact Us</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Safety</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-heading font-semibold text-foreground mb-3">Company</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Privacy</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Terms</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-border/50 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2024 Magit. All rights reserved. Made with care for families in Uzbekistan.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
