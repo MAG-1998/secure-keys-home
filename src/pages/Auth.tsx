@@ -11,7 +11,10 @@ import { Eye, EyeOff, ArrowLeft } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true)
+  const [isLogin, setIsLogin] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    return !urlParams.has('signup')
+  })
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [fullName, setFullName] = useState("")

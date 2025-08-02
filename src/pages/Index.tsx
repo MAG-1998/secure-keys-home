@@ -64,7 +64,12 @@ const Index = () => {
               >
                 {t('nav.signIn')}
               </Button>
-              <Button variant={isHalalMode ? "trust" : "default"}>{t('nav.getStarted')}</Button>
+              <Button 
+                variant={isHalalMode ? "trust" : "default"}
+                onClick={() => window.location.href = '/auth?signup=true'}
+              >
+                {t('nav.getStarted')}
+              </Button>
             </div>
           </div>
         </div>
@@ -225,7 +230,11 @@ const Index = () => {
                 {t('cta.subtitle')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="text-lg px-8 py-6 shadow-warm">
+                <Button 
+                  size="lg" 
+                  className="text-lg px-8 py-6 shadow-warm"
+                  onClick={() => window.location.href = '/auth?signup=true'}
+                >
                   {t('cta.button')}
                 </Button>
                 <Button variant="outline" size="lg" className="text-lg px-8 py-6">
