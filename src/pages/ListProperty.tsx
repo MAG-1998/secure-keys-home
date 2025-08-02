@@ -140,7 +140,7 @@ const ListProperty = () => {
                         {[0, 1, 2, 3, 4, 5, 6].map(num => (
                           <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? 'bedroom' : 'bedrooms'}</SelectItem>
                         ))}
-                        <SelectItem value="custom">Other (specify below)</SelectItem>
+                        <SelectItem value="custom">Other (enter custom number)</SelectItem>
                       </SelectContent>
                     </Select>
                     {formData.bedrooms === "custom" && (
@@ -148,6 +148,7 @@ const ListProperty = () => {
                         type="number"
                         placeholder="Enter number of bedrooms"
                         min="0"
+                        autoFocus
                         onChange={(e) => handleInputChange("bedrooms", e.target.value)}
                       />
                     )}
