@@ -36,6 +36,7 @@ const ListProperty = () => {
     address: "",
     price: "",
     bedrooms: "",
+    customBedrooms: "",
     bathrooms: "",
     area: "",
     description: "",
@@ -148,8 +149,9 @@ const ListProperty = () => {
                         type="number"
                         placeholder="Enter number of bedrooms"
                         min="0"
+                        value={formData.customBedrooms}
                         autoFocus
-                        onChange={(e) => handleInputChange("bedrooms", e.target.value)}
+                        onChange={(e) => handleInputChange("customBedrooms", e.target.value)}
                       />
                     )}
                   </div>
