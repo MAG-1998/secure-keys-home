@@ -83,9 +83,9 @@ const Index = () => {
             </Badge>
             <h1 className={`font-heading font-bold text-3xl md:text-5xl text-foreground mb-4 leading-tight transition-all duration-500 ${isScrolled ? 'scale-95' : ''}`}>
               {isHalalMode ? (
-                <>Find your home. <span className="text-primary">Stay Halal.</span></>
+                <>{t('hero.titleHalal').split(' ').slice(0, 3).join(' ')} <span className="text-primary">{t('hero.titleHalal').split(' ').slice(-2).join(' ')}</span></>
               ) : (
-                <>Buy smart. <span className="text-primary">Pay fair.</span></>
+                <>{t('hero.titleStandard').split(' ').slice(0, 2).join(' ')} <span className="text-primary">{t('hero.titleStandard').split(' ').slice(-2).join(' ')}</span></>
               )}
             </h1>
             <p className={`text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed transition-all duration-500 ${isScrolled ? 'opacity-60' : ''}`}>
