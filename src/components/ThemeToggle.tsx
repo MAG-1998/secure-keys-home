@@ -71,7 +71,7 @@ export const ThemeToggle = ({ isHalalMode = false }: ThemeToggleProps) => {
       <Switch
         checked={theme === "dark"}
         onCheckedChange={handleThemeToggle}
-        className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust [&>span]:data-[state=unchecked]:bg-magit-trust" : "data-[state=checked]:bg-primary data-[state=checked]:border-primary"}
+        className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust dark:data-[state=checked]:border-white data-[state=unchecked]:border-border dark:data-[state=unchecked]:border-white/20 [&>span]:data-[state=unchecked]:bg-magit-trust" : "data-[state=checked]:bg-primary data-[state=checked]:border-primary dark:data-[state=checked]:border-white data-[state=unchecked]:border-border dark:data-[state=unchecked]:border-white/20"}
       />
       <Moon className="h-4 w-4 text-muted-foreground" />
       <div className="flex items-center space-x-2">
