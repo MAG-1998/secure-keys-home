@@ -96,7 +96,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10 h-12 text-base"
                   />
-                  <Badge variant="warning" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs">
+                  <Badge variant="warning" className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-xs ${isHalalMode ? 'bg-magit-trust text-white' : ''}`}>
                     <Sparkles className="h-3 w-3 mr-1" />
                     AI
                   </Badge>
