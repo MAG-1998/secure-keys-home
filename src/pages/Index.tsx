@@ -109,67 +109,6 @@ const Index = () => {
         <MapSection />
       </div>
 
-      {/* Featured Properties Section */}
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <Badge variant="success" className="mb-4">
-              ✓ Live Listings
-            </Badge>
-            <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
-              Featured verified properties
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Real homes from verified sellers, available right now with Halal financing options.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8">
-            <PropertyCard
-              id="1"
-              title="Modern 3-room apartment"
-              location="Chilonzor, Tashkent"
-              price="$52,000"
-              bedrooms={3}
-              bathrooms={2}
-              area={85}
-              imageUrl="https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=300&fit=crop"
-              isVerified={true}
-              isHalalFinanced={true}
-            />
-            <PropertyCard
-              id="2"
-              title="Family apartment with garden"
-              location="Yunusobod, Tashkent"
-              price="$47,000"
-              bedrooms={2}
-              bathrooms={1}
-              area={72}
-              imageUrl="https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=300&fit=crop"
-              isVerified={true}
-              isHalalFinanced={false}
-            />
-            <PropertyCard
-              id="3"
-              title="Renovated 4-room home"
-              location="Shaykhontohur, Tashkent"
-              price="$68,000"
-              bedrooms={4}
-              bathrooms={2}
-              area={110}
-              imageUrl="https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=300&fit=crop"
-              isVerified={true}
-              isHalalFinanced={true}
-            />
-          </div>
-          
-          <div className="text-center">
-            <Button size="lg" variant="outline" className="shadow-soft">
-              View All 1,500+ Properties
-            </Button>
-          </div>
-        </div>
-      </section>
 
       {/* Features Section */}
       <section id="features" className="py-20 bg-background/50">
