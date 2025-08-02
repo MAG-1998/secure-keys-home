@@ -313,28 +313,28 @@ const ListProperty = () => {
                   <Calendar className="w-5 h-5 text-blue-600 mt-0.5" />
                   <div className="flex-1">
                     <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100">
-                      Field Agent Visit
+                      Premium Verified Field Agent Visit
                     </h4>
                     <p className="text-sm text-blue-700 dark:text-blue-200 mt-1 mb-3">
                       Our certified agent will visit your property within 2-3 business days 
-                      to verify details and take professional photos.
+                      to verify details, take professional photos, and award your Premium Verified Badge.
                     </p>
                     
                     <div className="flex items-start gap-3 mt-3 p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
                       <input
                         type="checkbox"
-                        id="verifiedProperty"
+                        id="premiumPhotos"
                         className="mt-1"
                       />
                       <div className="flex-1">
-                        <label htmlFor="verifiedProperty" className="font-semibold cursor-pointer text-blue-900 dark:text-blue-100">
-                          Premium Verified Property Badge
+                        <label htmlFor="premiumPhotos" className="font-semibold cursor-pointer text-blue-900 dark:text-blue-100">
+                          Professional 3D Photos & Virtual Tour
                         </label>
                         <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
-                          Get enhanced verification, priority placement, and increased buyer trust.
+                          Upgrade to immersive 3D photography and virtual touring experience for maximum buyer engagement.
                         </p>
                         <div className="mt-2">
-                          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Additional fee: 50,000 UZS</span>
+                          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Additional fee: 300,000 UZS</span>
                         </div>
                       </div>
                     </div>
