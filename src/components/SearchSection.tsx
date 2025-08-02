@@ -54,7 +54,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   id="halal-mode"
                   checked={isHalalMode}
                   onCheckedChange={onHalalModeChange}
-                  className="data-[state=checked]:bg-magit-trust flex-shrink-0"
+                  className="data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust flex-shrink-0"
                 />
                 <div className={`transition-all duration-300 ${
                   isHalalMode ? 'w-32 opacity-100' : 'w-0 opacity-0 overflow-hidden'
