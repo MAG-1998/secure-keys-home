@@ -1,82 +1,82 @@
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { MagitLogo } from "@/components/MagitLogo"
-import { useNavigate } from "react-router-dom"
-import { supabase } from "@/integrations/supabase/client"
-import { useTranslation } from "@/hooks/useTranslation"
-import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search } from "lucide-react"
-import { ThemeToggle } from "@/components/ThemeToggle"
-import { useToast } from "@/hooks/use-toast"
-import type { User } from "@supabase/supabase-js"
-
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { MagitLogo } from "@/components/MagitLogo";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "@/hooks/useTranslation";
+import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useToast } from "@/hooks/use-toast";
+import type { User } from "@supabase/supabase-js";
 const Dashboard = () => {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
-  const { toast } = useToast()
-
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const {
+    toast
+  } = useToast();
   useEffect(() => {
     const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) {
-        navigate("/auth")
-        return
+        navigate("/auth");
+        return;
       }
-      setUser(session.user)
-      setLoading(false)
-    }
-
-    getUser()
+      setUser(session.user);
+      setLoading(false);
+    };
+    getUser();
 
     // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
-        navigate("/auth")
-      } else {
-        setUser(session.user)
+    const {
+      data: {
+        subscription
       }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [navigate])
-
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate("/auth");
+      } else {
+        setUser(session.user);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [navigate]);
   const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut()
+    const {
+      error
+    } = await supabase.auth.signOut();
     if (error) {
       toast({
         title: "Error signing out",
         description: error.message,
-        variant: "destructive",
-      })
+        variant: "destructive"
+      });
     } else {
-      navigate("/")
+      navigate("/");
     }
-  }
-
+  };
   const handleListProperty = () => {
-    navigate("/list-property")
-  }
-
+    navigate("/list-property");
+  };
   const handleBuyProperty = () => {
-    navigate("/")
-  }
-
+    navigate("/");
+  };
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+    return <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
           <MagitLogo size="lg" />
           <p className="text-muted-foreground mt-4">Loading your dashboard...</p>
         </div>
-      </div>
-    )
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-hero">
+  return <div className="min-h-screen bg-gradient-hero">
       {/* Header */}
       <header className="border-b border-border/50 bg-background/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
@@ -84,11 +84,7 @@ const Dashboard = () => {
             <MagitLogo size="md" />
             
             <div className="flex items-center space-x-4">
-              {user && (
-                <button 
-                  className="flex items-center space-x-3 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer text-left"
-                  onClick={() => navigate('/profile')}
-                >
+              {user && <button className="flex items-center space-x-3 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer text-left" onClick={() => navigate('/profile')}>
                   <Avatar>
                     <AvatarFallback className="bg-muted text-foreground">
                       {user.email?.charAt(0).toUpperCase()}
@@ -98,16 +94,10 @@ const Dashboard = () => {
                     <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
                     <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
-                </button>
-              )}
+                </button>}
               
               <ThemeToggle />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleSignOut}
-                className="text-muted-foreground hover:text-destructive"
-              >
+              <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive">
                 <LogOut className="h-4 w-4" />
               </Button>
             </div>
@@ -132,10 +122,7 @@ const Dashboard = () => {
         {/* Split Screen Options */}
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {/* List Property - Orange Theme */}
-          <Card 
-            className="group cursor-pointer border-0 overflow-hidden shadow-warm hover:shadow-lg transition-all duration-300 hover:scale-105"
-            onClick={handleListProperty}
-          >
+          <Card className="group cursor-pointer border-0 overflow-hidden shadow-warm hover:shadow-lg transition-all duration-300 hover:scale-105" onClick={handleListProperty}>
             <div className="h-full bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10">
               <CardContent className="p-8 h-full flex flex-col justify-center text-center min-h-[400px]">
                 <div className="mb-6">
@@ -165,10 +152,7 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <Button 
-                  className="w-full group-hover:shadow-warm transition-all duration-300"
-                  size="lg"
-                >
+                <Button className="w-full group-hover:shadow-warm transition-all duration-300" size="lg">
                   Get Started
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -177,10 +161,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Buy Property */}
-          <Card 
-            className="group cursor-pointer border-0 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-            onClick={handleBuyProperty}
-          >
+          <Card className="group cursor-pointer border-0 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" onClick={handleBuyProperty}>
             <div className="h-full bg-white">
               <CardContent className="p-8 h-full flex flex-col justify-center text-center min-h-[400px] text-black">
                 <div className="mb-6">
@@ -210,11 +191,7 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <Button 
-                  variant="outline" 
-                  className="w-full group-hover:shadow-lg transition-all duration-300 text-black border-black hover:bg-black hover:text-white"
-                  size="lg"
-                >
+                <Button variant="outline" size="lg" className="w-full group-hover:shadow-lg transition-all duration-300 border-black hover:bg-black text-base text-slate-50">
                   Start Browsing
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -233,8 +210,6 @@ const Dashboard = () => {
           </Button>
         </div>
       </main>
-    </div>
-  )
-}
-
-export default Dashboard
+    </div>;
+};
+export default Dashboard;
