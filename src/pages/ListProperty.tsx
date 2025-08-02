@@ -221,12 +221,18 @@ const ListProperty = () => {
               
               <div>
                 <Label htmlFor="ownerPhone">Phone Number</Label>
-                <Input 
-                  id="ownerPhone"
-                  placeholder="+998 90 123 45 67"
-                  value={formData.ownerPhone}
-                  onChange={(e) => handleInputChange("ownerPhone", e.target.value)}
-                />
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none">
+                    +998
+                  </span>
+                  <Input 
+                    id="ownerPhone"
+                    placeholder="90 123 45 67"
+                    className="pl-16"
+                    value={formData.ownerPhone}
+                    onChange={(e) => handleInputChange("ownerPhone", e.target.value)}
+                  />
+                </div>
               </div>
               
               <div>
