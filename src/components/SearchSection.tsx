@@ -60,7 +60,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   isHalalMode ? 'w-32 opacity-100' : 'w-0 opacity-0 overflow-hidden'
                 }`}>
                   <Badge variant="trust" className="text-xs whitespace-nowrap">
-                    ✓ Sharia Compliant
+                    {t('search.halalBadge')}
                   </Badge>
                 </div>
               </div>
@@ -72,12 +72,12 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-2">
-              {isHalalMode ? "Find Halal-Financed Homes" : "Search Verified Properties"}
+              {isHalalMode ? t('search.titleHalal') : t('search.titleStandard')}
             </h2>
             <p className="text-muted-foreground text-sm">
               {isHalalMode 
-                ? "Discover verified homes with Sharia-compliant financing options across Tashkent"
-                : "Scam-free marketplace with 1,500+ verified properties across Tashkent"
+                ? t('search.descHalal')
+                : t('search.descStandard')
               }
             </p>
           </div>
@@ -91,7 +91,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Tell us what you're looking for... (e.g., '3-bedroom near metro with garden')"
+                    placeholder={t('search.placeholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10 h-12 text-base"
@@ -102,7 +102,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   </Badge>
                 </div>
                 <Button size="lg" className="px-8 shadow-warm">
-                  Search
+                  {t('search.searchBtn')}
                 </Button>
               </div>
 
@@ -110,7 +110,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
               <div className="flex flex-wrap gap-2 mb-4">
                 <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
                   <Filter className="h-4 w-4 mr-2" />
-                  Filters
+                  {t('search.filters')}
                 </Button>
                 <Button variant="outline" size="sm">
                   <MapPin className="h-4 w-4 mr-2" />
@@ -126,7 +126,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 </Button>
                 {isHalalMode && (
                   <Button variant="trust" size="sm">
-                    ✓ Halal Financing
+                    {t('search.halalFinancing')}
                   </Button>
                 )}
               </div>
@@ -137,13 +137,13 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   <div className="bg-magit-trust/5 p-4 rounded-lg">
                     <h3 className="font-medium text-sm mb-3 flex items-center">
                       <Wallet className="h-4 w-4 mr-2" />
-                      Your Financial Profile
+                      {t('search.financialProfile')}
                     </h3>
                     <div className={`grid md:grid-cols-3 gap-4 mb-4 transition-all duration-300 ${
                       showAllProperties ? 'blur-sm pointer-events-none' : ''
                     }`}>
                       <div>
-                        <Label className="text-sm font-medium mb-2 block">Cash Available ($)</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('search.cashAvailable')}</Label>
                         <Input
                           placeholder="e.g., 15,000"
                           value={cashAmount}
@@ -153,7 +153,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                         />
                       </div>
                       <div>
-                        <Label className="text-sm font-medium mb-2 block">Monthly Payment ($)</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('search.monthlyPayment')}</Label>
                         <Input
                           placeholder="e.g., 500"
                           value={monthlyPayment}
@@ -163,7 +163,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                         />
                       </div>
                       <div>
-                        <Label className="text-sm font-medium mb-2 block">Monthly Salary ($)</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('search.monthlySalary')}</Label>
                         <Input
                           placeholder="e.g., 2,000"
                           value={monthlySalary}
@@ -180,12 +180,12 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                         onCheckedChange={setShowAllProperties}
                       />
                       <Label htmlFor="show-all" className="text-sm">
-                        Show all properties (not just what I can afford)
+                        {t('search.showAll')}
                       </Label>
                       {!showAllProperties && cashAmount && monthlyPayment && (
                         <Badge variant="trust" className="text-xs">
                           <TrendingUp className="h-3 w-3 mr-1" />
-                          Smart Match
+                          {t('search.smartMatch')}
                         </Badge>
                       )}
                     </div>
@@ -198,10 +198,10 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 <div className="border-t pt-4 animate-fade-in">
                   <div className="grid md:grid-cols-4 gap-4">
                     <div>
-                      <Label className="text-sm font-medium mb-2 block">District</Label>
+                      <Label className="text-sm font-medium mb-2 block">{t('filter.district')}</Label>
                       <Select>
                         <SelectTrigger>
-                          <SelectValue placeholder="Choose district" />
+                          <SelectValue placeholder={t('filter.chooseDistrict')} />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="yunusobod">Yunusobod</SelectItem>
@@ -213,10 +213,10 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                     </div>
                     
                     <div>
-                      <Label className="text-sm font-medium mb-2 block">Price Range</Label>
+                      <Label className="text-sm font-medium mb-2 block">{t('filter.priceRange')}</Label>
                       <Select>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select budget" />
+                          <SelectValue placeholder={t('filter.selectBudget')} />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="30-40">$30k - $40k</SelectItem>
@@ -228,10 +228,10 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium mb-2 block">Square Meters</Label>
+                      <Label className="text-sm font-medium mb-2 block">{t('filter.squareMeters')}</Label>
                       <Select>
                         <SelectTrigger>
-                          <SelectValue placeholder="Size" />
+                          <SelectValue placeholder={t('filter.size')} />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="30-50">30-50 m²</SelectItem>
@@ -243,15 +243,15 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                     </div>
                     
                     <div>
-                      <Label className="text-sm font-medium mb-2 block">Property Type</Label>
+                      <Label className="text-sm font-medium mb-2 block">{t('filter.propertyType')}</Label>
                       <Select>
                         <SelectTrigger>
-                          <SelectValue placeholder="Type" />
+                          <SelectValue placeholder={t('filter.type')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="apartment">Apartment</SelectItem>
-                          <SelectItem value="house">House</SelectItem>
-                          <SelectItem value="studio">Studio</SelectItem>
+                          <SelectItem value="apartment">{t('filter.apartment')}</SelectItem>
+                          <SelectItem value="house">{t('filter.house')}</SelectItem>
+                          <SelectItem value="studio">{t('filter.studio')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -263,20 +263,20 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
 
           {/* Popular Searches */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground mb-3">Popular searches:</p>
+            <p className="text-sm text-muted-foreground mb-3">{t('search.popularSearches')}</p>
             <div className="flex flex-wrap justify-center gap-2">
               <Badge variant="outline" className="cursor-pointer hover:bg-muted">
-                3-bedroom Yunusobod
+                {t('search.popular1')}
               </Badge>
               <Badge variant="outline" className="cursor-pointer hover:bg-muted">
-                New construction Chilonzor
+                {t('search.popular2')}
               </Badge>
               <Badge variant="outline" className="cursor-pointer hover:bg-muted">
-                Apartment with parking
+                {t('search.popular3')}
               </Badge>
               {isHalalMode && (
                 <Badge variant="trust" className="cursor-pointer">
-                  Halal financing available
+                  {t('search.popular4')}
                 </Badge>
               )}
             </div>

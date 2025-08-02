@@ -42,9 +42,9 @@ const Index = () => {
             <MagitLogo size="md" />
             <div className="hidden md:flex items-center space-x-8">
               <a href="#search" className="text-muted-foreground hover:text-foreground transition-colors">{t('nav.search')}</a>
-              <a href="#map" className="text-muted-foreground hover:text-foreground transition-colors">Map</a>
-              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
-              <a href="#financing" className="text-muted-foreground hover:text-foreground transition-colors">Financing</a>
+              <a href="#map" className="text-muted-foreground hover:text-foreground transition-colors">{t('nav.map')}</a>
+              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">{t('nav.features')}</a>
+              <a href="#financing" className="text-muted-foreground hover:text-foreground transition-colors">{t('nav.financing')}</a>
             </div>
             <div className="flex items-center space-x-3">
               {/* Language Selector */}
@@ -79,29 +79,36 @@ const Index = () => {
               variant={isHalalMode ? "trust" : "success"} 
               className={`mb-4 transition-all duration-500 ${isScrolled ? 'scale-90 opacity-70' : ''}`}
             >
-              {isHalalMode ? "✓ Sharia-Compliant Platform" : "✓ Verified Marketplace"}
+              {isHalalMode ? t('hero.badgeHalal') : t('hero.badgeStandard')}
             </Badge>
             <h1 className={`font-heading font-bold text-3xl md:text-5xl text-foreground mb-4 leading-tight transition-all duration-500 ${isScrolled ? 'scale-95' : ''}`}>
-              {t('hero.title')}
+              {isHalalMode ? (
+                <>Find your home. <span className="text-primary">Stay Halal.</span></>
+              ) : (
+                <>Buy smart. <span className="text-primary">Pay fair.</span></>
+              )}
             </h1>
             <p className={`text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed transition-all duration-500 ${isScrolled ? 'opacity-60' : ''}`}>
-              {t('hero.subtitle')}
+              {isHalalMode 
+                ? t('hero.subtitleHalal')
+                : t('hero.subtitleStandard')
+              }
             </p>
             
             {/* Trust Indicators */}
             <div className={`flex flex-wrap justify-center gap-4 text-sm text-muted-foreground transition-all duration-500 ${isScrolled ? 'opacity-40 scale-90' : ''}`}>
-              <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
-                1,500+ Verified Homes
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
-                {isHalalMode ? "100% Halal Financing" : "Zero Interest Rates"}
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
-                ID Verified Sellers
-              </div>
+                <div className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
+                  {t('hero.verifiedHomes')}
+                </div>
+                <div className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
+                  {isHalalMode ? t('hero.financingHalal') : t('hero.financing')}
+                </div>
+                <div className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
+                  {t('hero.verified')}
+                </div>
             </div>
           </div>
         </div>
@@ -127,49 +134,49 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
-              Your home journey, reimagined
+              {t('features.title')}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Everything you need to find, finance, and secure your perfect home — all in one trusted platform.
+              {t('features.subtitle')}
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             <FeatureCard
               icon={Shield}
-              title="Verified Properties"
-              description="Every listing is verified with ID checks and document validation. No scams, no surprises."
+              title={t('features.verified')}
+              description={t('features.verifiedDesc')}
               badge="Verified"
               badgeVariant="success"
             />
             <FeatureCard
               icon={Calculator}
-              title="Halal Financing"
-              description="Sharia-compliant buy-now-pay-later options with transparent terms and zero interest."
+              title={t('features.halalFinancing')}
+              description={t('features.halalDesc')}
               badge="Halal"
               badgeVariant="trust"
             />
             <FeatureCard
               icon={MapPin}
-              title="Interactive Map"
-              description="Explore neighborhoods, check amenities, and find homes that match your lifestyle."
+              title={t('features.map')}
+              description={t('features.mapDesc')}
               badge="Live"
               badgeVariant="warning"
             />
             <FeatureCard
               icon={Users}
-              title="Trusted Community"
-              description="Connect with verified sellers and join a community of families upgrading their homes."
+              title={t('features.community')}
+              description={t('features.communityDesc')}
             />
             <FeatureCard
               icon={Home}
-              title="Smart Matching"
-              description="Our algorithm matches you with homes that fit your budget, preferences, and financing needs."
+              title={t('features.smartMatching')}
+              description={t('features.smartDesc')}
             />
             <FeatureCard
               icon={CheckCircle}
-              title="Secure Process"
-              description="End-to-end protection with escrow services, legal support, and transparent documentation."
+              title={t('features.secure')}
+              description={t('features.secureDesc')}
               badge="Protected"
               badgeVariant="success"
             />
@@ -183,19 +190,19 @@ const Index = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             <div className="text-center">
               <div className="font-heading font-bold text-3xl md:text-4xl text-primary mb-2">1,500+</div>
-              <div className="text-muted-foreground">Verified Homes</div>
+              <div className="text-muted-foreground">{t('stats.verifiedHomes')}</div>
             </div>
             <div className="text-center">
               <div className="font-heading font-bold text-3xl md:text-4xl text-primary mb-2">95%</div>
-              <div className="text-muted-foreground">Trust Rating</div>
+              <div className="text-muted-foreground">{t('stats.trustRating')}</div>
             </div>
             <div className="text-center">
               <div className="font-heading font-bold text-3xl md:text-4xl text-primary mb-2">0%</div>
-              <div className="text-muted-foreground">Interest Rate</div>
+              <div className="text-muted-foreground">{t('stats.interestRate')}</div>
             </div>
             <div className="text-center">
               <div className="font-heading font-bold text-3xl md:text-4xl text-primary mb-2">24/7</div>
-              <div className="text-muted-foreground">Support</div>
+              <div className="text-muted-foreground">{t('stats.support')}</div>
             </div>
           </div>
         </div>
@@ -217,7 +224,7 @@ const Index = () => {
                   {t('cta.button')}
                 </Button>
                 <Button variant="outline" size="lg" className="text-lg px-8 py-6">
-                  Learn More
+                  {t('cta.learnMore')}
                 </Button>
               </div>
             </CardContent>

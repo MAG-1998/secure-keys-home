@@ -20,15 +20,20 @@ const translations: Translations = {
     ru: 'Поиск',
     uz: 'Qidiruv'
   },
-  'nav.about': {
-    en: 'About',
-    ru: 'О нас',
-    uz: 'Biz haqimizda'
+  'nav.map': {
+    en: 'Map',
+    ru: 'Карта',
+    uz: 'Xarita'
   },
-  'nav.contact': {
-    en: 'Contact',
-    ru: 'Контакты',
-    uz: 'Aloqa'
+  'nav.features': {
+    en: 'Features',
+    ru: 'Функции',
+    uz: 'Imkoniyatlar'
+  },
+  'nav.financing': {
+    en: 'Financing',
+    ru: 'Финансы',
+    uz: 'Moliya'
   },
   'nav.signIn': {
     en: 'Sign In',
@@ -41,124 +46,343 @@ const translations: Translations = {
     uz: 'Boshlash'
   },
 
-  // Hero Section
-  'hero.title': {
-    en: 'Find Your Perfect Property with Smart Financing',
-    ru: 'Найдите идеальную недвижимость с умным финансированием',
-    uz: 'Aqlli moliyalashtirish bilan mukammal mulkni toping'
+  // Hero Section - Original functionality preserved
+  'hero.titleStandard': {
+    en: 'Buy smart. Pay fair.',
+    ru: 'Покупай умно. Плати честно.',
+    uz: 'Aqlli xarid. Adolatli toʻlov.'
   },
-  'hero.subtitle': {
-    en: 'Discover thousands of verified properties with flexible financing options including Sharia-compliant solutions.',
-    ru: 'Откройте для себя тысячи проверенных объектов недвижимости с гибкими вариантами финансирования, включая решения, соответствующие шариату.',
-    uz: 'Shariat talablariga mos yechimlar bilan moslashuvchan moliyalashtirish imkoniyatlari bilan minglab tasdiqlangan mulklarni kashf eting.'
+  'hero.titleHalal': {
+    en: 'Find your home. Stay Halal.',
+    ru: 'Найди дом. Живи по шариату.',
+    uz: 'Uyingni top. Halol yashar.'
+  },
+  'hero.subtitleStandard': {
+    en: 'Discover verified homes with honest, interest-free financing options.',
+    ru: 'Проверенные дома с честным, беспроцентным финансированием.',
+    uz: 'Halol, foizsiz moliyalashtirish bilan tekshirilgan uylar.'
+  },
+  'hero.subtitleHalal': {
+    en: 'Discover verified homes with Sharia-compliant financing options across Tashkent.',
+    ru: 'Проверенные дома с шариатским финансированием в Ташкенте.',
+    uz: 'Toshkentda shariatga mos moliya bilan tekshirilgan uylar.'
   },
   'hero.trustedBy': {
     en: 'Trusted by 50,000+ users',
     ru: 'Доверяют 50,000+ пользователей',
     uz: '50,000+ foydalanuvchi ishonadi'
   },
-  'hero.verifiedProperties': {
-    en: '10,000+ Verified Properties',
-    ru: '10,000+ проверенных объектов',
-    uz: '10,000+ tasdiqlangan mulk'
+  'hero.verifiedHomes': {
+    en: '1,500+ Verified Homes',
+    ru: '1,500+ проверенных домов',
+    uz: '1,500+ tekshirilgan uy'
   },
-  'hero.shariahCompliant': {
-    en: 'Shariah Compliant Financing',
-    ru: 'Финансирование в соответствии с шариатом',
-    uz: 'Shariatga mos moliyalashtirish'
+  'hero.financing': {
+    en: 'Zero Interest Rates',
+    ru: 'Нулевая ставка',
+    uz: 'Foizsiz'
   },
-
-  // Features
-  'features.smartSearch': {
-    en: 'Smart Property Search',
-    ru: 'Умный поиск недвижимости',
-    uz: 'Aqlli mulk qidiruvi'
+  'hero.financingHalal': {
+    en: '100% Halal Financing',
+    ru: '100% халяль финансы',
+    uz: '100% halol moliya'
   },
-  'features.smartSearchDesc': {
-    en: 'Advanced filters and AI-powered recommendations to find your perfect property match.',
-    ru: 'Расширенные фильтры и рекомендации на основе ИИ для поиска идеальной недвижимости.',
-    uz: 'Mukammal mulkni topish uchun ilg\'or filtrlar va AI-ga asoslangan tavsiyalar.'
+  'hero.verified': {
+    en: 'ID Verified Sellers',
+    ru: 'Проверенные продавцы',
+    uz: 'Tekshirilgan sotuvchilar'
   },
-  'features.financing': {
-    en: 'Flexible Financing',
-    ru: 'Гибкое финансирование',
-    uz: 'Moslashuvchan moliyalashtirish'
+  'hero.badgeStandard': {
+    en: '✓ Verified Marketplace',
+    ru: '✓ Проверенная площадка',
+    uz: '✓ Tekshirilgan platforma'
   },
-  'features.financingDesc': {
-    en: 'Multiple financing options including conventional and Shariah-compliant solutions.',
-    ru: 'Множественные варианты финансирования, включая обычные и шариатские решения.',
-    uz: 'An\'anaviy va shariatga mos yechimlar bilan ko\'plab moliyalashtirish imkoniyatlari.'
-  },
-  'features.verification': {
-    en: 'Property Verification',
-    ru: 'Проверка недвижимости',
-    uz: 'Mulk tekshiruvi'
-  },
-  'features.verificationDesc': {
-    en: 'All properties undergo thorough verification for authenticity and legal compliance.',
-    ru: 'Вся недвижимость проходит тщательную проверку на подлинность и соответствие закону.',
-    uz: 'Barcha mulklar haqiqiylik va qonuniy muvofiqlik uchun to\'liq tekshiruvdan o\'tadi.'
-  },
-  'features.support': {
-    en: '24/7 Expert Support',
-    ru: 'Экспертная поддержка 24/7',
-    uz: '24/7 ekspert yordami'
-  },
-  'features.supportDesc': {
-    en: 'Get professional guidance from our real estate experts whenever you need it.',
-    ru: 'Получите профессиональные консультации от наших экспертов по недвижимости в любое время.',
-    uz: 'Kerak bo\'lganda ko\'chmas mulk ekspertlarimizdan professional yo\'l-yo\'riq oling.'
-  },
-
-  // Stats
-  'stats.properties': {
-    en: 'Properties Listed',
-    ru: 'Объектов размещено',
-    uz: 'Ro\'yxatga olingan mulklar'
-  },
-  'stats.customers': {
-    en: 'Happy Customers',
-    ru: 'Довольных клиентов',
-    uz: 'Mamnun mijozlar'
-  },
-  'stats.financing': {
-    en: 'Financing Options',
-    ru: 'Вариантов финансирования',
-    uz: 'Moliyalashtirish imkoniyatlari'
-  },
-  'stats.support': {
-    en: 'Support Rating',
-    ru: 'Рейтинг поддержки',
-    uz: 'Yordam reytingi'
-  },
-
-  // CTA
-  'cta.title': {
-    en: 'Ready to Find Your Dream Property?',
-    ru: 'Готовы найти недвижимость своей мечты?',
-    uz: 'Orzuingizdagi mulkni topishga tayyormisiz?'
-  },
-  'cta.subtitle': {
-    en: 'Join thousands of satisfied customers who found their perfect home with our platform.',
-    ru: 'Присоединяйтесь к тысячам довольных клиентов, которые нашли свой идеальный дом с нашей платформой.',
-    uz: 'Bizning platformamiz bilan mukammal uyini topgan minglab mamnun mijozlarga qo\'shiling.'
-  },
-  'cta.button': {
-    en: 'Start Your Search',
-    ru: 'Начать поиск',
-    uz: 'Qidiruvni boshlash'
+  'hero.badgeHalal': {
+    en: '✓ Sharia-Compliant Platform',
+    ru: '✓ Шариатская платформа',
+    uz: '✓ Shariatga mos platforma'
   },
 
   // Search Section
   'search.halalMode': {
-    en: 'Enable Halal Mode',
-    ru: 'Включить халяльный режим',
-    uz: 'Halol rejimini yoqish'
+    en: 'Halal Financing Mode',
+    ru: 'Режим халяль финансов',
+    uz: 'Halol moliya rejimi'
   },
-  'search.standardMode': {
-    en: 'Standard Mode',
-    ru: 'Стандартный режим',
-    uz: 'Standart rejim'
+  'search.halalBadge': {
+    en: '✓ Sharia Compliant',
+    ru: '✓ По шариату',
+    uz: '✓ Shariatga mos'
+  },
+  'search.titleStandard': {
+    en: 'Search Verified Properties',
+    ru: 'Поиск проверенных домов',
+    uz: 'Tekshirilgan uylarni qidirish'
+  },
+  'search.titleHalal': {
+    en: 'Find Halal-Financed Homes',
+    ru: 'Дома с халяль финансами',
+    uz: 'Halol moliyali uylar'
+  },
+  'search.descStandard': {
+    en: 'Scam-free marketplace with 1,500+ verified properties across Tashkent',
+    ru: 'Безопасная площадка с 1,500+ проверенными объектами в Ташкенте',
+    uz: 'Toshkentda 1,500+ tekshirilgan uy bilan xavfsiz platforma'
+  },
+  'search.descHalal': {
+    en: 'Discover verified homes with Sharia-compliant financing options across Tashkent',
+    ru: 'Проверенные дома с шариатским финансированием в Ташкенте',
+    uz: 'Toshkentda shariatga mos moliya bilan tekshirilgan uylar'
+  },
+  'search.placeholder': {
+    en: "Tell us what you're looking for... (e.g., '3-bedroom near metro with garden')",
+    ru: 'Расскажите, что ищете... (например, "3-комнатная рядом с метро с садом")',
+    uz: 'Nimani qidirayotganingizni ayting... (masalan, "metro yaqinida bogʻli 3 xonali")'
+  },
+  'search.searchBtn': {
+    en: 'Search',
+    ru: 'Найти',
+    uz: 'Qidirish'
+  },
+  'search.filters': {
+    en: 'Filters',
+    ru: 'Фильтры',
+    uz: 'Filtrlar'
+  },
+  'search.halalFinancing': {
+    en: '✓ Halal Financing',
+    ru: '✓ Халяль финансы',
+    uz: '✓ Halol moliya'
+  },
+  'search.financialProfile': {
+    en: 'Your Financial Profile',
+    ru: 'Ваш финансовый профиль',
+    uz: 'Moliyaviy profilingiz'
+  },
+  'search.cashAvailable': {
+    en: 'Cash Available ($)',
+    ru: 'Наличные ($)',
+    uz: 'Naqd pul ($)'
+  },
+  'search.monthlyPayment': {
+    en: 'Monthly Payment ($)',
+    ru: 'Месячный платеж ($)',
+    uz: 'Oylik toʻlov ($)'
+  },
+  'search.monthlySalary': {
+    en: 'Monthly Salary ($)',
+    ru: 'Месячная зарплата ($)',
+    uz: 'Oylik maosh ($)'
+  },
+  'search.showAll': {
+    en: 'Show all properties (not just what I can afford)',
+    ru: 'Показать все (не только по карману)',
+    uz: 'Barcha uylarni koʻrsatish (faqat qiziqtirganlar emas)'
+  },
+  'search.smartMatch': {
+    en: 'Smart Match',
+    ru: 'Умный подбор',
+    uz: 'Aqlli tanlov'
+  },
+
+  // Filters
+  'filter.district': {
+    en: 'District',
+    ru: 'Район',
+    uz: 'Tuman'
+  },
+  'filter.chooseDistrict': {
+    en: 'Choose district',
+    ru: 'Выберите район',
+    uz: 'Tumanni tanlang'
+  },
+  'filter.priceRange': {
+    en: 'Price Range',
+    ru: 'Цена',
+    uz: 'Narx oraligʻi'
+  },
+  'filter.selectBudget': {
+    en: 'Select budget',
+    ru: 'Выберите бюджет',
+    uz: 'Byudjetni tanlang'
+  },
+  'filter.squareMeters': {
+    en: 'Square Meters',
+    ru: 'Площадь',
+    uz: 'Maydoni'
+  },
+  'filter.size': {
+    en: 'Size',
+    ru: 'Размер',
+    uz: 'Oʻlchami'
+  },
+  'filter.propertyType': {
+    en: 'Property Type',
+    ru: 'Тип',
+    uz: 'Uy turi'
+  },
+  'filter.type': {
+    en: 'Type',
+    ru: 'Тип',
+    uz: 'Turi'
+  },
+  'filter.apartment': {
+    en: 'Apartment',
+    ru: 'Квартира',
+    uz: 'Kvartira'
+  },
+  'filter.house': {
+    en: 'House',
+    ru: 'Дом',
+    uz: 'Uy'
+  },
+  'filter.studio': {
+    en: 'Studio',
+    ru: 'Студия',
+    uz: 'Studiya'
+  },
+
+  // Popular searches
+  'search.popularSearches': {
+    en: 'Popular searches:',
+    ru: 'Популярные запросы:',
+    uz: 'Ommabop qidiruvlar:'
+  },
+  'search.popular1': {
+    en: '3-bedroom Yunusobod',
+    ru: '3-комнатная Юнусабад',
+    uz: '3 xonali Yunusobod'
+  },
+  'search.popular2': {
+    en: 'New construction Chilonzor',
+    ru: 'Новостройка Чиланзар',
+    uz: 'Yangi bino Chilonzor'
+  },
+  'search.popular3': {
+    en: 'Apartment with parking',
+    ru: 'Квартира с парковкой',
+    uz: 'Garaj bilan kvartira'
+  },
+  'search.popular4': {
+    en: 'Halal financing available',
+    ru: 'Халяль финансирование',
+    uz: 'Halol moliyalashtirish'
+  },
+
+  // Features Section
+  'features.title': {
+    en: 'Your home journey, reimagined',
+    ru: 'Поиск дома по-новому',
+    uz: 'Uy izlash yangi usulda'
+  },
+  'features.subtitle': {
+    en: 'Everything you need to find, finance, and secure your perfect home — all in one trusted platform.',
+    ru: 'Все для поиска, финансирования и покупки идеального дома на одной платформе.',
+    uz: 'Mukammal uyni topish, moliyalashtirish va xarid qilish uchun barcha imkoniyatlar bir platformada.'
+  },
+  'features.verified': {
+    en: 'Verified Properties',
+    ru: 'Проверенные дома',
+    uz: 'Tekshirilgan uylar'
+  },
+  'features.verifiedDesc': {
+    en: 'Every listing is verified with ID checks and document validation. No scams, no surprises.',
+    ru: 'Каждое объявление проверено документально. Никаких мошенников.',
+    uz: 'Har bir uy hujjatlar bilan tekshirilgan. Firibgarlik yoq.'
+  },
+  'features.halalFinancing': {
+    en: 'Halal Financing',
+    ru: 'Халяль финансы',
+    uz: 'Halol moliyalashtirish'
+  },
+  'features.halalDesc': {
+    en: 'Sharia-compliant buy-now-pay-later options with transparent terms and zero interest.',
+    ru: 'Шариатское финансирование без процентов с прозрачными условиями.',
+    uz: 'Foizsiz, ochiq shartlar bilan shariatga mos moliyalashtirish.'
+  },
+  'features.map': {
+    en: 'Interactive Map',
+    ru: 'Интерактивная карта',
+    uz: 'Interaktiv xarita'
+  },
+  'features.mapDesc': {
+    en: 'Explore neighborhoods, check amenities, and find homes that match your lifestyle.',
+    ru: 'Изучайте районы, проверяйте инфраструктуру, находите дом мечты.',
+    uz: 'Hududlarni oʻrganish, infratuzilmani tekshirish va hayot tarziga mos uy topish.'
+  },
+  'features.community': {
+    en: 'Trusted Community',
+    ru: 'Надежное сообщество',
+    uz: 'Ishonchli jamoa'
+  },
+  'features.communityDesc': {
+    en: 'Connect with verified sellers and join a community of families upgrading their homes.',
+    ru: 'Общайтесь с проверенными продавцами в сообществе семей.',
+    uz: 'Tekshirilgan sotuvchilar va oilalar jamoasi bilan aloqa.'
+  },
+  'features.smartMatching': {
+    en: 'Smart Matching',
+    ru: 'Умный подбор',
+    uz: 'Aqlli tanlov'
+  },
+  'features.smartDesc': {
+    en: 'Our algorithm matches you with homes that fit your budget, preferences, and financing needs.',
+    ru: 'Алгоритм подбирает дома по вашему бюджету, предпочтениям и финансам.',
+    uz: 'Algoritm byudjet, istaklar va moliya imkoniyatlariga mos uylarni tanlaydi.'
+  },
+  'features.secure': {
+    en: 'Secure Process',
+    ru: 'Безопасная сделка',
+    uz: 'Xavfsiz jarayon'
+  },
+  'features.secureDesc': {
+    en: 'End-to-end protection with escrow services, legal support, and transparent documentation.',
+    ru: 'Полная защита с депозитом, юридической поддержкой и прозрачными документами.',
+    uz: 'Depozit xizmati, yuridik yordam va ochiq hujjatlar bilan toʻliq himoya.'
+  },
+
+  // Stats
+  'stats.verifiedHomes': {
+    en: 'Verified Homes',
+    ru: 'Проверенные дома',
+    uz: 'Tekshirilgan uylar'
+  },
+  'stats.trustRating': {
+    en: 'Trust Rating',
+    ru: 'Рейтинг доверия',
+    uz: 'Ishonch reytingi'
+  },
+  'stats.interestRate': {
+    en: 'Interest Rate',
+    ru: 'Процентная ставка',
+    uz: 'Foiz stavkasi'
+  },
+  'stats.support': {
+    en: 'Support',
+    ru: 'Поддержка',
+    uz: 'Yordam'
+  },
+
+  // CTA
+  'cta.title': {
+    en: 'Ready to find your perfect home?',
+    ru: 'Готовы найти идеальный дом?',
+    uz: 'Mukammal uyni topishga tayyormisiz?'
+  },
+  'cta.subtitle': {
+    en: 'Join thousands of families who\'ve found their dream homes through our verified marketplace with honest, Halal financing options.',
+    ru: 'Присоединяйтесь к тысячам семей, нашедших дом мечты на нашей проверенной платформе с честным халяль финансированием.',
+    uz: 'Bizning ishonchli platformamizda halol moliyalashtirish bilan orzuingizdagi uyni topgan minglab oilalarga qoʻshiling.'
+  },
+  'cta.button': {
+    en: 'Start Your Journey',
+    ru: 'Начать поиск',
+    uz: 'Izlashni boshlash'
+  },
+  'cta.learnMore': {
+    en: 'Learn More',
+    ru: 'Узнать больше',
+    uz: 'Batafsil'
   }
 };
 
