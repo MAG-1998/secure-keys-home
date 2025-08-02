@@ -43,7 +43,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
             }}
           >
             <div className={`flex items-center space-x-4 transition-all duration-300 ${
-              isHalalMode ? 'w-[300px]' : 'w-[220px]'
+              isHalalMode ? 'w-[360px]' : 'w-[220px]'
             }`}>
               <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap">
                 Halal Financing Mode
