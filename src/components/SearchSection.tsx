@@ -36,7 +36,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
         <div className="flex justify-center mb-8">
           <Card 
             className={`border-0 shadow-soft transition-colors duration-300 max-w-fit mx-auto ${
-              isHalalMode ? 'bg-magit-trust/40' : 'bg-muted/80'
+              isHalalMode ? 'bg-magit-trust/30' : 'bg-muted/60'
             }`}
             style={{
               padding: isHalalMode ? '16px' : '12px'
