@@ -184,6 +184,21 @@ const translations: Translations = {
     ru: 'Умный подбор',
     uz: 'Aqlli tanlov'
   },
+  'search.yunusobod': {
+    en: 'Yunusobod',
+    ru: 'Юнусабад',
+    uz: 'Yunusobod'
+  },
+  'search.bedrooms': {
+    en: '2-3 bedrooms',
+    ru: '2-3 комнаты',
+    uz: '2-3 xonali'
+  },
+  'search.priceRange': {
+    en: '$40k-60k',
+    ru: '$40к-60к',
+    uz: '$40k-60k'
+  },
 
   // Filters
   'filter.district': {
@@ -529,7 +544,6 @@ export const useTranslation = () => {
   const [language, setLanguage] = useState<Language>('en');
 
   const t = useCallback((key: string): string => {
-    console.log('Translation request:', key, 'Language:', language, 'Result:', translations[key]?.[language] || key);
     return translations[key]?.[language] || key;
   }, [language]);
 

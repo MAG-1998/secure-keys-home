@@ -114,15 +114,15 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 </Button>
                 <Button variant="outline" size="sm">
                   <MapPin className="h-4 w-4 mr-2" />
-                  Yunusobod
+                  {t('search.yunusobod')}
                 </Button>
                 <Button variant="outline" size="sm">
                   <Bed className="h-4 w-4 mr-2" />
-                  2-3 bedrooms
+                  {t('search.bedrooms')}
                 </Button>
                 <Button variant="outline" size="sm">
                   <DollarSign className="h-4 w-4 mr-2" />
-                  $40k-60k
+                  {t('search.priceRange')}
                 </Button>
                 {isHalalMode && (
                   <Button variant="trust" size="sm">
