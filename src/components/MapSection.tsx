@@ -68,14 +68,15 @@ export const MapSection = () => {
                       options={{
                         iconLayout: 'default#image',
                         iconImageHref: 'data:image/svg+xml;base64,' + btoa(`
-                          <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="16" cy="16" r="14" fill="#0ea5e9" stroke="#ffffff" stroke-width="3"/>
-                            <circle cx="16" cy="16" r="6" fill="#ffffff"/>
-                            <text x="16" y="20" text-anchor="middle" fill="#0ea5e9" font-size="10" font-weight="bold">$</text>
+                          <svg width="28" height="36" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 0C6.268 0 0 6.268 0 14C0 22 14 36 14 36C14 36 28 22 28 14C28 6.268 21.732 0 14 0Z" fill="hsl(25 12% 28%)"/>
+                            <circle cx="14" cy="14" r="8" fill="hsl(35 20% 98%)"/>
+                            <circle cx="14" cy="14" r="5" fill="hsl(25 12% 28%)"/>
+                            <rect x="11" y="11" width="6" height="6" rx="1" fill="hsl(35 20% 98%)"/>
                           </svg>
                         `),
-                        iconImageSize: [32, 32],
-                        iconImageOffset: [-16, -16]
+                        iconImageSize: [28, 36],
+                        iconImageOffset: [-14, -36]
                       }}
                     />
                     <Placemark
@@ -87,14 +88,15 @@ export const MapSection = () => {
                       options={{
                         iconLayout: 'default#image',
                         iconImageHref: 'data:image/svg+xml;base64,' + btoa(`
-                          <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="16" cy="16" r="14" fill="#22c55e" stroke="#ffffff" stroke-width="3"/>
-                            <circle cx="16" cy="16" r="6" fill="#ffffff"/>
-                            <text x="16" y="20" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="bold">$</text>
+                          <svg width="28" height="36" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 0C6.268 0 0 6.268 0 14C0 22 14 36 14 36C14 36 28 22 28 14C28 6.268 21.732 0 14 0Z" fill="hsl(180 30% 75%)"/>
+                            <circle cx="14" cy="14" r="8" fill="hsl(35 20% 98%)"/>
+                            <circle cx="14" cy="14" r="5" fill="hsl(180 30% 75%)"/>
+                            <rect x="11" y="11" width="6" height="6" rx="1" fill="hsl(35 20% 98%)"/>
                           </svg>
                         `),
-                        iconImageSize: [32, 32],
-                        iconImageOffset: [-16, -16]
+                        iconImageSize: [28, 36],
+                        iconImageOffset: [-14, -36]
                       }}
                     />
                     <Placemark
@@ -106,14 +108,15 @@ export const MapSection = () => {
                       options={{
                         iconLayout: 'default#image',
                         iconImageHref: 'data:image/svg+xml;base64,' + btoa(`
-                          <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="18" cy="18" r="16" fill="#8b5cf6" stroke="#ffffff" stroke-width="3"/>
-                            <circle cx="18" cy="18" r="8" fill="#ffffff"/>
-                            <text x="18" y="22" text-anchor="middle" fill="#8b5cf6" font-size="11" font-weight="bold">$</text>
+                          <svg width="30" height="38" viewBox="0 0 30 38" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 0C6.716 0 0 6.716 0 15C0 24 15 38 15 38C15 38 30 24 30 15C30 6.716 23.284 0 15 0Z" fill="hsl(45 85% 70%)"/>
+                            <circle cx="15" cy="15" r="9" fill="hsl(35 20% 98%)"/>
+                            <circle cx="15" cy="15" r="6" fill="hsl(45 85% 70%)"/>
+                            <rect x="12" y="12" width="6" height="6" rx="1" fill="hsl(35 20% 98%)"/>
                           </svg>
                         `),
-                        iconImageSize: [36, 36],
-                        iconImageOffset: [-18, -18]
+                        iconImageSize: [30, 38],
+                        iconImageOffset: [-15, -38]
                       }}
                     />
                   </Map>

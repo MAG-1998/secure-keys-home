@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp } from "lucide-react"
+import { useScroll } from "@/hooks/use-scroll"
 
 interface SearchSectionProps {
   isHalalMode: boolean
@@ -20,6 +21,9 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
   const [cashAmount, setCashAmount] = useState("")
   const [monthlyPayment, setMonthlyPayment] = useState("")
   const [monthlySalary, setMonthlySalary] = useState("")
+  const { scrollY } = useScroll()
+
+  const scrollProgress = Math.min(scrollY / 300, 1)
 
   return (
     <section className={`py-12 transition-all duration-500 ${
@@ -30,12 +34,16 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
       <div className="container mx-auto px-4">
         {/* Halal Mode Toggle */}
         <div className="flex justify-center mb-8">
-          <Card className={`border-0 shadow-soft transition-all duration-300 ${
-            isHalalMode ? 'bg-magit-trust/10 p-4' : 'bg-background p-3'
-          }`}>
-            <div className={`flex items-center space-x-4 transition-all duration-300 ${
-              isHalalMode ? 'min-w-[380px]' : 'min-w-[240px]'
-            }`}>
+          <Card 
+            className={`border-0 shadow-soft transition-all duration-500 ${
+              isHalalMode ? 'bg-magit-trust/10' : 'bg-background'
+            }`}
+            style={{
+              transform: `scale(${1 + scrollProgress * 0.1})`,
+              padding: isHalalMode ? '16px' : '12px'
+            }}
+          >
+            <div className="flex items-center space-x-4 w-[380px]">
               <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap">
                 Halal Financing Mode
               </Label>
@@ -46,7 +54,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
                   onCheckedChange={onHalalModeChange}
                   className="data-[state=checked]:bg-magit-trust flex-shrink-0"
                 />
-                <div className={`flex justify-start transition-all duration-300 ${
+                <div className={`transition-all duration-300 ${
                   isHalalMode ? 'w-32 opacity-100' : 'w-0 opacity-0 overflow-hidden'
                 }`}>
                   <Badge variant="trust" className="text-xs whitespace-nowrap">
@@ -72,7 +80,12 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
             </p>
           </div>
 
-          <Card className="bg-background/80 backdrop-blur-sm border-0 shadow-warm">
+          <Card 
+            className="bg-background/80 backdrop-blur-sm border-0 shadow-warm transition-all duration-500"
+            style={{
+              transform: `translateX(${scrollProgress * 20}px)`
+            }}
+          >
             <CardContent className="p-6">
               {/* Main Search Bar */}
               <div className="flex gap-3 mb-4">
@@ -95,7 +108,12 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
               </div>
 
               {/* Quick Filters */}
-              <div className="flex flex-wrap gap-2 mb-4">
+              <div 
+                className="flex flex-wrap gap-2 mb-4 transition-all duration-500"
+                style={{
+                  transform: `translateX(${-scrollProgress * 15}px)`
+                }}
+              >
                 <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
                   <Filter className="h-4 w-4 mr-2" />
                   Filters
