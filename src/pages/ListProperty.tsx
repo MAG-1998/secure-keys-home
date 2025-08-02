@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import { MagitLogo } from "@/components/MagitLogo"
 import { Footer } from "@/components/Footer"
@@ -310,14 +311,14 @@ const ListProperty = () => {
               
               <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
                 <div className="flex items-start gap-3">
-                  <Calendar className="w-5 h-5 text-blue-600 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100">
-                      Field Agent Visit
-                    </h4>
+                  <Checkbox id="virtualTour" />
+                  <div className="flex-1">
+                    <Label htmlFor="virtualTour" className="font-semibold text-sm text-blue-900 dark:text-blue-100 cursor-pointer">
+                      Professional Virtual Tour (+300,000 UZS)
+                    </Label>
                     <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
                       Our certified agent will visit your property within 2-3 business days 
-                      to verify details and take professional photos.
+                      to verify details and create professional virtual tour photos.
                     </p>
                   </div>
                 </div>
