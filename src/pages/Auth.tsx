@@ -8,6 +8,7 @@ import { MagitLogo } from "@/components/MagitLogo"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { ThemeToggle } from "@/components/ThemeToggle"
 import { useToast } from "@/hooks/use-toast"
 
 const Auth = () => {
@@ -102,6 +103,9 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-md">
         {/* Back to home button */}
         <Button

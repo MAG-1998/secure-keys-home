@@ -23,6 +23,7 @@ import {
   Save,
   X
 } from "lucide-react"
+import { ThemeToggle } from "@/components/ThemeToggle"
 import { useToast } from "@/hooks/use-toast"
 
 const Profile = () => {
@@ -127,10 +128,13 @@ const Profile = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <MagitLogo size="md" />
-            <Button variant="ghost" onClick={() => navigate('/dashboard')}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
-            </Button>
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" onClick={() => navigate('/dashboard')}>
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Dashboard
+              </Button>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </nav>

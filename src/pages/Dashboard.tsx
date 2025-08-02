@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useTranslation } from "@/hooks/useTranslation"
 import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search } from "lucide-react"
+import { ThemeToggle } from "@/components/ThemeToggle"
 import { useToast } from "@/hooks/use-toast"
 import type { User } from "@supabase/supabase-js"
 
@@ -100,6 +101,7 @@ const Dashboard = () => {
                 </button>
               )}
               
+              <ThemeToggle />
               <Button
                 variant="ghost"
                 size="icon"
