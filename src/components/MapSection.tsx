@@ -4,15 +4,21 @@ import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Filter, Search } from "lucide-react"
 import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps'
 
-export const MapSection = () => {
+interface MapSectionProps {
+  isHalalMode?: boolean
+}
+
+export const MapSection = ({ isHalalMode = false }: MapSectionProps) => {
   return (
-    <section className="py-16 bg-background/50">
+    <section className={`py-16 transition-colors duration-500 ${
+      isHalalMode ? 'bg-magit-trust/5' : 'bg-background/50'
+    }`}>
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           {/* Left: Text Content */}
           <div>
-            <Badge variant="trust" className="mb-4">
-              Live Marketplace
+            <Badge variant={isHalalMode ? "trust" : "warning"} className="mb-4">
+              {isHalalMode ? "Halal Marketplace" : "Live Marketplace"}
             </Badge>
             <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
               Find your perfect home on the map

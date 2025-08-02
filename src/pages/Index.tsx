@@ -125,7 +125,7 @@ const Index = () => {
 
       {/* Interactive Map Section */}
       <div id="map">
-        <MapSection />
+        <MapSection isHalalMode={isHalalMode} />
       </div>
 
 
