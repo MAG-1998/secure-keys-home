@@ -41,10 +41,10 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <MagitLogo size="md" />
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#search" className="text-muted-foreground hover:text-foreground transition-colors">{t('nav.search')}</a>
-              <a href="#map" className="text-muted-foreground hover:text-foreground transition-colors">{t('nav.map')}</a>
-              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">{t('nav.features')}</a>
-              <a href="#financing" className="text-muted-foreground hover:text-foreground transition-colors">{t('nav.financing')}</a>
+              <a href="#search" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20">{t('nav.search')}</a>
+              <a href="#map" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20">{t('nav.map')}</a>
+              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20">{t('nav.features')}</a>
+              <a href="#financing" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20">{t('nav.financing')}</a>
             </div>
             <div className="flex items-center space-x-3">
               {/* Language Selector */}
