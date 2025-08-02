@@ -31,12 +31,25 @@ const ListProperty = () => {
     description: "",
     // Documents
     documents: [] as File[],
-    photos: [] as File[]
+    photos: [] as File[],
+    // Additional Services
+    virtualTour: false
   });
   const totalSteps = 5;
+  
+  // Calculate total amount based on selected features
+  const calculateTotalAmount = () => {
+    return formData.virtualTour ? 300000 : 0; // 300,000 UZS for virtual tour
+  };
+  
   const nextStep = () => {
     if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
+      // Skip payment step if no paid features are selected
+      if (currentStep === 3 && calculateTotalAmount() === 0) {
+        setCurrentStep(currentStep + 2);
+      } else {
+        setCurrentStep(currentStep + 1);
+      }
     }
   };
   const prevStep = () => {
@@ -209,9 +222,13 @@ const ListProperty = () => {
                 </div>
               </div>
               
-              <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
+                <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
                 <div className="flex items-start gap-3">
-                  <Checkbox id="virtualTour" />
+                  <Checkbox 
+                    id="virtualTour" 
+                    checked={formData.virtualTour}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, virtualTour: checked as boolean }))}
+                  />
                   <div className="flex-1">
                     <Label htmlFor="virtualTour" className="font-semibold text-sm text-blue-900 dark:text-blue-100 cursor-pointer">Professional Virtual Tour (+300,000 UZS)</Label>
                     <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
@@ -240,20 +257,23 @@ const ListProperty = () => {
                     <span className="text-muted-foreground">Basic Listing:</span>
                     <span className="font-semibold text-green-600">FREE</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Professional Virtual Tour:</span>
-                    <span>$300</span>
-                  </div>
+                  {formData.virtualTour && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Professional Virtual Tour:</span>
+                      <span>300,000 UZS</span>
+                    </div>
+                  )}
                   <div className="border-t pt-2 flex justify-between font-semibold">
                     <span>Total:</span>
-                    <span>$300</span>
+                    <span>{calculateTotalAmount().toLocaleString()} UZS</span>
                   </div>
                 </div>
               </div>
               
-              <PaymentMethods amount={300} onPaymentSuccess={() => {
-              setCurrentStep(5);
-            }} />
+              <PaymentMethods 
+                amount={calculateTotalAmount()} 
+                onPaymentSuccess={() => setCurrentStep(5)} 
+              />
             </CardContent>
           </Card>;
       case 5:
