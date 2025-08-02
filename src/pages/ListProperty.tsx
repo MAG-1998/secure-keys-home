@@ -322,6 +322,28 @@ const ListProperty = () => {
                   </div>
                 </div>
               </div>
+              
+              <div className="border rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="verifiedProperty"
+                    className="mt-1"
+                  />
+                  <div className="flex-1">
+                    <label htmlFor="verifiedProperty" className="font-semibold cursor-pointer">
+                      Premium Verified Property Badge
+                    </label>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Get a premium verified badge for your property listing. This includes enhanced verification, 
+                      priority placement, and increased buyer trust.
+                    </p>
+                    <div className="mt-2">
+                      <span className="text-sm font-medium text-primary">Additional fee: 50,000 UZS</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         )
