@@ -58,6 +58,14 @@ const Index = () => {
                   <SelectItem value="uz">UZ</SelectItem>
                 </SelectContent>
               </Select>
+              <Button 
+                variant="warm" 
+                size="sm" 
+                onClick={() => window.location.href = '/list-property'}
+                className="hidden md:flex"
+              >
+                List Property
+              </Button>
               <Button variant="ghost">{t('nav.signIn')}</Button>
               <Button variant={isHalalMode ? "trust" : "default"}>{t('nav.getStarted')}</Button>
             </div>
