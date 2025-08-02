@@ -15,6 +15,9 @@ export const Header = () => {
           </div>
           
           <div className="flex items-center space-x-4">
+            <Button variant="ghost">Sign In</Button>
+            <Button>Get Started</Button>
+            
             {/* Language Selector */}
             <div className="flex items-center space-x-2">
               <Languages className="h-4 w-4 text-muted-foreground" />
@@ -29,9 +32,6 @@ export const Header = () => {
                 </SelectContent>
               </Select>
             </div>
-
-            <Button variant="ghost">Sign In</Button>
-            <Button>Get Started</Button>
           </div>
         </div>
       </div>
