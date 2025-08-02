@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { MagitLogo } from "@/components/MagitLogo"
@@ -12,22 +12,25 @@ interface FooterProps {
 
 export const Footer = ({ isHalalMode = false, t }: FooterProps) => {
   const { theme, setTheme } = useTheme()
+  const [autoThemeEnabled, setAutoThemeEnabled] = useState(false)
 
-  // Auto theme based on time
+  // Auto theme based on time - only when enabled
   useEffect(() => {
+    if (!autoThemeEnabled) return
+
     const setAutoTheme = () => {
       const hour = new Date().getHours()
       const isDarkTime = hour < 7 || hour >= 19 // Dark mode between 7PM and 7AM
       setTheme(isDarkTime ? "dark" : "light")
     }
 
-    // Set initial theme
+    // Set initial theme when auto mode is enabled
     setAutoTheme()
 
     // Update every hour
     const interval = setInterval(setAutoTheme, 3600000)
     return () => clearInterval(interval)
-  }, [setTheme])
+  }, [setTheme, autoThemeEnabled])
 
   return (
     <footer className="border-t border-border/50 bg-background/80 py-12">
@@ -75,11 +78,22 @@ export const Footer = ({ isHalalMode = false, t }: FooterProps) => {
             <Sun className="h-4 w-4 text-muted-foreground" />
             <Switch
               checked={theme === "dark"}
-              onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+              onCheckedChange={(checked) => {
+                setAutoThemeEnabled(false) // Disable auto theme when manually toggling
+                setTheme(checked ? "dark" : "light")
+              }}
               className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust [&>span]:data-[state=unchecked]:bg-magit-trust" : "data-[state=checked]:bg-primary data-[state=checked]:border-primary"}
             />
             <Moon className="h-4 w-4 text-muted-foreground" />
-            <Label className="text-sm text-muted-foreground">{t('footer.autoDarkMode')}</Label>
+            
+            <div className="flex items-center space-x-2 ml-4">
+              <Switch
+                checked={autoThemeEnabled}
+                onCheckedChange={setAutoThemeEnabled}
+                className="data-[state=checked]:bg-accent"
+              />
+              <Label className="text-sm text-muted-foreground">{t('footer.autoDarkMode')}</Label>
+            </div>
           </div>
         </div>
       </div>
