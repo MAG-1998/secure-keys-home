@@ -178,7 +178,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                         id="show-all"
                         checked={showAllProperties}
                         onCheckedChange={setShowAllProperties}
-                        className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust" : "data-[state=checked]:bg-primary data-[state=checked]:border-primary"}
+                        className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust [&>span]:data-[state=unchecked]:bg-magit-trust" : "data-[state=checked]:bg-primary data-[state=checked]:border-primary"}
                       />
                       <Label htmlFor="show-all" className="text-sm">
                         {t('search.showAll')}
