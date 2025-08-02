@@ -99,10 +99,12 @@ const Index = () => {
       </section>
 
       {/* AI-Powered Search Section */}
-      <SearchSection 
-        isHalalMode={isHalalMode} 
-        onHalalModeChange={setIsHalalMode} 
-      />
+      <div className="relative z-10">
+        <SearchSection 
+          isHalalMode={isHalalMode} 
+          onHalalModeChange={setIsHalalMode} 
+        />
+      </div>
 
       {/* Interactive Map Section */}
       <div id="map">

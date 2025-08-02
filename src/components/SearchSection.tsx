@@ -64,7 +64,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
             <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-2">
               {isHalalMode ? "Find Halal-Financed Homes" : "Search Verified Properties"}
             </h2>
-            <p className="text-muted-foreground whitespace-nowrap">
+            <p className="text-muted-foreground text-sm">
               {isHalalMode 
                 ? "Discover verified homes with Sharia-compliant financing options across Tashkent"
                 : "Scam-free marketplace with 1,500+ verified properties across Tashkent"
