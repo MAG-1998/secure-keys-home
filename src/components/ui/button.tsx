@@ -19,7 +19,9 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         warm: "bg-magit-warm text-primary hover:bg-magit-warm/80 shadow-warm",
-        trust: "bg-magit-trust text-primary hover:bg-magit-trust/80",
+        trust: "bg-magit-trust text-white hover:bg-magit-trust/90 shadow-md border-magit-trust/20",
+        success: "bg-magit-success text-white hover:bg-magit-success/90 shadow-md",
+        warning: "bg-magit-warm text-white hover:bg-magit-warm/90 shadow-md",
       },
       size: {
         default: "h-10 px-4 py-2",

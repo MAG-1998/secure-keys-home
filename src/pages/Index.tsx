@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -5,81 +6,97 @@ import { MagitLogo } from "@/components/MagitLogo"
 import { FeatureCard } from "@/components/FeatureCard"
 import { PropertyCard } from "@/components/PropertyCard"
 import { MapSection } from "@/components/MapSection"
+import { SearchSection } from "@/components/SearchSection"
 import { Shield, Home, Calculator, MapPin, Users, CheckCircle } from "lucide-react"
 
 const Index = () => {
+  const [isHalalMode, setIsHalalMode] = useState(false)
+
+  // Apply global design changes based on Halal mode
+  useEffect(() => {
+    if (isHalalMode) {
+      document.documentElement.style.setProperty('--primary', '176 64% 45%') // More trust-focused
+      document.documentElement.style.setProperty('--accent', '176 44% 65%')
+    } else {
+      document.documentElement.style.setProperty('--primary', '25 85% 53%') // Original magit-warm
+      document.documentElement.style.setProperty('--accent', '38 84% 60%')
+    }
+  }, [isHalalMode])
   return (
-    <div className="min-h-screen bg-gradient-hero">
+    <div className={`min-h-screen transition-all duration-500 ${
+      isHalalMode ? 'bg-gradient-to-br from-magit-trust/5 to-primary/5' : 'bg-gradient-hero'
+    }`}>
       {/* Navigation */}
-      <nav className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+      <nav className={`border-b border-border/50 backdrop-blur-sm sticky top-0 z-50 transition-all duration-500 ${
+        isHalalMode ? 'bg-magit-trust/10' : 'bg-background/80'
+      }`}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <MagitLogo size="md" />
             <div className="hidden md:flex items-center space-x-8">
+              <a href="#search" className="text-muted-foreground hover:text-foreground transition-colors">Search</a>
+              <a href="#map" className="text-muted-foreground hover:text-foreground transition-colors">Map</a>
               <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
-              <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">How it Works</a>
               <a href="#financing" className="text-muted-foreground hover:text-foreground transition-colors">Financing</a>
             </div>
             <div className="flex items-center space-x-3">
               <Button variant="ghost">Sign In</Button>
-              <Button variant="default">Get Started</Button>
+              <Button variant={isHalalMode ? "trust" : "default"}>Get Started</Button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative py-20 md:py-32">
+      {/* Compact Hero Section */}
+      <section className="relative py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <Badge variant="trust" className="mb-6">
-              ✓ Sharia-Compliant Financing
+          <div className="max-w-3xl mx-auto text-center">
+            <Badge variant={isHalalMode ? "trust" : "success"} className="mb-4">
+              {isHalalMode ? "✓ Sharia-Compliant Platform" : "✓ Verified Marketplace"}
             </Badge>
-            <h1 className="font-heading font-bold text-4xl md:text-6xl lg:text-7xl text-foreground mb-6 leading-tight">
-              Buy smart. <br />
-              <span className="text-primary">Pay fair.</span> <br />
-              Live free.
+            <h1 className="font-heading font-bold text-3xl md:text-5xl text-foreground mb-4 leading-tight">
+              {isHalalMode ? (
+                <>Find your home. <span className="text-primary">Stay Halal.</span></>
+              ) : (
+                <>Buy smart. <span className="text-primary">Pay fair.</span></>
+              )}
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed max-w-3xl mx-auto">
-              Discover verified homes with honest, interest-free financing. 
-              Your path to homeownership without compromise.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-              <Button size="lg" className="text-lg px-8 py-6 shadow-warm">
-                <MapPin className="mr-2 h-5 w-5" />
-                Explore Homes Now
-              </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6">
-                <Calculator className="mr-2 h-5 w-5" />
-                Calculate Financing
-              </Button>
-            </div>
-            
-            <p className="text-sm text-muted-foreground mb-6">
-              Start browsing verified homes immediately — no signup required
+            <p className="text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed">
+              {isHalalMode 
+                ? "Discover verified homes with Sharia-compliant financing options across Tashkent."
+                : "Discover verified homes with honest, interest-free financing options."
+              }
             </p>
             
             {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center">
+                <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
+                1,500+ Verified Homes
+              </div>
+              <div className="flex items-center">
+                <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
+                {isHalalMode ? "100% Halal Financing" : "Zero Interest Rates"}
+              </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
                 ID Verified Sellers
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
-                Zero Interest Rates
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
-                Halal Certified
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* AI-Powered Search Section */}
+      <SearchSection 
+        isHalalMode={isHalalMode} 
+        onHalalModeChange={setIsHalalMode} 
+      />
+
       {/* Interactive Map Section */}
-      <MapSection />
+      <div id="map">
+        <MapSection />
+      </div>
 
       {/* Featured Properties Section */}
       <section className="py-16 bg-background">
