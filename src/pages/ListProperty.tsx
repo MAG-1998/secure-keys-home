@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import { MagitLogo } from "@/components/MagitLogo"
-import { ThemeToggle } from "@/components/ThemeToggle"
 import { PaymentMethods } from "@/components/PaymentMethods"
 import { Footer } from "@/components/Footer"
 import { useTranslation } from "@/hooks/useTranslation"
@@ -398,12 +397,9 @@ const ListProperty = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <MagitLogo size="md" />
-            <div className="flex items-center space-x-3">
-              <ThemeToggle />
-              <Button variant="ghost" onClick={() => window.location.href = '/'}>
-                Back to Home
-              </Button>
-            </div>
+            <Button variant="ghost" onClick={() => window.location.href = '/'}>
+              Back to Home
+            </Button>
           </div>
         </div>
       </nav>

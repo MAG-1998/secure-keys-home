@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { MagitLogo } from "@/components/MagitLogo"
-import { ThemeToggle } from "@/components/ThemeToggle"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useTranslation } from "@/hooks/useTranslation"
@@ -84,7 +83,6 @@ const Dashboard = () => {
             <MagitLogo size="md" />
             
             <div className="flex items-center space-x-4">
-              <ThemeToggle />
               {user && (
                 <button 
                   className="flex items-center space-x-3 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer text-left"
