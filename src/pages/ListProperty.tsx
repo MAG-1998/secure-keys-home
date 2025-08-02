@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import { MagitLogo } from "@/components/MagitLogo"
+import { PaymentMethods } from "@/components/PaymentMethods"
 import { Footer } from "@/components/Footer"
 import { useTranslation } from "@/hooks/useTranslation"
 import { 
@@ -49,7 +50,7 @@ const ListProperty = () => {
     photos: [] as File[]
   })
 
-  const totalSteps = 5
+  const totalSteps = 6
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
@@ -328,6 +329,45 @@ const ListProperty = () => {
         )
 
       case 5:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                Payment & Fees
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-gradient-card p-6 rounded-lg">
+                <h3 className="font-semibold mb-4">Listing Fees</h3>
+                
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Basic Listing:</span>
+                    <span className="font-semibold text-green-600">FREE</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Professional Virtual Tour:</span>
+                    <span>300,000 UZS</span>
+                  </div>
+                  <div className="border-t pt-2 flex justify-between font-semibold">
+                    <span>Total:</span>
+                    <span>300,000 UZS</span>
+                  </div>
+                </div>
+              </div>
+              
+              <PaymentMethods 
+                amount={300000} 
+                onPaymentSuccess={() => {
+                  setCurrentStep(6)
+                }}
+              />
+            </CardContent>
+          </Card>
+        )
+
+      case 6:
         return (
           <Card>
             <CardHeader>
