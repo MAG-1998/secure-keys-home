@@ -83,7 +83,10 @@ const Dashboard = () => {
             
             <div className="flex items-center space-x-4">
               {user && (
-                <div className="flex items-center space-x-3">
+                <button 
+                  className="flex items-center space-x-3 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer"
+                  onClick={() => {/* TODO: Navigate to profile */}}
+                >
                   <Avatar>
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       {user.email?.charAt(0).toUpperCase()}
@@ -93,7 +96,7 @@ const Dashboard = () => {
                     <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
                     <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
-                </div>
+                </button>
               )}
               
               <Button
