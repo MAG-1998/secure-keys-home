@@ -131,16 +131,27 @@ const ListProperty = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="bedrooms">Bedrooms</Label>
-                  <Select value={formData.bedrooms} onValueChange={(value) => handleInputChange("bedrooms", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="0" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[0, 1, 2, 3, 4, 5, 6].map(num => (
-                        <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="space-y-2">
+                    <Select value={formData.bedrooms} onValueChange={(value) => handleInputChange("bedrooms", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select bedrooms" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[0, 1, 2, 3, 4, 5, 6].map(num => (
+                          <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? 'bedroom' : 'bedrooms'}</SelectItem>
+                        ))}
+                        <SelectItem value="custom">Other (specify below)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {formData.bedrooms === "custom" && (
+                      <Input 
+                        type="number"
+                        placeholder="Enter number of bedrooms"
+                        min="0"
+                        onChange={(e) => handleInputChange("bedrooms", e.target.value)}
+                      />
+                    )}
+                  </div>
                 </div>
                 <div>
                   <Label htmlFor="bathrooms">Bathrooms</Label>
