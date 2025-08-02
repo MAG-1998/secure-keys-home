@@ -33,21 +33,25 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
           <Card className={`p-4 border-0 shadow-soft transition-all duration-300 ${
             isHalalMode ? 'bg-magit-trust/10' : 'bg-background'
           }`}>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-between w-72">
               <Label htmlFor="halal-mode" className="text-sm font-medium">
                 Halal Financing Mode
               </Label>
-              <Switch
-                id="halal-mode"
-                checked={isHalalMode}
-                onCheckedChange={onHalalModeChange}
-                className="data-[state=checked]:bg-magit-trust"
-              />
-              {isHalalMode && (
-                <Badge variant="trust" className="text-xs animate-fade-in">
-                  ✓ Sharia Compliant
-                </Badge>
-              )}
+              <div className="flex items-center space-x-3">
+                <Switch
+                  id="halal-mode"
+                  checked={isHalalMode}
+                  onCheckedChange={onHalalModeChange}
+                  className="data-[state=checked]:bg-magit-trust"
+                />
+                <div className="w-24 flex justify-start">
+                  {isHalalMode && (
+                    <Badge variant="trust" className="text-xs animate-fade-in">
+                      ✓ Sharia Compliant
+                    </Badge>
+                  )}
+                </div>
+              </div>
             </div>
           </Card>
         </div>

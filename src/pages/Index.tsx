@@ -7,10 +7,12 @@ import { FeatureCard } from "@/components/FeatureCard"
 import { PropertyCard } from "@/components/PropertyCard"
 import { MapSection } from "@/components/MapSection"
 import { SearchSection } from "@/components/SearchSection"
+import { useScroll } from "@/hooks/use-scroll"
 import { Shield, Home, Calculator, MapPin, Users, CheckCircle } from "lucide-react"
 
 const Index = () => {
   const [isHalalMode, setIsHalalMode] = useState(false)
+  const { scrollY, isScrolled } = useScroll()
 
   // Apply global design changes based on Halal mode
   useEffect(() => {
@@ -47,21 +49,30 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Compact Hero Section */}
-      <section className="relative py-12 md:py-16">
+      {/* Hero Section with Scroll Animation */}
+      <section 
+        className="relative py-12 md:py-16 transition-all duration-700 ease-out"
+        style={{
+          transform: `scale(${Math.max(0.85, 1 - scrollY * 0.0003)}) translateY(${scrollY * 0.1}px)`,
+          opacity: Math.max(0.3, 1 - scrollY * 0.002)
+        }}
+      >
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge variant={isHalalMode ? "trust" : "success"} className="mb-4">
+            <Badge 
+              variant={isHalalMode ? "trust" : "success"} 
+              className={`mb-4 transition-all duration-500 ${isScrolled ? 'scale-90 opacity-70' : ''}`}
+            >
               {isHalalMode ? "✓ Sharia-Compliant Platform" : "✓ Verified Marketplace"}
             </Badge>
-            <h1 className="font-heading font-bold text-3xl md:text-5xl text-foreground mb-4 leading-tight">
+            <h1 className={`font-heading font-bold text-3xl md:text-5xl text-foreground mb-4 leading-tight transition-all duration-500 ${isScrolled ? 'scale-95' : ''}`}>
               {isHalalMode ? (
                 <>Find your home. <span className="text-primary">Stay Halal.</span></>
               ) : (
                 <>Buy smart. <span className="text-primary">Pay fair.</span></>
               )}
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed">
+            <p className={`text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed transition-all duration-500 ${isScrolled ? 'opacity-60' : ''}`}>
               {isHalalMode 
                 ? "Discover verified homes with Sharia-compliant financing options across Tashkent."
                 : "Discover verified homes with honest, interest-free financing options."
@@ -69,7 +80,7 @@ const Index = () => {
             </p>
             
             {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
+            <div className={`flex flex-wrap justify-center gap-4 text-sm text-muted-foreground transition-all duration-500 ${isScrolled ? 'opacity-40 scale-90' : ''}`}>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
                 1,500+ Verified Homes
