@@ -11,8 +11,14 @@ interface FooterProps {
 }
 
 export const Footer = ({ isHalalMode = false, t }: FooterProps) => {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, systemTheme, resolvedTheme } = useTheme()
   const [autoThemeEnabled, setAutoThemeEnabled] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Wait for client to mount to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Auto theme based on time - only when enabled
   useEffect(() => {
@@ -77,10 +83,13 @@ export const Footer = ({ isHalalMode = false, t }: FooterProps) => {
           <div className="flex items-center space-x-3">
             <Sun className="h-4 w-4 text-muted-foreground" />
             <Switch
-              checked={theme === "dark"}
+              checked={mounted ? theme === "dark" : false}
               onCheckedChange={(checked) => {
+                console.log("Theme toggle clicked:", checked, "Current theme:", theme, "Resolved:", resolvedTheme)
                 setAutoThemeEnabled(false) // Disable auto theme when manually toggling
-                setTheme(checked ? "dark" : "light")
+                const newTheme = checked ? "dark" : "light"
+                console.log("Setting theme to:", newTheme)
+                setTheme(newTheme)
               }}
               className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust [&>span]:data-[state=unchecked]:bg-magit-trust" : "data-[state=checked]:bg-primary data-[state=checked]:border-primary"}
             />
