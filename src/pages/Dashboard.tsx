@@ -212,7 +212,7 @@ const Dashboard = () => {
 
                 <Button 
                   variant="outline" 
-                  className="w-full group-hover:shadow-lg transition-all duration-300"
+                  className="w-full group-hover:shadow-lg transition-all duration-300 text-black border-black hover:bg-black hover:text-white"
                   size="lg"
                 >
                   Start Browsing
