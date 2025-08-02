@@ -115,13 +115,13 @@ const Index = () => {
       </section>
 
       {/* AI-Powered Search Section */}
-      <div className="relative z-10">
+      <section id="search" className="relative z-10 pt-16">
         <SearchSection 
           isHalalMode={isHalalMode} 
           onHalalModeChange={setIsHalalMode} 
           t={t}
         />
-      </div>
+      </section>
 
       {/* Interactive Map Section */}
       <div id="map">
@@ -185,7 +185,7 @@ const Index = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-gradient-card">
+      <section id="financing" className="py-16 bg-gradient-card">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             <div className="text-center">
