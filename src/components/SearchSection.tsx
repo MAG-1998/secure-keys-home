@@ -35,7 +35,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange }: SearchSectionP
         {/* Halal Mode Toggle */}
         <div className="flex justify-center mb-8">
           <Card 
-            className={`border-0 shadow-soft transition-colors duration-300 max-w-fit mx-auto ${
+            className={`border border-border shadow-lg transition-colors duration-300 max-w-fit mx-auto ${
               isHalalMode ? 'bg-magit-trust/40' : 'bg-muted'
             }`}
             style={{
