@@ -137,7 +137,7 @@ export const MapSection = ({ isHalalMode = false }: MapSectionProps) => {
                       <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
                       <span>Available Now</span>
                     </div>
-                    <Badge variant="trust" className="text-xs mt-1 text-primary-foreground">
+                    <Badge variant={isHalalMode ? "trust" : "warning"} className="text-xs mt-1">
                       Real-time Updates
                     </Badge>
                   </CardContent>
