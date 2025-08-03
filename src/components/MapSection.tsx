@@ -148,19 +148,12 @@ export const MapSection = ({ isHalalMode = false, t }: MapSectionProps) => {
                     </Button>
                   </div>
                   
-                  {/* Filter Panel */}
+                  {/* Filter Panel - Overlayed on map */}
                   {showFilters && (
-                    <Card className="w-80 h-full overflow-y-auto border-l bg-background z-50">
+                    <Card className="absolute right-4 top-16 w-80 max-h-[calc(100vh-8rem)] overflow-y-auto bg-background border shadow-lg z-50">
                       <CardContent className="p-6 space-y-6">
                         <div className="flex items-center justify-between">
                           <DialogTitle className="text-lg font-semibold">Filters</DialogTitle>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowFilters(false)}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
                         </div>
                         
                         {/* Price Range */}
