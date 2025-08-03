@@ -150,8 +150,8 @@ export const MapSection = ({ isHalalMode = false, t }: MapSectionProps) => {
                   
                   {/* Filter Panel */}
                   {showFilters && (
-                    <Card className="w-80 h-full overflow-y-auto border-l">
-                      <CardContent className="p-6 space-y-6">
+                    <Card className="w-80 max-w-[320px] h-full overflow-y-auto border-l absolute right-0 top-0 bg-background/95 backdrop-blur-sm md:relative md:bg-background z-50">
+                      <CardContent className="p-4 md:p-6 space-y-4 md:space-y-6">
                         <div className="flex items-center justify-between">
                           <DialogTitle className="text-lg font-semibold">Filters</DialogTitle>
                           <Button
