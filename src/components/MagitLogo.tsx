@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import { useNavigate } from "react-router-dom"
 
 interface MagitLogoProps {
   className?: string
@@ -7,6 +8,11 @@ interface MagitLogoProps {
 }
 
 export const MagitLogo = ({ className, size = "md", variant = "full" }: MagitLogoProps) => {
+  const navigate = useNavigate()
+  
+  const handleClick = () => {
+    navigate("/")
+  }
   const sizeClasses = {
     sm: "text-lg",
     md: "text-2xl", 
@@ -23,11 +29,14 @@ export const MagitLogo = ({ className, size = "md", variant = "full" }: MagitLog
 
   if (variant === "icon") {
     return (
-      <div className={cn(
-        "relative flex items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80",
-        iconSizes[size],
-        className
-      )}>
+      <div 
+        className={cn(
+          "relative flex items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 cursor-pointer hover:opacity-90 transition-opacity",
+          iconSizes[size],
+          className
+        )}
+        onClick={handleClick}
+      >
         <div className="text-primary-foreground font-heading font-bold text-center leading-none">
           {size === "sm" ? "M" : size === "md" ? "M" : "M"}
         </div>
@@ -37,7 +46,10 @@ export const MagitLogo = ({ className, size = "md", variant = "full" }: MagitLog
   }
 
   return (
-    <div className={cn("flex items-center space-x-3", className)}>
+    <div 
+      className={cn("flex items-center space-x-3 cursor-pointer hover:opacity-90 transition-opacity", className)}
+      onClick={handleClick}
+    >
       <div className={cn(
         "relative flex items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80",
         iconSizes[size]
