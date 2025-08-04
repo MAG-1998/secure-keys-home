@@ -195,7 +195,7 @@ const Dashboard = () => {
                 </div>
                 </div>
 
-                <Button variant="outline" size="lg" className="w-full group-hover:shadow-lg transition-all duration-300 border-background dark:border-black hover:bg-background dark:hover:bg-black text-foreground dark:text-background hover:text-background dark:hover:text-foreground">
+                <Button variant="outline" size="lg" className="w-full group-hover:shadow-lg transition-all duration-300 border-background dark:border-black hover:bg-background dark:hover:bg-black text-slate-50">
                   Start Browsing
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
