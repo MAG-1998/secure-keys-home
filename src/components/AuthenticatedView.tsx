@@ -100,24 +100,27 @@ export const AuthenticatedView = ({
                 <CardContent className="p-6 text-center">
                   <div className="font-heading font-bold text-2xl text-primary mb-2">0</div>
                   <div className="text-muted-foreground">Saved Properties</div>
-                  <Button variant="ghost" size="sm" className="mt-2">View Saved Properties</Button>
+                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/saved-properties')}>View Saved Properties</Button>
                 </CardContent>
               </Card>
               <Card className="bg-background/50 border-border/50">
                 <CardContent className="p-6 text-center">
                   <div className="font-heading font-bold text-2xl text-primary mb-2">0</div>
                   <div className="text-muted-foreground">Properties Listed</div>
-                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/list-property')}>
-                    List Property
+                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-properties')}>
+                    View Listed Properties
                   </Button>
                 </CardContent>
               </Card>
               <Card className="bg-background/50 border-border/50">
                 <CardContent className="p-6 text-center">
                   <div className="font-heading font-bold text-2xl text-primary mb-2">0</div>
-                  <div className="text-muted-foreground">Active Inquiries</div>
-                  <Button variant="ghost" size="sm" className="mt-2">
-                    View All
+                  <div className="text-muted-foreground">Active Requests</div>
+                  <div className="text-xs text-muted-foreground/70 mt-1">
+                    Property listings, visits & verifications
+                  </div>
+                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-properties')}>
+                    View All Requests
                   </Button>
                 </CardContent>
               </Card>

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { MagitLogo } from "@/components/MagitLogo"
-import { ThemeToggle } from "@/components/ThemeToggle"
+
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
@@ -46,18 +46,20 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
           <MagitLogo size="md" />
           
           <div className="hidden md:flex items-center space-x-8">
-            <a 
-              href="#search" 
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/my-properties')}
               className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20"
             >
-              Search Properties
-            </a>
-            <a 
-              href="#map" 
+              View Listed Properties
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/saved-properties')}
               className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20"
             >
-              Interactive Map
-            </a>
+              View Saved Properties
+            </Button>
             <Button 
               variant="ghost" 
               onClick={() => navigate('/list-property')}
@@ -80,7 +82,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
               </SelectContent>
             </Select>
 
-            <ThemeToggle isHalalMode={isHalalMode} />
+            
 
             {/* User Profile */}
             <div className="flex items-center space-x-3">
