@@ -66,34 +66,38 @@ export const ThemeToggle = ({ isHalalMode = false }: ThemeToggleProps) => {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg">
-      <div className="flex items-center space-x-3">
-        <Sun className="h-4 w-4 text-muted-foreground" />
-        <Switch
-          checked={theme === "dark"}
-          onCheckedChange={handleThemeToggle}
-          className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust dark:data-[state=checked]:border-white data-[state=unchecked]:border-border dark:data-[state=unchecked]:border-white/20 [&>span]:data-[state=unchecked]:bg-magit-trust" : "data-[state=checked]:bg-primary data-[state=checked]:border-primary dark:data-[state=checked]:border-white data-[state=unchecked]:border-border dark:data-[state=unchecked]:border-white/20"}
-        />
-        <Moon className="h-4 w-4 text-muted-foreground" />
-        <div className="flex items-center space-x-2">
-          <Label className="text-sm text-muted-foreground">
-            {isAutoMode ? (
-              <span className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                Auto {theme === "dark" ? "Dark" : "Light"}
-              </span>
-            ) : (
-              "Manual"
-            )}
-          </Label>
-          {!isAutoMode && (
-            <button
-              onClick={resetToAutoMode}
-              className="text-xs text-primary hover:text-primary/80 underline"
-            >
-              Reset to Auto
-            </button>
-          )}
+    <div className="border-t border-border/50 bg-background/80 py-4">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-center items-center">
+          <div className="flex items-center space-x-3">
+            <Sun className="h-4 w-4 text-muted-foreground" />
+            <Switch
+              checked={theme === "dark"}
+              onCheckedChange={handleThemeToggle}
+              className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust dark:data-[state=checked]:border-white data-[state=unchecked]:border-border dark:data-[state=unchecked]:border-white/20 [&>span]:data-[state=unchecked]:bg-magit-trust" : "data-[state=checked]:bg-primary data-[state=checked]:border-primary dark:data-[state=checked]:border-white data-[state=unchecked]:border-border dark:data-[state=unchecked]:border-white/20"}
+            />
+            <Moon className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center space-x-2">
+              <Label className="text-sm text-muted-foreground">
+                {isAutoMode ? (
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    Auto {theme === "dark" ? "Dark" : "Light"}
+                  </span>
+                ) : (
+                  "Manual"
+                )}
+              </Label>
+              {!isAutoMode && (
+                <button
+                  onClick={resetToAutoMode}
+                  className="text-xs text-primary hover:text-primary/80 underline"
+                >
+                  Reset to Auto
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
