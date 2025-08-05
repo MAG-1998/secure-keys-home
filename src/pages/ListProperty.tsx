@@ -33,6 +33,8 @@ const ListProperty = () => {
     // Documents
     documents: [] as File[],
     photos: [] as File[],
+    // Visit Hours
+    visitHours: [] as string[],
     // Additional Services
     virtualTour: false
   });
@@ -142,6 +144,48 @@ const ListProperty = () => {
               <div>
                 <Label htmlFor="description">Property Description</Label>
                 <Textarea id="description" placeholder="Describe your property's features, condition, and highlights..." value={formData.description} onChange={e => handleInputChange("description", e.target.value)} rows={4} />
+              </div>
+
+              <div>
+                <Label htmlFor="visitHours">Comfortable Visit Hours</Label>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Select time slots when you're comfortable showing your property to potential buyers
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    "09:00", "10:00", "11:00", "12:00", 
+                    "13:00", "14:00", "15:00", "16:00", 
+                    "17:00", "18:00", "19:00", "20:00"
+                  ].map((time) => (
+                    <div key={time} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`time-${time}`}
+                        checked={formData.visitHours.includes(time)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setFormData(prev => ({
+                              ...prev,
+                              visitHours: [...prev.visitHours, time]
+                            }))
+                          } else {
+                            setFormData(prev => ({
+                              ...prev,
+                              visitHours: prev.visitHours.filter(t => t !== time)
+                            }))
+                          }
+                        }}
+                      />
+                      <Label htmlFor={`time-${time}`} className="text-sm cursor-pointer">
+                        {time}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+                {formData.visitHours.length === 0 && (
+                  <p className="text-sm text-orange-600 dark:text-orange-400 mt-2">
+                    Please select at least one time slot for property visits
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>;

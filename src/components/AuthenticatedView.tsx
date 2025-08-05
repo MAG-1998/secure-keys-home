@@ -126,8 +126,8 @@ export const AuthenticatedView = ({ user, isHalalMode, setIsHalalMode, t }: Auth
                 <CardContent className="p-6 text-center">
                   <div className="font-heading font-bold text-2xl text-primary mb-2">0</div>
                   <div className="text-muted-foreground">Properties Listed</div>
-                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/list-property')}>
-                    List Property
+                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-properties')}>
+                    View Properties
                   </Button>
                 </CardContent>
               </Card>

@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ListProperty from "./pages/ListProperty";
+import MyProperties from "./pages/MyProperties";
+import SavedProperties from "./pages/SavedProperties";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancelled from "./pages/PaymentCancelled";
 import Profile from "./pages/Profile";
@@ -39,6 +41,16 @@ const App = () => (
             <Route path="/list-property" element={
               <ProtectedRoute>
                 <ListProperty />
+              </ProtectedRoute>
+            } />
+            <Route path="/my-properties" element={
+              <ProtectedRoute>
+                <MyProperties />
+              </ProtectedRoute>
+            } />
+            <Route path="/saved-properties" element={
+              <ProtectedRoute>
+                <SavedProperties />
               </ProtectedRoute>
             } />
             <Route path="/payment-success" element={<PaymentSuccess />} />

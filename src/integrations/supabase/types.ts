@@ -47,6 +47,200 @@ export type Database = {
         }
         Relationships: []
       }
+      properties: {
+        Row: {
+          area: number | null
+          bathrooms: number | null
+          bedrooms: number | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_halal_financed: boolean | null
+          is_verified: boolean | null
+          location: string
+          price: number
+          title: string
+          updated_at: string
+          user_id: string
+          visit_hours: Json | null
+        }
+        Insert: {
+          area?: number | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_halal_financed?: boolean | null
+          is_verified?: boolean | null
+          location: string
+          price: number
+          title: string
+          updated_at?: string
+          user_id: string
+          visit_hours?: Json | null
+        }
+        Update: {
+          area?: number | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_halal_financed?: boolean | null
+          is_verified?: boolean | null
+          location?: string
+          price?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+          visit_hours?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "properties_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      property_views: {
+        Row: {
+          id: string
+          ip_address: unknown | null
+          property_id: string
+          viewed_at: string
+          viewer_id: string | null
+        }
+        Insert: {
+          id?: string
+          ip_address?: unknown | null
+          property_id: string
+          viewed_at?: string
+          viewer_id?: string | null
+        }
+        Update: {
+          id?: string
+          ip_address?: unknown | null
+          property_id?: string
+          viewed_at?: string
+          viewer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_views_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_views_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      property_visits: {
+        Row: {
+          created_at: string
+          deposit_amount: number | null
+          deposit_paid: boolean | null
+          id: string
+          is_custom_time: boolean | null
+          notes: string | null
+          property_id: string
+          status: string | null
+          updated_at: string
+          visit_date: string
+          visitor_id: string
+        }
+        Insert: {
+          created_at?: string
+          deposit_amount?: number | null
+          deposit_paid?: boolean | null
+          id?: string
+          is_custom_time?: boolean | null
+          notes?: string | null
+          property_id: string
+          status?: string | null
+          updated_at?: string
+          visit_date: string
+          visitor_id: string
+        }
+        Update: {
+          created_at?: string
+          deposit_amount?: number | null
+          deposit_paid?: boolean | null
+          id?: string
+          is_custom_time?: boolean | null
+          notes?: string | null
+          property_id?: string
+          status?: string | null
+          updated_at?: string
+          visit_date?: string
+          visitor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_visits_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_visits_visitor_id_fkey"
+            columns: ["visitor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      saved_properties: {
+        Row: {
+          id: string
+          property_id: string
+          saved_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          property_id: string
+          saved_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          property_id?: string
+          saved_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_properties_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_properties_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
