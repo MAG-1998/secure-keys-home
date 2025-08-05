@@ -60,6 +60,7 @@ export type Database = {
           is_verified: boolean | null
           location: string
           price: number
+          status: string | null
           title: string
           updated_at: string
           user_id: string
@@ -77,6 +78,7 @@ export type Database = {
           is_verified?: boolean | null
           location: string
           price: number
+          status?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -94,6 +96,7 @@ export type Database = {
           is_verified?: boolean | null
           location?: string
           price?: number
+          status?: string | null
           title?: string
           updated_at?: string
           user_id?: string
@@ -108,6 +111,72 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      property_applications: {
+        Row: {
+          address: string
+          area: number | null
+          bathrooms: number | null
+          bedrooms: number | null
+          created_at: string
+          description: string | null
+          documents: Json | null
+          id: string
+          moderator_notes: string | null
+          photos: Json | null
+          price: number
+          property_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+          virtual_tour: boolean | null
+          visit_hours: Json | null
+        }
+        Insert: {
+          address: string
+          area?: number | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          description?: string | null
+          documents?: Json | null
+          id?: string
+          moderator_notes?: string | null
+          photos?: Json | null
+          price: number
+          property_type: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+          virtual_tour?: boolean | null
+          visit_hours?: Json | null
+        }
+        Update: {
+          address?: string
+          area?: number | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          description?: string | null
+          documents?: Json | null
+          id?: string
+          moderator_notes?: string | null
+          photos?: Json | null
+          price?: number
+          property_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+          virtual_tour?: boolean | null
+          visit_hours?: Json | null
+        }
+        Relationships: []
       }
       property_views: {
         Row: {
@@ -241,15 +310,42 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "moderator" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -376,6 +472,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "moderator", "admin"],
+    },
   },
 } as const
