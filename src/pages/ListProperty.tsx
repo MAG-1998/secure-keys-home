@@ -12,13 +12,18 @@ import { MagitLogo } from "@/components/MagitLogo";
 import { PaymentMethods } from "@/components/PaymentMethods";
 import { Footer } from "@/components/Footer";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 const ListProperty = () => {
   const {
     t
   } = useTranslation();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [applicationSubmitted, setApplicationSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     // Property Details
     propertyType: "",
@@ -65,6 +70,59 @@ const ListProperty = () => {
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleSubmitApplication = async () => {
+    setIsSubmitting(true);
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to submit an application",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const bedroomCount = formData.bedrooms === "custom" ? 
+        parseInt(formData.customBedrooms) : parseInt(formData.bedrooms);
+      const bathroomCount = formData.bathrooms === "custom" ? 
+        parseInt(formData.customBathrooms) : parseInt(formData.bathrooms);
+
+      const { error } = await supabase
+        .from('property_applications')
+        .insert({
+          user_id: user.user.id,
+          property_type: formData.propertyType,
+          address: formData.address,
+          price: parseFloat(formData.price),
+          bedrooms: bedroomCount,
+          bathrooms: bathroomCount,
+          area: parseFloat(formData.area),
+          description: formData.description,
+          visit_hours: formData.visitHours,
+          virtual_tour: formData.virtualTour,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+
+      setApplicationSubmitted(true);
+      toast({
+        title: "Success",
+        description: "Your property application has been submitted for review",
+      });
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit application. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   const renderStepContent = () => {
     switch (currentStep) {
@@ -366,9 +424,31 @@ const ListProperty = () => {
                 </div>
               </div>
               
-              <Button className="w-full" size="lg">
-                Submit Application
+              <Button 
+                className="w-full" 
+                size="lg" 
+                onClick={handleSubmitApplication}
+                disabled={isSubmitting || applicationSubmitted}
+              >
+                {isSubmitting ? "Submitting..." : applicationSubmitted ? "Application Submitted" : "Submit Application"}
               </Button>
+              
+              {applicationSubmitted && (
+                <div className="bg-green-50 dark:bg-green-950/20 p-4 rounded-lg mt-4">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold text-sm text-green-900 dark:text-green-100 mb-2">
+                        Application Under Review
+                      </h4>
+                      <p className="text-sm text-green-700 dark:text-green-200">
+                        Your property listing application has been sent to our moderation team. 
+                        You'll receive an email notification once it's reviewed (typically within 24-48 hours).
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>;
       default:

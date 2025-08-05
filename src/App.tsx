@@ -10,6 +10,8 @@ import Dashboard from "./pages/Dashboard";
 import ListProperty from "./pages/ListProperty";
 import MyProperties from "./pages/MyProperties";
 import SavedProperties from "./pages/SavedProperties";
+import ModeratorDashboard from "./pages/ModeratorDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancelled from "./pages/PaymentCancelled";
 import Profile from "./pages/Profile";
@@ -51,6 +53,16 @@ const App = () => (
             <Route path="/saved-properties" element={
               <ProtectedRoute>
                 <SavedProperties />
+              </ProtectedRoute>
+            } />
+            <Route path="/moderator" element={
+              <ProtectedRoute>
+                <ModeratorDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <AdminDashboard />
               </ProtectedRoute>
             } />
             <Route path="/payment-success" element={<PaymentSuccess />} />

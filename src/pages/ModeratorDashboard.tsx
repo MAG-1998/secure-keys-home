@@ -1,0 +1,288 @@
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { CheckCircle, XCircle, Clock, Users, Home, Eye } from "lucide-react";
+
+interface PropertyApplication {
+  id: string;
+  property_type: string;
+  address: string;
+  price: number;
+  bedrooms: number;
+  bathrooms: number;
+  area: number;
+  description: string;
+  visit_hours: any;
+  virtual_tour: boolean;
+  status: string;
+  created_at: string;
+  user_id: string;
+  profiles: {
+    full_name: string;
+    email: string;
+  } | null;
+}
+
+interface UserProfile {
+  id: string;
+  user_id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  user_type: string;
+  created_at: string;
+}
+
+export default function ModeratorDashboard() {
+  const [applications, setApplications] = useState<PropertyApplication[]>([]);
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [moderatorNotes, setModeratorNotes] = useState<{ [key: string]: string }>({});
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchApplications();
+    fetchUsers();
+  }, []);
+
+  const fetchApplications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('property_applications')
+        .select(`
+          *,
+          profiles!inner (
+            full_name,
+            email
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setApplications(data as any || []);
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch property applications",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setUsers(data || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch users",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApplicationReview = async (applicationId: string, status: 'approved' | 'rejected') => {
+    try {
+      // Update application status
+      const { error: appError } = await supabase
+        .from('property_applications')
+        .update({
+          status,
+          moderator_notes: moderatorNotes[applicationId] || '',
+          reviewed_at: new Date().toISOString(),
+          reviewed_by: (await supabase.auth.getUser()).data.user?.id
+        })
+        .eq('id', applicationId);
+
+      if (appError) throw appError;
+
+      // If approved, create property listing
+      if (status === 'approved') {
+        const application = applications.find(app => app.id === applicationId);
+        if (application) {
+          const { error: propError } = await supabase
+            .from('properties')
+            .insert({
+              user_id: application.user_id,
+              title: `${application.property_type} in ${application.address}`,
+              location: application.address,
+              price: application.price,
+              bedrooms: application.bedrooms,
+              bathrooms: application.bathrooms,
+              area: application.area,
+              description: application.description,
+              visit_hours: application.visit_hours,
+              status: 'active'
+            });
+
+          if (propError) throw propError;
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: `Application ${status} successfully`,
+      });
+
+      fetchApplications();
+    } catch (error) {
+      console.error('Error reviewing application:', error);
+      toast({
+        title: "Error",
+        description: "Failed to review application",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
+      case 'approved':
+        return <Badge variant="default"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>;
+      case 'rejected':
+        return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Moderator Dashboard</h1>
+        <p className="text-muted-foreground">Review property applications and manage users</p>
+      </div>
+
+      <Tabs defaultValue="applications" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="applications" className="flex items-center gap-2">
+            <Home className="w-4 h-4" />
+            Property Applications
+          </TabsTrigger>
+          <TabsTrigger value="users" className="flex items-center gap-2">
+            <Users className="w-4 h-4" />
+            Users
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="applications" className="space-y-6">
+          <div className="grid gap-6">
+            {applications.map((application) => (
+              <Card key={application.id}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl">
+                      {application.property_type} - ${application.price.toLocaleString()}
+                    </CardTitle>
+                    {getStatusBadge(application.status)}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Submitted by {application.profiles?.full_name} ({application.profiles?.email})
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <p><strong>Address:</strong> {application.address}</p>
+                      <p><strong>Bedrooms:</strong> {application.bedrooms}</p>
+                      <p><strong>Bathrooms:</strong> {application.bathrooms}</p>
+                      <p><strong>Area:</strong> {application.area} m²</p>
+                    </div>
+                    <div>
+                      <p><strong>Virtual Tour:</strong> {application.virtual_tour ? 'Yes' : 'No'}</p>
+                      <p><strong>Visit Hours:</strong> {application.visit_hours?.join(', ') || 'None specified'}</p>
+                      <p><strong>Submitted:</strong> {new Date(application.created_at).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  
+                  {application.description && (
+                    <div>
+                      <strong>Description:</strong>
+                      <p className="mt-1 text-sm">{application.description}</p>
+                    </div>
+                  )}
+
+                  {application.status === 'pending' && (
+                    <div className="space-y-3 pt-4 border-t">
+                      <Textarea
+                        placeholder="Add moderator notes (optional)"
+                        value={moderatorNotes[application.id] || ''}
+                        onChange={(e) => setModeratorNotes(prev => ({
+                          ...prev,
+                          [application.id]: e.target.value
+                        }))}
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleApplicationReview(application.id, 'approved')}
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          <CheckCircle className="w-4 h-4 mr-2" />
+                          Approve
+                        </Button>
+                        <Button
+                          onClick={() => handleApplicationReview(application.id, 'rejected')}
+                          variant="destructive"
+                        >
+                          <XCircle className="w-4 h-4 mr-2" />
+                          Reject
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="users" className="space-y-6">
+          <div className="grid gap-6">
+            {users.map((user) => (
+              <Card key={user.id}>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold">{user.full_name}</h3>
+                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                      <p className="text-sm">{user.phone}</p>
+                      <p className="text-sm">Type: {user.user_type}</p>
+                      <p className="text-sm">Joined: {new Date(user.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm">
+                        <Eye className="w-4 h-4 mr-2" />
+                        View Details
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

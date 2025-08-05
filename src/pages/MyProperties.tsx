@@ -27,6 +27,7 @@ interface Property {
   views_count: number
   visit_requests_count: number
   upcoming_visits: any[]
+  status?: string
 }
 
 const MyProperties = () => {
@@ -37,7 +38,48 @@ const MyProperties = () => {
 
   useEffect(() => {
     fetchProperties()
+    fetchApplications()
   }, [])
+
+  const fetchApplications = async () => {
+    try {
+      const { data: user } = await supabase.auth.getUser()
+      if (!user.user) return
+
+      const { data, error } = await supabase
+        .from('property_applications')
+        .select('*')
+        .eq('user_id', user.user.id)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      
+      // Add pending applications to properties list for display
+      const pendingApplications = data?.filter(app => app.status === 'pending').map(app => ({
+        id: app.id,
+        title: `${app.property_type} - ${app.address}`,
+        location: app.address,
+        price: app.price,
+        bedrooms: app.bedrooms,
+        bathrooms: app.bathrooms,
+        area: app.area,
+        description: app.description,
+        visit_hours: Array.isArray(app.visit_hours) ? app.visit_hours : [],
+        status: 'pending',
+        created_at: app.created_at,
+        image_url: null,
+        is_verified: false,
+        is_halal_financed: false,
+        views_count: 0,
+        visit_requests_count: 0,
+        upcoming_visits: []
+      } as Property)) || []
+
+      setProperties(prev => [...prev, ...pendingApplications])
+    } catch (error) {
+      console.error('Error fetching applications:', error)
+    }
+  }
 
   const fetchProperties = async () => {
     try {
@@ -173,6 +215,9 @@ const MyProperties = () => {
                     className="w-full h-48 object-cover rounded-t-lg"
                   />
                   <div className="absolute top-3 left-3">
+                    {property.status === 'pending' && (
+                      <Badge variant="secondary" className="mb-2">Under Review</Badge>
+                    )}
                     {property.is_verified && (
                       <Badge variant="success" className="mb-2">Verified</Badge>
                     )}
