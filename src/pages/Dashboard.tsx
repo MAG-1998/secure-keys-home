@@ -77,6 +77,7 @@ const Dashboard = () => {
       </div>;
   }
   return <div className="min-h-screen bg-gradient-hero">
+      <ThemeToggle />
       {/* Header */}
       <header className="border-b border-border/50 bg-background/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
@@ -96,7 +97,6 @@ const Dashboard = () => {
                   </div>
                 </button>}
               
-              <ThemeToggle />
               <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive">
                 <LogOut className="h-4 w-4" />
               </Button>

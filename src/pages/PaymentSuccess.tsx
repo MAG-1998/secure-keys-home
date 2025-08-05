@@ -15,9 +15,7 @@ const PaymentSuccess = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
+      <ThemeToggle />
       <div className="container mx-auto px-4">
         <div className="max-w-md mx-auto">
           <Card>
