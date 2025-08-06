@@ -1,29 +1,31 @@
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useUserRole } from './useUserRole'
 import type { User } from '@supabase/supabase-js'
 
-export const useRoleBasedRedirect = (user: User | null) => {
+export const useRoleBasedRedirect = (user: User | null, shouldRedirect: boolean = false) => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { role, loading } = useUserRole(user)
+  const hasRedirected = useRef(false)
 
   useEffect(() => {
-    if (!loading && user && role) {
-      // Redirect based on user role
-      switch (role) {
-        case 'admin':
-          navigate('/admin', { replace: true })
-          break
-        case 'moderator':
-          navigate('/moderator', { replace: true })
-          break
-        case 'user':
-        default:
-          navigate('/dashboard', { replace: true })
-          break
+    // Only redirect if explicitly requested (like on login) and haven't redirected before
+    if (!loading && user && role && shouldRedirect && !hasRedirected.current) {
+      // Don't redirect if already on the correct page
+      const targetPath = role === 'admin' ? '/admin' : role === 'moderator' ? '/moderator' : '/dashboard'
+      
+      if (location.pathname !== targetPath) {
+        hasRedirected.current = true
+        navigate(targetPath, { replace: true })
       }
     }
-  }, [user, role, loading, navigate])
+  }, [user, role, loading, navigate, location.pathname, shouldRedirect])
+
+  // Reset redirect flag when user changes
+  useEffect(() => {
+    hasRedirected.current = false
+  }, [user?.id])
 
   return { role, loading }
 }

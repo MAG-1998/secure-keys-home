@@ -27,19 +27,20 @@ const Auth = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [user, setUser] = useState<User | null>(null)
+  const [shouldRedirect, setShouldRedirect] = useState(false)
   const navigate = useNavigate()
   const { toast } = useToast()
   const { t } = useTranslation()
   
   // Use role-based redirect hook
-  useRoleBasedRedirect(user)
-
+  useRoleBasedRedirect(user, shouldRedirect)
   // Check if user is already logged in and set user for role-based redirect
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
         setUser(session.user)
+        setShouldRedirect(true) // Trigger redirect for existing session
       }
     }
     checkSession()
@@ -48,8 +49,12 @@ const Auth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         setUser(session.user)
+        if (event === 'SIGNED_IN') {
+          setShouldRedirect(true) // Trigger redirect on login
+        }
       } else {
         setUser(null)
+        setShouldRedirect(false)
       }
     })
 
@@ -106,11 +111,8 @@ const Auth = () => {
     if (signInError) {
       setError(signInError.message)
     } else {
-      // User will be set via auth state change listener, which will trigger role-based redirect
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        setUser(session.user)
-      }
+      // The auth state change listener will handle setting user and redirect
+      setShouldRedirect(true)
     }
     setLoading(false)
   }

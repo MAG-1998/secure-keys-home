@@ -89,12 +89,26 @@ const Dashboard = () => {
               {(role === 'admin' || role === 'moderator') && (
                 <div className="flex items-center space-x-2">
                   {role === 'admin' && (
-                    <Button variant="outline" size="sm" onClick={() => navigate('/admin')}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => {
+                        console.log('Admin Panel button clicked, navigating to /admin')
+                        navigate('/admin')
+                      }}
+                    >
                       Admin Panel
                     </Button>
                   )}
                   {(role === 'moderator' || role === 'admin') && (
-                    <Button variant="outline" size="sm" onClick={() => navigate('/moderator')}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => {
+                        console.log('Review Applications button clicked, navigating to /moderator')
+                        navigate('/moderator')
+                      }}
+                    >
                       Review Applications
                     </Button>
                   )}
