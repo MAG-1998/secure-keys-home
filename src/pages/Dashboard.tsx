@@ -3,13 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { MagitLogo } from "@/components/MagitLogo";
 import { Footer } from "@/components/Footer";
+import { AppSidebar } from "@/components/AppSidebar";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useUserRole } from "@/hooks/useUserRole";
-import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search } from "lucide-react";
+import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search, Menu } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@supabase/supabase-js";
 
@@ -77,70 +79,51 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-hero flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border/50 bg-background/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <MagitLogo size="md" />
-            
-            <div className="flex items-center space-x-4">
-              {/* Admin/Moderator Dashboard Links */}
-              {(role === 'admin' || role === 'moderator') && (
-                <div className="flex items-center space-x-2">
-                  {role === 'admin' && (
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => {
-                        console.log('Admin Panel button clicked, navigating to /admin')
-                        navigate('/admin')
-                      }}
-                    >
-                      Admin Panel
-                    </Button>
+    <SidebarProvider>
+      <div className="min-h-screen bg-gradient-hero flex w-full">
+        {/* Sidebar for admin/moderator */}
+        {(role === 'admin' || role === 'moderator') && <AppSidebar user={user} />}
+        
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <header className="border-b border-border/50 bg-background/50 backdrop-blur-sm">
+            <div className="container mx-auto px-4 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  {/* Sidebar trigger for admin/moderator */}
+                  {(role === 'admin' || role === 'moderator') && (
+                    <SidebarTrigger />
                   )}
-                  {(role === 'moderator' || role === 'admin') && (
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => {
-                        console.log('Review Applications button clicked, navigating to /moderator')
-                        navigate('/moderator')
-                      }}
-                    >
-                      Review Applications
-                    </Button>
-                  )}
+                  <MagitLogo size="md" />
                 </div>
-              )}
-              
-              {user && (
-                <button 
-                  className="flex items-center space-x-3 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer text-left" 
-                  onClick={() => navigate('/profile')}
-                >
-                  <Avatar>
-                    <AvatarFallback className="bg-muted text-foreground">
-                      {user.email?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="hidden md:block">
-                    <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
-                  </div>
-                </button>
-              )}
-              
-              <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive">
-                <LogOut className="h-4 w-4" />
-              </Button>
+                
+                <div className="flex items-center space-x-4">
+                  {user && (
+                    <button 
+                      className="flex items-center space-x-3 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer text-left" 
+                      onClick={() => navigate('/profile')}
+                    >
+                      <Avatar>
+                        <AvatarFallback className="bg-muted text-foreground">
+                          {user.email?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="hidden md:block">
+                        <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
+                        <p className="text-xs text-muted-foreground">{user.email}</p>
+                      </div>
+                    </button>
+                  )}
+                  
+                  <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive">
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </header>
+          </header>
 
-      {/* Main Content */}
+          {/* Main Content */}
       <main className="container mx-auto px-4 py-16 flex-1">
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h1 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
@@ -249,9 +232,11 @@ const Dashboard = () => {
           </Button>
         </div>
       </main>
-      
-      <Footer t={t} />
-    </div>
+          
+          <Footer t={t} />
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
