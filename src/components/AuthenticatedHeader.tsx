@@ -50,8 +50,8 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
           <MagitLogo size={isMobile ? "sm" : "md"} />
           
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-6">
-            <Button 
+          <div className="hidden xl:flex items-center space-x-6">
+            <Button
               variant="ghost" 
               onClick={() => navigate('/my-properties')}
               className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm"
@@ -78,7 +78,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
           </div>
 
           {/* Mobile & Tablet Navigation */}
-          <div className="flex items-center space-x-2 lg:space-x-3">
+          <div className="flex items-center space-x-2 xl:space-x-3">
             {/* Language Selector */}
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger className={`${isMobile ? 'w-12' : 'w-16'}`}>
@@ -92,8 +92,8 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
             </Select>
 
             {/* Desktop User Profile */}
-            <div className="hidden lg:flex items-center space-x-3">
-              <button 
+            <div className="hidden xl:flex items-center space-x-3">
+              <button
                 className="flex items-center space-x-2 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer"
                 onClick={() => navigate('/profile')}
               >
@@ -127,9 +127,9 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
               </Button>
             </div>
 
-            {/* Mobile User Avatar & Menu */}
-            <div className="lg:hidden flex items-center space-x-2">
-              <button 
+            {/* Mobile & Tablet User Avatar & Menu */}
+            <div className="xl:hidden flex items-center space-x-2">
+              <button
                 className="flex items-center hover:bg-muted/50 rounded-lg p-1 transition-colors cursor-pointer"
                 onClick={() => navigate('/profile')}
               >

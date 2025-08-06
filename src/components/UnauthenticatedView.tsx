@@ -38,14 +38,14 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
             <MagitLogo size={isMobile ? "sm" : "md"} />
             
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-6">
+            <div className="hidden xl:flex items-center space-x-6">
               <a href="#search" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm">{t('nav.search')}</a>
               <a href="#map" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm">{t('nav.map')}</a>
               <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm">{t('nav.features')}</a>
               <a href="#financing" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm">{t('nav.financing')}</a>
             </div>
             
-            <div className="flex items-center space-x-2 lg:space-x-3">
+            <div className="flex items-center space-x-2 xl:space-x-3">
               {/* Language Selector */}
               <Select value={language} onValueChange={setLanguage}>
                 <SelectTrigger className={`${isMobile ? 'w-12' : 'w-16'}`}>
@@ -59,8 +59,8 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
               </Select>
               
               {/* Desktop Auth Buttons */}
-              <div className="hidden lg:flex items-center space-x-3">
-                <Button 
+              <div className="hidden xl:flex items-center space-x-3">
+                <Button
                   variant="ghost" 
                   onClick={() => window.location.href = '/auth'}
                   className="text-sm"
@@ -76,8 +76,8 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
                 </Button>
               </div>
 
-              {/* Mobile Menu */}
-              <div className="lg:hidden">
+              {/* Mobile & Tablet Menu */}
+              <div className="xl:hidden">
                 <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                   <SheetTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-8 w-8">
