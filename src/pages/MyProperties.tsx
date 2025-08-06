@@ -6,9 +6,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { Eye, Calendar, MapPin, Bed, Bath, Square, Plus, Clock } from "lucide-react"
-import { ThemeToggle } from "@/components/ThemeToggle"
+import { Footer } from "@/components/Footer"
 import { MagitLogo } from "@/components/MagitLogo"
 import { useToast } from "@/hooks/use-toast"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface Property {
   id: string
@@ -35,6 +36,7 @@ const MyProperties = () => {
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { t } = useTranslation()
 
   useEffect(() => {
     fetchProperties()
@@ -325,7 +327,7 @@ const MyProperties = () => {
         )}
       </div>
 
-      <ThemeToggle />
+      <Footer t={t} />
     </div>
   )
 }

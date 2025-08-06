@@ -5,11 +5,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { MagitLogo } from "@/components/MagitLogo"
+import { Footer } from "@/components/Footer"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { Eye, EyeOff, ArrowLeft } from "lucide-react"
-import { ThemeToggle } from "@/components/ThemeToggle"
 import { useToast } from "@/hooks/use-toast"
+import { useTranslation } from "@/hooks/useTranslation"
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(() => {
@@ -25,6 +26,7 @@ const Auth = () => {
   const [error, setError] = useState("")
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { t } = useTranslation()
 
   // Check if user is already logged in
   useEffect(() => {
@@ -102,150 +104,152 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
-      <ThemeToggle />
-      <div className="w-full max-w-md">
-        {/* Back to home button */}
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/")}
-          className="mb-6 text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Home
-        </Button>
+    <div className="min-h-screen bg-gradient-hero flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          {/* Back to home button */}
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/")}
+            className="mb-6 text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
+          </Button>
 
-        <Card className="shadow-warm border-0">
-          <CardHeader className="text-center pb-6">
-            <div className="flex justify-center mb-4">
-              <MagitLogo size="lg" />
-            </div>
-            <CardTitle className="text-2xl font-heading">
-              {isLogin ? "Welcome Back" : "Create Account"}
-            </CardTitle>
-            <p className="text-muted-foreground">
-              {isLogin 
-                ? "Sign in to access your property dashboard" 
-                : "Join Magit to start your property journey"
-              }
-            </p>
-          </CardHeader>
+          <Card className="shadow-warm border-0">
+            <CardHeader className="text-center pb-6">
+              <div className="flex justify-center mb-4">
+                <MagitLogo size="lg" />
+              </div>
+              <CardTitle className="text-2xl font-heading">
+                {isLogin ? "Welcome Back" : "Create Account"}
+              </CardTitle>
+              <p className="text-muted-foreground">
+                {isLogin 
+                  ? "Sign in to access your property dashboard" 
+                  : "Join Magit to start your property journey"
+                }
+              </p>
+            </CardHeader>
 
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      type="text"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Enter your full name"
-                      required={!isLogin}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none">
-                        +998
-                      </span>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {!isLogin && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName">Full Name</Label>
                       <Input
-                        id="phone"
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="90 123 45 67"
-                        className="pl-16"
+                        id="fullName"
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Enter your full name"
                         required={!isLogin}
                       />
                     </div>
-                  </div>
-                </>
-              )}
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none">
+                          +998
+                        </span>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="90 123 45 67"
+                          className="pl-16"
+                          required={!isLogin}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
                   <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
                     required
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </Button>
                 </div>
-              </div>
 
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading}
-              >
-                {loading 
-                  ? "Loading..." 
-                  : isLogin 
-                    ? "Sign In" 
-                    : "Create Account"
-                }
-              </Button>
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
-              <div className="text-center pt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsLogin(!isLogin)
-                    setError("")
-                    setFullName("")
-                    setPhone("")
-                  }}
-                  className="text-primary hover:text-primary/80 transition-colors"
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loading}
                 >
-                  {isLogin 
-                    ? "Don't have an account? Sign up" 
-                    : "Already have an account? Sign in"
+                  {loading 
+                    ? "Loading..." 
+                    : isLogin 
+                      ? "Sign In" 
+                      : "Create Account"
                   }
-                </button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                </Button>
+
+                <div className="text-center pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsLogin(!isLogin)
+                      setError("")
+                      setFullName("")
+                      setPhone("")
+                    }}
+                    className="text-primary hover:text-primary/80 transition-colors"
+                  >
+                    {isLogin 
+                      ? "Don't have an account? Sign up" 
+                      : "Already have an account? Sign in"
+                    }
+                  </button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
       </div>
+      <Footer t={t} />
     </div>
   )
 }

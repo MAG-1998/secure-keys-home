@@ -8,9 +8,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { Heart, MapPin, Bed, Bath, Square, Calendar, Clock, CreditCard } from "lucide-react"
-import { ThemeToggle } from "@/components/ThemeToggle"
+import { Footer } from "@/components/Footer"
 import { MagitLogo } from "@/components/MagitLogo"
 import { useToast } from "@/hooks/use-toast"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface SavedProperty {
   id: string
@@ -46,6 +47,7 @@ const SavedProperties = () => {
   const [needsDeposit, setNeedsDeposit] = useState(false)
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { t } = useTranslation()
 
   useEffect(() => {
     fetchSavedProperties()
@@ -181,7 +183,7 @@ const SavedProperties = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-hero">
+    <div className="min-h-screen bg-gradient-hero flex flex-col">
       {/* Header */}
       <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
@@ -196,7 +198,7 @@ const SavedProperties = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="flex-1 container mx-auto px-4 py-8">
         {savedProperties.length === 0 ? (
           <div className="text-center py-16">
             <h2 className="font-heading font-bold text-2xl text-foreground mb-4">No Saved Properties</h2>
@@ -371,7 +373,7 @@ const SavedProperties = () => {
         )}
       </div>
 
-      <ThemeToggle />
+      <Footer t={t} />
     </div>
   )
 }

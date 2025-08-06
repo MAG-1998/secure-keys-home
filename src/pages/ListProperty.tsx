@@ -15,7 +15,6 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
 const ListProperty = () => {
   const {
     t
@@ -455,8 +454,8 @@ const ListProperty = () => {
         return null;
     }
   };
-  return <div className="min-h-screen bg-background">
-      <ThemeToggle />
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Navigation */}
       <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50 bg-background/95">
         <div className="container mx-auto px-4 py-4">
@@ -573,6 +572,8 @@ const ListProperty = () => {
       </section>
 
       <Footer isHalalMode={false} t={t} />
-    </div>;
+    </div>
+  );
 };
+
 export default ListProperty;

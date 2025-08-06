@@ -23,8 +23,9 @@ import {
   Save,
   X
 } from "lucide-react"
-import { ThemeToggle } from "@/components/ThemeToggle"
+import { Footer } from "@/components/Footer"
 import { useToast } from "@/hooks/use-toast"
+import { useTranslation } from "@/hooks/useTranslation"
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null)
@@ -38,6 +39,7 @@ const Profile = () => {
   })
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const getProfile = async () => {
@@ -122,8 +124,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <ThemeToggle />
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Navigation */}
       <nav className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50 bg-background/95">
         <div className="container mx-auto px-4 py-4">
@@ -139,7 +140,7 @@ const Profile = () => {
         </div>
       </nav>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-6">
           
           {/* Profile Header */}
@@ -365,6 +366,8 @@ const Profile = () => {
           </Card>
         </div>
       </div>
+      
+      <Footer t={t} />
     </div>
   )
 }

@@ -4,27 +4,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MagitLogo } from "@/components/MagitLogo";
+import { Footer } from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@supabase/supabase-js";
+
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  const { t } = useTranslation();
+
   useEffect(() => {
     const getUser = async () => {
-      const {
-        data: {
-          session
-        }
-      } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         navigate("/auth");
         return;
@@ -35,11 +32,7 @@ const Dashboard = () => {
     getUser();
 
     // Listen for auth state changes
-    const {
-      data: {
-        subscription
-      }
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) {
         navigate("/auth");
       } else {
@@ -48,10 +41,9 @@ const Dashboard = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
+
   const handleSignOut = async () => {
-    const {
-      error
-    } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
     if (error) {
       toast({
         title: "Error signing out",
@@ -62,22 +54,28 @@ const Dashboard = () => {
       navigate("/");
     }
   };
+
   const handleListProperty = () => {
     navigate("/list-property");
   };
+
   const handleBuyProperty = () => {
     navigate("/");
   };
+
   if (loading) {
-    return <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+    return (
+      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
           <MagitLogo size="lg" />
           <p className="text-muted-foreground mt-4">Loading your dashboard...</p>
         </div>
-      </div>;
+      </div>
+    );
   }
-  return <div className="min-h-screen bg-gradient-hero">
-      <ThemeToggle />
+
+  return (
+    <div className="min-h-screen bg-gradient-hero flex flex-col">
       {/* Header */}
       <header className="border-b border-border/50 bg-background/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
@@ -85,7 +83,11 @@ const Dashboard = () => {
             <MagitLogo size="md" />
             
             <div className="flex items-center space-x-4">
-              {user && <button className="flex items-center space-x-3 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer text-left" onClick={() => navigate('/profile')}>
+              {user && (
+                <button 
+                  className="flex items-center space-x-3 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer text-left" 
+                  onClick={() => navigate('/profile')}
+                >
                   <Avatar>
                     <AvatarFallback className="bg-muted text-foreground">
                       {user.email?.charAt(0).toUpperCase()}
@@ -95,7 +97,8 @@ const Dashboard = () => {
                     <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
                     <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
-                </button>}
+                </button>
+              )}
               
               <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive">
                 <LogOut className="h-4 w-4" />
@@ -106,7 +109,7 @@ const Dashboard = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-16">
+      <main className="container mx-auto px-4 py-16 flex-1">
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h1 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
             Welcome to Your Property Dashboard
@@ -214,6 +217,10 @@ const Dashboard = () => {
           </Button>
         </div>
       </main>
-    </div>;
+      
+      <Footer t={t} />
+    </div>
+  );
 };
+
 export default Dashboard;
