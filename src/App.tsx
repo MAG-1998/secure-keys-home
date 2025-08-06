@@ -17,6 +17,7 @@ import PaymentCancelled from "./pages/PaymentCancelled";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RoleProtectedRoute from "./components/RoleProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -56,14 +57,14 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/moderator" element={
-              <ProtectedRoute>
+              <RoleProtectedRoute requiredRoles={['moderator', 'admin']}>
                 <ModeratorDashboard />
-              </ProtectedRoute>
+              </RoleProtectedRoute>
             } />
             <Route path="/admin" element={
-              <ProtectedRoute>
+              <RoleProtectedRoute requiredRoles={['admin']}>
                 <AdminDashboard />
-              </ProtectedRoute>
+              </RoleProtectedRoute>
             } />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancelled" element={<PaymentCancelled />} />

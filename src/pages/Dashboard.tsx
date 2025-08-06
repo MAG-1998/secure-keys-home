@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useUserRole } from "@/hooks/useUserRole";
 import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@supabase/supabase-js";
@@ -18,6 +19,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const { role } = useUserRole(user);
 
   useEffect(() => {
     const getUser = async () => {
@@ -83,6 +85,22 @@ const Dashboard = () => {
             <MagitLogo size="md" />
             
             <div className="flex items-center space-x-4">
+              {/* Admin/Moderator Dashboard Links */}
+              {(role === 'admin' || role === 'moderator') && (
+                <div className="flex items-center space-x-2">
+                  {role === 'admin' && (
+                    <Button variant="outline" size="sm" onClick={() => navigate('/admin')}>
+                      Admin Panel
+                    </Button>
+                  )}
+                  {(role === 'moderator' || role === 'admin') && (
+                    <Button variant="outline" size="sm" onClick={() => navigate('/moderator')}>
+                      Review Applications
+                    </Button>
+                  )}
+                </div>
+              )}
+              
               {user && (
                 <button 
                   className="flex items-center space-x-3 hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer text-left" 
