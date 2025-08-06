@@ -25,6 +25,7 @@ export const useUserRole = (user: User | null) => {
         }
 
         setRole(data?.role || 'user');
+        console.log(`User role fetched: ${data?.role || 'user'} for user ${user.id}`);
       } catch (error) {
         console.error('Error fetching user role:', error);
       } finally {

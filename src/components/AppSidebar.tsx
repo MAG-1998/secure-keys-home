@@ -58,9 +58,12 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
   // Only show sidebar for admin and moderator roles
   if (role !== 'admin' && role !== 'moderator') {
+    console.log(`Sidebar hidden for role: ${role}`)
     return null
   }
 
+  console.log(`Sidebar shown for role: ${role}`)
+  
   return (
     <Sidebar
       collapsible="icon"
@@ -80,6 +83,9 @@ export function AppSidebar({ user }: AppSidebarProps) {
                       to={item.url} 
                       end 
                       className={getNavCls}
+                      onClick={() => {
+                        console.log(`Navigating to: ${item.url}`)
+                      }}
                     >
                       <item.icon className="mr-2 h-4 w-4" />
                       {state === 'expanded' && <span>{item.title}</span>}

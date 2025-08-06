@@ -48,6 +48,7 @@ const RoleProtectedRoute = ({ children, requiredRoles }: RoleProtectedRouteProps
   }
 
   if (!requiredRoles.includes(role)) {
+    console.log(`Access denied. User role: ${role}, Required roles: ${requiredRoles.join(', ')}`)
     return <Navigate to="/dashboard" replace />
   }
 

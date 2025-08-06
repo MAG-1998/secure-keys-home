@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom"
 import { Eye, EyeOff, ArrowLeft } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useTranslation } from "@/hooks/useTranslation"
-import { useRoleBasedRedirect } from "@/hooks/useRoleBasedRedirect"
 import type { User } from "@supabase/supabase-js"
 
 const Auth = () => {
@@ -27,34 +26,25 @@ const Auth = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [user, setUser] = useState<User | null>(null)
-  const [shouldRedirect, setShouldRedirect] = useState(false)
   const navigate = useNavigate()
   const { toast } = useToast()
   const { t } = useTranslation()
-  
-  // Use role-based redirect hook
-  useRoleBasedRedirect(user, shouldRedirect)
-  // Check if user is already logged in and set user for role-based redirect
+  // Check if user is already logged in
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        setUser(session.user)
-        setShouldRedirect(true) // Trigger redirect for existing session
+        // Simple redirect to dashboard for existing sessions
+        navigate("/dashboard")
       }
     }
     checkSession()
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        setUser(session.user)
-        if (event === 'SIGNED_IN') {
-          setShouldRedirect(true) // Trigger redirect on login
-        }
-      } else {
-        setUser(null)
-        setShouldRedirect(false)
+      if (session && event === 'SIGNED_IN') {
+        // Simple redirect to dashboard on sign in
+        navigate("/dashboard")
       }
     })
 
@@ -111,8 +101,7 @@ const Auth = () => {
     if (signInError) {
       setError(signInError.message)
     } else {
-      // The auth state change listener will handle setting user and redirect
-      setShouldRedirect(true)
+      // Redirect will be handled by auth state change listener
     }
     setLoading(false)
   }
