@@ -63,44 +63,5 @@ export const ThemeToggle = ({
     const isDarkTime = hour < 7 || hour >= 19;
     setTheme(isDarkTime ? "dark" : "light");
   };
-  return (
-    <div className="flex items-center space-x-4 p-4 border rounded-lg bg-card">
-      {/* Auto Mode Toggle */}
-      <div className="flex items-center space-x-2">
-        <Clock className="h-4 w-4" />
-        <Label htmlFor="auto-mode">Auto Mode</Label>
-        <Switch
-          id="auto-mode"
-          checked={isAutoMode}
-          onCheckedChange={(checked) => {
-            if (checked) {
-              resetToAutoMode();
-            } else {
-              setIsAutoMode(false);
-              localStorage.setItem('hasManualThemePreference', 'true');
-            }
-          }}
-        />
-      </div>
-
-      {/* Manual Theme Toggle */}
-      {!isAutoMode && (
-        <div className="flex items-center space-x-2">
-          <Sun className="h-4 w-4" />
-          <Switch
-            checked={theme === "dark"}
-            onCheckedChange={handleThemeToggle}
-          />
-          <Moon className="h-4 w-4" />
-        </div>
-      )}
-
-      {/* Halal Mode Indicator */}
-      {isHalalMode && (
-        <div className="text-sm text-muted-foreground">
-          Halal Mode Active
-        </div>
-      )}
-    </div>
-  );
+  return;
 };
