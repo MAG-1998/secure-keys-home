@@ -336,6 +336,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_property_from_application: {
+        Args: { application_id: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _user_id: string

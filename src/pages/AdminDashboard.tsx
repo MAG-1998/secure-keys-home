@@ -218,16 +218,19 @@ export default function AdminDashboard() {
         throw error;
       }
 
-      // If approved, create property listing using RPC function to bypass RLS
+      // If approved, create property listing using RPC function
       if (status === 'approved') {
-        const application = applications.find(app => app.id === applicationId);
-        if (application) {
-          console.log('Creating property for application:', application);
-          
-          // Use the service role or create an RPC function to bypass RLS restrictions
-          // For now, let's just update the application status and not create property
-          console.log('Property creation will be handled by the user');
+        const { data: propertyId, error: rpcError } = await supabase
+          .rpc('create_property_from_application', {
+            application_id: applicationId
+          });
+
+        if (rpcError) {
+          console.error('Error creating property:', rpcError);
+          throw rpcError;
         }
+
+        console.log('Property created successfully with ID:', propertyId);
       }
 
       toast({

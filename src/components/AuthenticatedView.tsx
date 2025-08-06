@@ -6,6 +6,8 @@ import { SearchSection } from "@/components/SearchSection";
 import { useNavigate } from "react-router-dom";
 import { useScroll } from "@/hooks/use-scroll";
 import { CheckCircle, Home, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 interface AuthenticatedViewProps {
   user: User;
@@ -24,6 +26,55 @@ export const AuthenticatedView = ({
     scrollY,
     isScrolled
   } = useScroll();
+
+  const [counts, setCounts] = useState({
+    savedProperties: 0,
+    listedProperties: 0,
+    activeRequests: 0
+  });
+
+  useEffect(() => {
+    fetchUserCounts();
+  }, [user]);
+
+  const fetchUserCounts = async () => {
+    if (!user?.id) return;
+
+    try {
+      // Fetch saved properties count
+      const { count: savedCount } = await supabase
+        .from('saved_properties')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+
+      // Fetch listed properties count
+      const { count: listedCount } = await supabase
+        .from('properties')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+
+      // Fetch active requests count (pending applications + active property visits)
+      const { count: applicationsCount } = await supabase
+        .from('property_applications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('status', 'pending');
+
+      const { count: visitsCount } = await supabase
+        .from('property_visits')
+        .select('*', { count: 'exact', head: true })
+        .eq('visitor_id', user.id)
+        .in('status', ['pending', 'confirmed']);
+
+      setCounts({
+        savedProperties: savedCount || 0,
+        listedProperties: listedCount || 0,
+        activeRequests: (applicationsCount || 0) + (visitsCount || 0)
+      });
+    } catch (error) {
+      console.error('Error fetching user counts:', error);
+    }
+  };
   const getUserDisplayName = () => {
     return user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
   };
@@ -98,14 +149,14 @@ export const AuthenticatedView = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="bg-background/50 border-border/50">
                 <CardContent className="p-6 text-center">
-                  <div className="font-heading font-bold text-2xl text-primary mb-2">0</div>
+                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.savedProperties}</div>
                   <div className="text-muted-foreground">Saved Properties</div>
                   <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/saved-properties')}>View Saved Properties</Button>
                 </CardContent>
               </Card>
               <Card className="bg-background/50 border-border/50">
                 <CardContent className="p-6 text-center">
-                  <div className="font-heading font-bold text-2xl text-primary mb-2">0</div>
+                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.listedProperties}</div>
                   <div className="text-muted-foreground">Properties Listed</div>
                   <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-properties')}>
                     View Listed Properties
@@ -114,7 +165,7 @@ export const AuthenticatedView = ({
               </Card>
               <Card className="bg-background/50 border-border/50">
                 <CardContent className="p-6 text-center">
-                  <div className="font-heading font-bold text-2xl text-primary mb-2">0</div>
+                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.activeRequests}</div>
                   <div className="text-muted-foreground">Active Requests</div>
                   <div className="text-xs text-muted-foreground/70 mt-1">
                     Property listings, visits & verifications
