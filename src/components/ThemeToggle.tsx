@@ -63,5 +63,37 @@ export const ThemeToggle = ({
     const isDarkTime = hour < 7 || hour >= 19;
     setTheme(isDarkTime ? "dark" : "light");
   };
-  return;
+  return (
+    <div className="flex items-center space-x-2 p-2">
+      {isAutoMode ? (
+        <div className="flex items-center space-x-2">
+          <Clock className="h-4 w-4" />
+          <span className="text-sm">Auto</span>
+          <button
+            onClick={resetToAutoMode}
+            className="text-xs text-muted-foreground hover:text-foreground"
+          >
+            Manual
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center space-x-2">
+          <Switch
+            checked={theme === "dark"}
+            onCheckedChange={handleThemeToggle}
+            aria-label="Toggle theme"
+          />
+          <Label htmlFor="theme-toggle" className="flex items-center space-x-1">
+            {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          </Label>
+          <button
+            onClick={resetToAutoMode}
+            className="text-xs text-muted-foreground hover:text-foreground"
+          >
+            Auto
+          </button>
+        </div>
+      )}
+    </div>
+  );
 };
