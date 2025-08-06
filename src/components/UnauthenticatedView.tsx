@@ -1,14 +1,17 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { MagitLogo } from "@/components/MagitLogo"
 import { FeatureCard } from "@/components/FeatureCard"
 import { MapSection } from "@/components/MapSection"
 import { SearchSection } from "@/components/SearchSection"
 import { Footer } from "@/components/Footer"
 import { useScroll } from "@/hooks/use-scroll"
-import { Shield, Home, Calculator, MapPin, Users, CheckCircle } from "lucide-react"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { Shield, Home, Calculator, MapPin, Users, CheckCircle, Menu } from "lucide-react"
 import type { Language } from "@/hooks/useTranslation"
 
 interface UnauthenticatedViewProps {
@@ -21,6 +24,8 @@ interface UnauthenticatedViewProps {
 
 export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsHalalMode, t }: UnauthenticatedViewProps) => {
   const { scrollY, isScrolled } = useScroll()
+  const isMobile = useIsMobile()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
     <>
@@ -28,39 +33,116 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
       <nav className={`border-b border-border/50 backdrop-blur-sm sticky top-0 z-50 transition-all duration-500 ${
         isHalalMode ? 'bg-magit-trust/10' : 'bg-background/50'
       }`}>
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-3 md:px-4 py-3 md:py-4">
           <div className="flex items-center justify-between">
-            <MagitLogo size="md" />
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#search" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20">{t('nav.search')}</a>
-              <a href="#map" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20">{t('nav.map')}</a>
-              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20">{t('nav.features')}</a>
-              <a href="#financing" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20">{t('nav.financing')}</a>
+            <MagitLogo size={isMobile ? "sm" : "md"} />
+            
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-6">
+              <a href="#search" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm">{t('nav.search')}</a>
+              <a href="#map" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm">{t('nav.map')}</a>
+              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm">{t('nav.features')}</a>
+              <a href="#financing" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm">{t('nav.financing')}</a>
             </div>
-            <div className="flex items-center space-x-3">
+            
+            <div className="flex items-center space-x-2 lg:space-x-3">
               {/* Language Selector */}
               <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="w-[80px]">
-                  <SelectValue placeholder={language === "en" ? "ENG" : language === "ru" ? "RU" : "UZ"} />
+                <SelectTrigger className={`${isMobile ? 'w-12' : 'w-16'}`}>
+                  <SelectValue placeholder={language === "en" ? (isMobile ? "EN" : "ENG") : language === "ru" ? "RU" : "UZ"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="en">ENG</SelectItem>
+                  <SelectItem value="en">{isMobile ? "EN" : "ENG"}</SelectItem>
                   <SelectItem value="ru">RU</SelectItem>
                   <SelectItem value="uz">UZ</SelectItem>
                 </SelectContent>
               </Select>
-              <Button 
-                variant="ghost" 
-                onClick={() => window.location.href = '/auth'}
-              >
-                {t('nav.signIn')}
-              </Button>
-              <Button 
-                variant={isHalalMode ? "trust" : "default"}
-                onClick={() => window.location.href = '/auth?signup=true'}
-              >
-                {t('nav.getStarted')}
-              </Button>
+              
+              {/* Desktop Auth Buttons */}
+              <div className="hidden lg:flex items-center space-x-3">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => window.location.href = '/auth'}
+                  className="text-sm"
+                >
+                  {t('nav.signIn')}
+                </Button>
+                <Button 
+                  variant={isHalalMode ? "trust" : "default"}
+                  onClick={() => window.location.href = '/auth?signup=true'}
+                  className="text-sm"
+                >
+                  {t('nav.getStarted')}
+                </Button>
+              </div>
+
+              {/* Mobile Menu */}
+              <div className="lg:hidden">
+                <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Menu className="h-4 w-4" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="right" className="w-[280px] sm:w-[350px]">
+                    <SheetHeader className="mb-6">
+                      <SheetTitle>Navigation</SheetTitle>
+                    </SheetHeader>
+                    
+                    <div className="space-y-4">
+                      {/* Navigation Links */}
+                      <div className="space-y-2">
+                        <a 
+                          href="#search" 
+                          className="flex items-center w-full p-3 text-left hover:bg-muted/50 rounded-lg transition-colors"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {t('nav.search')}
+                        </a>
+                        <a 
+                          href="#map" 
+                          className="flex items-center w-full p-3 text-left hover:bg-muted/50 rounded-lg transition-colors"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {t('nav.map')}
+                        </a>
+                        <a 
+                          href="#features" 
+                          className="flex items-center w-full p-3 text-left hover:bg-muted/50 rounded-lg transition-colors"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {t('nav.features')}
+                        </a>
+                        <a 
+                          href="#financing" 
+                          className="flex items-center w-full p-3 text-left hover:bg-muted/50 rounded-lg transition-colors"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {t('nav.financing')}
+                        </a>
+                      </div>
+
+                      {/* Auth Buttons */}
+                      <div className="pt-4 border-t space-y-2">
+                        <Button 
+                          variant="ghost" 
+                          onClick={() => window.location.href = '/auth'}
+                          className="w-full"
+                        >
+                          {t('nav.signIn')}
+                        </Button>
+                        <Button 
+                          variant={isHalalMode ? "trust" : "default"}
+                          onClick={() => window.location.href = '/auth?signup=true'}
+                          className="w-full"
+                        >
+                          {t('nav.getStarted')}
+                        </Button>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
             </div>
           </div>
         </div>
