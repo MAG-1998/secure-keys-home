@@ -52,19 +52,32 @@ export default function ModeratorDashboard() {
 
   const fetchApplications = async () => {
     try {
-      const { data, error } = await supabase
+      // First fetch property applications
+      const { data: applicationsData, error: applicationsError } = await supabase
         .from('property_applications')
-        .select(`
-          *,
-          profiles!inner (
-            full_name,
-            email
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setApplications(data as any || []);
+      if (applicationsError) throw applicationsError;
+
+      // Then fetch user profiles for each application
+      const applicationsWithProfiles = await Promise.all(
+        (applicationsData || []).map(async (application) => {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('full_name, email')
+            .eq('user_id', application.user_id)
+            .single();
+
+          return {
+            ...application,
+            profiles: profileData
+          };
+        })
+      );
+
+      setApplications(applicationsWithProfiles as any);
+      console.log('Fetched applications with profiles:', applicationsWithProfiles);
     } catch (error) {
       console.error('Error fetching applications:', error);
       toast({

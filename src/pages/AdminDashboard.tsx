@@ -34,19 +34,32 @@ export default function AdminDashboard() {
 
   const fetchUsers = async () => {
     try {
-      const { data, error } = await supabase
+      // First fetch profiles
+      const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          user_roles (
-            role
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setUsers(data as any || []);
-      console.log('Fetched users with roles:', data);
+      if (profilesError) throw profilesError;
+
+      // Then fetch user roles for each user
+      const usersWithRoles = await Promise.all(
+        (profilesData || []).map(async (profile) => {
+          const { data: roleData } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', profile.user_id)
+            .single();
+
+          return {
+            ...profile,
+            user_roles: roleData ? [{ role: roleData.role }] : []
+          };
+        })
+      );
+
+      setUsers(usersWithRoles as any);
+      console.log('Fetched users with roles:', usersWithRoles);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
