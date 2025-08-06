@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom"
 import { Eye, EyeOff, ArrowLeft } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useTranslation } from "@/hooks/useTranslation"
+import { useRoleBasedRedirect } from "@/hooks/useRoleBasedRedirect"
+import type { User } from "@supabase/supabase-js"
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(() => {
@@ -24,20 +26,35 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [user, setUser] = useState<User | null>(null)
   const navigate = useNavigate()
   const { toast } = useToast()
   const { t } = useTranslation()
+  
+  // Use role-based redirect hook
+  useRoleBasedRedirect(user)
 
-  // Check if user is already logged in
+  // Check if user is already logged in and set user for role-based redirect
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        navigate("/dashboard")
+        setUser(session.user)
       }
     }
     checkSession()
-  }, [navigate])
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setUser(session.user)
+      } else {
+        setUser(null)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   const handleSignUp = async () => {
     if (!email || !password || !fullName || !phone) {
@@ -89,7 +106,11 @@ const Auth = () => {
     if (signInError) {
       setError(signInError.message)
     } else {
-      navigate("/dashboard")
+      // User will be set via auth state change listener, which will trigger role-based redirect
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        setUser(session.user)
+      }
     }
     setLoading(false)
   }
