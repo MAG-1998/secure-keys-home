@@ -174,6 +174,67 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    try {
+      // First, delete existing role
+      await supabase
+        .from('user_roles')
+        .delete()
+        .eq('user_id', userId);
+
+      // Then insert new role with proper typing
+      const { error } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: userId,
+          role: newRole as 'user' | 'moderator' | 'admin'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `User role updated to ${newRole}`,
+      });
+
+      // Refresh data without losing sort order
+      await fetchUsers();
+    } catch (error) {
+      console.error('Error updating role:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update user role",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePropertyStatusChange = async (propertyId: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('properties')
+        .update({ status: newStatus })
+        .eq('id', propertyId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success", 
+        description: `Property ${newStatus} successfully`,
+      });
+
+      // Refresh data
+      await fetchProperties();
+    } catch (error) {
+      console.error('Error updating property status:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update property status",
+        variant: "destructive",
+      });
+    }
+  };
+
   const assignRole = async (userId: string, role: 'user' | 'moderator' | 'admin') => {
     try {
       console.log(`Assigning role ${role} to user ${userId}`);
@@ -257,8 +318,8 @@ export default function AdminDashboard() {
         description: `Application ${status} successfully`,
       });
 
-      // Refresh all data
-      await fetchAllData();
+      // Refresh all data while maintaining current view
+      await fetchApplications();
     } catch (error) {
       console.error('Error handling application:', error);
       toast({
@@ -267,6 +328,13 @@ export default function AdminDashboard() {
         variant: "destructive",
       });
     }
+  };
+
+  // Group applications by status for better organization
+  const groupedApplications = {
+    pending: applications.filter(app => app.status === 'pending'),
+    approved: applications.filter(app => app.status === 'approved'), 
+    rejected: applications.filter(app => app.status === 'rejected')
   };
 
   const updatePropertyStatus = async (propertyId: string, status: 'active' | 'suspended') => {
@@ -355,7 +423,7 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
             Users & Roles ({users.length})
@@ -367,10 +435,6 @@ export default function AdminDashboard() {
           <TabsTrigger value="requests" className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
             Property Requests ({applications.length})
-          </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2">
-            <Settings className="w-4 h-4" />
-            Settings
           </TabsTrigger>
         </TabsList>
 
@@ -400,7 +464,7 @@ export default function AdminDashboard() {
                     <div className="flex gap-2">
                       <Select
                         value={getUserRole(user)}
-                        onValueChange={(role) => assignRole(user.user_id, role as any)}
+                        onValueChange={(role) => handleRoleChange(user.user_id, role)}
                       >
                         <SelectTrigger className="w-32">
                           <SelectValue />
@@ -443,12 +507,12 @@ export default function AdminDashboard() {
                       <p className="text-sm">Owner: {property.profiles?.full_name} ({property.profiles?.email})</p>
                       <p className="text-sm">Listed: {new Date(property.created_at).toLocaleDateString()}</p>
                     </div>
-                    <div className="flex gap-2">
+                     <div className="flex gap-2">
                       {property.status === 'active' ? (
                         <Button
                           variant="destructive"
                           size="sm"
-                          onClick={() => updatePropertyStatus(property.id, 'suspended')}
+                          onClick={() => handlePropertyStatusChange(property.id, 'suspended')}
                         >
                           <UserX className="w-4 h-4 mr-2" />
                           Suspend
@@ -457,13 +521,13 @@ export default function AdminDashboard() {
                         <Button
                           variant="default"
                           size="sm"
-                          onClick={() => updatePropertyStatus(property.id, 'active')}
+                          onClick={() => handlePropertyStatusChange(property.id, 'active')}
                         >
                           <UserCheck className="w-4 h-4 mr-2" />
                           Activate
                         </Button>
                       )}
-                    </div>
+                     </div>
                   </div>
                 </CardContent>
               </Card>
@@ -531,16 +595,6 @@ export default function AdminDashboard() {
           )}
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>System Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">System configuration options will be available here.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </div>
   );
