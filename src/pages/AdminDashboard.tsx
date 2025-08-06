@@ -24,13 +24,22 @@ interface UserWithRole {
 export default function AdminDashboard() {
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
+  const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchUsers();
-    fetchProperties();
+    fetchAllData();
   }, []);
+
+  const fetchAllData = async () => {
+    await Promise.all([
+      fetchUsers(),
+      fetchProperties(), 
+      fetchApplications()
+    ]);
+    setLoading(false);
+  };
 
   const fetchUsers = async () => {
     try {
@@ -72,19 +81,32 @@ export default function AdminDashboard() {
 
   const fetchProperties = async () => {
     try {
-      const { data, error } = await supabase
+      // Fetch all properties with owner information
+      const { data: propertiesData, error: propertiesError } = await supabase
         .from('properties')
-        .select(`
-          *,
-          profiles (
-            full_name,
-            email
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setProperties(data || []);
+      if (propertiesError) throw propertiesError;
+
+      // Fetch profiles for each property
+      const propertiesWithOwners = await Promise.all(
+        (propertiesData || []).map(async (property) => {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('full_name, email')
+            .eq('user_id', property.user_id)
+            .single();
+
+          return {
+            ...property,
+            profiles: profileData
+          };
+        })
+      );
+
+      setProperties(propertiesWithOwners);
+      console.log('Fetched properties with owners:', propertiesWithOwners);
     } catch (error) {
       console.error('Error fetching properties:', error);
       toast({
@@ -92,8 +114,44 @@ export default function AdminDashboard() {
         description: "Failed to fetch properties",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const fetchApplications = async () => {
+    try {
+      // Fetch all property applications
+      const { data: applicationsData, error: applicationsError } = await supabase
+        .from('property_applications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (applicationsError) throw applicationsError;
+
+      // Fetch profiles for each application
+      const applicationsWithProfiles = await Promise.all(
+        (applicationsData || []).map(async (application) => {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('full_name, email')
+            .eq('user_id', application.user_id)
+            .single();
+
+          return {
+            ...application,
+            profiles: profileData
+          };
+        })
+      );
+
+      setApplications(applicationsWithProfiles);
+      console.log('Fetched applications with profiles:', applicationsWithProfiles);
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+      toast({
+        title: "Error", 
+        description: "Failed to fetch property applications",
+        variant: "destructive",
+      });
     }
   };
 
@@ -136,6 +194,58 @@ export default function AdminDashboard() {
       toast({
         title: "Error",
         description: `Failed to assign role: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleApplicationAction = async (applicationId: string, status: 'approved' | 'rejected') => {
+    try {
+      const { error } = await supabase
+        .from('property_applications')
+        .update({ 
+          status,
+          reviewed_at: new Date().toISOString(),
+          reviewed_by: (await supabase.auth.getUser()).data.user?.id
+        })
+        .eq('id', applicationId);
+
+      if (error) throw error;
+
+      // If approved, create property listing
+      if (status === 'approved') {
+        const application = applications.find(app => app.id === applicationId);
+        if (application) {
+          const { error: propError } = await supabase
+            .from('properties')
+            .insert({
+              user_id: application.user_id,
+              title: `${application.property_type} in ${application.address}`,
+              location: application.address,
+              price: application.price,
+              bedrooms: application.bedrooms,
+              bathrooms: application.bathrooms,
+              area: application.area,
+              description: application.description,
+              visit_hours: application.visit_hours,
+              status: 'active'
+            });
+
+          if (propError) throw propError;
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: `Application ${status} successfully`,
+      });
+
+      fetchAllData();
+    } catch (error) {
+      console.error('Error handling application:', error);
+      toast({
+        title: "Error",
+        description: "Failed to handle application",
         variant: "destructive",
       });
     }
@@ -206,14 +316,18 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
-            Users & Roles
+            Users & Roles ({users.length})
           </TabsTrigger>
           <TabsTrigger value="properties" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
-            Properties
+            Properties ({properties.length})
+          </TabsTrigger>
+          <TabsTrigger value="requests" className="flex items-center gap-2">
+            <Shield className="w-4 h-4" />
+            Property Requests ({applications.length})
           </TabsTrigger>
           <TabsTrigger value="settings" className="flex items-center gap-2">
             <Settings className="w-4 h-4" />
@@ -222,7 +336,14 @@ export default function AdminDashboard() {
         </TabsList>
 
         <TabsContent value="users" className="space-y-6">
-          <div className="grid gap-6">
+          {users.length === 0 ? (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <p className="text-muted-foreground">No users found. Loading...</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-6">
             {users.map((user) => (
               <Card key={user.id}>
                 <CardContent className="p-6">
@@ -256,11 +377,19 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             ))}
-          </div>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="properties" className="space-y-6">
-          <div className="grid gap-6">
+          {properties.length === 0 ? (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <p className="text-muted-foreground">No properties found.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-6">
             {properties.map((property) => (
               <Card key={property.id}>
                 <CardContent className="p-6">
@@ -300,7 +429,67 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             ))}
-          </div>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="requests" className="space-y-6">
+          {applications.length === 0 ? (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <p className="text-muted-foreground">No property applications found.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-6">
+              {applications.map((application) => (
+                <Card key={application.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="font-semibold">{application.property_type}</h3>
+                          <Badge variant={application.status === 'pending' ? 'secondary' : 
+                                        application.status === 'approved' ? 'default' : 'destructive'}>
+                            {application.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{application.address}</p>
+                        <p className="text-sm">Price: ${application.price?.toLocaleString()}</p>
+                        <p className="text-sm">Applicant: {application.profiles?.full_name} ({application.profiles?.email})</p>
+                        <p className="text-sm">Bedrooms: {application.bedrooms} | Bathrooms: {application.bathrooms}</p>
+                        <p className="text-sm">Area: {application.area} m²</p>
+                        <p className="text-sm">Submitted: {new Date(application.created_at).toLocaleDateString()}</p>
+                        {application.description && (
+                          <p className="text-sm mt-2"><strong>Description:</strong> {application.description}</p>
+                        )}
+                      </div>
+                      <div className="flex gap-2">
+                        {application.status === 'pending' && (
+                          <>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => handleApplicationAction(application.id, 'approved')}
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleApplicationAction(application.id, 'rejected')}
+                            >
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="settings" className="space-y-6">
