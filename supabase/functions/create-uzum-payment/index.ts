@@ -16,7 +16,7 @@ serve(async (req) => {
     
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
     // Get authenticated user
@@ -24,6 +24,30 @@ serve(async (req) => {
     const token = authHeader.replace("Bearer ", "");
     const { data } = await supabaseClient.auth.getUser(token);
     const user = data.user;
+
+    if (!user) {
+      throw new Error("Authentication required");
+    }
+
+    // Get client IP and user agent for security logging
+    const clientIP = req.headers.get("cf-connecting-ip") || 
+                    req.headers.get("x-forwarded-for") || 
+                    "unknown";
+    const userAgent = req.headers.get("user-agent") || "unknown";
+
+    // Log and validate payment request
+    const { error: logError } = await supabaseClient.rpc('log_payment_request', {
+      user_id_param: user.id,
+      amount_param: amount,
+      currency_param: currency,
+      method_param: 'uzum',
+      ip_addr: clientIP,
+      user_agent_str: userAgent
+    });
+
+    if (logError) {
+      throw new Error(logError.message);
+    }
 
     // Uzum Bank API integration
     const uzumApiUrl = "https://processing.uzumbank.uz/api/v1";

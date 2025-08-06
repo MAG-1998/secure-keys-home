@@ -425,6 +425,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      log_payment_request: {
+        Args: {
+          user_id_param: string
+          amount_param: number
+          currency_param: string
+          method_param: string
+          ip_addr?: unknown
+          user_agent_str?: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "user" | "moderator" | "admin"

@@ -7,7 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "@/contexts/UserContext";
 import { Shield, Users, Home, Settings, UserCheck, UserX, LogOut } from "lucide-react";
+import SecurityAuditPanel from "@/components/SecurityAuditPanel";
 
 interface UserWithRole {
   id: string;
@@ -29,6 +31,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useUser();
 
   const handleSignOut = async () => {
     try {
@@ -176,11 +179,26 @@ export default function AdminDashboard() {
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {
+      // Prevent self-role modification
+      if (userId === user?.id) {
+        toast({
+          title: "Error",
+          description: "Cannot modify your own role",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // For now, use the existing secure method until RPC is available
       // First, delete existing role
-      await supabase
+      const { error: deleteError } = await supabase
         .from('user_roles')
         .delete()
         .eq('user_id', userId);
+
+      if (deleteError) {
+        console.error('Error deleting existing roles:', deleteError);
+      }
 
       // Then insert new role with proper typing
       const { error } = await supabase
@@ -189,6 +207,20 @@ export default function AdminDashboard() {
           user_id: userId,
           role: newRole as 'user' | 'moderator' | 'admin'
         });
+
+      // Log the action manually to role_audit_log
+      if (!error) {
+        await supabase
+          .from('role_audit_log')
+          .insert({
+            user_id: user?.id,
+            target_user_id: userId,
+            new_role: newRole,
+            action: 'changed',
+            changed_by: user?.id,
+            user_agent: navigator.userAgent
+          });
+      }
 
       if (error) throw error;
 
@@ -423,7 +455,7 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
             Users & Roles ({users.length})
@@ -433,8 +465,12 @@ export default function AdminDashboard() {
             Properties ({properties.length})
           </TabsTrigger>
           <TabsTrigger value="requests" className="flex items-center gap-2">
-            <Shield className="w-4 h-4" />
+            <Settings className="w-4 h-4" />
             Property Requests ({applications.length})
+          </TabsTrigger>
+          <TabsTrigger value="security" className="flex items-center gap-2">
+            <Shield className="w-4 h-4" />
+            Security Audit
           </TabsTrigger>
         </TabsList>
 
@@ -593,6 +629,10 @@ export default function AdminDashboard() {
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="security" className="space-y-6">
+          <SecurityAuditPanel />
         </TabsContent>
 
       </Tabs>
