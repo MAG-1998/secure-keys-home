@@ -36,11 +36,17 @@ export default function AdminDashboard() {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select(`
+          *,
+          user_roles (
+            role
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       setUsers(data as any || []);
+      console.log('Fetched users with roles:', data);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -80,11 +86,17 @@ export default function AdminDashboard() {
 
   const assignRole = async (userId: string, role: 'user' | 'moderator' | 'admin') => {
     try {
+      console.log(`Assigning role ${role} to user ${userId}`);
+      
       // Remove existing roles first
-      await supabase
+      const { error: deleteError } = await supabase
         .from('user_roles')
         .delete()
         .eq('user_id', userId);
+
+      if (deleteError) {
+        console.error('Error deleting existing roles:', deleteError);
+      }
 
       // Add new role
       const { error } = await supabase
@@ -94,19 +106,23 @@ export default function AdminDashboard() {
           role: role
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error inserting new role:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
         description: `Role ${role} assigned successfully`,
       });
 
-      fetchUsers();
+      // Refresh data
+      await fetchUsers();
     } catch (error) {
       console.error('Error assigning role:', error);
       toast({
         title: "Error",
-        description: "Failed to assign role",
+        description: `Failed to assign role: ${error.message}`,
         variant: "destructive",
       });
     }
