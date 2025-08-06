@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      payment_audit_log: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          ip_address: unknown | null
+          order_id: string | null
+          payment_method: string
+          status: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          ip_address?: unknown | null
+          order_id?: string | null
+          payment_method: string
+          status: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          ip_address?: unknown | null
+          order_id?: string | null
+          payment_method?: string
+          status?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -273,6 +312,45 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      role_audit_log: {
+        Row: {
+          action: string
+          changed_by: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          new_role: string
+          old_role: string | null
+          target_user_id: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          changed_by: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          new_role: string
+          old_role?: string | null
+          target_user_id: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          changed_by?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          new_role?: string
+          old_role?: string | null
+          target_user_id?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       saved_properties: {
         Row: {
