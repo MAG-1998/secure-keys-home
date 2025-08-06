@@ -11,17 +11,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useUserRole } from "@/hooks/useUserRole"
-import type { User } from "@supabase/supabase-js"
+import { useUser } from "@/contexts/UserContext"
 
-interface AppSidebarProps {
-  user: User | null
-}
-
-export function AppSidebar({ user }: AppSidebarProps) {
+export function AppSidebar() {
   const { state } = useSidebar() // state is 'expanded' or 'collapsed'
   const location = useLocation()
-  const { role } = useUserRole(user)
+  const { role } = useUser()
   const currentPath = location.pathname
 
   const getNavCls = ({ isActive }: { isActive: boolean }) =>

@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
-import { supabase } from "@/integrations/supabase/client"
 import { MagitLogo } from "@/components/MagitLogo"
-import { useUserRole } from "@/hooks/useUserRole"
-import type { User } from "@supabase/supabase-js"
+import { useUser } from "@/contexts/UserContext"
 
 interface RoleProtectedRouteProps {
   children: React.ReactNode
@@ -11,28 +8,9 @@ interface RoleProtectedRouteProps {
 }
 
 const RoleProtectedRoute = ({ children, requiredRoles }: RoleProtectedRouteProps) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [authLoading, setAuthLoading] = useState(true)
-  const { role, loading: roleLoading } = useUserRole(user)
+  const { user, role, loading } = useUser()
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-      setAuthLoading(false)
-    }
-
-    checkUser()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null)
-      setAuthLoading(false)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  if (authLoading || roleLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">

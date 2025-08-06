@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -10,39 +9,13 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useUserRole } from "@/hooks/useUserRole";
+import { useUser } from "@/contexts/UserContext";
 import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search, Menu } from "lucide-react";
-import type { User } from "@supabase/supabase-js";
 
 const Dashboard = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { role } = useUserRole(user);
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
-      setUser(session.user);
-      setLoading(false);
-    };
-    getUser();
-
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
-        navigate("/auth");
-      } else {
-        setUser(session.user);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+  const { user, role, loading } = useUser();
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -76,7 +49,7 @@ const Dashboard = () => {
     <SidebarProvider>
       <div className="min-h-screen bg-gradient-hero flex w-full">
         {/* Sidebar for admin/moderator */}
-        {(role === 'admin' || role === 'moderator') && <AppSidebar user={user} />}
+        {(role === 'admin' || role === 'moderator') && <AppSidebar />}
         
         <div className="flex-1 flex flex-col">
           {/* Header */}
