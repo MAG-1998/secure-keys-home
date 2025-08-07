@@ -60,6 +60,7 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          role: Database["public"]["Enums"]["app_role"]
           updated_at: string
           user_id: string
           user_type: string | null
@@ -70,6 +71,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id: string
           user_type?: string | null
@@ -80,6 +82,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id?: string
           user_type?: string | null
@@ -388,32 +391,19 @@ export type Database = {
           },
         ]
       }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      assign_role: {
+        Args: {
+          target_user_id: string
+          new_role: Database["public"]["Enums"]["app_role"]
+          changed_by_user_id: string
+        }
+        Returns: boolean
+      }
       create_property_from_application: {
         Args: { application_id: string }
         Returns: string

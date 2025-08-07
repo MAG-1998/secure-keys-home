@@ -18,10 +18,8 @@ interface UserWithRole {
   email: string;
   phone: string;
   user_type: string;
+  role: 'user' | 'moderator' | 'admin';
   created_at: string;
-  user_roles?: {
-    role: string;
-  }[];
 }
 
 export default function AdminDashboard() {
@@ -65,7 +63,6 @@ export default function AdminDashboard() {
 
   const fetchUsers = async () => {
     try {
-      // First fetch profiles
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
@@ -73,24 +70,8 @@ export default function AdminDashboard() {
 
       if (profilesError) throw profilesError;
 
-      // Then fetch user roles for each user
-      const usersWithRoles = await Promise.all(
-        (profilesData || []).map(async (profile) => {
-          const { data: roleData } = await supabase
-            .from('user_roles')
-            .select('role')
-            .eq('user_id', profile.user_id)
-            .single();
-
-          return {
-            ...profile,
-            user_roles: roleData ? [{ role: roleData.role }] : []
-          };
-        })
-      );
-
-      setUsers(usersWithRoles as any);
-      console.log('Fetched users with roles:', usersWithRoles);
+      setUsers(profilesData || []);
+      console.log('Fetched users with roles:', profilesData);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -189,38 +170,12 @@ export default function AdminDashboard() {
         return;
       }
 
-      // For now, use the existing secure method until RPC is available
-      // First, delete existing role
-      const { error: deleteError } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', userId);
-
-      if (deleteError) {
-        console.error('Error deleting existing roles:', deleteError);
-      }
-
-      // Then insert new role with proper typing
-      const { error } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: userId,
-          role: newRole as 'user' | 'moderator' | 'admin'
-        });
-
-      // Log the action manually to role_audit_log
-      if (!error) {
-        await supabase
-          .from('role_audit_log')
-          .insert({
-            user_id: user?.id,
-            target_user_id: userId,
-            new_role: newRole,
-            action: 'changed',
-            changed_by: user?.id,
-            user_agent: navigator.userAgent
-          });
-      }
+      // Use the assign_role function
+      const { error } = await supabase.rpc('assign_role', {
+        target_user_id: userId,
+        new_role: newRole as 'user' | 'moderator' | 'admin',
+        changed_by_user_id: user?.id
+      });
 
       if (error) throw error;
 
@@ -229,7 +184,7 @@ export default function AdminDashboard() {
         description: `User role updated to ${newRole}`,
       });
 
-      // Refresh data without losing sort order
+      // Refresh data
       await fetchUsers();
     } catch (error) {
       console.error('Error updating role:', error);
@@ -271,26 +226,15 @@ export default function AdminDashboard() {
     try {
       console.log(`Assigning role ${role} to user ${userId}`);
       
-      // Remove existing roles first
-      const { error: deleteError } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', userId);
-
-      if (deleteError) {
-        console.error('Error deleting existing roles:', deleteError);
-      }
-
-      // Add new role
-      const { error } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: userId,
-          role: role
-        });
+      // Use the assign_role function
+      const { error } = await supabase.rpc('assign_role', {
+        target_user_id: userId,
+        new_role: role,
+        changed_by_user_id: user?.id
+      });
 
       if (error) {
-        console.error('Error inserting new role:', error);
+        console.error('Error assigning role:', error);
         throw error;
       }
 
@@ -395,7 +339,7 @@ export default function AdminDashboard() {
   };
 
   const getUserRole = (user: UserWithRole) => {
-    return user.user_roles?.[0]?.role || 'user';
+    return user.role || 'user';
   };
 
   const getRoleBadge = (role: string) => {

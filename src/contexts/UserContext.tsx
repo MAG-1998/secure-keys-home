@@ -34,11 +34,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const loading = authLoading || roleLoading;
 
-  // Fetch user role
+  // Fetch user role from profiles table
   const fetchUserRole = async (userId: string) => {
     try {
       const { data, error } = await supabase
-        .from('user_roles')
+        .from('profiles')
         .select('role')
         .eq('user_id', userId)
         .single();
