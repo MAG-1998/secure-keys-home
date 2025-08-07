@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import { Shield, Users, Home, Settings, UserCheck, UserX, LogOut } from "lucide-react";
 import SecurityAuditPanel from "@/components/SecurityAuditPanel";
 
@@ -353,32 +355,30 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header with navigation */}
-      <div className="flex items-center justify-between mb-8 pb-4 border-b">
-        <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage users, roles, and system settings</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2"
-          >
-            <Home className="w-4 h-4" />
-            Home
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={handleSignOut}
-            className="flex items-center gap-2"
-          >
-            <LogOut className="w-4 h-4" />
-            Sign Out
-          </Button>
-        </div>
-      </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <SidebarInset className="flex-1">
+          <div className="min-h-screen bg-background">
+            <header className="h-16 flex items-center border-b px-4">
+              <SidebarTrigger className="mr-4" />
+              <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+              <div className="ml-auto">
+                <Button 
+                  variant="outline" 
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign Out
+                </Button>
+              </div>
+            </header>
+            <main className="container mx-auto px-4 py-8">
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+                <p className="text-muted-foreground">Manage users, roles, and system settings</p>
+              </div>
 
       <Tabs defaultValue="users" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
@@ -564,11 +564,14 @@ export default function AdminDashboard() {
           )}
         </TabsContent>
 
-        <TabsContent value="security" className="space-y-6">
-          <SecurityAuditPanel />
-        </TabsContent>
-
-      </Tabs>
-    </div>
+              <TabsContent value="security" className="space-y-6">
+                <SecurityAuditPanel />
+              </TabsContent>
+            </Tabs>
+            </main>
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }

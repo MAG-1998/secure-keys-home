@@ -6,7 +6,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, XCircle, Clock, Users, Home, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
+import { CheckCircle, XCircle, Clock, Users, Home, Eye, LogOut } from "lucide-react";
 
 interface PropertyApplication {
   id: string;
@@ -44,6 +47,24 @@ export default function ModeratorDashboard() {
   const [loading, setLoading] = useState(true);
   const [moderatorNotes, setModeratorNotes] = useState<{ [key: string]: string }>({});
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate('/');
+      toast({
+        title: "Signed out successfully",
+        description: "You have been logged out.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out",
+        variant: "destructive",
+      });
+    }
+  };
 
   useEffect(() => {
     fetchApplications();
@@ -160,11 +181,30 @@ export default function ModeratorDashboard() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Moderator Dashboard</h1>
-        <p className="text-muted-foreground">Review property applications and manage users</p>
-      </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <SidebarInset className="flex-1">
+          <div className="min-h-screen bg-background">
+            <header className="h-16 flex items-center border-b px-4">
+              <SidebarTrigger className="mr-4" />
+              <h1 className="text-xl font-semibold">Moderator Dashboard</h1>
+              <div className="ml-auto">
+                <Button 
+                  variant="outline" 
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign Out
+                </Button>
+              </div>
+            </header>
+            <main className="container mx-auto px-4 py-8">
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold">Moderator Dashboard</h1>
+                <p className="text-muted-foreground">Review property applications and manage users</p>
+              </div>
 
       <Tabs defaultValue="applications" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">
@@ -273,8 +313,12 @@ export default function ModeratorDashboard() {
               </Card>
             ))}
           </div>
-        </TabsContent>
-      </Tabs>
-    </div>
+              </TabsContent>
+            </Tabs>
+            </main>
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }
