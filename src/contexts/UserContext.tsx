@@ -37,6 +37,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   // Fetch user role from profiles table
   const fetchUserRole = async (userId: string) => {
     try {
+      setRoleLoading(true);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('role')
@@ -45,13 +47,16 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error fetching user role:', error);
+        // Set default role and continue instead of staying in loading state
+        setRole('user');
+      } else {
+        const userRole = data?.role || 'user';
+        setRole(userRole);
+        console.log(`User role fetched: ${userRole} for user ${userId}`);
       }
-
-      const userRole = data?.role || 'user';
-      setRole(userRole);
-      console.log(`User role fetched: ${userRole} for user ${userId}`);
     } catch (error) {
       console.error('Error fetching user role:', error);
+      // Set default role and continue instead of staying in loading state
       setRole('user');
     } finally {
       setRoleLoading(false);
@@ -59,17 +64,31 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   };
 
   useEffect(() => {
+    let mounted = true;
+    
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      setAuthLoading(false);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        setAuthLoading(false);
 
-      if (session?.user) {
-        await fetchUserRole(session.user.id);
-      } else {
-        setRoleLoading(false);
+        if (session?.user) {
+          await fetchUserRole(session.user.id);
+        } else {
+          setRole('user');
+          setRoleLoading(false);
+        }
+      } catch (error) {
+        console.error('Error getting initial session:', error);
+        if (mounted) {
+          setAuthLoading(false);
+          setRoleLoading(false);
+        }
       }
     };
 
@@ -78,13 +97,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (!mounted) return;
+        
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setAuthLoading(false);
 
         if (session?.user) {
-          setRoleLoading(true);
           await fetchUserRole(session.user.id);
         } else {
           setRole('user');
@@ -93,7 +113,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const value: UserContextType = {

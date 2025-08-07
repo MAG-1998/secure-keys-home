@@ -41,8 +41,11 @@ const Dashboard = memo(() => {
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
-          <MagitLogo size="lg" />
-          <p className="text-muted-foreground mt-4">Loading your dashboard...</p>
+          <MagitLogo size="lg" isLoading={true} />
+          <p className="text-muted-foreground mt-4 animate-pulse">Loading your dashboard...</p>
+          <div className="mt-2 text-xs text-muted-foreground/70">
+            Please wait while we set up your account
+          </div>
         </div>
       </div>
     );
