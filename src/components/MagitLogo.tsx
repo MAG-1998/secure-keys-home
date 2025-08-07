@@ -5,13 +5,16 @@ interface MagitLogoProps {
   className?: string
   size?: "sm" | "md" | "lg" | "xl"
   variant?: "full" | "icon"
+  isLoading?: boolean
 }
 
-export const MagitLogo = ({ className, size = "md", variant = "full" }: MagitLogoProps) => {
+export const MagitLogo = ({ className, size = "md", variant = "full", isLoading = false }: MagitLogoProps) => {
   const navigate = useNavigate()
   
   const handleClick = () => {
-    navigate("/")
+    if (!isLoading) {
+      navigate("/")
+    }
   }
   const sizeClasses = {
     sm: "text-lg",
@@ -31,7 +34,8 @@ export const MagitLogo = ({ className, size = "md", variant = "full" }: MagitLog
     return (
       <div 
         className={cn(
-          "relative flex items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 cursor-pointer hover:opacity-90 transition-opacity",
+          "relative flex items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 transition-opacity",
+          isLoading ? "cursor-default opacity-70" : "cursor-pointer hover:opacity-90",
           iconSizes[size],
           className
         )}
@@ -47,7 +51,11 @@ export const MagitLogo = ({ className, size = "md", variant = "full" }: MagitLog
 
   return (
     <div 
-      className={cn("flex items-center space-x-3 cursor-pointer hover:opacity-90 transition-opacity", className)}
+      className={cn(
+        "flex items-center space-x-3 transition-opacity", 
+        isLoading ? "cursor-default opacity-70" : "cursor-pointer hover:opacity-90",
+        className
+      )}
       onClick={handleClick}
     >
       <div className={cn(

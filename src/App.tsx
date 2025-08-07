@@ -39,7 +39,7 @@ const queryClient = new QueryClient({
 const PageLoading = () => (
   <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
     <div className="text-center">
-      <MagitLogo size="lg" />
+      <MagitLogo size="lg" isLoading={true} />
       <div className="animate-pulse">
         <div className="h-4 bg-muted rounded w-24 mx-auto mt-4"></div>
       </div>
