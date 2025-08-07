@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp } from "lucide-react"
-import { useScroll } from "@/hooks/use-scroll"
+
 
 interface SearchSectionProps {
   isHalalMode: boolean
@@ -22,9 +22,6 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
   const [cashAmount, setCashAmount] = useState("")
   const [monthlyPayment, setMonthlyPayment] = useState("")
   const [monthlySalary, setMonthlySalary] = useState("")
-  const { scrollY } = useScroll()
-
-  const scrollProgress = Math.min(scrollY / 300, 1)
 
   return (
     <section className={`py-12 transition-all duration-500 ${
