@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      halal_financing_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string | null
+          id: string
+          property_id: string
+          request_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string | null
+          id?: string
+          property_id: string
+          request_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string | null
+          id?: string
+          property_id?: string
+          request_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "halal_financing_requests_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_audit_log: {
         Row: {
           amount: number
@@ -97,11 +144,15 @@ export type Database = {
           created_at: string
           description: string | null
           documents: Json | null
+          halal_financing_requested: boolean | null
+          halal_financing_status: string | null
           id: string
           image_url: string | null
           is_halal_financed: boolean | null
           is_verified: boolean | null
+          latitude: number | null
           location: string
+          longitude: number | null
           moderator_notes: string | null
           photos: Json | null
           price: number
@@ -122,11 +173,15 @@ export type Database = {
           created_at?: string
           description?: string | null
           documents?: Json | null
+          halal_financing_requested?: boolean | null
+          halal_financing_status?: string | null
           id?: string
           image_url?: string | null
           is_halal_financed?: boolean | null
           is_verified?: boolean | null
+          latitude?: number | null
           location: string
+          longitude?: number | null
           moderator_notes?: string | null
           photos?: Json | null
           price: number
@@ -147,11 +202,15 @@ export type Database = {
           created_at?: string
           description?: string | null
           documents?: Json | null
+          halal_financing_requested?: boolean | null
+          halal_financing_status?: string | null
           id?: string
           image_url?: string | null
           is_halal_financed?: boolean | null
           is_verified?: boolean | null
+          latitude?: number | null
           location?: string
+          longitude?: number | null
           moderator_notes?: string | null
           photos?: Json | null
           price?: number

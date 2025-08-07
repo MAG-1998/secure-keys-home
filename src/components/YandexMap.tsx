@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Filter, Search, Home, Bed, Bath } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
 
 interface YandexMapProps {
   isHalalMode?: boolean;
@@ -11,12 +13,12 @@ interface YandexMapProps {
 }
 
 interface Property {
-  id: number;
+  id: string;
   lat: number;
   lng: number;
   price: number;
   district: string;
-  type: 'apartment' | 'house' | 'premium';
+  type: string;
   bedrooms: number;
   bathrooms: number;
   area: number;
@@ -43,79 +45,50 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
     halalOnly: false
   });
 
-  // Sample properties data for Tashkent
-  const allProperties: Property[] = [
-    {
-      id: 1,
-      lat: 41.2995,
-      lng: 69.2401,
-      price: 52000,
-      district: 'Chilonzor',
-      type: 'apartment',
-      bedrooms: 2,
-      bathrooms: 1,
-      area: 65,
-      isHalal: true,
-      title: '2-Room Apartment in Chilonzor',
-      description: 'Modern apartment with halal financing available'
-    },
-    {
-      id: 2,
-      lat: 41.3111,
-      lng: 69.2797,
-      price: 47000,
-      district: 'Yunusobod',
-      type: 'house',
-      bedrooms: 3,
-      bathrooms: 2,
-      area: 120,
-      isHalal: false,
-      title: 'Family House in Yunusobod',
-      description: 'Spacious family home with garden'
-    },
-    {
-      id: 3,
-      lat: 41.2648,
-      lng: 69.2163,
-      price: 68000,
-      district: 'Shaykhantahur',
-      type: 'premium',
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 180,
-      isHalal: true,
-      title: 'Premium Villa in Shaykhantahur',
-      description: 'Luxury villa with modern amenities'
-    },
-    {
-      id: 4,
-      lat: 41.3167,
-      lng: 69.2500,
-      price: 35000,
-      district: 'Mirzo-Ulugbek',
-      type: 'apartment',
-      bedrooms: 1,
-      bathrooms: 1,
-      area: 45,
-      isHalal: true,
-      title: 'Studio Apartment',
-      description: 'Perfect for young professionals'
-    },
-    {
-      id: 5,
-      lat: 41.2889,
-      lng: 69.2725,
-      price: 75000,
-      district: 'Yakkasaray',
-      type: 'house',
-      bedrooms: 5,
-      bathrooms: 4,
-      area: 250,
-      isHalal: false,
-      title: 'Large Family Home',
-      description: 'Spacious home in premium location'
+  // Fetch properties from database
+  const { data: dbProperties, isLoading } = useOptimizedQuery(
+    ['properties', 'active'],
+    async () => {
+      const { data, error } = await supabase
+        .from('properties')
+        .select('*')
+        .eq('status', 'active')
+        .not('latitude', 'is', null)
+        .not('longitude', 'is', null);
+      
+      if (error) {
+        console.error('Error fetching properties:', error);
+        return [];
+      }
+      
+      return data || [];
     }
-  ];
+  );
+
+  // Transform database properties to component format
+  const allProperties: Property[] = (dbProperties || []).map(prop => ({
+    id: prop.id,
+    lat: Number(prop.latitude) || 41.2995,
+    lng: Number(prop.longitude) || 69.2401,
+    price: Number(prop.price) || 0,
+    district: extractDistrict(prop.location || ''),
+    type: prop.property_type || 'apartment',
+    bedrooms: Number(prop.bedrooms) || 1,
+    bathrooms: Number(prop.bathrooms) || 1,
+    area: Number(prop.area) || 50,
+    isHalal: prop.is_halal_financed || false,
+    title: prop.title || 'Property',
+    description: prop.description || ''
+  }));
+
+  // Helper function to extract district from location
+  function extractDistrict(location: string): string {
+    const districts = ['Chilonzor', 'Yunusobod', 'Shaykhantahur', 'Mirzo-Ulugbek', 'Yakkasaray', 'Mirobod', 'Bektemir'];
+    const foundDistrict = districts.find(district => 
+      location.toLowerCase().includes(district.toLowerCase())
+    );
+    return foundDistrict || 'Other';
+  }
 
   // Apply filters
   useEffect(() => {
@@ -275,6 +248,9 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
                     <SelectItem value="Shaykhantahur">Shaykhantahur</SelectItem>
                     <SelectItem value="Mirzo-Ulugbek">Mirzo-Ulugbek</SelectItem>
                     <SelectItem value="Yakkasaray">Yakkasaray</SelectItem>
+                    <SelectItem value="Mirobod">Mirobod</SelectItem>
+                    <SelectItem value="Bektemir">Bektemir</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -332,11 +308,13 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
             <Card className="bg-gradient-card border-0 shadow-warm">
               <CardContent className="p-6">
                 <div className="relative rounded-lg h-96 overflow-hidden">
-                  {!mapLoaded ? (
+                  {!mapLoaded || isLoading ? (
                     <div className="absolute inset-0 bg-muted/20 flex items-center justify-center">
                       <div className="text-center">
                         <MapPin className="h-12 w-12 text-primary mx-auto mb-2 animate-pulse" />
-                        <p className="text-muted-foreground font-medium">Loading Yandex Maps...</p>
+                        <p className="text-muted-foreground font-medium">
+                          {isLoading ? 'Loading properties...' : 'Loading Yandex Maps...'}
+                        </p>
                       </div>
                     </div>
                   ) : (

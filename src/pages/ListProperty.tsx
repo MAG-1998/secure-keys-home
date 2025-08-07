@@ -14,6 +14,7 @@ import { Footer } from "@/components/Footer";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import LocationPicker from "@/components/LocationPicker";
 import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail } from "lucide-react";
 const ListProperty = () => {
   const {
@@ -34,15 +35,20 @@ const ListProperty = () => {
     customBathrooms: "",
     area: "",
     description: "",
+    // Location
+    latitude: null as number | null,
+    longitude: null as number | null,
     // Documents
     documents: [] as File[],
     photos: [] as File[],
     // Visit Hours
     visitHours: [] as string[],
     // Additional Services
-    virtualTour: false
+    virtualTour: false,
+    // Halal Financing
+    halalFinancingRequested: false
   });
-  const totalSteps = 5;
+  const totalSteps = 6;
   
   // Calculate total amount based on selected features
   const calculateTotalAmount = () => {
@@ -52,7 +58,7 @@ const ListProperty = () => {
   const nextStep = () => {
     if (currentStep < totalSteps) {
       // Skip payment step if no paid features are selected
-      if (currentStep === 3 && calculateTotalAmount() === 0) {
+      if (currentStep === 4 && calculateTotalAmount() === 0) {
         setCurrentStep(currentStep + 2);
       } else {
         setCurrentStep(currentStep + 1);
@@ -89,7 +95,7 @@ const ListProperty = () => {
       const bathroomCount = formData.bathrooms === "custom" ? 
         parseInt(formData.customBathrooms) : parseInt(formData.bathrooms);
 
-      const { error } = await supabase
+      const { data: property, error } = await supabase
         .from('properties')
         .insert({
           user_id: user.user.id,
@@ -103,15 +109,37 @@ const ListProperty = () => {
           description: formData.description,
           visit_hours: formData.visitHours,
           virtual_tour: formData.virtualTour,
+          latitude: formData.latitude,
+          longitude: formData.longitude,
+          halal_financing_requested: formData.halalFinancingRequested,
           status: 'pending'
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Submit halal financing request if requested
+      if (formData.halalFinancingRequested && property) {
+        const { error: halalError } = await supabase
+          .from('halal_financing_requests')
+          .insert({
+            property_id: property.id,
+            user_id: user.user.id,
+            request_notes: 'Halal financing requested during property listing'
+          });
+        
+        if (halalError) {
+          console.error('Error submitting halal financing request:', halalError);
+        }
+      }
 
       setApplicationSubmitted(true);
       toast({
         title: "Success",
-        description: "Your property application has been submitted for review",
+        description: formData.halalFinancingRequested 
+          ? "Your property application and halal financing request have been submitted for review"
+          : "Your property application has been submitted for review",
       });
     } catch (error) {
       console.error('Error submitting application:', error);
@@ -248,6 +276,19 @@ const ListProperty = () => {
             </CardContent>
           </Card>;
       case 2:
+        return <LocationPicker 
+          onLocationSelect={(lat, lng, address) => {
+            setFormData(prev => ({
+              ...prev,
+              latitude: lat,
+              longitude: lng,
+              address: address || prev.address
+            }));
+          }}
+          selectedLat={formData.latitude || undefined}
+          selectedLng={formData.longitude || undefined}
+        />;
+      case 3:
         return <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -278,7 +319,7 @@ const ListProperty = () => {
               </div>
             </CardContent>
           </Card>;
-      case 3:
+      case 4:
         return <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -325,7 +366,7 @@ const ListProperty = () => {
                 </div>
               </div>
               
-                <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
+              <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
                 <div className="flex items-start gap-3">
                   <Checkbox 
                     id="virtualTour" 
@@ -341,9 +382,26 @@ const ListProperty = () => {
                   </div>
                 </div>
               </div>
+
+              <div className="bg-green-50 dark:bg-green-950/20 p-4 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Checkbox 
+                    id="halalFinancing" 
+                    checked={formData.halalFinancingRequested}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, halalFinancingRequested: checked as boolean }))}
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor="halalFinancing" className="font-semibold text-sm text-green-900 dark:text-green-100 cursor-pointer">Halal Financing Available</Label>
+                    <p className="text-sm text-green-700 dark:text-green-200 mt-1">
+                      Request to make your property available for Sharia-compliant financing. 
+                      Our Islamic finance team will contact you within 1 week to discuss options.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>;
-      case 4:
+      case 5:
         return <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -379,7 +437,7 @@ const ListProperty = () => {
               />
             </CardContent>
           </Card>;
-      case 5:
+      case 6:
         return <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -404,6 +462,18 @@ const ListProperty = () => {
                     <span className="text-muted-foreground">Price:</span>
                     <span>{formData.price ? `$${formData.price}` : "Not specified"}</span>
                   </div>
+                  {formData.latitude && formData.longitude && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Location:</span>
+                      <span>Coordinates set ✓</span>
+                    </div>
+                  )}
+                  {formData.halalFinancingRequested && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Halal Financing:</span>
+                      <span className="text-green-600">Requested ✓</span>
+                    </div>
+                  )}
                 </div>
               </div>
               
