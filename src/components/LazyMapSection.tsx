@@ -1,8 +1,8 @@
 import { lazy, Suspense, memo } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 
-// Use the lightweight SimpleMapSection instead of heavy Yandex Maps
-const SimpleMapSection = lazy(() => import('./SimpleMapSection').then(module => ({ default: module.SimpleMapSection })))
+// Use the interactive Mapbox map instead of simple placeholder
+const InteractiveMap = lazy(() => import('./InteractiveMap'))
 
 const MapLoadingFallback = memo(() => (
   <Card>
@@ -29,7 +29,7 @@ interface LazyMapSectionProps {
 const LazyMapSection = memo(({ t }: LazyMapSectionProps) => {
   return (
     <Suspense fallback={<MapLoadingFallback />}>
-      <SimpleMapSection t={t} />
+      <InteractiveMap t={t} />
     </Suspense>
   )
 })
