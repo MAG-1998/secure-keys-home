@@ -66,6 +66,15 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   useEffect(() => {
     let mounted = true;
     
+    // Emergency timeout to prevent infinite loading (10 seconds max)
+    const emergencyTimeout = setTimeout(() => {
+      if (mounted) {
+        console.warn('Emergency timeout: forcing auth loading to complete');
+        setAuthLoading(false);
+        setRoleLoading(false);
+      }
+    }, 10000);
+
     // Get initial session
     const getInitialSession = async () => {
       try {
@@ -78,7 +87,24 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setAuthLoading(false);
 
         if (session?.user) {
-          await fetchUserRole(session.user.id);
+          // Add timeout for role fetching
+          const roleTimeout = setTimeout(() => {
+            if (mounted) {
+              console.warn('Role fetch timeout: defaulting to user role');
+              setRole('user');
+              setRoleLoading(false);
+            }
+          }, 5000);
+          
+          try {
+            await fetchUserRole(session.user.id);
+            clearTimeout(roleTimeout);
+          } catch (error) {
+            clearTimeout(roleTimeout);
+            console.error('Role fetch failed:', error);
+            setRole('user');
+            setRoleLoading(false);
+          }
         } else {
           setRole('user');
           setRoleLoading(false);
@@ -88,6 +114,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         if (mounted) {
           setAuthLoading(false);
           setRoleLoading(false);
+          setRole('user');
         }
       }
     };
@@ -105,7 +132,24 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setAuthLoading(false);
 
         if (session?.user) {
-          await fetchUserRole(session.user.id);
+          // Add timeout for role fetching in auth state change
+          const roleTimeout = setTimeout(() => {
+            if (mounted) {
+              console.warn('Role fetch timeout in auth change: defaulting to user role');
+              setRole('user');
+              setRoleLoading(false);
+            }
+          }, 5000);
+          
+          try {
+            await fetchUserRole(session.user.id);
+            clearTimeout(roleTimeout);
+          } catch (error) {
+            clearTimeout(roleTimeout);
+            console.error('Role fetch failed in auth change:', error);
+            setRole('user');
+            setRoleLoading(false);
+          }
         } else {
           setRole('user');
           setRoleLoading(false);
@@ -116,6 +160,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     return () => {
       mounted = false;
       subscription.unsubscribe();
+      clearTimeout(emergencyTimeout);
     };
   }, []);
 

@@ -10,47 +10,67 @@ export function useRoutePreloader() {
   useEffect(() => {
     if (!user?.id) return
 
-    // Preload commonly accessed data
+    // Non-blocking preload with error handling
     const preloadData = async () => {
-      // Preload user counts for dashboard
-      queryClient.prefetchQuery({
-        queryKey: ['user-counts', user.id],
-        queryFn: async () => {
-          const [savedResult, listedResult, requestsResult] = await Promise.all([
-            supabase.from('saved_properties').select('id', { count: 'exact' }).eq('user_id', user.id),
-            supabase.from('properties').select('id', { count: 'exact' }).eq('user_id', user.id),
-            supabase.from('property_visits').select('id', { count: 'exact' }).eq('visitor_id', user.id)
-          ])
+      try {
+        // Preload user counts for dashboard
+        queryClient.prefetchQuery({
+          queryKey: ['user-counts', user.id],
+          queryFn: async () => {
+            try {
+              const [savedResult, listedResult, requestsResult] = await Promise.all([
+                supabase.from('saved_properties').select('id', { count: 'exact' }).eq('user_id', user.id),
+                supabase.from('properties').select('id', { count: 'exact' }).eq('user_id', user.id),
+                supabase.from('property_visits').select('id', { count: 'exact' }).eq('visitor_id', user.id)
+              ])
 
-          return {
-            saved: savedResult.count || 0,
-            listed: listedResult.count || 0,
-            requests: requestsResult.count || 0
-          }
-        },
-        staleTime: 2 * 60 * 1000, // 2 minutes
-      })
+              return {
+                saved: savedResult.count || 0,
+                listed: listedResult.count || 0,
+                requests: requestsResult.count || 0
+              }
+            } catch (error) {
+              console.warn('Failed to preload user counts:', error);
+              return { saved: 0, listed: 0, requests: 0 };
+            }
+          },
+          staleTime: 2 * 60 * 1000, // 2 minutes
+        })
 
-      // Preload user properties
-      queryClient.prefetchQuery({
-        queryKey: ['user-properties', user.id],
-        queryFn: async () => {
-          const { data, error } = await supabase
-            .from('properties')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(10) // Only preload first 10
-          
-          if (error) throw error
-          return data || []
-        },
-        staleTime: 5 * 60 * 1000, // 5 minutes
-      })
+        // Preload user properties with timeout
+        const preloadTimeout = setTimeout(() => {
+          console.warn('Preload timeout - continuing without preloaded data');
+        }, 3000);
+
+        queryClient.prefetchQuery({
+          queryKey: ['user-properties', user.id],
+          queryFn: async () => {
+            try {
+              const { data, error } = await supabase
+                .from('properties')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false })
+                .limit(5) // Reduced to 5 for faster loading
+              
+              if (error) throw error
+              clearTimeout(preloadTimeout);
+              return data || []
+            } catch (error) {
+              clearTimeout(preloadTimeout);
+              console.warn('Failed to preload user properties:', error);
+              return [];
+            }
+          },
+          staleTime: 5 * 60 * 1000, // 5 minutes
+        })
+      } catch (error) {
+        console.warn('Route preloader error:', error);
+      }
     }
 
-    // Small delay to not block initial render
-    const timeoutId = setTimeout(preloadData, 100)
+    // Delay to not block initial render
+    const timeoutId = setTimeout(preloadData, 500)
     
     return () => clearTimeout(timeoutId)
   }, [user?.id, queryClient])
