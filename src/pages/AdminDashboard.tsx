@@ -55,8 +55,7 @@ export default function AdminDashboard() {
   const fetchAllData = async () => {
     await Promise.all([
       fetchUsers(),
-      fetchProperties(), 
-      fetchApplications()
+      fetchProperties()
     ]);
     setLoading(false);
   };
@@ -84,7 +83,7 @@ export default function AdminDashboard() {
 
   const fetchProperties = async () => {
     try {
-      // Fetch all properties with owner information
+      // Fetch all properties (including applications which are now unified)
       const { data: propertiesData, error: propertiesError } = await supabase
         .from('properties')
         .select('*')
@@ -108,8 +107,18 @@ export default function AdminDashboard() {
         })
       );
 
-      setProperties(propertiesWithOwners);
-      console.log('Fetched properties with owners:', propertiesWithOwners);
+      // Separate properties and applications based on status
+      const activeProperties = propertiesWithOwners.filter(p => 
+        ['active', 'suspended'].includes(p.status)
+      );
+      const applicationData = propertiesWithOwners.filter(p => 
+        ['pending', 'approved', 'rejected'].includes(p.status)
+      );
+
+      setProperties(activeProperties);
+      setApplications(applicationData);
+      console.log('Fetched properties:', activeProperties);
+      console.log('Fetched applications:', applicationData);
     } catch (error) {
       console.error('Error fetching properties:', error);
       toast({
@@ -120,39 +129,27 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchApplications = async () => {
+  const handleApplicationDelete = async (applicationId: string) => {
     try {
-      // Fetch all property applications
-      const { data: applicationsData, error: applicationsError } = await supabase
-        .from('property_applications')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { error } = await supabase
+        .from('properties')
+        .delete()
+        .eq('id', applicationId);
 
-      if (applicationsError) throw applicationsError;
+      if (error) throw error;
 
-      // Fetch profiles for each application
-      const applicationsWithProfiles = await Promise.all(
-        (applicationsData || []).map(async (application) => {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('full_name, email')
-            .eq('user_id', application.user_id)
-            .single();
-
-          return {
-            ...application,
-            profiles: profileData
-          };
-        })
-      );
-
-      setApplications(applicationsWithProfiles);
-      console.log('Fetched applications with profiles:', applicationsWithProfiles);
-    } catch (error) {
-      console.error('Error fetching applications:', error);
       toast({
-        title: "Error", 
-        description: "Failed to fetch property applications",
+        title: "Success", 
+        description: "Application deleted successfully",
+      });
+
+      // Refresh data
+      await fetchProperties();
+    } catch (error) {
+      console.error('Error deleting application:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete application",
         variant: "destructive",
       });
     }
@@ -261,9 +258,9 @@ export default function AdminDashboard() {
       
       // Update application status
       const { error } = await supabase
-        .from('property_applications')
+        .from('properties')
         .update({ 
-          status,
+          status: status === 'approved' ? 'active' : status,
           reviewed_at: new Date().toISOString(),
           reviewed_by: (await supabase.auth.getUser()).data.user?.id
         })
@@ -274,28 +271,13 @@ export default function AdminDashboard() {
         throw error;
       }
 
-      // If approved, create property listing using RPC function
-      if (status === 'approved') {
-        const { data: propertyId, error: rpcError } = await supabase
-          .rpc('create_property_from_application', {
-            application_id: applicationId
-          });
-
-        if (rpcError) {
-          console.error('Error creating property:', rpcError);
-          throw rpcError;
-        }
-
-        console.log('Property created successfully with ID:', propertyId);
-      }
-
       toast({
         title: "Success",
         description: `Application ${status} successfully`,
       });
 
       // Refresh all data while maintaining current view
-      await fetchApplications();
+      await fetchProperties();
     } catch (error) {
       console.error('Error handling application:', error);
       toast({
@@ -537,7 +519,7 @@ export default function AdminDashboard() {
                             {application.status}
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground">{application.address}</p>
+                        <p className="text-sm text-muted-foreground">{application.location}</p>
                         <p className="text-sm">Price: ${application.price?.toLocaleString()}</p>
                         <p className="text-sm">Applicant: {application.profiles?.full_name} ({application.profiles?.email})</p>
                         <p className="text-sm">Bedrooms: {application.bedrooms} | Bathrooms: {application.bathrooms}</p>
@@ -563,6 +545,13 @@ export default function AdminDashboard() {
                               onClick={() => handleApplicationAction(application.id, 'rejected')}
                             >
                               Reject
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleApplicationDelete(application.id)}
+                            >
+                              Delete
                             </Button>
                           </>
                         )}

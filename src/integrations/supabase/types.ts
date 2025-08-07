@@ -96,16 +96,23 @@ export type Database = {
           bedrooms: number | null
           created_at: string
           description: string | null
+          documents: Json | null
           id: string
           image_url: string | null
           is_halal_financed: boolean | null
           is_verified: boolean | null
           location: string
+          moderator_notes: string | null
+          photos: Json | null
           price: number
+          property_type: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           status: string | null
           title: string
           updated_at: string
           user_id: string
+          virtual_tour: boolean | null
           visit_hours: Json | null
         }
         Insert: {
@@ -114,16 +121,23 @@ export type Database = {
           bedrooms?: number | null
           created_at?: string
           description?: string | null
+          documents?: Json | null
           id?: string
           image_url?: string | null
           is_halal_financed?: boolean | null
           is_verified?: boolean | null
           location: string
+          moderator_notes?: string | null
+          photos?: Json | null
           price: number
+          property_type?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: string | null
           title: string
           updated_at?: string
           user_id: string
+          virtual_tour?: boolean | null
           visit_hours?: Json | null
         }
         Update: {
@@ -132,16 +146,23 @@ export type Database = {
           bedrooms?: number | null
           created_at?: string
           description?: string | null
+          documents?: Json | null
           id?: string
           image_url?: string | null
           is_halal_financed?: boolean | null
           is_verified?: boolean | null
           location?: string
+          moderator_notes?: string | null
+          photos?: Json | null
           price?: number
+          property_type?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: string | null
           title?: string
           updated_at?: string
           user_id?: string
+          virtual_tour?: boolean | null
           visit_hours?: Json | null
         }
         Relationships: [
@@ -153,72 +174,6 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
-      }
-      property_applications: {
-        Row: {
-          address: string
-          area: number | null
-          bathrooms: number | null
-          bedrooms: number | null
-          created_at: string
-          description: string | null
-          documents: Json | null
-          id: string
-          moderator_notes: string | null
-          photos: Json | null
-          price: number
-          property_type: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: string | null
-          updated_at: string
-          user_id: string
-          virtual_tour: boolean | null
-          visit_hours: Json | null
-        }
-        Insert: {
-          address: string
-          area?: number | null
-          bathrooms?: number | null
-          bedrooms?: number | null
-          created_at?: string
-          description?: string | null
-          documents?: Json | null
-          id?: string
-          moderator_notes?: string | null
-          photos?: Json | null
-          price: number
-          property_type: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string | null
-          updated_at?: string
-          user_id: string
-          virtual_tour?: boolean | null
-          visit_hours?: Json | null
-        }
-        Update: {
-          address?: string
-          area?: number | null
-          bathrooms?: number | null
-          bedrooms?: number | null
-          created_at?: string
-          description?: string | null
-          documents?: Json | null
-          id?: string
-          moderator_notes?: string | null
-          photos?: Json | null
-          price?: number
-          property_type?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string | null
-          updated_at?: string
-          user_id?: string
-          virtual_tour?: boolean | null
-          visit_hours?: Json | null
-        }
-        Relationships: []
       }
       property_views: {
         Row: {

@@ -55,7 +55,7 @@ export const AuthenticatedView = ({
 
       // Fetch active requests count (pending applications + active property visits)
       const { count: applicationsCount } = await supabase
-        .from('property_applications')
+        .from('properties')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id)
         .eq('status', 'pending');

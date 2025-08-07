@@ -49,9 +49,10 @@ const MyProperties = () => {
       if (!user.user) return
 
       const { data, error } = await supabase
-        .from('property_applications')
+        .from('properties')
         .select('*')
         .eq('user_id', user.user.id)
+        .in('status', ['pending', 'approved', 'rejected'])
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -59,8 +60,8 @@ const MyProperties = () => {
       // Add pending applications to properties list for display
       const pendingApplications = data?.filter(app => app.status === 'pending').map(app => ({
         id: app.id,
-        title: `${app.property_type} - ${app.address}`,
-        location: app.address,
+        title: app.title || `${app.property_type} - ${app.location}`,
+        location: app.location,
         price: app.price,
         bedrooms: app.bedrooms,
         bathrooms: app.bathrooms,
@@ -69,9 +70,9 @@ const MyProperties = () => {
         visit_hours: Array.isArray(app.visit_hours) ? app.visit_hours : [],
         status: 'pending',
         created_at: app.created_at,
-        image_url: null,
-        is_verified: false,
-        is_halal_financed: false,
+        image_url: app.image_url,
+        is_verified: app.is_verified || false,
+        is_halal_financed: app.is_halal_financed || false,
         views_count: 0,
         visit_requests_count: 0,
         upcoming_visits: []

@@ -54,8 +54,9 @@ export default function ModeratorDashboard() {
     try {
       // First fetch property applications
       const { data: applicationsData, error: applicationsError } = await supabase
-        .from('property_applications')
+        .from('properties')
         .select('*')
+        .in('status', ['pending', 'approved', 'rejected'])
         .order('created_at', { ascending: false });
 
       if (applicationsError) throw applicationsError;
@@ -71,6 +72,7 @@ export default function ModeratorDashboard() {
 
           return {
             ...application,
+            address: application.location, // Map location to address for compatibility
             profiles: profileData
           };
         })
@@ -113,9 +115,9 @@ export default function ModeratorDashboard() {
     try {
       // Update application status
       const { error: appError } = await supabase
-        .from('property_applications')
+        .from('properties')
         .update({
-          status,
+          status: status === 'approved' ? 'active' : status,
           moderator_notes: moderatorNotes[applicationId] || '',
           reviewed_at: new Date().toISOString(),
           reviewed_by: (await supabase.auth.getUser()).data.user?.id
@@ -123,29 +125,6 @@ export default function ModeratorDashboard() {
         .eq('id', applicationId);
 
       if (appError) throw appError;
-
-      // If approved, create property listing
-      if (status === 'approved') {
-        const application = applications.find(app => app.id === applicationId);
-        if (application) {
-          const { error: propError } = await supabase
-            .from('properties')
-            .insert({
-              user_id: application.user_id,
-              title: `${application.property_type} in ${application.address}`,
-              location: application.address,
-              price: application.price,
-              bedrooms: application.bedrooms,
-              bathrooms: application.bathrooms,
-              area: application.area,
-              description: application.description,
-              visit_hours: application.visit_hours,
-              status: 'active'
-            });
-
-          if (propError) throw propError;
-        }
-      }
 
       toast({
         title: "Success",

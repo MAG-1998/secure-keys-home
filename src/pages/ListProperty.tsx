@@ -90,11 +90,12 @@ const ListProperty = () => {
         parseInt(formData.customBathrooms) : parseInt(formData.bathrooms);
 
       const { error } = await supabase
-        .from('property_applications')
+        .from('properties')
         .insert({
           user_id: user.user.id,
+          title: `${formData.propertyType} in ${formData.address}`,
+          location: formData.address,
           property_type: formData.propertyType,
-          address: formData.address,
           price: parseFloat(formData.price),
           bedrooms: bedroomCount,
           bathrooms: bathroomCount,
