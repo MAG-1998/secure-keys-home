@@ -1,8 +1,8 @@
 import { lazy, Suspense, memo } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 
-// Use the interactive Mapbox map instead of simple placeholder
-const InteractiveMap = lazy(() => import('./InteractiveMap'))
+// Use the Yandex Maps implementation with filtering
+const YandexMap = lazy(() => import('./YandexMap'))
 
 const MapLoadingFallback = memo(() => (
   <Card>
@@ -29,7 +29,7 @@ interface LazyMapSectionProps {
 const LazyMapSection = memo(({ t }: LazyMapSectionProps) => {
   return (
     <Suspense fallback={<MapLoadingFallback />}>
-      <InteractiveMap t={t} />
+      <YandexMap t={t} />
     </Suspense>
   )
 })
