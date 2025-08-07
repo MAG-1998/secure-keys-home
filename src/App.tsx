@@ -4,23 +4,48 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
+import { lazy, Suspense } from "react";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
-import ListProperty from "./pages/ListProperty";
-import MyProperties from "./pages/MyProperties";
-import SavedProperties from "./pages/SavedProperties";
-import ModeratorDashboard from "./pages/ModeratorDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
-import PaymentSuccess from "./pages/PaymentSuccess";
-import PaymentCancelled from "./pages/PaymentCancelled";
-import Profile from "./pages/Profile";
-import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
-import RoleProtectedRoute from "./components/RoleProtectedRoute";
+import OptimizedRoute from "./components/OptimizedRoute";
 import { UserProvider } from "./contexts/UserContext";
+import { MagitLogo } from "./components/MagitLogo";
 
-const queryClient = new QueryClient();
+// Lazy load heavy components
+const ListProperty = lazy(() => import("./pages/ListProperty"));
+const MyProperties = lazy(() => import("./pages/MyProperties"));
+const SavedProperties = lazy(() => import("./pages/SavedProperties"));
+const ModeratorDashboard = lazy(() => import("./pages/ModeratorDashboard"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+const PaymentCancelled = lazy(() => import("./pages/PaymentCancelled"));
+const Profile = lazy(() => import("./pages/Profile"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Optimized QueryClient configuration
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (replaces cacheTime in v5)
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
+// Shared loading component
+const PageLoading = () => (
+  <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+    <div className="text-center">
+      <MagitLogo size="lg" />
+      <div className="animate-pulse">
+        <div className="h-4 bg-muted rounded w-24 mx-auto mt-4"></div>
+      </div>
+    </div>
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -31,47 +56,70 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/list-property" element={
-              <ProtectedRoute>
-                <ListProperty />
-              </ProtectedRoute>
-            } />
-            <Route path="/my-properties" element={
-              <ProtectedRoute>
-                <MyProperties />
-              </ProtectedRoute>
-            } />
-            <Route path="/saved-properties" element={
-              <ProtectedRoute>
-                <SavedProperties />
-              </ProtectedRoute>
-            } />
-            <Route path="/moderator" element={
-              <RoleProtectedRoute requiredRoles={['moderator', 'admin']}>
-                <ModeratorDashboard />
-              </RoleProtectedRoute>
-            } />
-            <Route path="/admin" element={
-              <RoleProtectedRoute requiredRoles={['admin']}>
-                <AdminDashboard />
-              </RoleProtectedRoute>
-            } />
-            <Route path="/payment-success" element={<PaymentSuccess />} />
-            <Route path="/payment-cancelled" element={<PaymentCancelled />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/dashboard" element={
+                <OptimizedRoute>
+                  <Dashboard />
+                </OptimizedRoute>
+              } />
+              <Route path="/profile" element={
+                <OptimizedRoute>
+                  <Suspense fallback={<PageLoading />}>
+                    <Profile />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/list-property" element={
+                <OptimizedRoute>
+                  <Suspense fallback={<PageLoading />}>
+                    <ListProperty />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/my-properties" element={
+                <OptimizedRoute>
+                  <Suspense fallback={<PageLoading />}>
+                    <MyProperties />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/saved-properties" element={
+                <OptimizedRoute>
+                  <Suspense fallback={<PageLoading />}>
+                    <SavedProperties />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/moderator" element={
+                <OptimizedRoute requiredRoles={['moderator', 'admin']}>
+                  <Suspense fallback={<PageLoading />}>
+                    <ModeratorDashboard />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/admin" element={
+                <OptimizedRoute requiredRoles={['admin']}>
+                  <Suspense fallback={<PageLoading />}>
+                    <AdminDashboard />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/payment-success" element={
+                <Suspense fallback={<PageLoading />}>
+                  <PaymentSuccess />
+                </Suspense>
+              } />
+              <Route path="/payment-cancelled" element={
+                <Suspense fallback={<PageLoading />}>
+                  <PaymentCancelled />
+                </Suspense>
+              } />
+              <Route path="*" element={
+                <Suspense fallback={<PageLoading />}>
+                  <NotFound />
+                </Suspense>
+              } />
             </Routes>
           </BrowserRouter>
         </UserProvider>

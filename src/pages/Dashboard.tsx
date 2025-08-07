@@ -10,12 +10,15 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useUser } from "@/contexts/UserContext";
+import { useHoverPreloader } from "@/hooks/useRoutePreloader";
 import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search, Menu } from "lucide-react";
+import { memo } from "react";
 
-const Dashboard = () => {
+const Dashboard = memo(() => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { user, role, loading } = useUser();
+  const { preloadRoute } = useHoverPreloader();
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -205,6 +208,8 @@ const Dashboard = () => {
       </div>
     </SidebarProvider>
   );
-};
+});
+
+Dashboard.displayName = "Dashboard";
 
 export default Dashboard;

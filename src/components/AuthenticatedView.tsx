@@ -1,13 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapSection } from "@/components/MapSection";
 import { SearchSection } from "@/components/SearchSection";
+import LazyMapSection from "@/components/LazyMapSection";
 import { useNavigate } from "react-router-dom";
 import { useScroll } from "@/hooks/use-scroll";
 import { CheckCircle, Home, Plus } from "lucide-react";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { memo } from "react";
+import { useUserCounts } from "@/hooks/useOptimizedQuery";
 import type { User } from "@supabase/supabase-js";
 interface AuthenticatedViewProps {
   user: User;
@@ -15,7 +15,7 @@ interface AuthenticatedViewProps {
   setIsHalalMode: (value: boolean) => void;
   t: (key: string) => string;
 }
-export const AuthenticatedView = ({
+export const AuthenticatedView = memo(({
   user,
   isHalalMode,
   setIsHalalMode,
@@ -27,54 +27,7 @@ export const AuthenticatedView = ({
     isScrolled
   } = useScroll();
 
-  const [counts, setCounts] = useState({
-    savedProperties: 0,
-    listedProperties: 0,
-    activeRequests: 0
-  });
-
-  useEffect(() => {
-    fetchUserCounts();
-  }, [user]);
-
-  const fetchUserCounts = async () => {
-    if (!user?.id) return;
-
-    try {
-      // Fetch saved properties count
-      const { count: savedCount } = await supabase
-        .from('saved_properties')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
-
-      // Fetch listed properties count
-      const { count: listedCount } = await supabase
-        .from('properties')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
-
-      // Fetch active requests count (pending applications + active property visits)
-      const { count: applicationsCount } = await supabase
-        .from('properties')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('status', 'pending');
-
-      const { count: visitsCount } = await supabase
-        .from('property_visits')
-        .select('*', { count: 'exact', head: true })
-        .eq('visitor_id', user.id)
-        .in('status', ['pending', 'confirmed']);
-
-      setCounts({
-        savedProperties: savedCount || 0,
-        listedProperties: listedCount || 0,
-        activeRequests: (applicationsCount || 0) + (visitsCount || 0)
-      });
-    } catch (error) {
-      console.error('Error fetching user counts:', error);
-    }
-  };
+  const { data: counts = { saved: 0, listed: 0, requests: 0 } } = useUserCounts(user?.id);
   const getUserDisplayName = () => {
     return user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
   };
@@ -136,7 +89,7 @@ export const AuthenticatedView = ({
 
       {/* Interactive Map Section */}
       <div id="map">
-        <MapSection isHalalMode={isHalalMode} t={t} />
+        <LazyMapSection t={t} />
       </div>
 
       {/* Quick Stats for Authenticated Users */}
@@ -149,14 +102,14 @@ export const AuthenticatedView = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="bg-background/50 border-border/50">
                 <CardContent className="p-6 text-center">
-                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.savedProperties}</div>
+                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.saved}</div>
                   <div className="text-muted-foreground">Saved Properties</div>
                   <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/saved-properties')}>View Saved Properties</Button>
                 </CardContent>
               </Card>
               <Card className="bg-background/50 border-border/50">
                 <CardContent className="p-6 text-center">
-                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.listedProperties}</div>
+                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.listed}</div>
                   <div className="text-muted-foreground">Properties Listed</div>
                   <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-properties')}>
                     View Listed Properties
@@ -165,7 +118,7 @@ export const AuthenticatedView = ({
               </Card>
               <Card className="bg-background/50 border-border/50">
                 <CardContent className="p-6 text-center">
-                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.activeRequests}</div>
+                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.requests}</div>
                   <div className="text-muted-foreground">Active Requests</div>
                   <div className="text-xs text-muted-foreground/70 mt-1">
                     Property listings, visits & verifications
@@ -180,4 +133,6 @@ export const AuthenticatedView = ({
         </div>
       </section>
     </>;
-};
+});
+
+AuthenticatedView.displayName = "AuthenticatedView";
