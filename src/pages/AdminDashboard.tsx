@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { Shield, Users, Home, Settings, UserCheck, UserX, LogOut } from "lucide-react";
+import { Shield, Users, Home, Settings, UserCheck, UserX, LogOut, Banknote } from "lucide-react";
 import SecurityAuditPanel from "@/components/SecurityAuditPanel";
 
 interface UserWithRole {
@@ -28,6 +28,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
   const [applications, setApplications] = useState<any[]>([]);
+  const [halalRequests, setHalalRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -64,6 +65,9 @@ export default function AdminDashboard() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'properties' }, () => {
         fetchProperties();
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'halal_financing_requests' }, () => {
+        fetchHalalRequests();
+      })
       .subscribe();
 
     return () => {
@@ -74,7 +78,8 @@ export default function AdminDashboard() {
   const fetchAllData = async () => {
     await Promise.all([
       fetchUsers(),
-      fetchProperties()
+      fetchProperties(),
+      fetchHalalRequests()
     ]);
     setLoading(false);
   };
@@ -143,6 +148,54 @@ export default function AdminDashboard() {
       toast({
         title: "Error",
         description: "Failed to fetch properties",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // New: Fetch Halal Financing Requests
+  const fetchHalalRequests = async () => {
+    try {
+      const { data: requests, error } = await supabase
+        .from('halal_financing_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const propertyIds = (requests || []).map((r: any) => r.property_id).filter(Boolean);
+      const userIds = (requests || []).map((r: any) => r.user_id).filter(Boolean);
+
+      const propertiesById: Record<string, any> = {};
+      if (propertyIds.length > 0) {
+        const { data: propsData } = await supabase
+          .from('properties')
+          .select('id, title, is_halal_financed, halal_financing_status, user_id')
+          .in('id', propertyIds);
+        (propsData || []).forEach((p: any) => { propertiesById[p.id] = p; });
+      }
+
+      const profilesByUserId: Record<string, any> = {};
+      if (userIds.length > 0) {
+        const { data: profsData } = await supabase
+          .from('profiles')
+          .select('user_id, full_name, email')
+          .in('user_id', userIds);
+        (profsData || []).forEach((pr: any) => { profilesByUserId[pr.user_id] = pr; });
+      }
+
+      const merged = (requests || []).map((r: any) => ({
+        ...r,
+        property: propertiesById[r.property_id],
+        requester: profilesByUserId[r.user_id]
+      }));
+
+      setHalalRequests(merged);
+    } catch (error) {
+      console.error('Error fetching halal requests:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch halal financing requests",
         variant: "destructive",
       });
     }
@@ -408,6 +461,15 @@ export default function AdminDashboard() {
     }
   };
 
+  const getHalalBadge = (property: any) => {
+    const available = property?.is_halal_financed || property?.halal_financing_status === 'available';
+    return available ? (
+      <Badge variant="default">Halal Available</Badge>
+    ) : (
+      <Badge variant="destructive">Halal Not Available</Badge>
+    );
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
@@ -435,11 +497,11 @@ export default function AdminDashboard() {
             <main className="container mx-auto px-4 py-8">
               <div className="mb-8">
                 <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-                <p className="text-muted-foreground">Manage users, roles, and system settings</p>
+                <p className="text-muted-foreground">Manage users, properties, halal financing, and security</p>
               </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
             Users & Roles ({users.length})
@@ -447,6 +509,10 @@ export default function AdminDashboard() {
           <TabsTrigger value="properties" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
             Properties ({properties.length})
+          </TabsTrigger>
+          <TabsTrigger value="halal" className="flex items-center gap-2">
+            <Banknote className="w-4 h-4" />
+            Halal Financing ({halalRequests.length})
           </TabsTrigger>
           <TabsTrigger value="requests" className="flex items-center gap-2">
             <Settings className="w-4 h-4" />
@@ -534,6 +600,7 @@ export default function AdminDashboard() {
                       <p className="text-sm">Price: ${property.price?.toLocaleString()}</p>
                       <p className="text-sm">Owner: {property.profiles?.full_name} ({property.profiles?.email})</p>
                       <p className="text-sm">Listed: {new Date(property.created_at).toLocaleDateString()}</p>
+                      <div className="mt-2">{getHalalBadge(property)}</div>
                     </div>
                      <div className="flex gap-2">
                       {property.status === 'active' ? (
@@ -560,6 +627,46 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="halal" className="space-y-6">
+          {halalRequests.length === 0 ? (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <p className="text-muted-foreground">No halal financing requests found.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-6">
+              {halalRequests.map((req) => (
+                <Card key={req.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="font-semibold">{req.property?.title || 'Property'}</h3>
+                          <Badge variant={req.status === 'pending' ? 'secondary' : req.status === 'approved' ? 'default' : 'destructive'}>
+                            {req.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">Request by: {req.requester?.full_name} ({req.requester?.email})</p>
+                        <p className="text-sm">Created: {new Date(req.created_at).toLocaleDateString()}</p>
+                        <div className="mt-2">
+                          {getHalalBadge(req.property)}
+                        </div>
+                        {req.request_notes && (
+                          <p className="text-sm mt-2"><strong>Notes:</strong> {req.request_notes}</p>
+                        )}
+                        {req.admin_notes && (
+                          <p className="text-sm mt-1"><strong>Admin Notes:</strong> {req.admin_notes}</p>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           )}
         </TabsContent>
