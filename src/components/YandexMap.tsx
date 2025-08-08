@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Filter, Search, Home, Bed, Bath } from "lucide-react";
+import { MapPin, Search, Home, Bed, Bath } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
 
@@ -40,28 +42,33 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [filters, setFilters] = useState({
     district: 'all',
-    priceRange: 'all',
+    minPrice: '',
+    maxPrice: '',
     bedrooms: 'all',
     halalOnly: false
   });
 
   // Fetch properties from database
   const { data: dbProperties, isLoading } = useOptimizedQuery(
-    ['properties', 'active'],
+    ['properties', 'map'],
     async () => {
       const { data, error } = await supabase
         .from('properties')
         .select('*')
-        .eq('status', 'active')
         .not('latitude', 'is', null)
         .not('longitude', 'is', null);
       
       if (error) {
         console.error('Error fetching properties:', error);
-        return [];
+        return [] as any[];
       }
       
       return data || [];
+    },
+    {
+      staleTime: 0,
+      refetchOnWindowFocus: true,
+      refetchOnMount: 'always',
     }
   );
 
@@ -98,9 +105,13 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
       filtered = filtered.filter(p => p.district === filters.district);
     }
 
-    if (filters.priceRange !== 'all') {
-      const [min, max] = filters.priceRange.split('-').map(Number);
-      filtered = filtered.filter(p => p.price >= min && (max ? p.price <= max : true));
+    const min = filters.minPrice ? Number(filters.minPrice) : undefined;
+    const max = filters.maxPrice ? Number(filters.maxPrice) : undefined;
+    if (min !== undefined) {
+      filtered = filtered.filter(p => p.price >= min);
+    }
+    if (max !== undefined) {
+      filtered = filtered.filter(p => p.price <= max);
     }
 
     if (filters.bedrooms !== 'all') {
@@ -165,38 +176,44 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
     // Clear existing markers
     map.current.geoObjects.removeAll();
 
+    // Minimalistic, theme-aware markers
+    const htmlLayout = window.ymaps.templateLayoutFactory.createClass(
+      '<div style="width:14px;height:14px;border-radius:9999px;background:$[properties.iconColor];box-shadow:0 2px 8px hsl(var(--foreground) / 0.15);border:1px solid hsl(var(--foreground) / 0.12)"></div>'
+    );
+
     // Add markers for filtered properties
     filteredProperties.forEach(property => {
+      const iconColor = property.isHalal ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))';
       const placemark = new window.ymaps.Placemark(
         [property.lat, property.lng],
         {
+          iconColor,
           balloonContentHeader: property.title,
           balloonContentBody: `
             <div style="padding: 10px; font-family: system-ui;">
-              <div style="font-size: 18px; font-weight: bold; color: #2563eb; margin-bottom: 8px;">
+              <div style="font-size: 18px; font-weight: bold; color: hsl(var(--primary)); margin-bottom: 8px;">
                 $${property.price.toLocaleString()}
               </div>
-              <div style="margin-bottom: 8px;">
+              <div style="margin-bottom: 8px; color: hsl(var(--muted-foreground));">
                 <strong>${property.district}</strong> • ${property.type}
               </div>
-              <div style="display: flex; gap: 12px; margin-bottom: 8px; font-size: 14px; color: #6b7280;">
+              <div style="display: flex; gap: 12px; margin-bottom: 8px; font-size: 14px; color: hsl(var(--muted-foreground));">
                 <span>🛏️ ${property.bedrooms} bed</span>
                 <span>🚿 ${property.bathrooms} bath</span>
                 <span>📐 ${property.area}m²</span>
               </div>
-              ${property.isHalal ? '<div style="background: #22c55e; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-bottom: 8px;">✅ Halal Financing</div>' : ''}
-              <div style="color: #6b7280; font-size: 14px;">
+              ${property.isHalal ? '<div style="background: hsl(var(--primary)); color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-bottom: 8px;">✅ Halal Financing</div>' : ''}
+              <div style="color: hsl(var(--muted-foreground)); font-size: 14px;">
                 ${property.description}
               </div>
-              <button style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin-top: 8px; cursor: pointer; font-size: 14px;">
-                View Details
-              </button>
             </div>
           `
         },
         {
-          preset: property.isHalal ? 'islands#greenIcon' : 'islands#blueIcon',
-          iconCaption: `$${property.price / 1000}k`
+          iconLayout: htmlLayout,
+          iconShape: { type: 'Circle', coordinates: [0, 0], radius: 8 },
+          iconOffset: [-7, -7],
+          zIndex: property.isHalal ? 650 : 600,
         }
       );
 
@@ -205,13 +222,18 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
 
     // Adjust map bounds to show all markers
     if (filteredProperties.length > 0) {
-      const bounds = filteredProperties.map(p => [p.lat, p.lng]);
       map.current.setBounds(map.current.geoObjects.getBounds(), {
         checkZoomRange: true,
         zoomMargin: 50
       });
     }
   };
+
+  const randomSample = React.useMemo(() => {
+    if (filteredProperties.length <= 3) return filteredProperties;
+    const arr = [...filteredProperties];
+    return arr.sort(() => 0.5 - Math.random()).slice(0, 3);
+  }, [filteredProperties]);
 
   return (
     <section className={`py-16 transition-colors duration-500 ${
@@ -256,19 +278,21 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Price Range</label>
-                <Select value={filters.priceRange} onValueChange={(value) => setFilters(prev => ({ ...prev, priceRange: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Any Price" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Any Price</SelectItem>
-                    <SelectItem value="0-40000">Under $40k</SelectItem>
-                    <SelectItem value="40000-60000">$40k - $60k</SelectItem>
-                    <SelectItem value="60000-80000">$60k - $80k</SelectItem>
-                    <SelectItem value="80000">Above $80k</SelectItem>
-                  </SelectContent>
-                </Select>
+                <label className="text-sm font-medium mb-2 block">Price (USD)</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Min"
+                    value={filters.minPrice}
+                    onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Max"
+                    value={filters.maxPrice}
+                    onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
+                  />
+                </div>
               </div>
 
               <div>
@@ -288,14 +312,14 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
               </div>
 
               <div className="flex items-end">
-                <Button 
-                  variant={filters.halalOnly ? "default" : "outline"} 
-                  onClick={() => setFilters(prev => ({ ...prev, halalOnly: !prev.halalOnly }))}
-                  className="w-full"
-                >
-                  <Filter className="h-4 w-4 mr-2" />
-                  {filters.halalOnly ? 'Halal Only ✓' : 'Halal Financing'}
-                </Button>
+                <div className="flex items-center space-x-2 w-full">
+                  <Checkbox
+                    id="halal-only"
+                    checked={filters.halalOnly}
+                    onCheckedChange={(checked) => setFilters(prev => ({ ...prev, halalOnly: Boolean(checked) }))}
+                  />
+                  <label htmlFor="halal-only" className="text-sm">Halal financing only</label>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -335,7 +359,7 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
                 </div>
                 
                 <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {filteredProperties.map(property => (
+                  {randomSample.map(property => (
                     <div key={property.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer">
                       <div className="flex items-start justify-between mb-2">
                         <div>
