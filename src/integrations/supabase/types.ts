@@ -17,8 +17,10 @@ export type Database = {
       halal_financing_requests: {
         Row: {
           admin_notes: string | null
+          attachments: Json
           created_at: string | null
           id: string
+          moderator_notes: string | null
           property_id: string
           request_notes: string | null
           reviewed_at: string | null
@@ -29,8 +31,10 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          attachments?: Json
           created_at?: string | null
           id?: string
+          moderator_notes?: string | null
           property_id: string
           request_notes?: string | null
           reviewed_at?: string | null
@@ -41,8 +45,10 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          attachments?: Json
           created_at?: string | null
           id?: string
+          moderator_notes?: string | null
           property_id?: string
           request_notes?: string | null
           reviewed_at?: string | null

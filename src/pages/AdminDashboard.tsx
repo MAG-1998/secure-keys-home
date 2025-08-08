@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,6 +30,7 @@ export default function AdminDashboard() {
   const [properties, setProperties] = useState<any[]>([]);
   const [applications, setApplications] = useState<any[]>([]);
   const [halalRequests, setHalalRequests] = useState<any[]>([]);
+  const [halalEdits, setHalalEdits] = useState<Record<string, { status?: string; admin_notes?: string }>>({});
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -662,6 +664,60 @@ export default function AdminDashboard() {
                         {req.admin_notes && (
                           <p className="text-sm mt-1"><strong>Admin Notes:</strong> {req.admin_notes}</p>
                         )}
+
+                        {/* Admin review controls */}
+                        <div className="mt-4 space-y-3 border-t pt-4">
+                          <div className="grid md:grid-cols-2 gap-3">
+                            <div>
+                              <label className="text-sm font-medium">Review Status</label>
+                              <Select
+                                value={halalEdits[req.id]?.status ?? req.status}
+                                onValueChange={(val) => setHalalEdits(prev => ({...prev, [req.id]: {...prev[req.id], status: val}}))}
+                              >
+                                <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="pending">Pending</SelectItem>
+                                  <SelectItem value="approved">Approved</SelectItem>
+                                  <SelectItem value="rejected">Rejected</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium">Admin Notes</label>
+                              <Textarea
+                                value={halalEdits[req.id]?.admin_notes ?? req.admin_notes ?? ''}
+                                onChange={(e) => setHalalEdits(prev => ({...prev, [req.id]: {...prev[req.id], admin_notes: e.target.value}}))}
+                                placeholder="Add notes for this request"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex justify-end">
+                            <Button
+                              onClick={async () => {
+                                const edit = halalEdits[req.id] || {};
+                                const reviewer = (await supabase.auth.getUser()).data.user?.id;
+                                const { error } = await supabase
+                                  .from('halal_financing_requests')
+                                  .update({
+                                    status: edit.status ?? req.status,
+                                    admin_notes: edit.admin_notes ?? req.admin_notes ?? '',
+                                    reviewed_by: reviewer,
+                                    reviewed_at: new Date().toISOString(),
+                                  })
+                                  .eq('id', req.id);
+                                if (error) {
+                                  toast({ title: 'Error', description: 'Failed to save review', variant: 'destructive' });
+                                } else {
+                                  toast({ title: 'Saved', description: 'Review saved successfully' });
+                                  setHalalEdits(prev => ({ ...prev, [req.id]: {} }));
+                                  fetchHalalRequests();
+                                }
+                              }}
+                            >
+                              Save Review
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
