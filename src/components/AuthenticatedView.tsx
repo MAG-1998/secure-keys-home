@@ -9,6 +9,7 @@ import { CheckCircle, Home, Plus } from "lucide-react";
 import { memo } from "react";
 import { useUserCounts } from "@/hooks/useOptimizedQuery";
 import type { User } from "@supabase/supabase-js";
+import { useTranslation } from "@/hooks/useTranslation";
 interface AuthenticatedViewProps {
   user: User;
   isHalalMode: boolean;
@@ -28,6 +29,7 @@ export const AuthenticatedView = memo(({
   } = useScroll();
 
   const { data: counts = { saved: 0, listed: 0, requests: 0 } } = useUserCounts(user?.id);
+  const { language } = useTranslation();
   const getUserDisplayName = () => {
     return user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
   };
@@ -89,7 +91,7 @@ export const AuthenticatedView = memo(({
 
       {/* Interactive Map Section */}
       <div id="map">
-        <LazyMapSection t={t} isHalalMode={isHalalMode} onHalalModeChange={setIsHalalMode} />
+        <LazyMapSection t={t} isHalalMode={isHalalMode} onHalalModeChange={setIsHalalMode} language={language} />
       </div>
 
       {/* Quick Stats for Authenticated Users */}
