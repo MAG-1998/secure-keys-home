@@ -46,7 +46,8 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, onHalalModeC
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
 const [mapLoaded, setMapLoaded] = useState(false);
-const priceContentLayoutRef = useRef<any>(null);
+const customIconLayoutRef = useRef<any>(null);
+const cssInjectedRef = useRef(false);
 const [filters, setFilters] = useState({
   district: 'all',
   minPrice: '',
@@ -181,13 +182,15 @@ useEffect(() => {
     };
   }, []);
 
-  // Prepare marker price content layout once
-  useEffect(() => {
-    if (!mapLoaded || !window.ymaps || priceContentLayoutRef.current) return;
-    priceContentLayoutRef.current = window.ymaps.templateLayoutFactory.createClass(
-      '<div style="transform: translateY(-8px); background: transparent !important; border: none !important; box-shadow: none !important; padding: 0; margin: 0; color: hsl(0 0% 0%); font-weight: 800; font-size: 12px; text-shadow: 0 1px 2px hsla(0 0% 100% / 0.7); pointer-events: none;">$[properties.iconContent]</div>'
-    );
-  }, [mapLoaded]);
+// Prepare transparent custom icon layout once
+useEffect(() => {
+  if (!mapLoaded || !window.ymaps || customIconLayoutRef.current) return;
+  customIconLayoutRef.current = window.ymaps.templateLayoutFactory.createClass(
+    '<div style="width:44px;height:60px;transform: translate(-22px,-60px); background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0; margin: 0;">' +
+    '<img src="$[properties.href]" alt="map pin" style="display:block;width:44px;height:60px;background: transparent !important;" />' +
+    '</div>'
+  );
+}, [mapLoaded]);
 
   // Initialize map
   useEffect(() => {
@@ -198,6 +201,28 @@ useEffect(() => {
       zoom: 11,
       controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
     });
+
+    // Inject transparent overrides for Yandex placemark containers
+    if (mapContainer.current) {
+      mapContainer.current.classList.add('ymaps-transparent-scope');
+      if (!cssInjectedRef.current) {
+        const styleEl = document.createElement('style');
+        styleEl.setAttribute('data-ymaps-transparent', 'true');
+        styleEl.textContent = `
+.ymaps-transparent-scope .ymaps-2-1-79-image,
+.ymaps-transparent-scope .ymaps-2-1-79-svg-icon,
+.ymaps-transparent-scope .ymaps-2-1-79-placemark-overlay,
+.ymaps-transparent-scope .ymaps-2-1-79-placemark,
+.ymaps-transparent-scope .ymaps-2-1-79-ground-pane {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+`;
+        document.head.appendChild(styleEl);
+        cssInjectedRef.current = true;
+      }
+    }
 
     // Update markers when filtered properties change
     updateMarkers();
@@ -302,6 +327,7 @@ useEffect(() => {
       return new window.ymaps.Placemark(
         [property.lat, property.lng],
         {
+          href: composedHref,
           hintContent: property.title,
           balloonContentHeader: property.title,
           balloonContentBody: `
@@ -326,10 +352,7 @@ useEffect(() => {
           `
         },
         {
-          iconLayout: 'default#image',
-          iconImageHref: composedHref,
-          iconImageSize: [44, 60],
-          iconImageOffset: [-22, -60],
+          iconLayout: customIconLayoutRef.current,
           zIndex: isOwner ? 700 : (property.isHalal ? 650 : 600),
           zIndexHover: isOwner ? 800 : 700,
         }
@@ -456,7 +479,7 @@ const approvedRandom = useMemo(() => {
             <Card className="bg-gradient-card border-0 shadow-warm">
               <CardContent className="p-6">
                 <div className="relative rounded-lg h-96 overflow-hidden">
-                  <div ref={mapContainer} className="absolute inset-0 rounded-lg bg-muted" />
+                  <div ref={mapContainer} className="absolute inset-0 rounded-lg bg-muted ymaps-transparent-scope" />
                   {!mapLoaded || isLoading ? (
                     <div className="absolute inset-0 bg-background/90 flex items-center justify-center">
                       <div className="text-center">
