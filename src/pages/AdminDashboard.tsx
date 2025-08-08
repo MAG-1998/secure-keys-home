@@ -464,11 +464,11 @@ export default function AdminDashboard() {
   };
 
   const getHalalBadge = (property: any) => {
-    const available = property?.is_halal_financed || property?.halal_financing_status === 'available';
-    return available ? (
-      <Badge variant="default">Halal Available</Badge>
+    const approved = property?.is_halal_financed || property?.halal_financing_status === 'approved';
+    return approved ? (
+      <Badge variant="default">Halal Approved</Badge>
     ) : (
-      <Badge variant="destructive">Halal Not Available</Badge>
+      <Badge variant="destructive">Halal Not Approved</Badge>
     );
   };
 
@@ -731,22 +731,45 @@ export default function AdminDashboard() {
                               onClick={async () => {
                                 const edit = halalEdits[req.id] || {};
                                 const reviewer = (await supabase.auth.getUser()).data.user?.id;
-                                const { error } = await supabase
+                                const finalStatus = (edit.status ?? req.status) as 'pending' | 'approved' | 'rejected';
+
+                                const { error: reqError } = await supabase
                                   .from('halal_financing_requests')
                                   .update({
-                                    status: edit.status ?? req.status,
+                                    status: finalStatus,
                                     admin_notes: edit.admin_notes ?? req.admin_notes ?? '',
                                     reviewed_by: reviewer,
                                     reviewed_at: new Date().toISOString(),
                                   })
                                   .eq('id', req.id);
-                                if (error) {
+
+                                if (reqError) {
                                   toast({ title: 'Error', description: 'Failed to save review', variant: 'destructive' });
-                                } else {
-                                  toast({ title: 'Saved', description: 'Review saved successfully' });
-                                  setHalalEdits(prev => ({ ...prev, [req.id]: {} }));
-                                  fetchHalalRequests();
+                                  return;
                                 }
+
+                                if (req.property?.id) {
+                                  let propUpdate: { is_halal_financed: boolean; halal_financing_status: string };
+                                  if (finalStatus === 'approved') {
+                                    propUpdate = { is_halal_financed: true, halal_financing_status: 'approved' };
+                                  } else if (finalStatus === 'rejected') {
+                                    propUpdate = { is_halal_financed: false, halal_financing_status: 'denied' };
+                                  } else {
+                                    propUpdate = { is_halal_financed: false, halal_financing_status: 'none' };
+                                  }
+                                  const { error: propError } = await supabase
+                                    .from('properties')
+                                    .update(propUpdate)
+                                    .eq('id', req.property.id);
+
+                                  if (propError) {
+                                    toast({ title: 'Partial save', description: 'Review saved, but failed to update property flags', variant: 'destructive' });
+                                  }
+                                }
+
+                                toast({ title: 'Saved', description: 'Review saved successfully' });
+                                setHalalEdits(prev => ({ ...prev, [req.id]: {} }));
+                                await Promise.all([fetchHalalRequests(), fetchProperties()]);
                               }}
                             >
                               Save Review
