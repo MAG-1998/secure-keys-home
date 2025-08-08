@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -77,6 +77,26 @@ const ListProperty = () => {
     }));
   };
 
+  // Photo upload helpers
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleChoosePhotos = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handlePhotosSelected = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    const limited = files.slice(0, 20);
+    setFormData(prev => ({ ...prev, photos: limited }));
+    if (files.length > 20) {
+      toast({ title: "Too many photos", description: "Maximum is 20 photos.", variant: "destructive" });
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    setFormData(prev => ({ ...prev, photos: prev.photos.filter((_, i) => i !== index) }));
+  };
   const handleSubmitApplication = async () => {
     setIsSubmitting(true);
     try {
@@ -119,6 +139,30 @@ const ListProperty = () => {
 
       if (error) throw error;
 
+      // Upload photos to Storage and update property row
+      if (property && formData.photos.length > 0) {
+        const uploadedUrls: string[] = [];
+        for (let i = 0; i < formData.photos.length; i++) {
+          const file = formData.photos[i];
+          const filePath = `${user.user.id}/${property.id}/${Date.now()}_${i}_${file.name}`;
+          const { data: uploadData, error: uploadError } = await supabase
+            .storage
+            .from('properties')
+            .upload(filePath, file, { contentType: file.type });
+          if (uploadError) throw uploadError;
+          const { data: publicUrlData } = supabase
+            .storage
+            .from('properties')
+            .getPublicUrl(uploadData.path);
+          uploadedUrls.push(publicUrlData.publicUrl);
+        }
+
+        await supabase
+          .from('properties')
+          .update({ image_url: uploadedUrls[0] ?? null, photos: uploadedUrls })
+          .eq('id', property.id);
+      }
+
       // Submit halal financing request if requested
       if (formData.halalFinancingRequested && property) {
         const { error: halalError } = await supabase
@@ -133,7 +177,6 @@ const ListProperty = () => {
           console.error('Error submitting halal financing request:', halalError);
         }
       }
-
       setApplicationSubmitted(true);
       toast({
         title: "Success",
@@ -304,10 +347,38 @@ const ListProperty = () => {
                 <p className="text-muted-foreground text-sm mb-4">
                   Upload at least 5 high-quality photos of your property
                 </p>
-                <Button variant="outline">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handlePhotosSelected}
+                />
+                <Button variant="outline" onClick={handleChoosePhotos}>
                   Choose Photos
                 </Button>
               </div>
+
+              {formData.photos.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {formData.photos.map((file, i) => (
+                    <div key={i} className="relative rounded-md overflow-hidden border">
+                      {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Property photo ${i + 1}`}
+                        className="h-32 w-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2">
+                        <Button size="sm" variant="secondary" onClick={() => removePhoto(i)}>
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
               
               <div className="bg-muted/50 p-4 rounded-lg">
                 <h4 className="font-semibold text-sm mb-2">Photo Guidelines</h4>
