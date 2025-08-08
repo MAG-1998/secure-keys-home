@@ -89,7 +89,7 @@ export const AuthenticatedView = memo(({
 
       {/* Interactive Map Section */}
       <div id="map">
-        <LazyMapSection t={t} />
+        <LazyMapSection t={t} isHalalMode={isHalalMode} onHalalModeChange={setIsHalalMode} />
       </div>
 
       {/* Quick Stats for Authenticated Users */}

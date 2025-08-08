@@ -24,12 +24,14 @@ MapLoadingFallback.displayName = "MapLoadingFallback"
 
 interface LazyMapSectionProps {
   t: (key: string) => string
+  isHalalMode?: boolean
+  onHalalModeChange?: (enabled: boolean) => void
 }
 
-const LazyMapSection = memo(({ t }: LazyMapSectionProps) => {
+const LazyMapSection = memo(({ t, isHalalMode, onHalalModeChange }: LazyMapSectionProps) => {
   return (
     <Suspense fallback={<MapLoadingFallback />}>
-      <YandexMap t={t} />
+      <YandexMap t={t} isHalalMode={isHalalMode} onHalalModeChange={onHalalModeChange} />
     </Suspense>
   )
 })

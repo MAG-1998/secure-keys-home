@@ -208,7 +208,7 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
 
       {/* Interactive Map Section */}
       <div id="map">
-        <LazyMapSection t={t} />
+        <LazyMapSection t={t} isHalalMode={isHalalMode} onHalalModeChange={setIsHalalMode} />
       </div>
 
       {/* Features Section */}

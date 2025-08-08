@@ -11,6 +11,7 @@ import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
 
 interface YandexMapProps {
   isHalalMode?: boolean;
+  onHalalModeChange?: (enabled: boolean) => void;
   t: (key: string) => string;
 }
 
@@ -36,7 +37,7 @@ declare global {
   }
 }
 
-const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
+const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, onHalalModeChange, t }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
 const [mapLoaded, setMapLoaded] = useState(false);
@@ -56,10 +57,11 @@ const [filters, setFilters] = useState({
   }, [isHalalMode]);
 
   // Unified handler so both toggle UIs behave the same
-  const handleHalalToggle = (checked: boolean | string) => {
-    const val = checked === 'indeterminate' ? true : Boolean(checked);
-    setFilters(prev => ({ ...prev, halalOnly: val }));
-  };
+const handleHalalToggle = (checked: boolean | string) => {
+  const val = checked === 'indeterminate' ? true : Boolean(checked);
+  setFilters(prev => ({ ...prev, halalOnly: val }));
+  onHalalModeChange?.(val);
+};
 
   // Fetch properties from database
   const { data: dbProperties, isLoading } = useOptimizedQuery(
@@ -133,7 +135,7 @@ const filteredProperties = useMemo(() => {
   }
 
   if (halalMode) {
-    filtered = filtered.filter(p => p.isHalal);
+    filtered = filtered.filter(p => p.isHalal && ['active','approved'].includes(p.status));
   }
 
   return filtered;
