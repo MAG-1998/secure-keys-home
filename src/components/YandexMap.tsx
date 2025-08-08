@@ -213,10 +213,21 @@ useEffect(() => {
 .ymaps-transparent-scope .ymaps-2-1-79-svg-icon,
 .ymaps-transparent-scope .ymaps-2-1-79-placemark-overlay,
 .ymaps-transparent-scope .ymaps-2-1-79-placemark,
+.ymaps-transparent-scope .ymaps-2-1-79-placemark-container,
+.ymaps-transparent-scope .ymaps-2-1-79-balloon,
+.ymaps-transparent-scope .ymaps-2-1-79-balloon__content,
+.ymaps-transparent-scope .ymaps-2-1-79-zoom__button,
+.ymaps-transparent-scope .ymaps-2-1-79-controls__control,
+.ymaps-transparent-scope .ymaps-2-1-79-copyrights-pane,
 .ymaps-transparent-scope .ymaps-2-1-79-ground-pane {
   background: transparent !important;
   box-shadow: none !important;
   border: 0 !important;
+}
+.ymaps-transparent-scope .ymaps-2-1-79-svg-icon path,
+.ymaps-transparent-scope .ymaps-2-1-79-placemark path {
+  fill: transparent !important;
+  stroke: none !important;
 }
 `;
         document.head.appendChild(styleEl);
@@ -352,7 +363,10 @@ useEffect(() => {
           `
         },
         {
-          iconLayout: customIconLayoutRef.current,
+          iconLayout: 'default#image',
+          iconImageHref: composedHref,
+          iconImageSize: [44, 60],
+          iconImageOffset: [-22, -60],
           zIndex: isOwner ? 700 : (property.isHalal ? 650 : 600),
           zIndexHover: isOwner ? 800 : 700,
         }
@@ -377,6 +391,10 @@ useEffect(() => {
       map.current.geoObjects.removeAll();
       composedPinCacheRef.current.clear();
       await updateMarkers();
+      // Force a reflow to ensure visuals update
+      if (map.current?.container?.fitToViewport) {
+        map.current.container.fitToViewport();
+      }
     } catch (e) {
       console.error('[Map] Failed to refresh pins', e);
     }
@@ -490,7 +508,7 @@ const approvedRandom = useMemo(() => {
             <Card className="bg-gradient-card border-0 shadow-warm">
               <CardContent className="p-6">
                 <div className="relative rounded-lg h-96 overflow-hidden">
-                  <div ref={mapContainer} className="absolute inset-0 rounded-lg bg-muted ymaps-transparent-scope" />
+                  <div ref={mapContainer} className="absolute inset-0 rounded-lg ymaps-transparent-scope" />
                   <div className="absolute top-3 right-3 z-10 flex gap-2">
                     <Button size="sm" variant="secondary" onClick={refreshPins}>Refresh pins</Button>
                   </div>
