@@ -494,14 +494,6 @@ const ListProperty = () => {
                 </div>
               </div>
               
-              <Button 
-                className="w-full" 
-                size="lg" 
-                onClick={handleSubmitApplication}
-                disabled={isSubmitting || applicationSubmitted}
-              >
-                {isSubmitting ? "Submitting..." : applicationSubmitted ? "Application Submitted" : "Submit Application"}
-              </Button>
               
               {applicationSubmitted && (
                 <div className="bg-green-50 dark:bg-green-950/20 p-4 rounded-lg mt-4">
@@ -590,8 +582,13 @@ const ListProperty = () => {
               {currentStep < totalSteps ? <Button onClick={nextStep} className="flex items-center gap-2">
                   Next Step
                   <ArrowRight className="w-4 h-4" />
-                </Button> : <Button variant="success" className="flex items-center gap-2">
-                  Complete Application
+                </Button> : <Button
+                  variant="success"
+                  className="flex items-center gap-2"
+                  onClick={handleSubmitApplication}
+                  disabled={isSubmitting || applicationSubmitted}
+                >
+                  {isSubmitting ? "Submitting..." : applicationSubmitted ? "Application Submitted" : "Complete Application"}
                   <CheckCircle className="w-4 h-4" />
                 </Button>}
             </div>
