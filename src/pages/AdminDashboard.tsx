@@ -254,6 +254,47 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      // Prevent self-deletion
+      if (userId === user?.id) {
+        toast({
+          title: "Error",
+          description: "Cannot delete your own account",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Confirm deletion
+      if (!confirm('Are you sure you want to delete this user account? This action cannot be undone.')) {
+        return;
+      }
+
+      // Use the delete_user_account function
+      const { error } = await supabase.rpc('delete_user_account', {
+        target_user_id: userId
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "User account deleted successfully",
+      });
+
+      // Refresh data
+      await fetchUsers();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete user account",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleApplicationAction = async (applicationId: string, status: 'approved' | 'rejected') => {
     try {
       console.log(`Handling application ${applicationId} with status: ${status}`);
@@ -437,6 +478,14 @@ export default function AdminDashboard() {
                           <SelectItem value="admin">Admin</SelectItem>
                         </SelectContent>
                       </Select>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteUser(user.user_id)}
+                        disabled={user.user_id === user?.id}
+                      >
+                        Delete Account
+                      </Button>
                     </div>
                   </div>
                 </CardContent>

@@ -422,6 +422,10 @@ export type Database = {
         Args: { application_id: string }
         Returns: string
       }
+      delete_user_account: {
+        Args: { target_user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _user_id: string
