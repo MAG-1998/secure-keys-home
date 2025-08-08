@@ -71,6 +71,22 @@ export default function ModeratorDashboard() {
     fetchUsers();
   }, []);
 
+  // Realtime updates for applications and users
+  useEffect(() => {
+    const channel = supabase
+      .channel('moderator-dashboard')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'properties' }, () => {
+        fetchApplications();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+        fetchUsers();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
   const fetchApplications = async () => {
     try {
       // First fetch property applications

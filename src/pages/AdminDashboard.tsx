@@ -54,6 +54,23 @@ export default function AdminDashboard() {
     fetchAllData();
   }, []);
 
+  // Realtime updates: refresh when profiles or properties change
+  useEffect(() => {
+    const channel = supabase
+      .channel('admin-dashboard')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+        fetchUsers();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'properties' }, () => {
+        fetchProperties();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   const fetchAllData = async () => {
     await Promise.all([
       fetchUsers(),
@@ -271,12 +288,12 @@ export default function AdminDashboard() {
         return;
       }
 
-      // Use the delete_user_account function
-      const { error } = await supabase.rpc('delete_user_account', {
-        target_user_id: userId
+      // Use the new admin-delete-user edge function
+      const { data, error } = await supabase.functions.invoke('admin-delete-user', {
+        body: { target_user_id: userId },
       });
 
-      if (error) throw error;
+      if (error || (data as any)?.error) throw (error || new Error((data as any)?.error));
 
       toast({
         title: "Success",
