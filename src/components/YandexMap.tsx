@@ -98,7 +98,7 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
   bedrooms: Number(prop.bedrooms) || 1,
   bathrooms: Number(prop.bathrooms) || 1,
   area: Number(prop.area) || 50,
-  isHalal: (prop.is_halal_financed || prop.halal_financing_status === 'available') || false,
+  isHalal: (prop.is_halal_financed || prop.halal_financing_status === 'approved') || false,
   title: prop.title || 'Property',
   description: prop.description || '',
   status: prop.status || 'active',
@@ -140,6 +140,13 @@ const filteredProperties = useMemo(() => {
 
   return filtered;
 }, [allProperties, filters, isHalalMode]);
+
+// Diagnostics to verify halal filtering
+useEffect(() => {
+  const halalApprovedCount = allProperties.filter(p => p.isHalal && ['active','approved'].includes(p.status)).length;
+  console.info('[Map] halalMode:', halalMode, 'total:', allProperties.length, 'halal+approved:', halalApprovedCount, 'shown:', filteredProperties.length);
+}, [halalMode, allProperties, filteredProperties]);
+
 
   // Load Yandex Maps API
   useEffect(() => {
@@ -246,13 +253,15 @@ const filteredProperties = useMemo(() => {
   };
 
 const approvedRandom = useMemo(() => {
-  const pool = (filteredProperties.length > 0
+  const pool = halalMode
     ? filteredProperties
-    : allProperties.filter(p => ['active', 'approved'].includes(p.status)));
+    : (filteredProperties.length > 0
+        ? filteredProperties
+        : allProperties.filter(p => ['active', 'approved'].includes(p.status)));
   if (pool.length <= 3) return pool;
   const arr = [...pool];
   return arr.sort(() => 0.5 - Math.random()).slice(0, 3);
-}, [filteredProperties, allProperties]);
+}, [halalMode, filteredProperties, allProperties]);
 
   return (
     <section className={`py-16 transition-colors duration-500 ${
@@ -378,37 +387,41 @@ const approvedRandom = useMemo(() => {
                 </div>
                 
                 <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {approvedRandom.map(property => (
-                    <div key={property.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h4 className="font-medium text-sm">{property.title}</h4>
-                          <p className="text-xs text-muted-foreground">{property.district}</p>
+                  {halalMode && filteredProperties.length === 0 ? (
+                    <div className="text-sm text-muted-foreground">No halal-approved properties found right now.</div>
+                  ) : (
+                    approvedRandom.map(property => (
+                      <div key={property.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h4 className="font-medium text-sm">{property.title}</h4>
+                            <p className="text-xs text-muted-foreground">{property.district}</p>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-bold text-primary">${property.price.toLocaleString()}</div>
+                            {property.isHalal && (
+                              <Badge variant="default" className="text-xs">Halal</Badge>
+                            )}
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <div className="font-bold text-primary">${property.price.toLocaleString()}</div>
-                          {property.isHalal && (
-                            <Badge variant="default" className="text-xs">Halal</Badge>
-                          )}
+                        
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <span className="flex items-center">
+                            <Bed className="h-3 w-3 mr-1" />
+                            {property.bedrooms}
+                          </span>
+                          <span className="flex items-center">
+                            <Bath className="h-3 w-3 mr-1" />
+                            {property.bathrooms}
+                          </span>
+                          <span className="flex items-center">
+                            <Home className="h-3 w-3 mr-1" />
+                            {property.area}m²
+                          </span>
                         </div>
                       </div>
-                      
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center">
-                          <Bed className="h-3 w-3 mr-1" />
-                          {property.bedrooms}
-                        </span>
-                        <span className="flex items-center">
-                          <Bath className="h-3 w-3 mr-1" />
-                          {property.bathrooms}
-                        </span>
-                        <span className="flex items-center">
-                          <Home className="h-3 w-3 mr-1" />
-                          {property.area}m²
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
 
                 <Button className="w-full mt-4" size="lg">
