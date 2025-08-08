@@ -287,6 +287,7 @@ const ListProperty = () => {
           }}
           selectedLat={formData.latitude || undefined}
           selectedLng={formData.longitude || undefined}
+          initialAddress={formData.address}
         />;
       case 3:
         return <Card>
