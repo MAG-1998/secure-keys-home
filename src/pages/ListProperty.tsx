@@ -104,13 +104,32 @@ const ListProperty = () => {
   };
 
   const handlePhotosSelected = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
-    const limited = files.slice(0, 20);
-    setFormData(prev => ({ ...prev, photos: limited }));
-    if (files.length > 20) {
-      toast({ title: "Too many photos", description: "Maximum is 20 photos.", variant: "destructive" });
+    const newFiles = Array.from(e.target.files || []);
+    if (newFiles.length === 0) return;
+
+    // Merge with existing, de-duplicate, and cap at 20 (keep earliest)
+    const existing = formData.photos;
+    const merged = [...existing, ...newFiles];
+    const seen = new Set<string>();
+    const deduped: File[] = [];
+    for (const f of merged) {
+      const key = `${f.name}_${f.size}_${(f as any).lastModified ?? ''}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        deduped.push(f);
+      }
     }
+    const finalPhotos = deduped.slice(0, 20);
+
+    if (deduped.length > 20) {
+      toast({ title: "Too many photos", description: "Maximum is 20 photos. Keeping the first 20.", variant: "destructive" });
+    }
+
+    setFormData(prev => ({ ...prev, photos: finalPhotos }));
+
+    // Reset input so selecting the same files again triggers change
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (e.target) e.target.value = "";
   };
 
   const removePhoto = (index: number) => {
@@ -386,6 +405,9 @@ const ListProperty = () => {
                 <Button variant="outline" onClick={handleChoosePhotos}>
                   Choose Photos
                 </Button>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Selected: {formData.photos.length}/20
+                </p>
               </div>
 
               {formData.photos.length > 0 && (
