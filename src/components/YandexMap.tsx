@@ -9,11 +9,13 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
 import { useUser } from "@/contexts/UserContext";
+import type { Language } from "@/hooks/useTranslation";
 
 interface YandexMapProps {
   isHalalMode?: boolean;
   onHalalModeChange?: (enabled: boolean) => void;
   t: (key: string) => string;
+  language: Language;
 }
 
 interface Property {
@@ -39,10 +41,10 @@ declare global {
   }
 }
 
-const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, onHalalModeChange, t }) => {
+const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, onHalalModeChange, t, language }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
-const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
 const cssInjectedRef = useRef(false);
 const [filters, setFilters] = useState({
@@ -162,8 +164,9 @@ useEffect(() => {
       return;
     }
 
+    const ymLang = language === 'ru' ? 'ru_RU' : (language === 'uz' ? 'uz_UZ' : 'en_US');
     const script = document.createElement('script');
-    script.src = `https://api-maps.yandex.ru/2.1/?apikey=8baec550-0c9b-458c-b9bd-e9893af7beb7&lang=en_US`;
+    script.src = `https://api-maps.yandex.ru/2.1/?apikey=8baec550-0c9b-458c-b9bd-e9893af7beb7&lang=${ymLang}`;
     script.async = true;
     script.onload = () => {
       window.ymaps.ready(() => {
@@ -385,13 +388,13 @@ const approvedRandom = useMemo(() => {
         {/* Header */}
         <div className="text-center mb-8">
           <Badge variant={halalMode ? "default" : "secondary"} className="mb-4">
-            {halalMode ? 'Halal Marketplace' : 'Live Marketplace'}
+            {halalMode ? t('map.halalMarketplace') : t('map.liveMarketplace')}
           </Badge>
           <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
-            Discover Properties in Tashkent
+            {t('map.title')}
           </h2>
           <p className="text-lg text-muted-foreground mb-6">
-            Browse verified properties with interactive maps and smart filtering options.
+            {t('map.description')}
           </p>
         </div>
 
@@ -480,7 +483,7 @@ const approvedRandom = useMemo(() => {
                       <div className="text-center">
                         <MapPin className="h-12 w-12 text-primary mx-auto mb-2 animate-pulse" />
                         <p className="text-muted-foreground font-medium">
-                          {isLoading ? 'Loading properties...' : 'Loading Yandex Maps...'}
+                          {isLoading ? t('map.loadingProperties') : t('map.loadingMap')}
                         </p>
                       </div>
                     </div>
@@ -495,14 +498,14 @@ const approvedRandom = useMemo(() => {
             <Card>
               <CardContent className="p-6 h-[36rem] flex flex-col">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold">Properties Found</h3>
+                  <h3 className="font-semibold">{t('map.propertiesFound')}</h3>
                   <Badge variant="secondary">{filteredProperties.length}</Badge>
                 </div>
                 
                 <div className="space-y-4 flex-1 overflow-y-auto">
-                  {halalMode && filteredProperties.length === 0 ? (
-                    <div className="text-sm text-muted-foreground">No halal-approved properties found right now.</div>
-                  ) : (
+              {halalMode && filteredProperties.length === 0 ? (
+                <div className="text-sm text-muted-foreground">{t('map.noHalalFound')}</div>
+              ) : (
                     approvedRandom.map(property => (
                       <div key={property.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer">
                         <div className="flex items-start justify-between mb-2">
@@ -537,9 +540,9 @@ const approvedRandom = useMemo(() => {
                   )}
                 </div>
 
-                <Button className="w-full mt-4" size="lg">
+                <Button className="w-full mt-4" size="lg" onClick={() => (window.location.href = '/properties')}>
                   <Search className="h-4 w-4 mr-2" />
-                  View All Properties
+                  {t('map.viewAllProperties')}
                 </Button>
               </CardContent>
             </Card>

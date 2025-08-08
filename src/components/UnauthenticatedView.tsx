@@ -48,7 +48,7 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
             <div className="flex items-center space-x-2 lg:space-x-3">
               {/* Language Selector */}
               <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className={`${isMobile ? 'w-12' : 'w-16'}`}>
+                <SelectTrigger className={`${isMobile ? 'w-14' : 'w-20'}`}>
                   <SelectValue placeholder={language === "en" ? (isMobile ? "EN" : "ENG") : language === "ru" ? "RU" : "UZ"} />
                 </SelectTrigger>
                 <SelectContent>

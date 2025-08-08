@@ -537,11 +537,73 @@ const translations: Translations = {
     en: 'Real-time Updates',
     ru: 'Обновления в реальном времени',
     uz: 'Real vaqt yangilanishlari'
+  },
+  // Map UI extras
+  'map.propertiesFound': {
+    en: 'Properties Found',
+    ru: 'Найдено объектов',
+    uz: 'Topilgan eʼlonlar'
+  },
+  'map.loadingProperties': {
+    en: 'Loading properties...',
+    ru: 'Загрузка объектов...',
+    uz: 'Eʼlonlar yuklanmoqda...'
+  },
+  'map.loadingMap': {
+    en: 'Loading Yandex Maps...',
+    ru: 'Загрузка Яндекс.Карт...',
+    uz: 'Yandex xaritalari yuklanmoqda...'
+  },
+  'map.noHalalFound': {
+    en: 'No halal-approved properties found right now.',
+    ru: 'Сейчас нет объектов с халяль рассрочкой.',
+    uz: 'Hozircha halol tasdiqlangan eʼlonlar yoʻq.'
+  },
+  'map.viewAllProperties': {
+    en: 'View All Properties',
+    ru: 'Смотреть все объекты',
+    uz: 'Barcha eʼlonlarni ko‘rish'
+  },
+  // Address/Location picker
+  'address.selectPropertyLocation': {
+    en: 'Select Property Location',
+    ru: 'Выберите расположение объекта',
+    uz: 'Obyekt manzilini tanlang'
+  },
+  'address.searchPlaceholder': {
+    en: 'Search address',
+    ru: 'Поиск адреса',
+    uz: 'Manzil qidirish'
+  },
+  'address.searchAria': {
+    en: 'Search address',
+    ru: 'Поиск адреса',
+    uz: 'Manzil qidirish'
+  },
+  'address.useMyLocation': {
+    en: 'Use my location',
+    ru: 'Моё местоположение',
+    uz: 'Joylashuvimdan foydalanish'
+  },
+  'address.loadingMap': {
+    en: 'Loading map...',
+    ru: 'Загрузка карты...',
+    uz: 'Xarita yuklanmoqda...'
+  },
+  'address.selectedLocation': {
+    en: 'Selected Location:',
+    ru: 'Выбранное место:',
+    uz: 'Tanlangan joy:'
+  },
+  'address.instructions': {
+    en: 'Search for your address, click on the map, or use My Location. You can also drag the marker to adjust.',
+    ru: 'Найдите адрес, кликните по карте или используйте Моё местоположение. Маркер можно перетаскивать.',
+    uz: 'Manzilingizni qidiring, xaritaga bosing yoki Joylashuvimdan foydalaning. Markerni sudrab sozlashingiz mumkin.'
   }
 };
 
 export const useTranslation = () => {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguage] = useState<Language>('ru');
 
   const t = useCallback((key: string): string => {
     return translations[key]?.[language] || key;

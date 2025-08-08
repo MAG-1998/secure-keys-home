@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MapPin, Check, Search, LocateFixed } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface LocationPickerProps {
   onLocationSelect: (lat: number, lng: number, address?: string) => void;
@@ -23,6 +24,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   selectedLng,
   initialAddress
 }) => {
+  const { language, t } = useTranslation();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
   const placemark = useRef<any>(null);
@@ -38,8 +40,9 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       return;
     }
 
+    const ymLang = language === 'ru' ? 'ru_RU' : (language === 'uz' ? 'uz_UZ' : 'en_US');
     const script = document.createElement('script');
-    script.src = `https://api-maps.yandex.ru/2.1/?apikey=8baec550-0c9b-458c-b9bd-e9893af7beb7&lang=en_US`;
+    script.src = `https://api-maps.yandex.ru/2.1/?apikey=8baec550-0c9b-458c-b9bd-e9893af7beb7&lang=${ymLang}`;
     script.async = true;
     script.onload = () => {
       window.ymaps.ready(() => {
@@ -210,7 +213,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MapPin className="w-5 h-5" />
-          Select Property Location
+          {t('address.selectPropertyLocation')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -223,16 +226,16 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
                   id="address-search-input"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search address"
+                  placeholder={t('address.searchPlaceholder')}
                   className="h-9"
-                  aria-label="Search address"
+                  aria-label={t('address.searchAria')}
                 />
                 <Button
                   type="button"
                   size="sm"
                   onClick={() => geocodeAddress(searchQuery)}
                   disabled={!searchQuery.trim()}
-                  aria-label="Search address"
+                  aria-label={t('address.searchAria')}
                 >
                   <Search className="w-4 h-4" />
                 </Button>
@@ -241,7 +244,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
                   size="sm"
                   variant="outline"
                   onClick={handleMyLocation}
-                  aria-label="Use my location"
+                  aria-label={t('address.useMyLocation')}
                 >
                   <LocateFixed className="w-4 h-4" />
                 </Button>
@@ -253,7 +256,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             <div className="absolute inset-0 bg-muted/20 flex items-center justify-center">
               <div className="text-center">
                 <MapPin className="h-8 w-8 text-primary mx-auto mb-2 animate-pulse" />
-                <p className="text-muted-foreground text-sm">Loading map...</p>
+                <p className="text-muted-foreground text-sm">{t('address.loadingMap')}</p>
               </div>
             </div>
           ) : (
@@ -266,7 +269,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             <div className="flex items-start gap-2">
               <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium">Selected Location:</p>
+                <p className="text-sm font-medium">{t('address.selectedLocation')}</p>
                 <p className="text-sm text-muted-foreground">{selectedAddress}</p>
               </div>
             </div>
@@ -274,7 +277,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         )}
         
         <p className="text-xs text-muted-foreground">
-          Search for your address, click on the map, or use My Location. You can also drag the marker to adjust.
+          {t('address.instructions')}
         </p>
       </CardContent>
     </Card>

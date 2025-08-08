@@ -1,5 +1,6 @@
 import { lazy, Suspense, memo } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
+import type { Language } from "@/hooks/useTranslation"
 
 // Use the Yandex Maps implementation with filtering
 const YandexMap = lazy(() => import('./YandexMap'))
@@ -26,12 +27,13 @@ interface LazyMapSectionProps {
   t: (key: string) => string
   isHalalMode?: boolean
   onHalalModeChange?: (enabled: boolean) => void
+  language: Language
 }
 
-const LazyMapSection = memo(({ t, isHalalMode, onHalalModeChange }: LazyMapSectionProps) => {
+const LazyMapSection = memo(({ t, isHalalMode, onHalalModeChange, language }: LazyMapSectionProps) => {
   return (
     <Suspense fallback={<MapLoadingFallback />}>
-      <YandexMap t={t} isHalalMode={isHalalMode} onHalalModeChange={onHalalModeChange} />
+      <YandexMap t={t} isHalalMode={isHalalMode} onHalalModeChange={onHalalModeChange} language={language} />
     </Suspense>
   )
 })
