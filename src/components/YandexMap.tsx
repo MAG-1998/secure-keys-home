@@ -233,11 +233,13 @@ const filteredProperties = useMemo(() => {
   };
 
 const approvedRandom = useMemo(() => {
-  const pool = allProperties.filter(p => p.status === 'approved');
+  const pool = (filteredProperties.length > 0
+    ? filteredProperties
+    : allProperties.filter(p => ['active', 'approved'].includes(p.status)));
   if (pool.length <= 3) return pool;
   const arr = [...pool];
   return arr.sort(() => 0.5 - Math.random()).slice(0, 3);
-}, [allProperties]);
+}, [filteredProperties, allProperties]);
 
   return (
     <section className={`py-16 transition-colors duration-500 ${
