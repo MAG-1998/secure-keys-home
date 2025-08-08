@@ -172,7 +172,7 @@ export default function AdminDashboard() {
       if (propertyIds.length > 0) {
         const { data: propsData } = await supabase
           .from('properties')
-          .select('id, title, is_halal_financed, halal_financing_status, user_id')
+          .select('id, title, image_url, photos, is_halal_financed, halal_financing_status, user_id')
           .in('id', propertyIds);
         (propsData || []).forEach((p: any) => { propertiesById[p.id] = p; });
       }
@@ -593,17 +593,33 @@ export default function AdminDashboard() {
               <Card key={property.id}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-semibold">{property.title}</h3>
-                        {getStatusBadge(property.status)}
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="font-semibold">{property.title}</h3>
+                          {getStatusBadge(property.status)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">ID: {property.id}</p>
+                        <p className="text-sm text-muted-foreground">{property.location}</p>
+                        <p className="text-sm">Price: ${property.price?.toLocaleString()}</p>
+                        <p className="text-sm">Owner: {property.profiles?.full_name} ({property.profiles?.email})</p>
+                        <p className="text-sm">Listed: {new Date(property.created_at).toLocaleDateString()}</p>
+                        {(Array.isArray(property.photos) && property.photos.length > 0 || property.image_url) && (
+                          <div className="mt-3 flex gap-2">
+                            {[...(Array.isArray(property.photos) ? property.photos.slice(0,3) : []), ...(property.image_url ? [property.image_url] : [])]
+                              .slice(0,3)
+                              .map((url: string, idx: number) => (
+                                <img
+                                  key={idx}
+                                  src={url}
+                                  alt="Property photo thumbnail"
+                                  loading="lazy"
+                                  className="h-16 w-20 rounded-md object-cover border border-border"
+                                />
+                              ))}
+                          </div>
+                        )}
+                        <div className="mt-2">{getHalalBadge(property)}</div>
                       </div>
-                      <p className="text-sm text-muted-foreground">{property.location}</p>
-                      <p className="text-sm">Price: ${property.price?.toLocaleString()}</p>
-                      <p className="text-sm">Owner: {property.profiles?.full_name} ({property.profiles?.email})</p>
-                      <p className="text-sm">Listed: {new Date(property.created_at).toLocaleDateString()}</p>
-                      <div className="mt-2">{getHalalBadge(property)}</div>
-                    </div>
                      <div className="flex gap-2">
                       {property.status === 'active' ? (
                         <Button
@@ -655,9 +671,28 @@ export default function AdminDashboard() {
                         </div>
                         <p className="text-sm text-muted-foreground">Request by: {req.requester?.full_name} ({req.requester?.email})</p>
                         <p className="text-sm">Created: {new Date(req.created_at).toLocaleDateString()}</p>
+                        <p className="text-xs text-muted-foreground">Request ID: {req.id}</p>
+                        {req.property?.id && (
+                          <p className="text-xs text-muted-foreground">Property ID: {req.property.id}</p>
+                        )}
                         <div className="mt-2">
                           {getHalalBadge(req.property)}
                         </div>
+                        {((Array.isArray(req.property?.photos) && req.property.photos.length > 0) || req.property?.image_url) && (
+                          <div className="mt-3 flex gap-2">
+                            {[...(Array.isArray(req.property?.photos) ? (req.property?.photos as string[]).slice(0,3) : []), ...(req.property?.image_url ? [req.property.image_url] : [])]
+                              .slice(0,3)
+                              .map((url: string, idx: number) => (
+                                <img
+                                  key={idx}
+                                  src={url}
+                                  alt="Property photo thumbnail"
+                                  loading="lazy"
+                                  className="h-16 w-20 rounded-md object-cover border border-border"
+                                />
+                              ))}
+                          </div>
+                        )}
                         {req.request_notes && (
                           <p className="text-sm mt-2"><strong>Notes:</strong> {req.request_notes}</p>
                         )}
@@ -748,12 +783,28 @@ export default function AdminDashboard() {
                             {application.status}
                           </Badge>
                         </div>
+                        <p className="text-xs text-muted-foreground">ID: {application.id}</p>
                         <p className="text-sm text-muted-foreground">{application.location}</p>
                         <p className="text-sm">Price: ${application.price?.toLocaleString()}</p>
                         <p className="text-sm">Applicant: {application.profiles?.full_name} ({application.profiles?.email})</p>
                         <p className="text-sm">Bedrooms: {application.bedrooms} | Bathrooms: {application.bathrooms}</p>
                         <p className="text-sm">Area: {application.area} m²</p>
                         <p className="text-sm">Submitted: {new Date(application.created_at).toLocaleDateString()}</p>
+                        {(Array.isArray(application.photos) && application.photos.length > 0 || application.image_url) && (
+                          <div className="mt-3 flex gap-2">
+                            {[...(Array.isArray(application.photos) ? application.photos.slice(0,3) : []), ...(application.image_url ? [application.image_url] : [])]
+                              .slice(0,3)
+                              .map((url: string, idx: number) => (
+                                <img
+                                  key={idx}
+                                  src={url}
+                                  alt="Application photo thumbnail"
+                                  loading="lazy"
+                                  className="h-16 w-20 rounded-md object-cover border border-border"
+                                />
+                              ))}
+                          </div>
+                        )}
                         {application.description && (
                           <p className="text-sm mt-2"><strong>Description:</strong> {application.description}</p>
                         )}
