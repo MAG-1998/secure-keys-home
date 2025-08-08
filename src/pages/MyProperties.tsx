@@ -218,8 +218,10 @@ const MyProperties = () => {
                     className="w-full h-48 object-cover rounded-t-lg"
                   />
                   <div className="absolute top-3 left-3">
-                    {property.status === 'pending' && (
-                      <Badge variant="secondary" className="mb-2">Under Review</Badge>
+                    {(property.status === 'approved' || property.status === 'active') ? (
+                      <Badge variant="success" className="mb-2">Approved</Badge>
+                    ) : (
+                      <Badge variant="destructive" className="mb-2">Not Approved</Badge>
                     )}
                     {property.is_verified && (
                       <Badge variant="success" className="mb-2">Verified</Badge>
