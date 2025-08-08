@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
+import { useUser } from "@/contexts/UserContext";
 
 interface YandexMapProps {
   isHalalMode?: boolean;
@@ -17,6 +18,7 @@ interface YandexMapProps {
 
 interface Property {
   id: string;
+  userId: string;
   lat: number;
   lng: number;
   price: number;
@@ -50,6 +52,7 @@ const [filters, setFilters] = useState({
 });
 
   const halalMode = isHalalMode || filters.halalOnly;
+  const { user } = useUser();
 
   // Keep internal halal filter in sync with external prop
   useEffect(() => {
@@ -90,6 +93,7 @@ const handleHalalToggle = (checked: boolean | string) => {
   // Transform database properties to component format
 const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
   id: prop.id,
+  userId: prop.user_id,
   lat: Number(prop.latitude) || 41.2995,
   lng: Number(prop.longitude) || 69.2401,
   price: Number(prop.price) || 0,
@@ -199,18 +203,27 @@ useEffect(() => {
     // Clear existing markers
     map.current.geoObjects.removeAll();
 
-    // Minimalistic, theme-aware markers
-    const htmlLayout = window.ymaps.templateLayoutFactory.createClass(
-      '<div style="width:14px;height:14px;border-radius:9999px;background:$[properties.iconColor];box-shadow:0 2px 8px hsl(var(--foreground) / 0.15);border:1px solid hsl(var(--foreground) / 0.12)"></div>'
-    );
+    // More outstanding markers with captions and distinct colors
+    const formatPriceShort = (n: number) => {
+      if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(n % 1_000_000 ? 1 : 0)}M`;
+      if (n >= 1000) return `$${Math.round(n / 1000)}k`;
+      return `$${n}`;
+    };
 
     // Add markers for filtered properties
     filteredProperties.forEach(property => {
-      const iconColor = property.isHalal ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))';
+      const isOwner = Boolean(user?.id && property.userId && user.id === property.userId);
+
+      // Choose a preset with caption so tags are more visible
+      let preset = 'islands#blueCircleIconWithCaption';
+      if (property.isHalal) preset = 'islands#greenCircleIconWithCaption';
+      if (isOwner) preset = 'islands#yellowCircleIconWithCaption'; // owner overrides
+
       const placemark = new window.ymaps.Placemark(
         [property.lat, property.lng],
         {
-          iconColor,
+          iconCaption: formatPriceShort(property.price),
+          hintContent: property.title,
           balloonContentHeader: property.title,
           balloonContentBody: `
             <div style="padding: 10px; font-family: system-ui;">
@@ -226,6 +239,7 @@ useEffect(() => {
                 <span>📐 ${property.area}m²</span>
               </div>
               ${property.isHalal ? '<div style="background: hsl(var(--primary)); color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-bottom: 8px;">✅ Halal Financing</div>' : ''}
+              ${isOwner ? '<div style="background: #d97706; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-left: 6px;">⭐ My Listing</div>' : ''}
               <div style="color: hsl(var(--muted-foreground)); font-size: 14px;">
                 ${property.description}
               </div>
@@ -233,10 +247,9 @@ useEffect(() => {
           `
         },
         {
-          iconLayout: htmlLayout,
-          iconShape: { type: 'Circle', coordinates: [0, 0], radius: 8 },
-          iconOffset: [-7, -7],
-          zIndex: property.isHalal ? 650 : 600,
+          preset,
+          zIndex: isOwner ? 700 : (property.isHalal ? 650 : 600),
+          zIndexHover: isOwner ? 800 : 700,
         }
       );
 
