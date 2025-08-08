@@ -3,3 +3,12 @@ import App from './App.tsx'
 import './index.css'
 
 createRoot(document.getElementById("root")!).render(<App />);
+
+// Register minimal Service Worker for PWA capabilities
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      // Silent fail
+    });
+  });
+}
