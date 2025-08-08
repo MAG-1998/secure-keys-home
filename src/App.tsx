@@ -23,6 +23,7 @@ const PaymentCancelled = lazy(() => import("./pages/PaymentCancelled"));
 const Profile = lazy(() => import("./pages/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Properties = lazy(() => import("./pages/Properties"));
+const ManageProperty = lazy(() => import("./pages/ManageProperty"));
 
 // Optimized QueryClient configuration
 const queryClient = new QueryClient({
@@ -120,6 +121,13 @@ const App = () => (
                 <Suspense fallback={<PageLoading />}>
                   <Properties />
                 </Suspense>
+              } />
+              <Route path="/property/:id/manage" element={
+                <OptimizedRoute>
+                  <Suspense fallback={<PageLoading />}>
+                    <ManageProperty />
+                  </Suspense>
+                </OptimizedRoute>
               } />
               <Route path="*" element={
                 <Suspense fallback={<PageLoading />}> 

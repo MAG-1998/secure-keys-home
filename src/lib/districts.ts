@@ -74,6 +74,10 @@ export const DISTRICTS: Record<DistrictKey, {
 export const ALL_DISTRICT_KEYS = Object.keys(DISTRICTS) as DistrictKey[];
 
 export function localizeDistrict(key: DistrictKey | string, lang: Language): string {
+  if (key === 'Other') {
+    const map = { en: 'Other', ru: 'Другое', uz: 'Boshqa' } as const;
+    return map[lang] || 'Other';
+  }
   const k = key as DistrictKey;
   if (DISTRICTS[k]) return DISTRICTS[k].labels[lang] || k;
   return String(key);
