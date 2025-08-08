@@ -336,6 +336,78 @@ export type Database = {
           },
         ]
       }
+      rejected_properties: {
+        Row: {
+          area: number | null
+          bathrooms: number | null
+          bedrooms: number | null
+          created_at: string
+          description: string | null
+          documents: Json
+          id: string
+          image_url: string | null
+          latitude: number | null
+          location: string | null
+          longitude: number | null
+          photos: Json
+          previous_status: string | null
+          price: number | null
+          property_id: string
+          property_type: string | null
+          reject_reason: string | null
+          rejected_at: string
+          rejected_by: string | null
+          title: string | null
+          user_id: string
+        }
+        Insert: {
+          area?: number | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          description?: string | null
+          documents?: Json
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          photos?: Json
+          previous_status?: string | null
+          price?: number | null
+          property_id: string
+          property_type?: string | null
+          reject_reason?: string | null
+          rejected_at?: string
+          rejected_by?: string | null
+          title?: string | null
+          user_id: string
+        }
+        Update: {
+          area?: number | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          description?: string | null
+          documents?: Json
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          photos?: Json
+          previous_status?: string | null
+          price?: number | null
+          property_id?: string
+          property_type?: string | null
+          reject_reason?: string | null
+          rejected_at?: string
+          rejected_by?: string | null
+          title?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       role_audit_log: {
         Row: {
           action: string
