@@ -185,7 +185,7 @@ useEffect(() => {
   useEffect(() => {
     if (!mapLoaded || !window.ymaps || priceContentLayoutRef.current) return;
     priceContentLayoutRef.current = window.ymaps.templateLayoutFactory.createClass(
-      '<div style="transform: translateY(-8px); background: transparent !important; border: none !important; box-shadow: none !important; padding: 0; margin: 0; color: hsl(0 0% 100%); font-weight: 800; font-size: 12px; text-shadow: 0 1px 2px hsla(0 0% 0% / 0.8); pointer-events: none;">$[properties.iconContent]</div>'
+      '<div style="transform: translateY(-8px); background: transparent !important; border: none !important; box-shadow: none !important; padding: 0; margin: 0; color: hsl(0 0% 0%); font-weight: 800; font-size: 12px; text-shadow: 0 1px 2px hsla(0 0% 100% / 0.7); pointer-events: none;">$[properties.iconContent]</div>'
     );
   }, [mapLoaded]);
 
