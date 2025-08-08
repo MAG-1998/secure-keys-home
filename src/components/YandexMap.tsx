@@ -513,10 +513,7 @@ const approvedRandom = useMemo(() => {
                           <div className="text-right">
                             <div className="font-bold text-primary">${property.price.toLocaleString()}</div>
                             {property.isHalal && (
-                              <div className="mt-1 flex justify-end gap-1">
-                                <Badge variant="default" className="text-xs">Financing</Badge>
-                                <Badge variant="default" className="text-xs">рассрочка</Badge>
-                              </div>
+                              <Badge variant="default" className="text-xs">Financing</Badge>
                             )}
                           </div>
                         </div>
