@@ -21,11 +21,18 @@ const Dashboard = memo(() => {
   const { preloadRoute } = useHoverPreloader();
 
   const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Error signing out:", error.message);
-    } else {
-      navigate("/");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Error signing out:", error.message);
+        alert("Error signing out. Please try again.");
+      } else {
+        console.log("Successfully signed out");
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Unexpected error during sign out:", err);
+      alert("Unexpected error. Please try again.");
     }
   };
 
