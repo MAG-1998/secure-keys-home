@@ -125,10 +125,12 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
 const filteredProperties = useMemo(() => {
   let filtered = allProperties;
 
+  // Only show approved/active listings on the map
+  filtered = filtered.filter(p => ['active','approved'].includes(p.status));
+
   if (filters.district !== 'all') {
     filtered = filtered.filter(p => p.district === filters.district);
   }
-
   const min = filters.minPrice ? Number(filters.minPrice) : undefined;
   const max = filters.maxPrice ? Number(filters.maxPrice) : undefined;
   if (min !== undefined) {
@@ -143,9 +145,8 @@ const filteredProperties = useMemo(() => {
   }
 
   if (halalMode) {
-    filtered = filtered.filter(p => p.isHalal && ['active','approved'].includes(p.status));
+    filtered = filtered.filter(p => p.isHalal);
   }
-
   return filtered;
 }, [allProperties, filters, isHalalMode]);
 
