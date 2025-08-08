@@ -50,11 +50,26 @@ const ListProperty = () => {
   });
   const totalSteps = 6;
   
-  // Calculate total amount based on selected features
-  const calculateTotalAmount = () => {
-    return formData.virtualTour ? 300000 : 0; // 300,000 UZS for virtual tour
+  // Form validation
+  const validateBeforeSubmit = () => {
+    const errors: string[] = [];
+    const price = Number(formData.price);
+    const area = Number(formData.area);
+    const bedrooms = formData.bedrooms === 'custom' ? Number(formData.customBedrooms) : Number(formData.bedrooms);
+    const bathrooms = formData.bathrooms === 'custom' ? Number(formData.customBathrooms) : Number(formData.bathrooms);
+
+    if (!formData.propertyType) errors.push('Please select a property type');
+    if (!formData.address) errors.push('Please enter the property address');
+    if (!Number.isFinite(price) || price <= 0) errors.push('Please enter a valid price');
+    if (!Number.isFinite(area) || area <= 0) errors.push('Please enter a valid area');
+    if (!Number.isFinite(bedrooms) || bedrooms < 0) errors.push('Please specify bedrooms');
+    if (!Number.isFinite(bathrooms) || bathrooms < 1) errors.push('Please specify bathrooms');
+    if (!formData.latitude || !formData.longitude) errors.push('Please select the property location on the map');
+    if (formData.photos.length < 5) errors.push('Please upload at least 5 photos (max 20)');
+    if (formData.visitHours.length === 0) errors.push('Please select at least one visit time');
+
+    return errors;
   };
-  
   const nextStep = () => {
     if (currentStep < totalSteps) {
       // Skip payment step if no paid features are selected
@@ -77,6 +92,10 @@ const ListProperty = () => {
     }));
   };
 
+  // Calculate total amount based on selected features
+  const calculateTotalAmount = () => {
+    return formData.virtualTour ? 300000 : 0; // 300,000 UZS for virtual tour
+  };
   // Photo upload helpers
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -110,10 +129,19 @@ const ListProperty = () => {
         return;
       }
 
+      // Validate
+      const validationErrors = validateBeforeSubmit();
+      if (validationErrors.length) {
+        toast({ title: "Missing information", description: validationErrors[0], variant: "destructive" });
+        const targetStep = (!formData.latitude || !formData.longitude) ? 2 : (formData.photos.length < 5 ? 3 : 1);
+        setCurrentStep(targetStep);
+        return;
+      }
+
       const bedroomCount = formData.bedrooms === "custom" ? 
-        parseInt(formData.customBedrooms) : parseInt(formData.bedrooms);
+        Number(formData.customBedrooms) : Number(formData.bedrooms);
       const bathroomCount = formData.bathrooms === "custom" ? 
-        parseInt(formData.customBathrooms) : parseInt(formData.bathrooms);
+        Number(formData.customBathrooms) : Number(formData.bathrooms);
 
       const { data: property, error } = await supabase
         .from('properties')
