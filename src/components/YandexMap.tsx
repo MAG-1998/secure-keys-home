@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
 import { useUser } from "@/contexts/UserContext";
+import halalPin from "@/assets/markers/halal-pin.png";
+import ownerPin from "@/assets/markers/owner-pin.png";
+import defaultPin from "@/assets/markers/default-pin.png";
 
 interface YandexMapProps {
   isHalalMode?: boolean;
@@ -43,6 +46,7 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, onHalalModeC
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
 const [mapLoaded, setMapLoaded] = useState(false);
+const priceContentLayoutRef = useRef<any>(null);
 const [filters, setFilters] = useState({
   district: 'all',
   minPrice: '',
@@ -176,6 +180,14 @@ useEffect(() => {
     };
   }, []);
 
+  // Prepare marker price content layout once
+  useEffect(() => {
+    if (!mapLoaded || !window.ymaps || priceContentLayoutRef.current) return;
+    priceContentLayoutRef.current = window.ymaps.templateLayoutFactory.createClass(
+      '<div style="transform: translateY(-8px); background: hsl(var(--foreground) / 0.85); color: hsl(var(--background)); padding: 2px 6px; border-radius: 12px; font-weight: 600; font-size: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">$[properties.iconContent]</div>'
+    );
+  }, [mapLoaded]);
+
   // Initialize map
   useEffect(() => {
     if (!mapLoaded || !mapContainer.current || map.current) return;
@@ -203,26 +215,22 @@ useEffect(() => {
     // Clear existing markers
     map.current.geoObjects.removeAll();
 
-    // More outstanding markers with captions and distinct colors
+    // Price formatter for compact captions
     const formatPriceShort = (n: number) => {
       if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(n % 1_000_000 ? 1 : 0)}M`;
       if (n >= 1000) return `$${Math.round(n / 1000)}k`;
       return `$${n}`;
     };
 
-    // Add markers for filtered properties
+    // Add markers for filtered properties using custom images with overlaid price
     filteredProperties.forEach(property => {
       const isOwner = Boolean(user?.id && property.userId && user.id === property.userId);
-
-      // Choose a preset with caption so tags are more visible
-      let preset = 'islands#blueCircleIconWithCaption';
-      if (property.isHalal) preset = 'islands#greenCircleIconWithCaption';
-      if (isOwner) preset = 'islands#yellowCircleIconWithCaption'; // owner overrides
+      const iconHref = isOwner ? ownerPin : (property.isHalal ? halalPin : defaultPin);
 
       const placemark = new window.ymaps.Placemark(
         [property.lat, property.lng],
         {
-          iconCaption: formatPriceShort(property.price),
+          iconContent: formatPriceShort(property.price),
           hintContent: property.title,
           balloonContentHeader: property.title,
           balloonContentBody: `
@@ -247,7 +255,11 @@ useEffect(() => {
           `
         },
         {
-          preset,
+          iconLayout: 'default#imageWithContent',
+          iconImageHref: iconHref,
+          iconImageSize: [44, 60],
+          iconImageOffset: [-22, -60],
+          iconContentLayout: priceContentLayoutRef.current,
           zIndex: isOwner ? 700 : (property.isHalal ? 650 : 600),
           zIndexHover: isOwner ? 800 : 700,
         }
