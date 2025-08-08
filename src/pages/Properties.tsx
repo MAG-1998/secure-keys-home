@@ -7,6 +7,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Search, Bed, Bath } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
+import { extractDistrictFromText, getDistrictOptions, localizeDistrict as localizeDistrictLib } from '@/lib/districts'
 
 interface Property {
   id: string;
@@ -15,6 +16,7 @@ interface Property {
   longitude: number;
   price: number;
   location: string;
+  district?: string;
   property_type: string;
   bedrooms: number;
   bathrooms: number;
@@ -27,7 +29,7 @@ interface Property {
 }
 
 const Properties = () => {
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   const [filters, setFilters] = useState({
     district: 'all',
     minPrice: '',
@@ -62,7 +64,7 @@ const Properties = () => {
   const all = useMemo(() => (properties || []).map((p) => ({
     id: p.id,
     price: Number(p.price) || 0,
-    district: extractDistrict(p.location || ''),
+    district: (p as any).district || extractDistrict(p.location || ''),
     type: p.property_type || 'apartment',
     bedrooms: Number(p.bedrooms) || 1,
     bathrooms: Number(p.bathrooms) || 1,
@@ -74,9 +76,7 @@ const Properties = () => {
   })), [properties])
 
   function extractDistrict(location: string): string {
-    const districts = ['Chilonzor', 'Yunusobod', 'Shaykhantahur', 'Mirzo-Ulugbek', 'Yakkasaray', 'Mirobod', 'Bektemir']
-    const found = districts.find(d => location.toLowerCase().includes(d.toLowerCase()))
-    return found || 'Other'
+    return extractDistrictFromText(location);
   }
 
   const filtered = useMemo(() => {
@@ -103,23 +103,19 @@ const Properties = () => {
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">District</label>
-                <Select value={filters.district} onValueChange={(value) => setFilters(prev => ({ ...prev, district: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="Chilonzor">Chilonzor</SelectItem>
-                    <SelectItem value="Yunusobod">Yunusobod</SelectItem>
-                    <SelectItem value="Shaykhantahur">Shaykhantahur</SelectItem>
-                    <SelectItem value="Mirzo-Ulugbek">Mirzo-Ulugbek</SelectItem>
-                    <SelectItem value="Yakkasaray">Yakkasaray</SelectItem>
-                    <SelectItem value="Mirobod">Mirobod</SelectItem>
-                    <SelectItem value="Bektemir">Bektemir</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
+                <label className="text-sm font-medium mb-2 block">{t('filter.district')}</label>
+                <Input
+                  list="districts"
+                  placeholder={t('filter.chooseDistrict')}
+                  value={filters.district === 'all' ? '' : filters.district}
+                  onChange={(e) => setFilters(prev => ({ ...prev, district: e.target.value || 'all' }))}
+                />
+                <datalist id="districts">
+                  {getDistrictOptions(language).map(({ value, label }) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                  <option value="Other">{localizeDistrictLib('Other', language)}</option>
+                </datalist>
               </div>
 
               <div>
@@ -178,7 +174,7 @@ const Properties = () => {
                   <div key={p.id} className="flex items-center justify-between rounded-lg border p-4">
                     <div>
                       <div className="font-medium">{p.title}</div>
-                      <div className="text-sm text-muted-foreground">{p.district} • {p.type}</div>
+                      <div className="text-sm text-muted-foreground">{localizeDistrictLib(p.district as any, language)} • {p.type}</div>
                       <div className="flex gap-3 text-xs text-muted-foreground mt-1">
                         <span>🛏️ {p.bedrooms} bed</span>
                         <span>🚿 {p.bathrooms} bath</span>

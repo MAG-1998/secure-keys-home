@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
 import { useUser } from "@/contexts/UserContext";
 import type { Language } from "@/hooks/useTranslation";
+import { extractDistrictFromText, localizeDistrict as localizeDistrictLib, getDistrictOptions } from "@/lib/districts";
 
 interface YandexMapProps {
   isHalalMode?: boolean;
@@ -101,7 +102,7 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
   lat: Number(prop.latitude) || 41.2995,
   lng: Number(prop.longitude) || 69.2401,
   price: Number(prop.price) || 0,
-  district: extractDistrict(prop.location || ''),
+  district: (prop.district as string) || extractDistrictFromText(prop.location || ''),
   type: prop.property_type || 'apartment',
   bedrooms: Number(prop.bedrooms) || 1,
   bathrooms: Number(prop.bathrooms) || 1,
@@ -114,47 +115,11 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
 
   // Helper function to extract district from location
   function extractDistrict(location: string): string {
-    const districts = ['Chilonzor', 'Yunusobod', 'Shaykhantahur', 'Mirzo-Ulugbek', 'Yakkasaray', 'Mirobod', 'Bektemir'];
-    const foundDistrict = districts.find(district => 
-      location.toLowerCase().includes(district.toLowerCase())
-    );
-    return foundDistrict || 'Other';
+    return extractDistrictFromText(location);
   }
 
   const localizeDistrict = useCallback((district: string): string => {
-    const maps = {
-      en: {
-        Chilonzor: 'Chilonzor',
-        Yunusobod: 'Yunusobod',
-        Shaykhantahur: 'Shaykhantahur',
-        'Mirzo-Ulugbek': 'Mirzo-Ulugbek',
-        Yakkasaray: 'Yakkasaray',
-        Mirobod: 'Mirobod',
-        Bektemir: 'Bektemir',
-        Other: 'Other',
-      },
-      ru: {
-        Chilonzor: 'Чиланзар',
-        Yunusobod: 'Юнусабад',
-        Shaykhantahur: 'Шайхантахур',
-        'Mirzo-Ulugbek': 'Мирзо-Улугбек',
-        Yakkasaray: 'Яккасарай',
-        Mirobod: 'Миробод',
-        Bektemir: 'Бектемир',
-        Other: 'Другой',
-      },
-      uz: {
-        Chilonzor: 'Chilonzor',
-        Yunusobod: 'Yunusobod',
-        Shaykhantahur: 'Shayxontohur',
-        'Mirzo-Ulugbek': 'Mirzo-Ulugʻbek',
-        Yakkasaray: 'Yakkasaroy',
-        Mirobod: 'Mirobod',
-        Bektemir: 'Bektemir',
-        Other: 'Boshqa',
-      },
-    } as const;
-    return (maps as any)[language]?.[district] ?? district;
+    return localizeDistrictLib(district as any, language);
   }, [language]);
 
 // Apply filters (reactive to data and UI)
@@ -446,13 +411,9 @@ const approvedRandom = useMemo(() => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t('filter.allDistricts')}</SelectItem>
-                    <SelectItem value="Chilonzor">{localizeDistrict('Chilonzor')}</SelectItem>
-                    <SelectItem value="Yunusobod">{localizeDistrict('Yunusobod')}</SelectItem>
-                    <SelectItem value="Shaykhantahur">{localizeDistrict('Shaykhantahur')}</SelectItem>
-                    <SelectItem value="Mirzo-Ulugbek">{localizeDistrict('Mirzo-Ulugbek')}</SelectItem>
-                    <SelectItem value="Yakkasaray">{localizeDistrict('Yakkasaray')}</SelectItem>
-                    <SelectItem value="Mirobod">{localizeDistrict('Mirobod')}</SelectItem>
-                    <SelectItem value="Bektemir">{localizeDistrict('Bektemir')}</SelectItem>
+                    {getDistrictOptions(language).map(({ value, label }) => (
+                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                    ))}
                     <SelectItem value="Other">{localizeDistrict('Other')}</SelectItem>
                   </SelectContent>
                 </Select>

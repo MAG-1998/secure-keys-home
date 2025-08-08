@@ -16,9 +16,10 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import LocationPicker from "@/components/LocationPicker";
 import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail } from "lucide-react";
+import { extractDistrictFromText, getDistrictOptions } from "@/lib/districts";
 const ListProperty = () => {
   const {
-    t
+    t, language
   } = useTranslation();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
@@ -28,6 +29,7 @@ const ListProperty = () => {
     // Property Details
     propertyType: "",
     address: "",
+    district: "",
     price: "",
     bedrooms: "",
     customBedrooms: "",
@@ -162,25 +164,28 @@ const ListProperty = () => {
       const bathroomCount = formData.bathrooms === "custom" ? 
         Number(formData.customBathrooms) : Number(formData.bathrooms);
 
+      const insertPayload: any = {
+        user_id: user.user.id,
+        title: `${formData.propertyType} in ${formData.address}`,
+        location: formData.address,
+        property_type: formData.propertyType,
+        price: parseFloat(formData.price),
+        bedrooms: bedroomCount,
+        bathrooms: bathroomCount,
+        area: parseFloat(formData.area),
+        description: formData.description,
+        visit_hours: formData.visitHours,
+        virtual_tour: formData.virtualTour,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        halal_financing_requested: formData.halalFinancingRequested,
+        status: 'pending',
+        district: formData.district || extractDistrictFromText(formData.address)
+      };
+
       const { data: property, error } = await supabase
         .from('properties')
-        .insert({
-          user_id: user.user.id,
-          title: `${formData.propertyType} in ${formData.address}`,
-          location: formData.address,
-          property_type: formData.propertyType,
-          price: parseFloat(formData.price),
-          bedrooms: bedroomCount,
-          bathrooms: bathroomCount,
-          area: parseFloat(formData.area),
-          description: formData.description,
-          visit_hours: formData.visitHours,
-          virtual_tour: formData.virtualTour,
-          latitude: formData.latitude,
-          longitude: formData.longitude,
-          halal_financing_requested: formData.halalFinancingRequested,
-          status: 'pending'
-        })
+        .insert(insertPayload)
         .select()
         .single();
 
@@ -271,6 +276,16 @@ const ListProperty = () => {
               <div>
                 <Label htmlFor="address">Property Address</Label>
                 <Input id="address" placeholder="Enter full address in Tashkent" value={formData.address} onChange={e => handleInputChange("address", e.target.value)} />
+              </div>
+              <div>
+                <Label htmlFor="district">District</Label>
+                <Input id="district" list="districts" placeholder="Select or type district" value={formData.district} onChange={(e) => handleInputChange('district', e.target.value)} />
+                <datalist id="districts">
+                  {getDistrictOptions(language).map(({ value, label }) => (
+                    <option key={value} value={value}>{label}</option>
+                  ))}
+                  <option value="Other">Other</option>
+                </datalist>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
@@ -368,11 +383,13 @@ const ListProperty = () => {
       case 2:
         return <LocationPicker 
           onLocationSelect={(lat, lng, address) => {
+            const detected = extractDistrictFromText(address || '');
             setFormData(prev => ({
               ...prev,
               latitude: lat,
               longitude: lng,
-              address: address || prev.address
+              address: address || prev.address,
+              district: prev.district || (detected !== 'Other' ? detected : '')
             }));
           }}
           selectedLat={formData.latitude || undefined}
