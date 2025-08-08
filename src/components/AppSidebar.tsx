@@ -51,7 +51,9 @@ export function AppSidebar() {
   const navigationItems = getNavigationItems()
   const hasActiveItem = navigationItems.some(item => currentPath === item.url)
 
-  // Only show sidebar for admin and moderator roles
+  // Always show sidebar for admin and moderator roles, with debug logging
+  console.log(`AppSidebar render - Current role: ${role}, Current path: ${currentPath}`);
+  
   if (role !== 'admin' && role !== 'moderator') {
     console.log(`Sidebar hidden for role: ${role}`)
     return null

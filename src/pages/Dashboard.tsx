@@ -95,6 +95,11 @@ const Dashboard = memo(() => {
                     </button>
                   )}
                   
+                  {/* Debug role indicator */}
+                  <Badge variant={role === 'admin' ? 'destructive' : role === 'moderator' ? 'default' : 'secondary'} className="text-xs">
+                    {role.toUpperCase()}
+                  </Badge>
+                  
                   <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive">
                     <LogOut className="h-4 w-4" />
                   </Button>

@@ -2,10 +2,56 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
+// Role caching utilities
+const ROLE_CACHE_KEY = 'magit_user_role';
+const ROLE_CACHE_EXPIRY_KEY = 'magit_user_role_expiry';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+type UserRole = 'user' | 'moderator' | 'admin';
+
+const setCachedRole = (role: UserRole) => {
+  try {
+    localStorage.setItem(ROLE_CACHE_KEY, role);
+    localStorage.setItem(ROLE_CACHE_EXPIRY_KEY, (Date.now() + CACHE_DURATION).toString());
+    console.log(`Role cached: ${role}`);
+  } catch (error) {
+    console.warn('Failed to cache role:', error);
+  }
+};
+
+const getCachedRole = (): UserRole | null => {
+  try {
+    const expiry = localStorage.getItem(ROLE_CACHE_EXPIRY_KEY);
+    if (!expiry || Date.now() > parseInt(expiry)) {
+      clearCachedRole();
+      return null;
+    }
+    const role = localStorage.getItem(ROLE_CACHE_KEY) as UserRole | null;
+    if (role && ['user', 'moderator', 'admin'].includes(role)) {
+      console.log(`Using cached role: ${role}`);
+      return role;
+    }
+    return null;
+  } catch (error) {
+    console.warn('Failed to get cached role:', error);
+    return null;
+  }
+};
+
+const clearCachedRole = () => {
+  try {
+    localStorage.removeItem(ROLE_CACHE_KEY);
+    localStorage.removeItem(ROLE_CACHE_EXPIRY_KEY);
+    console.log('Role cache cleared');
+  } catch (error) {
+    console.warn('Failed to clear role cache:', error);
+  }
+};
+
 interface UserContextType {
   user: User | null;
   session: Session | null;
-  role: 'user' | 'moderator' | 'admin';
+  role: UserRole;
   loading: boolean;
   authLoading: boolean;
   roleLoading: boolean;
@@ -28,15 +74,19 @@ interface UserProviderProps {
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [role, setRole] = useState<'user' | 'moderator' | 'admin'>('user');
+  const [role, setRole] = useState<UserRole>('user');
   const [authLoading, setAuthLoading] = useState(true);
   const [roleLoading, setRoleLoading] = useState(true);
 
   const loading = authLoading || roleLoading;
 
-  // Fetch user role from profiles table
-  const fetchUserRole = async (userId: string) => {
+  // Fetch user role with retry logic and caching
+  const fetchUserRole = async (userId: string, retryCount = 0): Promise<void> => {
+    const maxRetries = 3;
+    const baseDelay = 1000; // 1 second
+    
     try {
+      console.log(`Fetching role for user ${userId} (attempt ${retryCount + 1})`);
       setRoleLoading(true);
       
       const { data, error } = await supabase
@@ -45,39 +95,53 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         .eq('user_id', userId)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching user role:', error);
-        // Set default role and continue instead of staying in loading state
-        setRole('user');
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No profile found - user role
+          console.log(`No profile found for user ${userId}, defaulting to user role`);
+          setRole('user');
+          setCachedRole('user');
+        } else {
+          throw error;
+        }
       } else {
-        const userRole = data?.role || 'user';
+        const userRole = (data?.role as UserRole) || 'user';
+        console.log(`Role fetched successfully: ${userRole} for user ${userId}`);
         setRole(userRole);
-        console.log(`User role fetched: ${userRole} for user ${userId}`);
+        setCachedRole(userRole);
       }
     } catch (error) {
-      console.error('Error fetching user role:', error);
-      // Set default role and continue instead of staying in loading state
-      setRole('user');
+      console.error(`Error fetching user role (attempt ${retryCount + 1}):`, error);
+      
+      if (retryCount < maxRetries) {
+        const delay = baseDelay * Math.pow(2, retryCount); // Exponential backoff
+        console.log(`Retrying role fetch in ${delay}ms...`);
+        setTimeout(() => {
+          fetchUserRole(userId, retryCount + 1);
+        }, delay);
+        return; // Don't set roleLoading to false yet
+      } else {
+        // All retries failed - use cached role or default to user
+        const cachedRole = getCachedRole();
+        const fallbackRole = cachedRole || 'user';
+        console.warn(`All role fetch attempts failed, using fallback role: ${fallbackRole}`);
+        setRole(fallbackRole);
+      }
     } finally {
-      setRoleLoading(false);
+      // Only set loading to false if this is the final attempt or successful
+      if (retryCount === 0 || retryCount >= maxRetries) {
+        setRoleLoading(false);
+      }
     }
   };
 
   useEffect(() => {
     let mounted = true;
     
-    // Emergency timeout to prevent infinite loading (10 seconds max)
-    const emergencyTimeout = setTimeout(() => {
-      if (mounted) {
-        console.warn('Emergency timeout: forcing auth loading to complete');
-        setAuthLoading(false);
-        setRoleLoading(false);
-      }
-    }, 10000);
-
     // Get initial session
     const getInitialSession = async () => {
       try {
+        console.log('Getting initial session...');
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!mounted) return;
@@ -87,27 +151,20 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setAuthLoading(false);
 
         if (session?.user) {
-          // Add timeout for role fetching
-          const roleTimeout = setTimeout(() => {
-            if (mounted) {
-              console.warn('Role fetch timeout: defaulting to user role');
-              setRole('user');
-              setRoleLoading(false);
-            }
-          }, 5000);
-          
-          try {
-            await fetchUserRole(session.user.id);
-            clearTimeout(roleTimeout);
-          } catch (error) {
-            clearTimeout(roleTimeout);
-            console.error('Role fetch failed:', error);
-            setRole('user');
-            setRoleLoading(false);
+          // Try to use cached role first for immediate UI update
+          const cachedRole = getCachedRole();
+          if (cachedRole) {
+            console.log(`Using cached role for immediate display: ${cachedRole}`);
+            setRole(cachedRole);
           }
+          
+          // Fetch fresh role data
+          await fetchUserRole(session.user.id);
         } else {
+          console.log('No session found, clearing role');
           setRole('user');
           setRoleLoading(false);
+          clearCachedRole();
         }
       } catch (error) {
         console.error('Error getting initial session:', error);
@@ -123,7 +180,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (!mounted) return;
         
         console.log('Auth state changed:', event, session?.user?.email);
@@ -132,27 +189,20 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setAuthLoading(false);
 
         if (session?.user) {
-          // Add timeout for role fetching in auth state change
-          const roleTimeout = setTimeout(() => {
-            if (mounted) {
-              console.warn('Role fetch timeout in auth change: defaulting to user role');
-              setRole('user');
-              setRoleLoading(false);
-            }
-          }, 5000);
-          
-          try {
-            await fetchUserRole(session.user.id);
-            clearTimeout(roleTimeout);
-          } catch (error) {
-            clearTimeout(roleTimeout);
-            console.error('Role fetch failed in auth change:', error);
-            setRole('user');
-            setRoleLoading(false);
+          // Try to use cached role first for immediate UI update
+          const cachedRole = getCachedRole();
+          if (cachedRole) {
+            console.log(`Using cached role after auth change: ${cachedRole}`);
+            setRole(cachedRole);
           }
+          
+          // Fetch fresh role data
+          fetchUserRole(session.user.id);
         } else {
+          console.log('Session ended, clearing role');
           setRole('user');
           setRoleLoading(false);
+          clearCachedRole();
         }
       }
     );
@@ -160,7 +210,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     return () => {
       mounted = false;
       subscription.unsubscribe();
-      clearTimeout(emergencyTimeout);
     };
   }, []);
 
