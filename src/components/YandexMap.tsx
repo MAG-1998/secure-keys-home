@@ -472,8 +472,8 @@ const approvedRandom = useMemo(() => {
           {/* Map */}
           <div>
             <Card className="bg-gradient-card border-0 shadow-warm">
-              <CardContent className="p-6">
-                <div className="relative rounded-lg h-[36rem] overflow-hidden">
+              <CardContent className="p-6 h-[36rem]">
+                <div className="relative rounded-lg h-full overflow-hidden">
                   <div ref={mapContainer} className="absolute inset-0 rounded-lg ymaps-transparent-scope" />
                   {!mapLoaded || isLoading ? (
                     <div className="absolute inset-0 bg-background/90 flex items-center justify-center">
