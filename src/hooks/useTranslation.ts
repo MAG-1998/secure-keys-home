@@ -599,6 +599,72 @@ const translations: Translations = {
     en: 'Search for your address, click on the map, or use My Location. You can also drag the marker to adjust.',
     ru: 'Найдите адрес, кликните по карте или используйте Моё местоположение. Маркер можно перетаскивать.',
     uz: 'Manzilingizni qidiring, xaritaga bosing yoki Joylashuvimdan foydalaning. Markerni sudrab sozlashingiz mumkin.'
+  },
+
+  // Common
+  'common.any': {
+    en: 'Any',
+    ru: 'Любой',
+    uz: 'Har qanday'
+  },
+  'common.min': {
+    en: 'Min',
+    ru: 'Мин',
+    uz: 'Eng kam'
+  },
+  'common.max': {
+    en: 'Max',
+    ru: 'Макс',
+    uz: 'Eng ko‘p'
+  },
+
+  // Filter extras
+  'filter.allDistricts': {
+    en: 'All Districts',
+    ru: 'Все районы',
+    uz: 'Barcha tumanlar'
+  },
+  'filter.bedroomsLabel': {
+    en: 'Bedrooms',
+    ru: 'Комнаты',
+    uz: 'Xonalar'
+  },
+  'filter.bedrooms1Plus': {
+    en: '1+ bed',
+    ru: '1+ комн.',
+    uz: '1+ xona'
+  },
+  'filter.bedrooms2Plus': {
+    en: '2+ bed',
+    ru: '2+ комн.',
+    uz: '2+ xona'
+  },
+  'filter.bedrooms3Plus': {
+    en: '3+ bed',
+    ru: '3+ комн.',
+    uz: '3+ xona'
+  },
+  'filter.bedrooms4Plus': {
+    en: '4+ bed',
+    ru: '4+ комн.',
+    uz: '4+ xona'
+  },
+
+  // Map badges
+  'map.bed': {
+    en: 'bed',
+    ru: 'спальни',
+    uz: 'xona'
+  },
+  'map.bath': {
+    en: 'bath',
+    ru: 'санузел',
+    uz: 'hammom'
+  },
+  'map.myListing': {
+    en: 'My Listing',
+    ru: 'Моё объявление',
+    uz: 'Mening eʼlonim'
   }
 };
 

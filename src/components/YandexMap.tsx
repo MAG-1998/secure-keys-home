@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -120,6 +120,42 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
     );
     return foundDistrict || 'Other';
   }
+
+  const localizeDistrict = useCallback((district: string): string => {
+    const maps = {
+      en: {
+        Chilonzor: 'Chilonzor',
+        Yunusobod: 'Yunusobod',
+        Shaykhantahur: 'Shaykhantahur',
+        'Mirzo-Ulugbek': 'Mirzo-Ulugbek',
+        Yakkasaray: 'Yakkasaray',
+        Mirobod: 'Mirobod',
+        Bektemir: 'Bektemir',
+        Other: 'Other',
+      },
+      ru: {
+        Chilonzor: 'Чиланзар',
+        Yunusobod: 'Юнусабад',
+        Shaykhantahur: 'Шайхантахур',
+        'Mirzo-Ulugbek': 'Мирзо-Улугбек',
+        Yakkasaray: 'Яккасарай',
+        Mirobod: 'Миробод',
+        Bektemir: 'Бектемир',
+        Other: 'Другой',
+      },
+      uz: {
+        Chilonzor: 'Chilonzor',
+        Yunusobod: 'Yunusobod',
+        Shaykhantahur: 'Shayxontohur',
+        'Mirzo-Ulugbek': 'Mirzo-Ulugʻbek',
+        Yakkasaray: 'Yakkasaroy',
+        Mirobod: 'Mirobod',
+        Bektemir: 'Bektemir',
+        Other: 'Boshqa',
+      },
+    } as const;
+    return (maps as any)[language]?.[district] ?? district;
+  }, [language]);
 
 // Apply filters (reactive to data and UI)
 const filteredProperties = useMemo(() => {
@@ -317,15 +353,15 @@ const composePinImage = (color: string, priceText: string) => {
                 $${property.price.toLocaleString()}
               </div>
               <div style="margin-bottom: 8px; color: hsl(var(--muted-foreground));">
-                <strong>${property.district}</strong> • ${property.type}
+                <strong>${localizeDistrict(property.district)}</strong> • ${property.type}
               </div>
               <div style="display: flex; gap: 12px; margin-bottom: 8px; font-size: 14px; color: hsl(var(--muted-foreground));">
-                <span>🛏️ ${property.bedrooms} bed</span>
-                <span>🚿 ${property.bathrooms} bath</span>
+                <span>🛏️ ${property.bedrooms} ${t('map.bed')}</span>
+                <span>🚿 ${property.bathrooms} ${t('map.bath')}</span>
                 <span>📐 ${property.area}m²</span>
               </div>
-              ${property.isHalal ? '<div style="background: hsl(var(--primary)); color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-bottom: 8px;">✅ Halal Financing</div>' : ''}
-              ${isOwner ? '<div style="background: #d97706; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-left: 6px;">⭐ My Listing</div>' : ''}
+              ${property.isHalal ? `<div style="background: hsl(var(--primary)); color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-bottom: 8px;">✅ ${t('features.halalFinancing')}</div>` : ''}
+              ${isOwner ? `<div style="background: #d97706; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-left: 6px;">⭐ ${t('map.myListing')}</div>` : ''}
               <div style="color: hsl(var(--muted-foreground)); font-size: 14px;">
                 ${property.description}
               </div>
@@ -403,37 +439,37 @@ const approvedRandom = useMemo(() => {
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">District</label>
+                <label className="text-sm font-medium mb-2 block">{t('filter.district')}</label>
                 <Select value={filters.district} onValueChange={(value) => setFilters(prev => ({ ...prev, district: value }))}>
                   <SelectTrigger>
-                    <SelectValue placeholder="All Districts" />
+                    <SelectValue placeholder={t('filter.chooseDistrict')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Districts</SelectItem>
-                    <SelectItem value="Chilonzor">Chilonzor</SelectItem>
-                    <SelectItem value="Yunusobod">Yunusobod</SelectItem>
-                    <SelectItem value="Shaykhantahur">Shaykhantahur</SelectItem>
-                    <SelectItem value="Mirzo-Ulugbek">Mirzo-Ulugbek</SelectItem>
-                    <SelectItem value="Yakkasaray">Yakkasaray</SelectItem>
-                    <SelectItem value="Mirobod">Mirobod</SelectItem>
-                    <SelectItem value="Bektemir">Bektemir</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
+                    <SelectItem value="all">{t('filter.allDistricts')}</SelectItem>
+                    <SelectItem value="Chilonzor">{localizeDistrict('Chilonzor')}</SelectItem>
+                    <SelectItem value="Yunusobod">{localizeDistrict('Yunusobod')}</SelectItem>
+                    <SelectItem value="Shaykhantahur">{localizeDistrict('Shaykhantahur')}</SelectItem>
+                    <SelectItem value="Mirzo-Ulugbek">{localizeDistrict('Mirzo-Ulugbek')}</SelectItem>
+                    <SelectItem value="Yakkasaray">{localizeDistrict('Yakkasaray')}</SelectItem>
+                    <SelectItem value="Mirobod">{localizeDistrict('Mirobod')}</SelectItem>
+                    <SelectItem value="Bektemir">{localizeDistrict('Bektemir')}</SelectItem>
+                    <SelectItem value="Other">{localizeDistrict('Other')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Price (USD)</label>
+                <label className="text-sm font-medium mb-2 block">{t('filter.priceRange')}</label>
                 <div className="grid grid-cols-2 gap-2">
                   <Input
                     type="number"
-                    placeholder="Min"
+                    placeholder={t('common.min')}
                     value={filters.minPrice}
                     onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
                   />
                   <Input
                     type="number"
-                    placeholder="Max"
+                    placeholder={t('common.max')}
                     value={filters.maxPrice}
                     onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
                   />
@@ -441,17 +477,17 @@ const approvedRandom = useMemo(() => {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Bedrooms</label>
+                <label className="text-sm font-medium mb-2 block">{t('filter.bedroomsLabel')}</label>
                 <Select value={filters.bedrooms} onValueChange={(value) => setFilters(prev => ({ ...prev, bedrooms: value }))}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Any" />
+                    <SelectValue placeholder={t('common.any')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Any</SelectItem>
-                    <SelectItem value="1">1+ bed</SelectItem>
-                    <SelectItem value="2">2+ bed</SelectItem>
-                    <SelectItem value="3">3+ bed</SelectItem>
-                    <SelectItem value="4">4+ bed</SelectItem>
+                    <SelectItem value="all">{t('common.any')}</SelectItem>
+                    <SelectItem value="1">{t('filter.bedrooms1Plus')}</SelectItem>
+                    <SelectItem value="2">{t('filter.bedrooms2Plus')}</SelectItem>
+                    <SelectItem value="3">{t('filter.bedrooms3Plus')}</SelectItem>
+                    <SelectItem value="4">{t('filter.bedrooms4Plus')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -463,7 +499,7 @@ const approvedRandom = useMemo(() => {
                     checked={halalMode}
                     onCheckedChange={handleHalalToggle}
                   />
-                  <label htmlFor="halal-mode" className="text-sm">Halal financing mode</label>
+                  <label htmlFor="halal-mode" className="text-sm">{t('search.halalMode')}</label>
                 </div>
               </div>
             </div>
@@ -511,12 +547,12 @@ const approvedRandom = useMemo(() => {
                         <div className="flex items-start justify-between mb-2">
                           <div>
                             <h4 className="font-medium text-sm">{property.title}</h4>
-                            <p className="text-xs text-muted-foreground">{property.district}</p>
+                            <p className="text-xs text-muted-foreground">{localizeDistrict(property.district)}</p>
                           </div>
                           <div className="text-right">
                             <div className="font-bold text-primary">${property.price.toLocaleString()}</div>
-                            {property.isHalal && (
-                              <Badge variant="default" className="text-xs">Financing</Badge>
+                              {property.isHalal && (
+                              <Badge variant="default" className="text-xs">{t('features.halalFinancing')}</Badge>
                             )}
                           </div>
                         </div>
