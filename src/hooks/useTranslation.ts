@@ -307,7 +307,7 @@ const translations: Translations = {
   },
   'features.halalFinancing': {
     en: 'Halal Financing',
-    ru: 'Халяль финансы',
+    ru: 'Рассрочка',
     uz: 'Halol moliyalashtirish'
   },
   'features.halalDesc': {
