@@ -9,9 +9,6 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
 import { useUser } from "@/contexts/UserContext";
-import halalPin from "@/assets/markers/halal-pin.png";
-import ownerPin from "@/assets/markers/owner-pin.png";
-import defaultPin from "@/assets/markers/default-pin.png";
 
 interface YandexMapProps {
   isHalalMode?: boolean;
@@ -46,7 +43,7 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, onHalalModeC
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
 const [mapLoaded, setMapLoaded] = useState(false);
-const customIconLayoutRef = useRef<any>(null);
+
 const cssInjectedRef = useRef(false);
 const [filters, setFilters] = useState({
   district: 'all',
@@ -182,15 +179,6 @@ useEffect(() => {
     };
   }, []);
 
-// Prepare transparent custom icon layout once
-useEffect(() => {
-  if (!mapLoaded || !window.ymaps || customIconLayoutRef.current) return;
-  customIconLayoutRef.current = window.ymaps.templateLayoutFactory.createClass(
-    '<div style="width:44px;height:60px;transform: translate(-22px,-60px); background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0; margin: 0;">' +
-    '<img src="$[properties.href]" alt="map pin" style="display:block;width:44px;height:60px;background: transparent !important;" />' +
-    '</div>'
-  );
-}, [mapLoaded]);
 
   // Initialize map
   useEffect(() => {
@@ -248,62 +236,48 @@ useEffect(() => {
 
   // Cache for composed pin images (key: `${baseKey}-${priceText}`)
   const composedPinCacheRef = useRef<Map<string, string>>(new Map());
-  const baseImagesRef = useRef<{ default: HTMLImageElement | null; halal: HTMLImageElement | null; owner: HTMLImageElement | null }>({
-    default: null,
-    halal: null,
-    owner: null,
-  });
 
-  const loadImage = (src: string) =>
-    new Promise<HTMLImageElement>((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
+const composePinImage = (color: string, priceText: string) => {
+  const WIDTH = 44;
+  const HEIGHT = 60;
+  const canvas = document.createElement('canvas');
+  canvas.width = WIDTH;
+  canvas.height = HEIGHT;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return '';
 
-  const ensureBaseImages = async () => {
-    if (!baseImagesRef.current.default) {
-      const [d, h, o] = await Promise.all([
-        loadImage(defaultPin),
-        loadImage(halalPin),
-        loadImage(ownerPin),
-      ]);
-      baseImagesRef.current.default = d;
-      baseImagesRef.current.halal = h;
-      baseImagesRef.current.owner = o;
-    }
-  };
+  // Draw teardrop pin shape
+  ctx.beginPath();
+  ctx.moveTo(22, 58);
+  ctx.quadraticCurveTo(44, 38, 22, 10);
+  ctx.quadraticCurveTo(0, 38, 22, 58);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'hsl(0 0% 100% / 0.5)';
+  ctx.stroke();
 
-  const composePinImage = (baseImg: HTMLImageElement, priceText: string) => {
-    const canvas = document.createElement('canvas');
-    // Match current icon size used in options
-    const WIDTH = 44;
-    const HEIGHT = 60;
-    canvas.width = WIDTH;
-    canvas.height = HEIGHT;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return '';
+  // Inner circle for accent
+  ctx.beginPath();
+  ctx.arc(22, 22, 10, 0, Math.PI * 2);
+  ctx.fillStyle = 'hsl(0 0% 100% / 0.85)';
+  ctx.fill();
 
-    // Draw base pin scaled to the target size
-    ctx.drawImage(baseImg, 0, 0, WIDTH, HEIGHT);
+  // Price text overlay near the head
+  ctx.font = '800 12px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const x = WIDTH / 2;
+  const y = 18;
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = 'hsl(0 0% 100% / 0.7)';
+  ctx.strokeText(priceText, x, y);
+  ctx.fillStyle = 'hsl(0 0% 0%)';
+  ctx.fillText(priceText, x, y);
 
-    // Draw price text centered with subtle white halo for readability
-    ctx.font = '800 12px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    const x = WIDTH / 2;
-    const y = 18; // visually centered near the pin head
-
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = 'hsl(0 0% 100% / 0.7)';
-    ctx.strokeText(priceText, x, y);
-
-    ctx.fillStyle = 'hsl(0 0% 0%)';
-    ctx.fillText(priceText, x, y);
-
-    return canvas.toDataURL('image/png');
-  };
+  return canvas.toDataURL('image/png');
+};
 
   const updateMarkers = async () => {
     if (!map.current) return;
@@ -311,8 +285,7 @@ useEffect(() => {
     // Clear existing markers
     map.current.geoObjects.removeAll();
 
-    // Ensure base images are ready
-    await ensureBaseImages();
+    // Using vector pins; no base image preparation needed
 
     // Price formatter for compact captions
     const formatPriceShort = (n: number) => {
@@ -324,14 +297,15 @@ useEffect(() => {
     // Prepare all placemarks concurrently for performance
     const placemarkPromises = filteredProperties.map(async (property) => {
       const isOwner = Boolean(user?.id && property.userId && user.id === property.userId);
-      const baseKey: 'owner' | 'halal' | 'default' = isOwner ? 'owner' : (property.isHalal ? 'halal' : 'default');
+      const color = isOwner
+        ? 'hsl(0 72% 50%)' // red for user's own properties
+        : (property.isHalal ? 'hsl(142 72% 42%)' : 'hsl(24 95% 53%)'); // green for halal, orange for ordinary
       const priceText = formatPriceShort(property.price);
-      const cacheKey = `${baseKey}-${priceText}`;
+      const cacheKey = `${color}-${priceText}`;
 
       let composedHref = composedPinCacheRef.current.get(cacheKey);
       if (!composedHref) {
-        const baseImg = baseImagesRef.current[baseKey]!;
-        composedHref = composePinImage(baseImg, priceText);
+        composedHref = composePinImage(color, priceText);
         composedPinCacheRef.current.set(cacheKey, composedHref);
       }
 
@@ -391,7 +365,6 @@ useEffect(() => {
       map.current.geoObjects.removeAll();
       composedPinCacheRef.current.clear();
       await updateMarkers();
-      // Force a reflow to ensure visuals update
       if (map.current?.container?.fitToViewport) {
         map.current.container.fitToViewport();
       }
@@ -502,16 +475,13 @@ const approvedRandom = useMemo(() => {
         </Card>
 
         {/* Map and Results */}
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-[2fr_1fr] gap-8 items-start">
           {/* Map */}
           <div className="lg:col-span-2">
             <Card className="bg-gradient-card border-0 shadow-warm">
               <CardContent className="p-6">
-                <div className="relative rounded-lg h-96 overflow-hidden">
+                <div className="relative rounded-lg h-[32rem] overflow-hidden">
                   <div ref={mapContainer} className="absolute inset-0 rounded-lg ymaps-transparent-scope" />
-                  <div className="absolute top-3 right-3 z-10 flex gap-2">
-                    <Button size="sm" variant="secondary" onClick={refreshPins}>Refresh pins</Button>
-                  </div>
                   {!mapLoaded || isLoading ? (
                     <div className="absolute inset-0 bg-background/90 flex items-center justify-center">
                       <div className="text-center">
@@ -536,7 +506,7 @@ const approvedRandom = useMemo(() => {
                   <Badge variant="secondary">{filteredProperties.length}</Badge>
                 </div>
                 
-                <div className="space-y-4 max-h-96 overflow-y-auto">
+                <div className="space-y-4 max-h-[32rem] overflow-y-auto">
                   {halalMode && filteredProperties.length === 0 ? (
                     <div className="text-sm text-muted-foreground">No halal-approved properties found right now.</div>
                   ) : (
