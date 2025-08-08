@@ -48,6 +48,8 @@ const [filters, setFilters] = useState({
   halalOnly: false
 });
 
+  const halalMode = isHalalMode || filters.halalOnly;
+
   // Fetch properties from database
   const { data: dbProperties, isLoading } = useOptimizedQuery(
     ['properties', 'map'],
@@ -119,7 +121,7 @@ const filteredProperties = useMemo(() => {
     filtered = filtered.filter(p => p.bedrooms >= parseInt(filters.bedrooms));
   }
 
-  if (filters.halalOnly || isHalalMode) {
+  if (halalMode) {
     filtered = filtered.filter(p => p.isHalal);
   }
 
@@ -239,13 +241,13 @@ const approvedRandom = useMemo(() => {
 
   return (
     <section className={`py-16 transition-colors duration-500 ${
-      isHalalMode ? 'bg-magit-trust/5' : 'bg-background/50'
+      halalMode ? 'bg-magit-trust/5' : 'bg-background/50'
     }`}>
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
-          <Badge variant={isHalalMode ? "default" : "secondary"} className="mb-4">
-            {isHalalMode ? 'Halal Marketplace' : 'Live Marketplace'}
+          <Badge variant={halalMode ? "default" : "secondary"} className="mb-4">
+            {halalMode ? 'Halal Marketplace' : 'Live Marketplace'}
           </Badge>
           <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
             Discover Properties in Tashkent
@@ -316,11 +318,11 @@ const approvedRandom = useMemo(() => {
               <div className="flex items-end">
                 <div className="flex items-center space-x-2 w-full">
                   <Checkbox
-                    id="halal-only"
-                    checked={filters.halalOnly}
+                    id="halal-mode"
+                    checked={halalMode}
                     onCheckedChange={(checked) => setFilters(prev => ({ ...prev, halalOnly: Boolean(checked) }))}
                   />
-                  <label htmlFor="halal-only" className="text-sm">Halal financing only</label>
+                  <label htmlFor="halal-mode" className="text-sm">Halal financing mode</label>
                 </div>
               </div>
             </div>
