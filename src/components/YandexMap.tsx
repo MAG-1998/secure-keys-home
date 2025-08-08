@@ -371,6 +371,17 @@ useEffect(() => {
     }
   };
 
+  const refreshPins = async () => {
+    if (!map.current) return;
+    try {
+      map.current.geoObjects.removeAll();
+      composedPinCacheRef.current.clear();
+      await updateMarkers();
+    } catch (e) {
+      console.error('[Map] Failed to refresh pins', e);
+    }
+  };
+
 const approvedRandom = useMemo(() => {
   const pool = halalMode
     ? filteredProperties
@@ -480,6 +491,9 @@ const approvedRandom = useMemo(() => {
               <CardContent className="p-6">
                 <div className="relative rounded-lg h-96 overflow-hidden">
                   <div ref={mapContainer} className="absolute inset-0 rounded-lg bg-muted ymaps-transparent-scope" />
+                  <div className="absolute top-3 right-3 z-10 flex gap-2">
+                    <Button size="sm" variant="secondary" onClick={refreshPins}>Refresh pins</Button>
+                  </div>
                   {!mapLoaded || isLoading ? (
                     <div className="absolute inset-0 bg-background/90 flex items-center justify-center">
                       <div className="text-center">
