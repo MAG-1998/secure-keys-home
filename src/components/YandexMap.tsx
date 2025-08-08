@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,7 @@ interface Property {
   isHalal: boolean;
   title: string;
   description: string;
+  status: string;
 }
 
 declare global {
@@ -38,15 +39,14 @@ declare global {
 const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
-  const [filters, setFilters] = useState({
-    district: 'all',
-    minPrice: '',
-    maxPrice: '',
-    bedrooms: 'all',
-    halalOnly: false
-  });
+const [mapLoaded, setMapLoaded] = useState(false);
+const [filters, setFilters] = useState({
+  district: 'all',
+  minPrice: '',
+  maxPrice: '',
+  bedrooms: 'all',
+  halalOnly: false
+});
 
   // Fetch properties from database
   const { data: dbProperties, isLoading } = useOptimizedQuery(
@@ -73,20 +73,21 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
   );
 
   // Transform database properties to component format
-  const allProperties: Property[] = (dbProperties || []).map(prop => ({
-    id: prop.id,
-    lat: Number(prop.latitude) || 41.2995,
-    lng: Number(prop.longitude) || 69.2401,
-    price: Number(prop.price) || 0,
-    district: extractDistrict(prop.location || ''),
-    type: prop.property_type || 'apartment',
-    bedrooms: Number(prop.bedrooms) || 1,
-    bathrooms: Number(prop.bathrooms) || 1,
-    area: Number(prop.area) || 50,
-    isHalal: prop.is_halal_financed || false,
-    title: prop.title || 'Property',
-    description: prop.description || ''
-  }));
+const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
+  id: prop.id,
+  lat: Number(prop.latitude) || 41.2995,
+  lng: Number(prop.longitude) || 69.2401,
+  price: Number(prop.price) || 0,
+  district: extractDistrict(prop.location || ''),
+  type: prop.property_type || 'apartment',
+  bedrooms: Number(prop.bedrooms) || 1,
+  bathrooms: Number(prop.bathrooms) || 1,
+  area: Number(prop.area) || 50,
+  isHalal: prop.is_halal_financed || false,
+  title: prop.title || 'Property',
+  description: prop.description || '',
+  status: prop.status || 'active',
+}));
 
   // Helper function to extract district from location
   function extractDistrict(location: string): string {
@@ -97,33 +98,33 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
     return foundDistrict || 'Other';
   }
 
-  // Apply filters
-  useEffect(() => {
-    let filtered = allProperties;
+// Apply filters (reactive to data and UI)
+const filteredProperties = useMemo(() => {
+  let filtered = allProperties;
 
-    if (filters.district !== 'all') {
-      filtered = filtered.filter(p => p.district === filters.district);
-    }
+  if (filters.district !== 'all') {
+    filtered = filtered.filter(p => p.district === filters.district);
+  }
 
-    const min = filters.minPrice ? Number(filters.minPrice) : undefined;
-    const max = filters.maxPrice ? Number(filters.maxPrice) : undefined;
-    if (min !== undefined) {
-      filtered = filtered.filter(p => p.price >= min);
-    }
-    if (max !== undefined) {
-      filtered = filtered.filter(p => p.price <= max);
-    }
+  const min = filters.minPrice ? Number(filters.minPrice) : undefined;
+  const max = filters.maxPrice ? Number(filters.maxPrice) : undefined;
+  if (min !== undefined) {
+    filtered = filtered.filter(p => p.price >= min);
+  }
+  if (max !== undefined) {
+    filtered = filtered.filter(p => p.price <= max);
+  }
 
-    if (filters.bedrooms !== 'all') {
-      filtered = filtered.filter(p => p.bedrooms >= parseInt(filters.bedrooms));
-    }
+  if (filters.bedrooms !== 'all') {
+    filtered = filtered.filter(p => p.bedrooms >= parseInt(filters.bedrooms));
+  }
 
-    if (filters.halalOnly || isHalalMode) {
-      filtered = filtered.filter(p => p.isHalal);
-    }
+  if (filters.halalOnly || isHalalMode) {
+    filtered = filtered.filter(p => p.isHalal);
+  }
 
-    setFilteredProperties(filtered);
-  }, [filters, isHalalMode]);
+  return filtered;
+}, [allProperties, filters, isHalalMode]);
 
   // Load Yandex Maps API
   useEffect(() => {
@@ -229,11 +230,12 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
     }
   };
 
-  const randomSample = React.useMemo(() => {
-    if (filteredProperties.length <= 3) return filteredProperties;
-    const arr = [...filteredProperties];
-    return arr.sort(() => 0.5 - Math.random()).slice(0, 3);
-  }, [filteredProperties]);
+const approvedRandom = useMemo(() => {
+  const pool = allProperties.filter(p => p.status === 'approved');
+  if (pool.length <= 3) return pool;
+  const arr = [...pool];
+  return arr.sort(() => 0.5 - Math.random()).slice(0, 3);
+}, [allProperties]);
 
   return (
     <section className={`py-16 transition-colors duration-500 ${
@@ -359,7 +361,7 @@ const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t }) => {
                 </div>
                 
                 <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {randomSample.map(property => (
+                  {approvedRandom.map(property => (
                     <div key={property.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer">
                       <div className="flex items-start justify-between mb-2">
                         <div>
