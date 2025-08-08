@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { MagitLogo } from "@/components/MagitLogo"
 import { FeatureCard } from "@/components/FeatureCard"
-import { SimpleMapSection } from "@/components/SimpleMapSection"
+import LazyMapSection from "@/components/LazyMapSection"
 import { SearchSection } from "@/components/SearchSection"
 import { Footer } from "@/components/Footer"
 import { useScroll } from "@/hooks/use-scroll"
@@ -208,7 +208,7 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
 
       {/* Interactive Map Section */}
       <div id="map">
-        <SimpleMapSection isHalalMode={isHalalMode} t={t} />
+        <LazyMapSection t={t} />
       </div>
 
       {/* Features Section */}
