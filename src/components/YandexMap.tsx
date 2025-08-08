@@ -197,8 +197,6 @@ useEffect(() => {
         const styleEl = document.createElement('style');
         styleEl.setAttribute('data-ymaps-transparent', 'true');
         styleEl.textContent = `
-.ymaps-transparent-scope .ymaps-2-1-79-image,
-.ymaps-transparent-scope .ymaps-2-1-79-svg-icon,
 .ymaps-transparent-scope .ymaps-2-1-79-placemark-overlay,
 .ymaps-transparent-scope .ymaps-2-1-79-placemark,
 .ymaps-transparent-scope .ymaps-2-1-79-placemark-container,
@@ -212,12 +210,7 @@ useEffect(() => {
   box-shadow: none !important;
   border: 0 !important;
 }
-.ymaps-transparent-scope .ymaps-2-1-79-svg-icon path,
-.ymaps-transparent-scope .ymaps-2-1-79-placemark path {
-  fill: transparent !important;
-  stroke: none !important;
-}
-`;
+        `;
         document.head.appendChild(styleEl);
         cssInjectedRef.current = true;
       }
@@ -477,10 +470,10 @@ const approvedRandom = useMemo(() => {
         {/* Map and Results */}
         <div className="grid lg:grid-cols-[2fr_1fr] gap-8 items-start">
           {/* Map */}
-          <div className="lg:col-span-2">
+          <div>
             <Card className="bg-gradient-card border-0 shadow-warm">
               <CardContent className="p-6">
-                <div className="relative rounded-lg h-[32rem] overflow-hidden">
+                <div className="relative rounded-lg h-[36rem] overflow-hidden">
                   <div ref={mapContainer} className="absolute inset-0 rounded-lg ymaps-transparent-scope" />
                   {!mapLoaded || isLoading ? (
                     <div className="absolute inset-0 bg-background/90 flex items-center justify-center">
@@ -500,13 +493,13 @@ const approvedRandom = useMemo(() => {
           {/* Results Panel */}
           <div>
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="p-6 h-[36rem] flex flex-col">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold">Properties Found</h3>
                   <Badge variant="secondary">{filteredProperties.length}</Badge>
                 </div>
                 
-                <div className="space-y-4 max-h-[32rem] overflow-y-auto">
+                <div className="space-y-4 flex-1 overflow-y-auto">
                   {halalMode && filteredProperties.length === 0 ? (
                     <div className="text-sm text-muted-foreground">No halal-approved properties found right now.</div>
                   ) : (
