@@ -50,6 +50,17 @@ const [filters, setFilters] = useState({
 
   const halalMode = isHalalMode || filters.halalOnly;
 
+  // Keep internal halal filter in sync with external prop
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, halalOnly: !!isHalalMode }));
+  }, [isHalalMode]);
+
+  // Unified handler so both toggle UIs behave the same
+  const handleHalalToggle = (checked: boolean | string) => {
+    const val = checked === 'indeterminate' ? true : Boolean(checked);
+    setFilters(prev => ({ ...prev, halalOnly: val }));
+  };
+
   // Fetch properties from database
   const { data: dbProperties, isLoading } = useOptimizedQuery(
     ['properties', 'map'],
@@ -85,7 +96,7 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
   bedrooms: Number(prop.bedrooms) || 1,
   bathrooms: Number(prop.bathrooms) || 1,
   area: Number(prop.area) || 50,
-  isHalal: prop.is_halal_financed || false,
+  isHalal: (prop.is_halal_financed || prop.halal_financing_status === 'available') || false,
   title: prop.title || 'Property',
   description: prop.description || '',
   status: prop.status || 'active',
@@ -322,7 +333,7 @@ const approvedRandom = useMemo(() => {
                   <Checkbox
                     id="halal-mode"
                     checked={halalMode}
-                    onCheckedChange={(checked) => setFilters(prev => ({ ...prev, halalOnly: Boolean(checked) }))}
+                    onCheckedChange={handleHalalToggle}
                   />
                   <label htmlFor="halal-mode" className="text-sm">Halal financing mode</label>
                 </div>
