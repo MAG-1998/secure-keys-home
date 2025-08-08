@@ -210,11 +210,73 @@ useEffect(() => {
     }
   }, [filteredProperties]);
 
-  const updateMarkers = () => {
+  // Cache for composed pin images (key: `${baseKey}-${priceText}`)
+  const composedPinCacheRef = useRef<Map<string, string>>(new Map());
+  const baseImagesRef = useRef<{ default: HTMLImageElement | null; halal: HTMLImageElement | null; owner: HTMLImageElement | null }>({
+    default: null,
+    halal: null,
+    owner: null,
+  });
+
+  const loadImage = (src: string) =>
+    new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+
+  const ensureBaseImages = async () => {
+    if (!baseImagesRef.current.default) {
+      const [d, h, o] = await Promise.all([
+        loadImage(defaultPin),
+        loadImage(halalPin),
+        loadImage(ownerPin),
+      ]);
+      baseImagesRef.current.default = d;
+      baseImagesRef.current.halal = h;
+      baseImagesRef.current.owner = o;
+    }
+  };
+
+  const composePinImage = (baseImg: HTMLImageElement, priceText: string) => {
+    const canvas = document.createElement('canvas');
+    // Match current icon size used in options
+    const WIDTH = 44;
+    const HEIGHT = 60;
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return '';
+
+    // Draw base pin scaled to the target size
+    ctx.drawImage(baseImg, 0, 0, WIDTH, HEIGHT);
+
+    // Draw price text centered with subtle white halo for readability
+    ctx.font = '800 12px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const x = WIDTH / 2;
+    const y = 18; // visually centered near the pin head
+
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'hsl(0 0% 100% / 0.7)';
+    ctx.strokeText(priceText, x, y);
+
+    ctx.fillStyle = 'hsl(0 0% 0%)';
+    ctx.fillText(priceText, x, y);
+
+    return canvas.toDataURL('image/png');
+  };
+
+  const updateMarkers = async () => {
     if (!map.current) return;
 
     // Clear existing markers
     map.current.geoObjects.removeAll();
+
+    // Ensure base images are ready
+    await ensureBaseImages();
 
     // Price formatter for compact captions
     const formatPriceShort = (n: number) => {
@@ -223,15 +285,23 @@ useEffect(() => {
       return `$${n}`;
     };
 
-    // Add markers for filtered properties using custom images with overlaid price
-    filteredProperties.forEach(property => {
+    // Prepare all placemarks concurrently for performance
+    const placemarkPromises = filteredProperties.map(async (property) => {
       const isOwner = Boolean(user?.id && property.userId && user.id === property.userId);
-      const iconHref = isOwner ? ownerPin : (property.isHalal ? halalPin : defaultPin);
+      const baseKey: 'owner' | 'halal' | 'default' = isOwner ? 'owner' : (property.isHalal ? 'halal' : 'default');
+      const priceText = formatPriceShort(property.price);
+      const cacheKey = `${baseKey}-${priceText}`;
 
-      const placemark = new window.ymaps.Placemark(
+      let composedHref = composedPinCacheRef.current.get(cacheKey);
+      if (!composedHref) {
+        const baseImg = baseImagesRef.current[baseKey]!;
+        composedHref = composePinImage(baseImg, priceText);
+        composedPinCacheRef.current.set(cacheKey, composedHref);
+      }
+
+      return new window.ymaps.Placemark(
         [property.lat, property.lng],
         {
-          iconContent: formatPriceShort(property.price),
           hintContent: property.title,
           balloonContentHeader: property.title,
           balloonContentBody: `
@@ -256,18 +326,18 @@ useEffect(() => {
           `
         },
         {
-          iconLayout: 'default#imageWithContent',
-          iconImageHref: iconHref,
+          iconLayout: 'default#image',
+          iconImageHref: composedHref,
           iconImageSize: [44, 60],
           iconImageOffset: [-22, -60],
-          iconContentLayout: priceContentLayoutRef.current,
           zIndex: isOwner ? 700 : (property.isHalal ? 650 : 600),
           zIndexHover: isOwner ? 800 : 700,
         }
       );
-
-      map.current.geoObjects.add(placemark);
     });
+
+    const placemarks = await Promise.all(placemarkPromises);
+    placemarks.forEach((pm) => map.current.geoObjects.add(pm));
 
     // Adjust map bounds to show all markers
     if (filteredProperties.length > 0) {
