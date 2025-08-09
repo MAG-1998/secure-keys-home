@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
-import { MapPin, Bed, Bath, Square, Calendar, MessageCircle, Heart, Maximize2, LogOut } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Calendar as CalendarIcon, MessageCircle, Heart, Maximize2, LogOut } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as DatePickerCalendar } from "@/components/ui/calendar";
 import { MagitLogo } from "@/components/MagitLogo";
 import { useTranslation } from "@/hooks/useTranslation";
 import { forceLocalSignOut } from "@/lib/auth";
@@ -54,7 +56,17 @@ const PropertyDetails = () => {
   const [message, setMessage] = useState("");
 
   const [selectedSlot, setSelectedSlot] = useState<string>("");
-  const [customDateTime, setCustomDateTime] = useState<string>("");
+const [customDateTime, setCustomDateTime] = useState<string>("");
+
+  const [dateOnly, setDateOnly] = useState<Date | undefined>();
+  const [timeOnly, setTimeOnly] = useState<string>("");
+
+  useEffect(() => {
+    if (dateOnly && timeOnly) {
+      const dateStr = format(dateOnly, "yyyy-MM-dd");
+      setCustomDateTime(`${dateStr}T${timeOnly}`);
+    }
+  }, [dateOnly, timeOnly]);
 
   const images = useMemo(() => {
     const arr: string[] = [];
@@ -396,7 +408,7 @@ const PropertyDetails = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium inline-flex items-center"><Calendar className="h-4 w-4 mr-2" /> Request a visit</label>
+                  <label className="text-sm font-medium inline-flex items-center"><CalendarIcon className="h-4 w-4 mr-2" /> Request a visit</label>
                   {availableSlots.length > 0 && (
                     <select
                       className="w-full rounded-md border bg-background p-2"
@@ -414,6 +426,27 @@ const PropertyDetails = () => {
                   )}
                   <div className="text-xs text-muted-foreground">Or pick a custom time:</div>
                   <Input type="datetime-local" value={customDateTime} onChange={(e) => setCustomDateTime(e.target.value)} />
+                  <div className="text-xs text-muted-foreground">Or choose date and time:</div>
+                  <div className="flex gap-2">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start font-normal">
+                          {dateOnly ? format(dateOnly, "PPP") : <span>Pick a date</span>}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <DatePickerCalendar
+                          mode="single"
+                          selected={dateOnly}
+                          onSelect={setDateOnly}
+                          initialFocus
+                          className="p-3 pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <Input type="time" value={timeOnly} onChange={(e) => setTimeOnly(e.target.value)} className="w-[140px]" />
+                  </div>
                   <Button className="w-full" onClick={requestVisit}>Send Request</Button>
                 </div>
               </CardContent>
