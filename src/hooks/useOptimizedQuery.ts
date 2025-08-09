@@ -40,18 +40,31 @@ export function useUserCounts(userId: string | undefined) {
   return useOptimizedQuery(
     ['user-counts', userId],
     async () => {
-      if (!userId) return { saved: 0, listed: 0, requests: 0 }
+      if (!userId) return { saved: 0, listed: 0, requests: 0, myRequests: 0, incomingRequests: 0 }
       
-      const [savedResult, listedResult, requestsResult] = await Promise.all([
+      const [savedResult, ownedPropertiesResult, myRequestsResult] = await Promise.all([
         supabase.from('saved_properties').select('id', { count: 'exact' }).eq('user_id', userId),
         supabase.from('properties').select('id', { count: 'exact' }).eq('user_id', userId),
         supabase.from('property_visits').select('id', { count: 'exact' }).eq('visitor_id', userId).in('status', ['pending', 'confirmed'])
       ])
 
+      const propertyIds = (ownedPropertiesResult.data || []).map((row: any) => row.id) as string[]
+      let incomingCount = 0
+      if (propertyIds.length > 0) {
+        const incomingResult = await supabase
+          .from('property_visits')
+          .select('id', { count: 'exact' })
+          .eq('status', 'pending')
+          .in('property_id', propertyIds)
+        incomingCount = incomingResult.count || 0
+      }
+
       return {
         saved: savedResult.count || 0,
-        listed: listedResult.count || 0,
-        requests: requestsResult.count || 0
+        listed: ownedPropertiesResult.count || 0,
+        requests: myRequestsResult.count || 0,
+        myRequests: myRequestsResult.count || 0,
+        incomingRequests: incomingCount
       }
     },
     { enabled: !!userId }

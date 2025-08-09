@@ -28,7 +28,7 @@ export const AuthenticatedView = memo(({
     isScrolled
   } = useScroll();
 
-  const { data: counts = { saved: 0, listed: 0, requests: 0 } } = useUserCounts(user?.id);
+  const { data: counts = { saved: 0, listed: 0, requests: 0, myRequests: 0, incomingRequests: 0 } } = useUserCounts(user?.id);
   const { language } = useTranslation();
   const getUserDisplayName = () => {
     return user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
@@ -105,36 +105,44 @@ export const AuthenticatedView = memo(({
             <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-8 text-center">
               Your Property Journey
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="bg-background/50 border-border/50">
-                <CardContent className="p-6 text-center">
-                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.saved}</div>
-                  <div className="text-muted-foreground">Saved Properties</div>
-                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/saved-properties')}>View Saved Properties</Button>
-                </CardContent>
-              </Card>
-              <Card className="bg-background/50 border-border/50">
-                <CardContent className="p-6 text-center">
-                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.listed}</div>
-                  <div className="text-muted-foreground">Properties Listed</div>
-                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-properties')}>
-                    View Listed Properties
-                  </Button>
-                </CardContent>
-              </Card>
-              <Card className="bg-background/50 border-border/50">
-                <CardContent className="p-6 text-center">
-                  <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.requests}</div>
-                  <div className="text-muted-foreground">Active Requests</div>
-                  <div className="text-xs text-muted-foreground/70 mt-1">
-                    Property listings, visits & verifications
-                  </div>
-                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-requests')}>
-                    View All Requests
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className="bg-background/50 border-border/50">
+                  <CardContent className="p-6 text-center">
+                    <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.saved}</div>
+                    <div className="text-muted-foreground">Saved Properties</div>
+                    <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/saved-properties')}>View Saved Properties</Button>
+                  </CardContent>
+                </Card>
+                <Card className="bg-background/50 border-border/50">
+                  <CardContent className="p-6 text-center">
+                    <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.listed}</div>
+                    <div className="text-muted-foreground">Properties Listed</div>
+                    <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-properties')}>
+                      View Listed Properties
+                    </Button>
+                  </CardContent>
+                </Card>
+                <Card className="bg-background/50 border-border/50">
+                  <CardContent className="p-6 text-center">
+                    <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.myRequests}</div>
+                    <div className="text-muted-foreground">Your Visit Requests</div>
+                    <div className="text-xs text-muted-foreground/70 mt-1">Pending and confirmed</div>
+                    <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-requests')}>
+                      View Your Requests
+                    </Button>
+                  </CardContent>
+                </Card>
+                <Card className="bg-background/50 border-border/50">
+                  <CardContent className="p-6 text-center">
+                    <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.incomingRequests}</div>
+                    <div className="text-muted-foreground">Requests To Your Properties</div>
+                    <div className="text-xs text-muted-foreground/70 mt-1">Owner inbox</div>
+                    <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/visit-requests')}>
+                      Manage Requests
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
           </div>
         </div>
       </section>

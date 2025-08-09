@@ -9,10 +9,11 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
-import { LogOut, User, Settings, Menu, FileText, Heart, Plus } from "lucide-react"
+import { LogOut, User, Settings, Menu, FileText, Heart, Plus, CalendarCheck } from "lucide-react"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import type { Language } from "@/hooks/useTranslation"
 import { forceLocalSignOut } from "@/lib/auth"
+import { NotificationBell } from "@/components/NotificationBell"
 
 interface AuthenticatedHeaderProps {
   user: SupabaseUser
@@ -93,6 +94,14 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
             </Button>
             <Button 
               variant="ghost" 
+              onClick={() => navigate('/visit-requests')}
+              className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm"
+            >
+              <CalendarCheck className="h-4 w-4 mr-2" />
+              Visit Requests
+            </Button>
+            <Button 
+              variant="ghost" 
               onClick={() => navigate('/list-property')}
               className="px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm"
             >
@@ -132,6 +141,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                 </div>
               </button>
 
+              <NotificationBell />
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -214,6 +224,18 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                       >
                         <Heart className="h-4 w-4 mr-3" />
                         Saved Properties
+                      </Button>
+                      
+                      <Button 
+                        variant="ghost" 
+                        onClick={() => {
+                          navigate('/visit-requests')
+                          setIsMenuOpen(false)
+                        }}
+                        className="w-full justify-start text-left"
+                      >
+                        <CalendarCheck className="h-4 w-4 mr-3" />
+                        Visit Requests
                       </Button>
                       
                       <Button 
