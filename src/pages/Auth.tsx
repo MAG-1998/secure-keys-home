@@ -60,6 +60,20 @@ const Auth = () => {
     setLoading(true)
     setError("")
 
+    // Block sign up if email/phone is banned
+    try {
+      const { data: banned } = await supabase
+        .from('red_list')
+        .select('id, reason')
+        .or(`lower(email).eq.${email.toLowerCase()},phone.eq.${phone}`)
+        .maybeSingle();
+      if (banned) {
+        setError(`Your account cannot be created: ${banned.reason || 'Banned'}`)
+        setLoading(false)
+        return
+      }
+    } catch {}
+
     const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
@@ -92,6 +106,20 @@ const Auth = () => {
 
     setLoading(true)
     setError("")
+
+    // Check red list before sign in
+    try {
+      const { data: banned } = await supabase
+        .from('red_list')
+        .select('id, reason')
+        .eq('email', email)
+        .maybeSingle();
+      if (banned) {
+        setError(`Sign in blocked: ${banned.reason || 'Banned'}`)
+        setLoading(false)
+        return
+      }
+    } catch {}
 
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
@@ -221,9 +249,14 @@ const Auth = () => {
                 </div>
 
                 {error && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
+                  <div className="space-y-2">
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                    <Button type="button" variant="outline" onClick={() => window.open('mailto:support@magit.app?subject=Ban%20Appeal','_blank')}>
+                      Contact Support
+                    </Button>
+                  </div>
                 )}
 
                 <Button

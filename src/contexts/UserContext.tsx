@@ -151,6 +151,26 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setAuthLoading(false);
 
         if (session?.user) {
+          // Enforce ban immediately
+          try {
+            const email = session.user.email || null;
+            const phone = (session.user.user_metadata as any)?.phone || null;
+            if (email || phone) {
+              const orParts = [email ? `email.eq.${email}` : null, phone ? `phone.eq.${phone}` : null].filter(Boolean).join(',');
+              const { data: banned } = await supabase
+                .from('red_list')
+                .select('id, reason')
+                .or(orParts)
+                .maybeSingle();
+              if (banned) {
+                try { localStorage.setItem('magit_ban_reason', banned.reason || 'Banned'); } catch {}
+                await supabase.auth.signOut();
+                window.location.href = '/auth?banned=1';
+                return;
+              }
+            }
+          } catch {}
+
           // Try to use cached role first for immediate UI update
           const cachedRole = getCachedRole();
           if (cachedRole) {

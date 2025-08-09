@@ -52,6 +52,7 @@ export default function ModeratorDashboard() {
   const [halalModeratorNotes, setHalalModeratorNotes] = useState<Record<string, string>>({});
   const [halalAttachments, setHalalAttachments] = useState<Record<string, string[]>>({});
   const [halalNewAttachment, setHalalNewAttachment] = useState<Record<string, string>>({});
+  const [reports, setReports] = useState<any[]>([]);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -88,9 +89,10 @@ export default function ModeratorDashboard() {
     fetchApplications();
     fetchUsers();
     fetchHalalRequests();
+    fetchReports();
   }, []);
 
-  // Realtime updates for applications, users, and halal requests
+  // Realtime updates for applications, users, halal requests, and reports
   useEffect(() => {
     const channel = supabase
       .channel('moderator-dashboard')
@@ -102,6 +104,9 @@ export default function ModeratorDashboard() {
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'halal_financing_requests' }, () => {
         fetchHalalRequests();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_reports' }, () => {
+        fetchReports();
       })
       .subscribe();
 
@@ -244,6 +249,59 @@ export default function ModeratorDashboard() {
     }
   };
 
+  // Reports fetching and actions
+  const fetchReports = async () => {
+    try {
+      const { data: reps, error } = await supabase
+        .from('user_reports')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+
+      const userIds = Array.from(new Set((reps || []).flatMap((r: any) => [r.reporter_id, r.reported_user_id])));
+      let profilesById: Record<string, any> = {};
+      if (userIds.length > 0) {
+        const { data: profs } = await supabase
+          .from('profiles')
+          .select('user_id, full_name, email, phone')
+          .in('user_id', userIds);
+        (profs || []).forEach((p: any) => { profilesById[p.user_id] = p; });
+      }
+
+      const merged = (reps || []).map((r: any) => ({
+        ...r,
+        reporterProfile: profilesById[r.reporter_id],
+        reportedProfile: profilesById[r.reported_user_id],
+      }));
+      setReports(merged);
+    } catch (e) {
+      console.error('Error fetching reports', e);
+    }
+  };
+
+  const handleReportDecision = async (report: any, decision: 'ban' | 'dismiss') => {
+    try {
+      if (decision === 'ban') {
+        const email = report.reportedProfile?.email || null;
+        const phone = report.reportedProfile?.phone || null;
+        // Insert into red list, ignore conflict errors
+        const { error: redErr } = await supabase.from('red_list').insert({ email, phone, reason: report.reason, banned_by: (await supabase.auth.getUser()).data.user?.id });
+        if (redErr && !(redErr as any).message?.toLowerCase?.().includes('duplicate')) throw redErr;
+      }
+
+      const { error: updErr } = await supabase
+        .from('user_reports')
+        .update({ status: 'reviewed', decision, reviewed_by: (await supabase.auth.getUser()).data.user?.id, reviewed_at: new Date().toISOString() })
+        .eq('id', report.id);
+      if (updErr) throw updErr;
+
+      toast({ title: 'Saved', description: decision === 'ban' ? 'User banned and report closed' : 'Report dismissed' });
+      fetchReports();
+    } catch (e: any) {
+      toast({ title: 'Error', description: e.message || 'Failed to update report', variant: 'destructive' });
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
@@ -288,7 +346,7 @@ export default function ModeratorDashboard() {
               </div>
 
       <Tabs defaultValue="applications" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="applications" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
             Property Applications
@@ -296,6 +354,10 @@ export default function ModeratorDashboard() {
           <TabsTrigger value="halal" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
             Halal Financing
+          </TabsTrigger>
+          <TabsTrigger value="reports" className="flex items-center gap-2">
+            <Home className="w-4 h-4" />
+            Reports ({reports.length})
           </TabsTrigger>
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
@@ -456,6 +518,41 @@ export default function ModeratorDashboard() {
                       >
                         Save
                       </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="reports" className="space-y-6">
+          <div className="grid gap-6">
+            {reports.length === 0 && (
+              <Card><CardContent className="p-6 text-center text-muted-foreground">No reports</CardContent></Card>
+            )}
+            {reports.map((r) => (
+              <Card key={r.id}>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <strong>Reported:</strong>
+                        <span>{r.reportedProfile?.full_name || r.reportedProfile?.email || r.reported_user_id}</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">By: {r.reporterProfile?.full_name || r.reporterProfile?.email}</div>
+                      <div className="text-sm mt-2"><strong>Reason:</strong> {r.reason}</div>
+                      <div className="text-xs text-muted-foreground mt-1">{new Date(r.created_at).toLocaleString()}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      {r.status === 'pending' ? (
+                        <>
+                          <Button size="sm" variant="destructive" onClick={() => handleReportDecision(r, 'ban')}>Ban User</Button>
+                          <Button size="sm" variant="outline" onClick={() => handleReportDecision(r, 'dismiss')}>Dismiss</Button>
+                        </>
+                      ) : (
+                        <Badge variant="secondary">Reviewed{r.decision ? `: ${r.decision}` : ''}</Badge>
+                      )}
                     </div>
                   </div>
                 </CardContent>

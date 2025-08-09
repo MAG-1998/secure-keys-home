@@ -28,6 +28,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Properties = lazy(() => import("./pages/Properties"));
 const ManageProperty = lazy(() => import("./pages/ManageProperty"));
 const PropertyDetails = lazy(() => import("./pages/PropertyDetails"));
+const Messages = lazy(() => import("./pages/Messages"));
 
 // Optimized QueryClient configuration
 const queryClient = new QueryClient({
@@ -110,6 +111,13 @@ const App = () => (
                 <OptimizedRoute>
                   <Suspense fallback={<PageLoading />}>
                     <VisitRequests />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/messages" element={
+                <OptimizedRoute>
+                  <Suspense fallback={<PageLoading />}>
+                    <Messages />
                   </Suspense>
                 </OptimizedRoute>
               } />
