@@ -266,29 +266,33 @@ const VisitRequests = () => {
                       </DialogContent>
                     </Dialog>
 
-                    <Button variant="secondary" size="sm" onClick={() => onApprove(r.id)}>
-                      <Check className="w-4 h-4 mr-1" /> Approve
-                    </Button>
-
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="sm">
-                          <X className="w-4 h-4 mr-1" /> Deny
+                    {(!r.status || r.status === 'pending') && (
+                      <>
+                        <Button variant="secondary" size="sm" onClick={() => onApprove(r.id)}>
+                          <Check className="w-4 h-4 mr-1" /> Approve
                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This will mark the request as denied. The visitor will no longer see it as active.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => onDeny(r.id)}>Yes, deny</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="sm">
+                              <X className="w-4 h-4 mr-1" /> Deny
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will mark the request as denied. The visitor will no longer see it as active.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => onDeny(r.id)}>Yes, deny</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </>
+                    )}
                   </div>
                 </CardContent>
               </Card>
