@@ -429,30 +429,50 @@ const PropertyDetails = () => {
                     <h3 className="font-semibold">Actions</h3>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <label className="text-sm font-medium inline-flex items-center"><CalendarIcon className="h-4 w-4 mr-2" /> Request a visit</label>
-                  <div className="space-y-1">
-                    <div className="text-xs text-muted-foreground">Available time of visit</div>
-                    <div className="flex items-start gap-3">
+
+                    {/* Step 1: Choose date */}
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">1. Choose a date</div>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="w-full justify-start font-normal">
+                            {dateOnly ? format(dateOnly, "PPP") : <span>Pick a date</span>}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <DatePickerCalendar
+                            mode="single"
+                            selected={dateOnly}
+                            onSelect={(d) => {
+                              setDateOnly(d);
+                              setSelectedSlot("");
+                            }}
+                            initialFocus
+                            className="p-3 pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    {/* Step 2: Choose available time */}
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">2. Choose an available time</div>
                       <div className="flex flex-wrap gap-2">
-                        {availableTimesForDate.length > 0 ? (
+                        {dateOnly && availableTimesForDate.length > 0 ? (
                           availableTimesForDate.map((t, idx) => {
-                            const dateStr = dateOnly ? format(dateOnly, "yyyy-MM-dd") : "";
-                            const slot = dateStr ? `${dateStr}T${t}` : "";
-                            const isSelected = !!slot && selectedSlot === slot;
+                            const slot = `${format(dateOnly!, "yyyy-MM-dd")}T${t}`;
+                            const isSelected = selectedSlot === slot;
                             return (
                               <Button
                                 key={idx}
                                 variant={isSelected ? "secondary" : "outline"}
                                 size="sm"
                                 onClick={() => {
-                                  if (!dateOnly) {
-                                    setTimeOnly(t);
-                                    toast({ title: "Pick a date", description: "Please choose a date first." });
-                                    return;
-                                  }
                                   setTimeOnly(t);
-                                  setSelectedSlot(`${format(dateOnly, "yyyy-MM-dd")}T${t}`);
+                                  setSelectedSlot(slot);
                                   setShowCustomTime(false);
                                 }}
                               >
@@ -461,51 +481,46 @@ const PropertyDetails = () => {
                             );
                           })
                         ) : (
-                          <div className="text-xs text-muted-foreground">Pick a date to see available times</div>
+                          <div className="text-xs text-muted-foreground">{dateOnly ? 'No predefined times for this date' : 'Pick a date to see available times'}</div>
                         )}
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedSlot("");
-                          setShowCustomTime((v) => !v);
-                        }}
-                      >
-                        Book other time
-                      </Button>
                     </div>
-                    {showCustomTime && (
-                      <div className="mt-2 flex items-center gap-2">
-                        <Input
-                          type="time"
-                          value={timeOnly}
-                          onChange={(e) => setTimeOnly(e.target.value)}
-                          className="w-[140px]"
-                        />
-                        <span className="text-xs text-muted-foreground">Custom time</span>
-                      </div>
-                    )}
-                  </div>
-                    <div className="text-xs text-muted-foreground">Then pick a date:</div>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start font-normal">
-                          {dateOnly ? format(dateOnly, "PPP") : <span>Pick a date</span>}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+
+                    {/* Step 3: Request other time with deposit info */}
+                    <div className="space-y-2">
+                      <div className="text-xs text-muted-foreground">3. Request other time (requires 200,000 UZS deposit)</div>
+                      <div className="flex items-start gap-3">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedSlot("");
+                            setShowCustomTime((v) => !v);
+                          }}
+                        >
+                          {showCustomTime ? 'Cancel other time' : 'Request other time'}
                         </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <DatePickerCalendar
-                          mode="single"
-                          selected={dateOnly}
-                          onSelect={setDateOnly}
-                          initialFocus
-                          className="p-3 pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <Button className="w-full" onClick={requestVisit}>Send Request</Button>
+                        {showCustomTime && (
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="time"
+                              value={timeOnly}
+                              onChange={(e) => setTimeOnly(e.target.value)}
+                              className="w-[140px]"
+                              disabled={!dateOnly}
+                            />
+                            <span className="text-xs text-muted-foreground">{dateOnly ? 'Pick your preferred time' : 'Pick a date first'}</span>
+                          </div>
+                        )}
+                      </div>
+                      {showCustomTime && (
+                        <div className="text-xs text-muted-foreground">A refundable 200,000 UZS deposit is required for custom times to show seriousness.</div>
+                      )}
+                    </div>
+
+                    <Button className="w-full" onClick={requestVisit}>
+                      {showCustomTime && timeOnly && dateOnly ? 'Send Request (200k deposit)' : 'Send Request'}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
