@@ -49,18 +49,18 @@ const translations: Translations = {
   // Hero Section - Original functionality preserved
   'hero.titleStandard': {
     en: 'Find Your Perfect Home',
-    ru: 'Найдите идеальный дом',
+    ru: 'Найди свой идеальный дом',
     uz: 'Mukammal uyingizni toping'
   },
   'hero.titleHalal': {
     en: 'Find Your Perfect Home',
-    ru: 'Найдите идеальный дом',
+    ru: 'Найди свой идеальный дом',
     uz: 'Mukammal uyingizni toping'
   },
   // Split title parts for precise styling (avoid word-splitting bugs)
   'hero.titleStandardLead': {
     en: 'Find Your',
-    ru: 'Найдите',
+    ru: 'Найди свой',
     uz: 'Toping'
   },
   'hero.titleStandardHighlight': {
@@ -70,7 +70,7 @@ const translations: Translations = {
   },
   'hero.titleHalalLead': {
     en: 'Find Your',
-    ru: 'Найдите',
+    ru: 'Найди свой',
     uz: 'Toping'
   },
   'hero.titleHalalHighlight': {
