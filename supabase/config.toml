@@ -1,1 +1,7 @@
 project_id = "mvndmnkgtoygsvesktgw"
+
+[functions.escalate-tickets]
+verify_jwt = false
+
+[functions.support-create-ticket]
+verify_jwt = true
