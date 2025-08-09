@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -42,6 +44,8 @@ export default function ChatWidget() {
   const [selectedOtherId, setSelectedOtherId] = useState<string | null>(null);
   const [currentMessages, setCurrentMessages] = useState<DBMessage[]>([]);
   const [text, setText] = useState("");
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [supportText, setSupportText] = useState("");
 
   const myId = user?.id ?? null;
   const lastNotifId = useRef<string | null>(null);
@@ -160,6 +164,31 @@ export default function ChatWidget() {
     }
   }, [myId, selectedOtherId, text, toast]);
 
+  const createTicket = useCallback(async () => {
+    try {
+      const msg = supportText.trim();
+      if (!myId || !msg) return;
+      const { data, error } = await supabase.functions.invoke('support-create-ticket', {
+        body: { message: msg },
+      });
+      if (error) {
+        throw error;
+      }
+      const assignedTo = (data as any)?.assigned_to as string | undefined;
+      if (assignedTo) {
+        setSupportOpen(false);
+        setSupportText('');
+        setSelectedOtherId(assignedTo);
+        loadThread(assignedTo);
+        toast({ title: 'Ticket created', description: 'A moderator will assist you shortly.' });
+      } else {
+        toast({ title: 'Ticket created', description: 'Assigned moderator not found yet.' });
+      }
+    } catch (e: any) {
+      toast({ title: 'Failed to create ticket', description: e?.message ?? 'Please try again', variant: 'destructive' });
+    }
+  }, [supportText, myId, loadThread, toast]);
+
   if (!myId) return null; // only for authenticated users
 
   return (
@@ -172,8 +201,9 @@ export default function ChatWidget() {
       )}
 
       {open && (
-        <Card className="w-[92vw] max-w-[380px] h-[70vh] max-h-[540px] bg-card text-card-foreground border shadow-2xl rounded-xl overflow-hidden">
-          {/* Header */}
+        <>
+          <Card className="w-[92vw] max-w-[380px] h-[70vh] max-h-[540px] bg-card text-card-foreground border shadow-2xl rounded-xl overflow-hidden">
+            {/* Header */}
           <div className="flex items-center justify-between px-3 py-2 border-b">
             <div className="flex items-center gap-2">
               {selectedOtherId ? (
@@ -240,10 +270,8 @@ export default function ChatWidget() {
               </ScrollArea>
 
               <div className="p-2 border-t">
-                <Button asChild variant="secondary" className="w-full">
-                  <Link to="/messages">
-                    <Headset className="mr-2 h-4 w-4" /> Contact Support
-                  </Link>
+                <Button variant="secondary" className="w-full" onClick={() => setSupportOpen(true)}>
+                  <Headset className="mr-2 h-4 w-4" /> Contact Support
                 </Button>
               </div>
             </div>
@@ -294,6 +322,26 @@ export default function ChatWidget() {
             </div>
           )}
         </Card>
+        <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Contact Support</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3">
+              <Textarea
+                value={supportText}
+                onChange={(e) => setSupportText(e.target.value)}
+                placeholder="Describe your issue..."
+                aria-label="Support message"
+              />
+            </div>
+            <DialogFooter>
+              <Button variant="secondary" onClick={() => setSupportOpen(false)}>Cancel</Button>
+              <Button onClick={createTicket} disabled={!supportText.trim()}>Send</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        </>
       )}
     </div>
   );
