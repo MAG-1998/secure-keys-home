@@ -49,7 +49,7 @@ export function NotificationBell() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80 p-0">
+      <DropdownMenuContent align="end" className="z-[60] w-80 p-0 bg-popover">
         <div className="flex items-center justify-between px-3 py-2 border-b">
           <DropdownMenuLabel>Notifications</DropdownMenuLabel>
           <Button variant="ghost" size="sm" className="h-7" onClick={() => markAllAsRead()}>

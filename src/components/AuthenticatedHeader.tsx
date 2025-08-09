@@ -174,6 +174,9 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                 </Avatar>
               </button>
 
+              {/* Notifications on mobile */}
+              <NotificationBell />
+
               {/* Mobile Menu */}
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <SheetTrigger asChild>
