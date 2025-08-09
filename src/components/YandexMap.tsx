@@ -311,7 +311,7 @@ const composePinImage = (color: string, priceText: string) => {
         {
           href: composedHref,
           hintContent: property.title,
-          balloonContentHeader: property.title,
+          balloonContentHeader: `<a href="/property/${property.id}" style="text-decoration: underline; color: hsl(var(--primary));" onclick="window.location.assign('/property/${property.id}'); return false;">${property.title}</a>`,
           balloonContentBody: `
             <div style="padding: 10px; font-family: system-ui;">
               <div style="font-size: 18px; font-weight: bold; color: hsl(var(--primary)); margin-bottom: 8px;">
@@ -504,7 +504,12 @@ const approvedRandom = useMemo(() => {
                 <div className="text-sm text-muted-foreground">{t('map.noHalalFound')}</div>
               ) : (
                     approvedRandom.map(property => (
-                      <div key={property.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer">
+                      <div
+                        key={property.id}
+                        className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer"
+                        role="button"
+                        onClick={() => window.location.assign(`/property/${property.id}`)}
+                      >
                         <div className="flex items-start justify-between mb-2">
                           <div>
                             <h4 className="font-medium text-sm">{property.title}</h4>

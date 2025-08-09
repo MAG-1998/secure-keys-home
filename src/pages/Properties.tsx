@@ -171,7 +171,7 @@ const Properties = () => {
             ) : (
               <div className="space-y-4">
                 {filtered.map((p) => (
-                  <div key={p.id} className="flex items-center justify-between rounded-lg border p-4">
+                  <div key={p.id} className="flex items-center justify-between rounded-lg border p-4 cursor-pointer hover:bg-muted/30" onClick={() => window.location.assign(`/property/${p.id}`)} role="button">
                     <div>
                       <div className="font-medium">{p.title}</div>
                       <div className="text-sm text-muted-foreground">{localizeDistrictLib(p.district as any, language)} • {p.type}</div>
