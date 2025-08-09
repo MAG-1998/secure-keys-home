@@ -378,7 +378,12 @@ const [customDateTime, setCustomDateTime] = useState<string>("");
 
             <Card className="mt-6">
               <CardContent className="p-6 space-y-4">
-                <h1 className="text-2xl font-heading font-bold">{property.title}</h1>
+                <div className="flex items-start justify-between gap-2">
+                  <h1 className="text-2xl font-heading font-bold">{property.title}</h1>
+                  <Button variant={isSaved ? "success" : "outline"} size="sm" onClick={toggleSave} aria-label={isSaved ? "Saved" : "Save"}>
+                    <Heart className="h-4 w-4 mr-2" /> {isSaved ? "Saved" : "Save"}
+                  </Button>
+                </div>
                 <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                   <span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {property.location}</span>
                   {property.is_verified && (<Badge variant="success">Verified</Badge>)}
