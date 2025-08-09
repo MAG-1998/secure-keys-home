@@ -46,6 +46,7 @@ export default function ChatWidget() {
   const [text, setText] = useState("");
   const [supportOpen, setSupportOpen] = useState(false);
   const [supportText, setSupportText] = useState("");
+  const [profilesById, setProfilesById] = useState<Record<string, { full_name?: string | null; email?: string | null }>>({});
 
   const myId = user?.id ?? null;
   const lastNotifId = useRef<string | null>(null);
@@ -60,6 +61,43 @@ export default function ChatWidget() {
     }
     return Array.from(map.entries()).map(([otherUserId, lastMessage]) => ({ otherUserId, lastMessage }));
   }, [allMyMessages, myId]);
+
+  // Fetch profiles for conversation participants
+  useEffect(() => {
+    const ids = conversations.map((c) => c.otherUserId).filter(Boolean);
+    const missing = ids.filter((id) => !profilesById[id]);
+    if (!missing.length) return;
+
+    supabase
+      .from('profiles')
+      .select('user_id, full_name, email')
+      .in('user_id', missing)
+      .then(({ data, error }) => {
+        if (error) return;
+        const map: Record<string, { full_name?: string | null; email?: string | null }> = { ...profilesById };
+        (data || []).forEach((p: any) => {
+          map[p.user_id] = { full_name: p.full_name, email: p.email };
+        });
+        setProfilesById(map);
+      });
+  }, [conversations, profilesById]);
+
+  // Ensure selected user's profile is loaded (e.g., support assignment)
+  useEffect(() => {
+    if (!selectedOtherId || profilesById[selectedOtherId]) return;
+    supabase
+      .from('profiles')
+      .select('user_id, full_name, email')
+      .eq('user_id', selectedOtherId)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (error || !data) return;
+        setProfilesById((prev) => ({
+          ...prev,
+          [selectedOtherId]: { full_name: (data as any).full_name, email: (data as any).email },
+        }));
+      });
+  }, [selectedOtherId, profilesById]);
 
   const loadMyMessages = useCallback(async () => {
     if (!myId) return;
@@ -212,7 +250,11 @@ export default function ChatWidget() {
                 </Button>
               ) : null}
               <div className="font-medium">
-                {selectedOtherId ? "Chat" : "Messages"}
+                {selectedOtherId
+                  ? (profilesById[selectedOtherId]?.full_name ||
+                     profilesById[selectedOtherId]?.email ||
+                     `User ${selectedOtherId.slice(0, 8)}`)
+                  : "Messages"}
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -251,7 +293,9 @@ export default function ChatWidget() {
                       className="w-full text-left rounded-md border hover:bg-muted/50 transition px-3 py-2"
                       onClick={() => setSelectedOtherId(c.otherUserId)}
                     >
-                      <div className="text-sm font-medium truncate">User {c.otherUserId.slice(0, 8)}</div>
+                      <div className="text-sm font-medium truncate">
+                        {profilesById[c.otherUserId]?.full_name || profilesById[c.otherUserId]?.email || `User ${c.otherUserId.slice(0, 8)}`}
+                      </div>
                       {c.lastMessage && (
                         <div className="text-xs text-muted-foreground truncate">
                           {c.lastMessage.sender_id === myId ? "You: " : ""}
