@@ -54,7 +54,7 @@ const translations: Translations = {
   },
   'hero.titleHalal': {
     en: 'Find Your Perfect Home',
-    ru: 'Найдите идеальный дом',
+    ru: 'Найди свой идеальный дом',
     uz: 'Mukammal uyingizni toping'
   },
   'hero.subtitleStandard': {
