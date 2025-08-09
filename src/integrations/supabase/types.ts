@@ -76,6 +76,7 @@ export type Database = {
           read_at: string | null
           recipient_id: string
           sender_id: string
+          ticket_id: string | null
         }
         Insert: {
           content: string
@@ -85,6 +86,7 @@ export type Database = {
           read_at?: string | null
           recipient_id: string
           sender_id: string
+          ticket_id?: string | null
         }
         Update: {
           content?: string
@@ -94,6 +96,7 @@ export type Database = {
           read_at?: string | null
           recipient_id?: string
           sender_id?: string
+          ticket_id?: string | null
         }
         Relationships: [
           {
@@ -601,6 +604,72 @@ export type Database = {
           },
         ]
       }
+      tickets: {
+        Row: {
+          assigned_to: string | null
+          auto_tags: string[]
+          closed_at: string | null
+          created_at: string
+          escalation_level: number
+          first_response_at: string | null
+          id: string
+          initial_message: string | null
+          last_agent_message_at: string | null
+          last_user_message_at: string | null
+          next_escalation_at: string | null
+          priority: Database["public"]["Enums"]["ticket_priority"]
+          property_id: string | null
+          sla_response_by: string | null
+          status: Database["public"]["Enums"]["ticket_status"]
+          subject: string | null
+          type: Database["public"]["Enums"]["ticket_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          auto_tags?: string[]
+          closed_at?: string | null
+          created_at?: string
+          escalation_level?: number
+          first_response_at?: string | null
+          id?: string
+          initial_message?: string | null
+          last_agent_message_at?: string | null
+          last_user_message_at?: string | null
+          next_escalation_at?: string | null
+          priority?: Database["public"]["Enums"]["ticket_priority"]
+          property_id?: string | null
+          sla_response_by?: string | null
+          status?: Database["public"]["Enums"]["ticket_status"]
+          subject?: string | null
+          type?: Database["public"]["Enums"]["ticket_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_to?: string | null
+          auto_tags?: string[]
+          closed_at?: string | null
+          created_at?: string
+          escalation_level?: number
+          first_response_at?: string | null
+          id?: string
+          initial_message?: string | null
+          last_agent_message_at?: string | null
+          last_user_message_at?: string | null
+          next_escalation_at?: string | null
+          priority?: Database["public"]["Enums"]["ticket_priority"]
+          property_id?: string | null
+          sla_response_by?: string | null
+          status?: Database["public"]["Enums"]["ticket_status"]
+          subject?: string | null
+          type?: Database["public"]["Enums"]["ticket_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_reports: {
         Row: {
           created_at: string
@@ -661,6 +730,14 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: boolean
       }
+      fn_escalate_tickets: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      get_least_loaded_moderator: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       has_role: {
         Args: {
           _user_id: string
@@ -682,6 +759,9 @@ export type Database = {
     }
     Enums: {
       app_role: "user" | "moderator" | "admin"
+      ticket_priority: "low" | "medium" | "high"
+      ticket_status: "open" | "in_progress" | "escalated" | "closed"
+      ticket_type: "general" | "financing" | "complaint"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -810,6 +890,9 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "moderator", "admin"],
+      ticket_priority: ["low", "medium", "high"],
+      ticket_status: ["open", "in_progress", "escalated", "closed"],
+      ticket_type: ["general", "financing", "complaint"],
     },
   },
 } as const
