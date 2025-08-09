@@ -169,8 +169,8 @@ const App = () => (
                 </Suspense>
               } />
             </Routes>
+            <ChatWidget />
           </BrowserRouter>
-          <ChatWidget />
         </UserProvider>
       </TooltipProvider>
     </ThemeProvider>
