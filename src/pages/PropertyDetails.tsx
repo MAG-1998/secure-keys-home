@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MagitLogo } from "@/components/MagitLogo";
 import { useTranslation } from "@/hooks/useTranslation";
 import { forceLocalSignOut } from "@/lib/auth";
+import { parseISO, isValid, format } from "date-fns";
 
 interface PropertyDetail {
   id: string;
@@ -71,17 +72,25 @@ const PropertyDetails = () => {
       if (Array.isArray(v)) {
         // items could be strings or objects {date, time}
         const normalized = v.map((item: any) => {
-          if (typeof item === "string") return item;
-          if (item?.iso) return item.iso;
-          if (item?.date && item?.time) return `${item.date}T${item.time}`;
-          if (item?.datetime) return item.datetime;
-          return null;
+          if (typeof item === "string") return item.replace(" ", "T");
+          const s = item?.iso || (item?.date && item?.time ? `${item.date}T${item.time}` : item?.datetime);
+          return typeof s === "string" ? s.replace(" ", "T") : null;
         }).filter(Boolean);
         return normalized as string[];
       }
     } catch {}
     return [];
   }, [property?.visit_hours]);
+
+  const formatSlotLabel = (value: string) => {
+    const norm = value?.replace(" ", "T") ?? "";
+    try {
+      const d = parseISO(norm);
+      if (isValid(d)) return format(d, "PPpp");
+    } catch {}
+    const nd = new Date(norm);
+    return isNaN(nd.getTime()) ? norm : nd.toLocaleString();
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -165,12 +174,20 @@ const PropertyDetails = () => {
         navigate("/auth");
         return;
       }
-      const pick = selectedSlot || customDateTime;
-      if (!pick) {
+      const pickRaw = selectedSlot || customDateTime;
+      if (!pickRaw) {
         toast({ title: "Select time", description: "Choose an available slot or pick a custom time" });
         return;
       }
-      const visitDate = new Date(pick).toISOString();
+      const pick = pickRaw.replace(" ", "T");
+      let visitDate: string;
+      try {
+        const d = parseISO(pick);
+        visitDate = isValid(d) ? d.toISOString() : (() => { const nd = new Date(pick); if (isNaN(nd.getTime())) throw new Error("Invalid date/time selected"); return nd.toISOString(); })();
+      } catch {
+        toast({ title: "Invalid date", description: "Please choose a valid date and time." });
+        return;
+      }
       const { error } = await supabase
         .from("property_visits")
         .insert({
@@ -387,9 +404,12 @@ const PropertyDetails = () => {
                       onChange={(e) => setSelectedSlot(e.target.value)}
                     >
                       <option value="">Select available slot</option>
-                      {availableSlots.map((iso, idx) => (
-                        <option value={iso} key={idx}>{new Date(iso).toLocaleString()}</option>
-                      ))}
+                      {availableSlots.map((iso, idx) => {
+                        const norm = iso.replace(" ", "T");
+                        return (
+                          <option value={norm} key={idx}>{formatSlotLabel(norm)}</option>
+                        );
+                      })}
                     </select>
                   )}
                   <div className="text-xs text-muted-foreground">Or pick a custom time:</div>
