@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
-import { MapPin, Bed, Bath, Square, Calendar, MessageCircle, Heart, Maximize2 } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Calendar, MessageCircle, Heart, Maximize2, LogOut } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -265,11 +265,11 @@ const PropertyDetails = () => {
             )}
             {user ? (
               <>
-                <Button variant="destructive" onClick={handleSignOut}>
-                  Sign out
-                </Button>
                 <Button variant="outline" onClick={() => navigate('/profile')}>
                   Profile
+                </Button>
+                <Button variant="ghost" size="icon" onClick={handleSignOut} aria-label="Sign out">
+                  <LogOut className="h-4 w-4" />
                 </Button>
               </>
             ) : (
