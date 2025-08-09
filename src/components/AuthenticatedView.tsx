@@ -42,13 +42,13 @@ export const AuthenticatedView = memo(({
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <Badge variant="success" className={`mb-4 transition-all duration-500 ${isScrolled ? 'scale-90 opacity-70' : ''}`}>
-              Welcome back, {getUserDisplayName()}!
+              {`${t('hero.welcomeBack')}, ${getUserDisplayName()}!`}
             </Badge>
             <h1 className={`font-heading font-bold text-3xl md:text-5xl text-foreground mb-4 leading-tight transition-all duration-500 ${isScrolled ? 'scale-95' : ''}`}>
-              Find Your <span className="text-primary">Perfect Home</span>
+              {isHalalMode ? t('hero.titleHalal') : t('hero.titleStandard')}
             </h1>
             <p className={`text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed transition-all duration-500 ${isScrolled ? 'opacity-60' : ''}`}>
-              {isHalalMode ? "Search verified properties with halal financing options" : "Discover verified properties with transparent pricing"}
+              {isHalalMode ? t('hero.subtitleHalal') : t('hero.subtitleStandard')}
             </p>
             
             {/* Quick Actions */}
@@ -57,11 +57,11 @@ export const AuthenticatedView = memo(({
               behavior: 'smooth'
             })}>
                 <Home className="w-5 h-5 mr-2" />
-                Find Properties
+                {t('actions.findProperties')}
               </Button>
               <Button variant="outline" size="lg" className="text-lg px-8 py-6" onClick={() => navigate('/list-property')}>
                 <Plus className="w-5 h-5 mr-2" />
-                List Your Property
+                {t('actions.listProperty')}
               </Button>
             </div>
 
@@ -69,15 +69,15 @@ export const AuthenticatedView = memo(({
             <div className={`flex flex-wrap justify-center gap-4 text-sm text-muted-foreground transition-all duration-500 ${isScrolled ? 'opacity-40 scale-90' : ''}`}>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
-                Verified Properties
+                {t('features.verified')}
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
-                {isHalalMode ? "Halal Financing" : "Transparent Pricing"}
+                {isHalalMode ? t('hero.financingHalal') : t('hero.transparentPricing')}
               </div>
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
-                Secure Transactions
+                {t('features.secure')}
               </div>
             </div>
           </div>

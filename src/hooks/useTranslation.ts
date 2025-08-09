@@ -103,6 +103,17 @@ const translations: Translations = {
     uz: '✓ Shariatga mos platforma'
   },
 
+  'hero.welcomeBack': {
+    en: 'Welcome back',
+    ru: 'С возвращением',
+    uz: 'Qaytganingiz bilan'
+  },
+  'hero.transparentPricing': {
+    en: 'Transparent Pricing',
+    ru: 'Прозрачные цены',
+    uz: 'Ochiq narxlar'
+  },
+
   // Search Section
   'search.halalMode': {
     en: 'Halal Financing Mode',
@@ -398,6 +409,18 @@ const translations: Translations = {
     en: 'Learn More',
     ru: 'Узнать больше',
     uz: 'Batafsil'
+  },
+
+  // Actions
+  'actions.findProperties': {
+    en: 'Find Properties',
+    ru: 'Найти объекты',
+    uz: 'Eʼlonlarni topish'
+  },
+  'actions.listProperty': {
+    en: 'List Your Property',
+    ru: 'Разместить объявление',
+    uz: 'Eʼlon joylash'
   },
 
   // Footer
