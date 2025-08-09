@@ -13,6 +13,7 @@ import { useUser } from "@/contexts/UserContext";
 import { useHoverPreloader } from "@/hooks/useRoutePreloader";
 import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search, Menu } from "lucide-react";
 import { memo } from "react";
+import { forceLocalSignOut } from "@/lib/auth";
 
 const Dashboard = memo(() => {
   const navigate = useNavigate();
@@ -24,8 +25,9 @@ const Dashboard = memo(() => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        await supabase.auth.signOut({ scope: 'local' });
+        await forceLocalSignOut();
         navigate("/");
+        setTimeout(() => window.location.reload(), 0);
         return;
       }
 
@@ -33,17 +35,20 @@ const Dashboard = memo(() => {
       if (error) {
         const msg = (error as any).message?.toLowerCase?.() || '';
         if (msg.includes('session') && msg.includes('missing')) {
-          await supabase.auth.signOut({ scope: 'local' });
+          await forceLocalSignOut();
         } else {
-          console.error("Error signing out:", error.message);
+          console.error("Error signing out:", (error as any).message || error);
           alert("Error signing out. Please try again.");
           return;
         }
       }
+      await forceLocalSignOut();
       navigate("/");
+      setTimeout(() => window.location.reload(), 0);
     } catch (err) {
-      try { await supabase.auth.signOut({ scope: 'local' }); } catch {}
+      await forceLocalSignOut();
       navigate("/");
+      setTimeout(() => window.location.reload(), 0);
     }
   };
 

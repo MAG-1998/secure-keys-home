@@ -14,6 +14,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MagitLogo } from "@/components/MagitLogo";
 import { useTranslation } from "@/hooks/useTranslation";
+import { forceLocalSignOut } from "@/lib/auth";
 
 interface PropertyDetail {
   id: string;
@@ -216,9 +217,10 @@ const PropertyDetails = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        await supabase.auth.signOut({ scope: 'local' });
+        await forceLocalSignOut();
         navigate("/");
         toast({ title: "Signed out", description: "You have been logged out." });
+        setTimeout(() => window.location.reload(), 0);
         return;
       }
 
@@ -226,17 +228,20 @@ const PropertyDetails = () => {
       if (error) {
         const msg = (error as any).message?.toLowerCase?.() || '';
         if (msg.includes('session') && msg.includes('missing')) {
-          await supabase.auth.signOut({ scope: 'local' });
+          await forceLocalSignOut();
         } else {
           throw error;
         }
       }
+      await forceLocalSignOut();
       navigate("/");
       toast({ title: "Signed out", description: "You have been logged out." });
+      setTimeout(() => window.location.reload(), 0);
     } catch (e: any) {
-      try { await supabase.auth.signOut({ scope: 'local' }); } catch {}
+      await forceLocalSignOut();
       navigate("/");
       toast({ title: "Signed out", description: "You have been logged out." });
+      setTimeout(() => window.location.reload(), 0);
     }
   };
 

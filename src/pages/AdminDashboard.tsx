@@ -13,6 +13,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { AppSidebar } from "@/components/AppSidebar";
 import { Shield, Users, Home, Settings, UserCheck, UserX, LogOut, Banknote } from "lucide-react";
 import SecurityAuditPanel from "@/components/SecurityAuditPanel";
+import { forceLocalSignOut } from "@/lib/auth";
 
 interface UserWithRole {
   id: string;
@@ -40,9 +41,10 @@ export default function AdminDashboard() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        await supabase.auth.signOut({ scope: 'local' });
+        await forceLocalSignOut();
         navigate('/');
         toast({ title: "Signed out successfully", description: "You have been logged out." });
+        setTimeout(() => window.location.reload(), 0);
         return;
       }
 
@@ -50,18 +52,21 @@ export default function AdminDashboard() {
       if (error) {
         const msg = (error as any).message?.toLowerCase?.() || '';
         if (msg.includes('session') && msg.includes('missing')) {
-          await supabase.auth.signOut({ scope: 'local' });
+          await forceLocalSignOut();
         } else {
           throw error;
         }
       }
 
+      await forceLocalSignOut();
       navigate('/');
       toast({ title: "Signed out successfully", description: "You have been logged out." });
+      setTimeout(() => window.location.reload(), 0);
     } catch (error) {
-      try { await supabase.auth.signOut({ scope: 'local' }); } catch {}
+      await forceLocalSignOut();
       navigate('/');
       toast({ title: "Signed out", description: "You have been logged out." });
+      setTimeout(() => window.location.reload(), 0);
     }
   };
 

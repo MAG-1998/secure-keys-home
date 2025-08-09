@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast"
 import { LogOut, User, Settings, Menu, FileText, Heart, Plus } from "lucide-react"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import type { Language } from "@/hooks/useTranslation"
+import { forceLocalSignOut } from "@/lib/auth"
 
 interface AuthenticatedHeaderProps {
   user: SupabaseUser
@@ -31,9 +32,10 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
-        await supabase.auth.signOut({ scope: 'local' });
+        await forceLocalSignOut();
         toast({ title: "Signed out", description: "You have been logged out." });
         navigate('/');
+        setTimeout(() => window.location.reload(), 0);
         return;
       }
 
@@ -41,19 +43,21 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
       if (error) {
         const msg = (error as any).message?.toLowerCase?.() || '';
         if (msg.includes('session') && msg.includes('missing')) {
-          await supabase.auth.signOut({ scope: 'local' });
+          await forceLocalSignOut();
         } else {
           throw error;
         }
       }
 
+      await forceLocalSignOut();
       toast({ title: "Signed out", description: "You have been logged out." });
       navigate('/');
+      setTimeout(() => window.location.reload(), 0);
     } catch (err) {
-      // Fallback: clear locally and proceed
-      try { await supabase.auth.signOut({ scope: 'local' }); } catch {}
+      await forceLocalSignOut();
       toast({ title: "Signed out", description: "You have been logged out." });
       navigate('/');
+      setTimeout(() => window.location.reload(), 0);
     }
   }
 

@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { CheckCircle, XCircle, Clock, Users, Home, Eye, LogOut } from "lucide-react";
+import { forceLocalSignOut } from "@/lib/auth";
 
 interface PropertyApplication {
   id: string;
