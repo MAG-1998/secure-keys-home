@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // Simple message type matching DB
 interface DBMessage {
@@ -33,7 +33,7 @@ function getOtherUserId(m: DBMessage, myId: string) {
 export default function ChatWidget() {
   const { user } = useUser();
   const { toast } = useToast();
-  const navigate = useNavigate();
+  
   const { notifications } = useNotifications(10);
 
   const [open, setOpen] = useState(false);
@@ -186,14 +186,10 @@ export default function ChatWidget() {
               </div>
             </div>
             <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate("/messages")}
-                title="Open full messages"
-                className="px-2"
-              >
-                <MessageSquare className="h-4 w-4" />
+              <Button asChild variant="ghost" size="sm" title="Open full messages" className="px-2">
+                <Link to="/messages">
+                  <MessageSquare className="h-4 w-4" />
+                </Link>
               </Button>
               <Button
                 variant="ghost"
@@ -244,8 +240,10 @@ export default function ChatWidget() {
               </ScrollArea>
 
               <div className="p-2 border-t">
-                <Button variant="secondary" className="w-full" onClick={() => navigate("/messages")}> 
-                  <Headset className="mr-2 h-4 w-4" /> Contact Support
+                <Button asChild variant="secondary" className="w-full">
+                  <Link to="/messages">
+                    <Headset className="mr-2 h-4 w-4" /> Contact Support
+                  </Link>
                 </Button>
               </div>
             </div>
