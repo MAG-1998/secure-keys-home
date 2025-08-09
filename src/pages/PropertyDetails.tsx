@@ -264,9 +264,14 @@ const PropertyDetails = () => {
               </Button>
             )}
             {user ? (
-              <Button variant="ghost" onClick={handleSignOut}>
-                Sign out
-              </Button>
+              <>
+                <Button variant="destructive" onClick={handleSignOut}>
+                  Sign out
+                </Button>
+                <Button variant="outline" onClick={() => navigate('/profile')}>
+                  Profile
+                </Button>
+              </>
             ) : (
               <Button variant="ghost" onClick={() => navigate('/auth')}>
                 Sign in
