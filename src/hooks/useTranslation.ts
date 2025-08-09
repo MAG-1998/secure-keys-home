@@ -78,6 +78,17 @@ const translations: Translations = {
     ru: 'идеальный дом',
     uz: 'mukammal uyingizni'
   },
+  // Unauthenticated hero tagline split
+  'hero.buyLead': {
+    en: 'Buy Smart',
+    ru: 'Покупай умно',
+    uz: 'Aqlli xarid qiling'
+  },
+  'hero.buyHighlight': {
+    en: 'Buy Fair',
+    ru: 'покупай честно',
+    uz: 'adolatli xarid qiling'
+  },
   'hero.subtitleStandard': {
     en: 'Discover verified properties with transparent pricing',
     ru: 'Проверенные объекты с прозрачными ценами',
