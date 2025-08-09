@@ -12,6 +12,7 @@ import OptimizedRoute from "./components/OptimizedRoute";
 import { UserProvider } from "./contexts/UserContext";
 import { MagitLogo } from "./components/MagitLogo";
 import { FaviconManager } from "./components/FaviconManager";
+import ChatWidget from "./components/ChatWidget";
 
 // Lazy load heavy components
 const ListProperty = lazy(() => import("./pages/ListProperty"));
@@ -169,6 +170,7 @@ const App = () => (
               } />
             </Routes>
           </BrowserRouter>
+          <ChatWidget />
         </UserProvider>
       </TooltipProvider>
     </ThemeProvider>
