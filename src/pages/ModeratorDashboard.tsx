@@ -56,18 +56,30 @@ export default function ModeratorDashboard() {
 
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        await supabase.auth.signOut({ scope: 'local' });
+        navigate('/');
+        toast({ title: "Signed out successfully", description: "You have been logged out." });
+        return;
+      }
+
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        const msg = (error as any).message?.toLowerCase?.() || '';
+        if (msg.includes('session') && msg.includes('missing')) {
+          await supabase.auth.signOut({ scope: 'local' });
+        } else {
+          throw error;
+        }
+      }
+
       navigate('/');
-      toast({
-        title: "Signed out successfully",
-        description: "You have been logged out.",
-      });
+      toast({ title: "Signed out successfully", description: "You have been logged out." });
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to sign out",
-        variant: "destructive",
-      });
+      try { await supabase.auth.signOut({ scope: 'local' }); } catch {}
+      navigate('/');
+      toast({ title: "Signed out", description: "You have been logged out." });
     }
   };
 

@@ -27,13 +27,33 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) {
-      toast({
-        title: "Error signing out",
-        description: error.message,
-        variant: "destructive"
-      })
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        await supabase.auth.signOut({ scope: 'local' });
+        toast({ title: "Signed out", description: "You have been logged out." });
+        navigate('/');
+        return;
+      }
+
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        const msg = (error as any).message?.toLowerCase?.() || '';
+        if (msg.includes('session') && msg.includes('missing')) {
+          await supabase.auth.signOut({ scope: 'local' });
+        } else {
+          throw error;
+        }
+      }
+
+      toast({ title: "Signed out", description: "You have been logged out." });
+      navigate('/');
+    } catch (err) {
+      // Fallback: clear locally and proceed
+      try { await supabase.auth.signOut({ scope: 'local' }); } catch {}
+      toast({ title: "Signed out", description: "You have been logged out." });
+      navigate('/');
     }
   }
 

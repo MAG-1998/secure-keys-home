@@ -22,17 +22,28 @@ const Dashboard = memo(() => {
 
   const handleSignOut = async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        await supabase.auth.signOut({ scope: 'local' });
+        navigate("/");
+        return;
+      }
+
       const { error } = await supabase.auth.signOut();
       if (error) {
-        console.error("Error signing out:", error.message);
-        alert("Error signing out. Please try again.");
-      } else {
-        console.log("Successfully signed out");
-        navigate("/");
+        const msg = (error as any).message?.toLowerCase?.() || '';
+        if (msg.includes('session') && msg.includes('missing')) {
+          await supabase.auth.signOut({ scope: 'local' });
+        } else {
+          console.error("Error signing out:", error.message);
+          alert("Error signing out. Please try again.");
+          return;
+        }
       }
+      navigate("/");
     } catch (err) {
-      console.error("Unexpected error during sign out:", err);
-      alert("Unexpected error. Please try again.");
+      try { await supabase.auth.signOut({ scope: 'local' }); } catch {}
+      navigate("/");
     }
   };
 

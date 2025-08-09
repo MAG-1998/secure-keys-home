@@ -213,11 +213,30 @@ const PropertyDetails = () => {
   };
 
   const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast({ title: "Error signing out", description: error.message, variant: "destructive" });
-    } else {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        await supabase.auth.signOut({ scope: 'local' });
+        navigate("/");
+        toast({ title: "Signed out", description: "You have been logged out." });
+        return;
+      }
+
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        const msg = (error as any).message?.toLowerCase?.() || '';
+        if (msg.includes('session') && msg.includes('missing')) {
+          await supabase.auth.signOut({ scope: 'local' });
+        } else {
+          throw error;
+        }
+      }
       navigate("/");
+      toast({ title: "Signed out", description: "You have been logged out." });
+    } catch (e: any) {
+      try { await supabase.auth.signOut({ scope: 'local' }); } catch {}
+      navigate("/");
+      toast({ title: "Signed out", description: "You have been logged out." });
     }
   };
 
