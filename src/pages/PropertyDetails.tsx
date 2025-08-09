@@ -60,6 +60,7 @@ const PropertyDetails = () => {
 
   const [dateOnly, setDateOnly] = useState<Date | undefined>();
   const [timeOnly, setTimeOnly] = useState<string>("");
+  const [showCustomTime, setShowCustomTime] = useState(false);
 
   useEffect(() => {
     if (dateOnly && timeOnly) {
@@ -430,21 +431,62 @@ const PropertyDetails = () => {
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium inline-flex items-center"><CalendarIcon className="h-4 w-4 mr-2" /> Request a visit</label>
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">Available time of visit</div>
-                      <datalist id="available-times">
-                        {availableTimesForDate.map((t, idx) => (
-                          <option key={idx} value={t} />
-                        ))}
-                      </datalist>
-                      <Input
-                        type="time"
-                        list="available-times"
-                        value={timeOnly}
-                        onChange={(e) => setTimeOnly(e.target.value)}
-                        className="w-[140px]"
-                      />
+                  <div className="space-y-1">
+                    <div className="text-xs text-muted-foreground">Available time of visit</div>
+                    <div className="flex items-start gap-3">
+                      <div className="flex flex-wrap gap-2">
+                        {availableTimesForDate.length > 0 ? (
+                          availableTimesForDate.map((t, idx) => {
+                            const dateStr = dateOnly ? format(dateOnly, "yyyy-MM-dd") : "";
+                            const slot = dateStr ? `${dateStr}T${t}` : "";
+                            const isSelected = !!slot && selectedSlot === slot;
+                            return (
+                              <Button
+                                key={idx}
+                                variant={isSelected ? "secondary" : "outline"}
+                                size="sm"
+                                onClick={() => {
+                                  if (!dateOnly) {
+                                    setTimeOnly(t);
+                                    toast({ title: "Pick a date", description: "Please choose a date first." });
+                                    return;
+                                  }
+                                  setTimeOnly(t);
+                                  setSelectedSlot(`${format(dateOnly, "yyyy-MM-dd")}T${t}`);
+                                  setShowCustomTime(false);
+                                }}
+                              >
+                                {t}
+                              </Button>
+                            );
+                          })
+                        ) : (
+                          <div className="text-xs text-muted-foreground">Pick a date to see available times</div>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedSlot("");
+                          setShowCustomTime((v) => !v);
+                        }}
+                      >
+                        Book other time
+                      </Button>
                     </div>
+                    {showCustomTime && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <Input
+                          type="time"
+                          value={timeOnly}
+                          onChange={(e) => setTimeOnly(e.target.value)}
+                          className="w-[140px]"
+                        />
+                        <span className="text-xs text-muted-foreground">Custom time</span>
+                      </div>
+                    )}
+                  </div>
                     <div className="text-xs text-muted-foreground">Then pick a date:</div>
                     <Popover>
                       <PopoverTrigger asChild>
