@@ -268,7 +268,7 @@ const PropertyDetails = () => {
                 <Button variant="outline" onClick={() => navigate('/profile')}>
                   Profile
                 </Button>
-                <Button variant="ghost" size="icon" onClick={handleSignOut} aria-label="Sign out">
+                <Button variant="destructive" size="icon" onClick={handleSignOut} aria-label="Sign out">
                   <LogOut className="h-4 w-4" />
                 </Button>
               </>
