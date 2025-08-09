@@ -56,7 +56,7 @@ const PropertyDetails = () => {
   const [message, setMessage] = useState("");
 
   const [selectedSlot, setSelectedSlot] = useState<string>("");
-const [customDateTime, setCustomDateTime] = useState<string>("");
+  const [customDateTime, setCustomDateTime] = useState<string>("");
 
   const [dateOnly, setDateOnly] = useState<Date | undefined>();
   const [timeOnly, setTimeOnly] = useState<string>("");
@@ -354,153 +354,150 @@ const [customDateTime, setCustomDateTime] = useState<string>("");
       </header>
       <main className="py-10">
         <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="lg:w-2/3 w-full">
-            <Card>
-              <CardContent className="p-0">
-                <div className="relative">
-                  {images.length > 0 ? (
-                    <>
-                      <Carousel className="w-full">
-                        <CarouselContent>
-                          {images.map((src, idx) => (
-                            <CarouselItem key={idx}>
-                              <div className="relative">
-                                <img
-                                  src={src}
-                                  alt={property.title}
-                                  className="w-full h-[380px] object-cover"
-                                  loading="lazy"
-                                  onClick={() => { setLightboxIndex(idx); setLightboxOpen(true); }}
-                                />
-                                <button
-                                  className="absolute top-3 right-3 bg-background/70 backdrop-blur-sm rounded-md p-2"
-                                  onClick={() => { setLightboxIndex(idx); setLightboxOpen(true); }}
-                                  aria-label="Open fullscreen"
-                                >
-                                  <Maximize2 className="h-4 w-4" />
-                                </button>
-                              </div>
-                            </CarouselItem>
-                          ))}
-                        </CarouselContent>
-                        <CarouselPrevious />
-                        <CarouselNext />
-                      </Carousel>
-                    </>
-                  ) : (
-                    <div className="h-64 flex items-center justify-center text-muted-foreground">No images</div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="mt-6">
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-start justify-between gap-2">
-                  <h1 className="text-2xl font-heading font-bold">{property.title}</h1>
-                  <Button variant={isSaved ? "success" : "outline"} size="sm" onClick={toggleSave} aria-label={isSaved ? "Saved" : "Save"}>
-                    <Heart className="h-4 w-4 mr-2" /> {isSaved ? "Saved" : "Save"}
-                  </Button>
-                </div>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                  <span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {property.location}</span>
-                  {property.is_verified && (<Badge variant="success">Verified</Badge>)}
-                  {property.is_halal_financed && (<Badge variant="trust">Halal Financing</Badge>)}
-                </div>
-                <div className="flex items-center gap-6 text-muted-foreground">
-                  {property.bedrooms != null && (<span className="inline-flex items-center"><Bed className="h-4 w-4 mr-1" /> {property.bedrooms} bed</span>)}
-                  {property.bathrooms != null && (<span className="inline-flex items-center"><Bath className="h-4 w-4 mr-1" /> {property.bathrooms} bath</span>)}
-                  {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} m²</span>)}
-                </div>
-                <div className="text-3xl font-bold text-primary">${Number(property.price).toLocaleString()}</div>
-                {property.description && (
-                  <p className="text-foreground/80 leading-relaxed whitespace-pre-line">{property.description}</p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="lg:w-1/3 w-full space-y-6">
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold">Actions</h3>
-                  <Button variant={isSaved ? "success" : "outline"} onClick={toggleSave}>
-                    <Heart className="h-4 w-4 mr-2" /> {isSaved ? "Saved" : "Save"}
-                  </Button>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium inline-flex items-center"><CalendarIcon className="h-4 w-4 mr-2" /> Request a visit</label>
-                  <div className="space-y-1">
-                    <div className="text-xs text-muted-foreground">Available time of visit</div>
-                    <datalist id="available-times">
-                      {availableTimesForDate.map((t, idx) => (
-                        <option key={idx} value={t} />
-                      ))}
-                    </datalist>
-                    <Input
-                      type="time"
-                      list="available-times"
-                      value={timeOnly}
-                      onChange={(e) => setTimeOnly(e.target.value)}
-                      className="w-[140px]"
-                    />
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="lg:w-2/3 w-full">
+              <Card>
+                <CardContent className="p-0">
+                  <div className="relative">
+                    {images.length > 0 ? (
+                      <>
+                        <Carousel className="w-full">
+                          <CarouselContent>
+                            {images.map((src, idx) => (
+                              <CarouselItem key={idx}>
+                                <div className="relative">
+                                  <img
+                                    src={src}
+                                    alt={property.title}
+                                    className="w-full h-[380px] object-cover"
+                                    loading="lazy"
+                                    onClick={() => { setLightboxIndex(idx); setLightboxOpen(true); }}
+                                  />
+                                  <button
+                                    className="absolute top-3 right-3 bg-background/70 backdrop-blur-sm rounded-md p-2"
+                                    onClick={() => { setLightboxIndex(idx); setLightboxOpen(true); }}
+                                    aria-label="Open fullscreen"
+                                  >
+                                    <Maximize2 className="h-4 w-4" />
+                                  </button>
+                                </div>
+                              </CarouselItem>
+                            ))}
+                          </CarouselContent>
+                          <CarouselPrevious />
+                          <CarouselNext />
+                        </Carousel>
+                      </>
+                    ) : (
+                      <div className="h-64 flex items-center justify-center text-muted-foreground">No images</div>
+                    )}
                   </div>
-                  <div className="text-xs text-muted-foreground">Then pick a date:</div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start font-normal">
-                        {dateOnly ? format(dateOnly, "PPP") : <span>Pick a date</span>}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <DatePickerCalendar
-                        mode="single"
-                        selected={dateOnly}
-                        onSelect={setDateOnly}
-                        initialFocus
-                        className="p-3 pointer-events-auto"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <Button className="w-full" onClick={requestVisit}>Send Request</Button>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardContent className="p-6 space-y-3">
-                <h3 className="font-semibold inline-flex items-center"><MessageCircle className="h-4 w-4 mr-2" /> Message owner</h3>
-                <div className="text-sm text-muted-foreground">{property.profiles?.full_name || property.profiles?.email}</div>
-                <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Write a message..." rows={4} />
-                <Button className="w-full" onClick={sendMessage}>Send Message</Button>
-              </CardContent>
-            </Card>
+              <Card className="mt-6">
+                <CardContent className="p-6 space-y-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <h1 className="text-2xl font-heading font-bold">{property.title}</h1>
+                    <Button variant={isSaved ? "success" : "outline"} size="sm" onClick={toggleSave} aria-label={isSaved ? "Saved" : "Save"}>
+                      <Heart className="h-4 w-4 mr-2" /> {isSaved ? "Saved" : "Save"}
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                    <span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {property.location}</span>
+                    {property.is_verified && (<Badge variant="success">Verified</Badge>)}
+                    {property.is_halal_financed && (<Badge variant="trust">Halal Financing</Badge>)}
+                  </div>
+                  <div className="flex items-center gap-6 text-muted-foreground">
+                    {property.bedrooms != null && (<span className="inline-flex items-center"><Bed className="h-4 w-4 mr-1" /> {property.bedrooms} bed</span>)}
+                    {property.bathrooms != null && (<span className="inline-flex items-center"><Bath className="h-4 w-4 mr-1" /> {property.bathrooms} bath</span>)}
+                    {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} m²</span>)}
+                  </div>
+                  <div className="text-3xl font-bold text-primary">${Number(property.price).toLocaleString()}</div>
+                  {property.description && (
+                    <p className="text-foreground/80 leading-relaxed whitespace-pre-line">{property.description}</p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="lg:w-1/3 w-full space-y-6">
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold">Actions</h3>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium inline-flex items-center"><CalendarIcon className="h-4 w-4 mr-2" /> Request a visit</label>
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground">Available time of visit</div>
+                      <datalist id="available-times">
+                        {availableTimesForDate.map((t, idx) => (
+                          <option key={idx} value={t} />
+                        ))}
+                      </datalist>
+                      <Input
+                        type="time"
+                        list="available-times"
+                        value={timeOnly}
+                        onChange={(e) => setTimeOnly(e.target.value)}
+                        className="w-[140px]"
+                      />
+                    </div>
+                    <div className="text-xs text-muted-foreground">Then pick a date:</div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start font-normal">
+                          {dateOnly ? format(dateOnly, "PPP") : <span>Pick a date</span>}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <DatePickerCalendar
+                          mode="single"
+                          selected={dateOnly}
+                          onSelect={setDateOnly}
+                          initialFocus
+                          className="p-3 pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <Button className="w-full" onClick={requestVisit}>Send Request</Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-6 space-y-3">
+                  <h3 className="font-semibold inline-flex items-center"><MessageCircle className="h-4 w-4 mr-2" /> Message owner</h3>
+                  <div className="text-sm text-muted-foreground">{property.profiles?.full_name || property.profiles?.email}</div>
+                  <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Write a message..." rows={4} />
+                  <Button className="w-full" onClick={sendMessage}>Send Message</Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
-      </div>
 
-      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-5xl p-0">
-          <div className="relative">
-            <Carousel className="w-full">
-              <CarouselContent>
-                {images.map((src, idx) => (
-                  <CarouselItem key={idx} className="flex items-center justify-center bg-black">
-                    <img src={src} alt={`${property.title} ${idx + 1}`} className="max-h-[80vh] w-auto object-contain" />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </main>
+        <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+          <DialogContent className="max-w-5xl p-0">
+            <div className="relative">
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {images.map((src, idx) => (
+                    <CarouselItem key={idx} className="flex items-center justify-center bg-black">
+                      <img src={src} alt={`${property.title} ${idx + 1}`} className="max-h-[80vh] w-auto object-contain" />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </main>
     </>
   );
 };
