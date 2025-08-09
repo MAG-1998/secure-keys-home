@@ -109,12 +109,17 @@ const PropertyDetails = () => {
     if (!availableSlots?.length) return [] as string[];
     const selectedDateStr = dateOnly ? format(dateOnly, "yyyy-MM-dd") : null;
     const times = availableSlots
-      .map((iso) => {
+      .map((raw) => {
+        const s = (raw || "").toString().trim().replace(" ", "T");
+        // If owner provided simple time-of-day (e.g., "09:00"), use it directly
+        if (/^\d{2}:\d{2}$/.test(s)) return s;
         try {
-          const d = parseISO((iso || "").replace(" ", "T"));
+          const d = parseISO(s);
           if (!isValid(d)) return null;
-          const dateStr = format(d, "yyyy-MM-dd");
-          if (selectedDateStr && dateStr !== selectedDateStr) return null;
+          if (selectedDateStr) {
+            const dateStr = format(d, "yyyy-MM-dd");
+            if (dateStr !== selectedDateStr) return null;
+          }
           return format(d, "HH:mm");
         } catch {
           return null;
