@@ -196,23 +196,43 @@ const VisitRequests = () => {
                   />
                 </div>
                 <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div>
+                  <div className="flex gap-4 items-start">
+                    {/* Left: Bigger status indicator */}
+                    <div className="shrink-0">
+                      <Badge
+                        variant={r.status === 'confirmed' ? 'success' : r.status === 'denied' ? 'destructive' : 'warning'}
+                        className="px-3 py-1.5 text-sm md:text-base rounded-md capitalize"
+                      >
+                        {r.status === 'confirmed' ? (
+                          <span className="inline-flex items-center"><Check className="w-4 h-4 mr-1" /> confirmed</span>
+                        ) : r.status === 'denied' ? (
+                          <span className="inline-flex items-center"><X className="w-4 h-4 mr-1" /> denied</span>
+                        ) : (
+                          <span className="inline-flex items-center"><Clock className="w-4 h-4 mr-1" /> pending</span>
+                        )}
+                      </Badge>
+                    </div>
+
+                    {/* Right: Property details and prominent visit time */}
+                    <div className="flex-1">
                       <h3 className="font-heading font-bold text-lg text-foreground mb-1">{r.properties?.title || 'Property'}</h3>
-                      <div className="flex items-center text-muted-foreground mb-2">
+                      <div className="flex items-center text-muted-foreground mb-3">
                         <MapPin className="w-4 h-4 mr-1" />
                         <span className="text-sm">{r.properties?.location}</span>
                       </div>
-                    </div>
-                    <Badge variant={r.status === 'confirmed' ? 'success' : r.status === 'denied' ? 'destructive' : 'secondary'}>
-                      {r.status || 'pending'}
-                    </Badge>
-                  </div>
 
-                  <div className="flex items-center text-sm text-muted-foreground mt-2">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    {new Date(r.visit_date).toLocaleString()}
-                    {r.is_custom_time ? <span className="ml-2">(custom)</span> : null}
+                      <div className="rounded-lg border border-border bg-muted/40 px-3 py-2">
+                        <div className="flex items-center text-foreground font-semibold">
+                          <Calendar className="w-5 h-5 mr-2" />
+                          {new Date(r.visit_date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
+                        </div>
+                        <div className="flex items-center text-primary font-bold mt-1">
+                          <Clock className="w-5 h-5 mr-2" />
+                          {new Date(r.visit_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {r.is_custom_time ? <Badge variant="warning" className="ml-2">custom</Badge> : null}
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="mt-4 flex flex-wrap gap-2 justify-end">
