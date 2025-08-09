@@ -11,6 +11,9 @@ import { useUser } from "@/contexts/UserContext";
 import { MapPin, Bed, Bath, Square, Calendar, MessageCircle, Heart, Maximize2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MagitLogo } from "@/components/MagitLogo";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface PropertyDetail {
   id: string;
@@ -36,6 +39,7 @@ const PropertyDetails = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useUser();
+  const { language, setLanguage } = useTranslation();
 
   const [property, setProperty] = useState<PropertyDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -208,6 +212,15 @@ const PropertyDetails = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({ title: "Error signing out", description: error.message, variant: "destructive" });
+    } else {
+      navigate("/");
+    }
+  };
+
   if (loading) {
     return (
       <section className="py-10">
@@ -230,8 +243,40 @@ const PropertyDetails = () => {
   }
 
   return (
-    <main className="py-10">
-      <div className="container mx-auto px-4">
+    <>
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
+          <MagitLogo size="sm" />
+          <div className="flex items-center gap-2">
+            <Select value={language} onValueChange={(val) => setLanguage(val as any)}>
+              <SelectTrigger className="w-20">
+                <SelectValue placeholder={language.toUpperCase()} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">ENG</SelectItem>
+                <SelectItem value="ru">RU</SelectItem>
+                <SelectItem value="uz">UZ</SelectItem>
+              </SelectContent>
+            </Select>
+            {user && (
+              <Button variant="ghost" onClick={() => navigate('/dashboard')}>
+                Dashboard
+              </Button>
+            )}
+            {user ? (
+              <Button variant="ghost" onClick={handleSignOut}>
+                Sign out
+              </Button>
+            ) : (
+              <Button variant="ghost" onClick={() => navigate('/auth')}>
+                Sign in
+              </Button>
+            )}
+          </div>
+        </div>
+      </header>
+      <main className="py-10">
+        <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="lg:w-2/3 w-full">
             <Card>
@@ -355,6 +400,7 @@ const PropertyDetails = () => {
         </DialogContent>
       </Dialog>
     </main>
+    </>
   );
 };
 
