@@ -45,7 +45,11 @@ export const AuthenticatedView = memo(({
               {`${t('hero.welcomeBack')}, ${getUserDisplayName()}!`}
             </Badge>
             <h1 className={`font-heading font-bold text-3xl md:text-5xl text-foreground mb-4 leading-tight transition-all duration-500 ${isScrolled ? 'scale-95' : ''}`}>
-              {isHalalMode ? t('hero.titleHalal') : t('hero.titleStandard')}
+              {isHalalMode ? (
+                <><span>{t('hero.titleHalalLead')}</span> <span className="text-primary">{t('hero.titleHalalHighlight')}</span></>
+              ) : (
+                <><span>{t('hero.titleStandardLead')}</span> <span className="text-primary">{t('hero.titleStandardHighlight')}</span></>
+              )}
             </h1>
             <p className={`text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed transition-all duration-500 ${isScrolled ? 'opacity-60' : ''}`}>
               {isHalalMode ? t('hero.subtitleHalal') : t('hero.subtitleStandard')}

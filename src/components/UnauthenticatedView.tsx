@@ -166,9 +166,9 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
             </Badge>
             <h1 className={`font-heading font-bold text-3xl md:text-5xl text-foreground mb-4 leading-tight transition-all duration-500 ${isScrolled ? 'scale-95' : ''}`}>
               {isHalalMode ? (
-                <>{t('hero.titleHalal').split(' ').slice(0, 3).join(' ')} <span className="text-primary">{t('hero.titleHalal').split(' ').slice(-2).join(' ')}</span></>
+                <><span>{t('hero.titleHalalLead')}</span> <span className="text-primary">{t('hero.titleHalalHighlight')}</span></>
               ) : (
-                <>{t('hero.titleStandard').split(' ').slice(0, 2).join(' ')} <span className="text-primary">{t('hero.titleStandard').split(' ').slice(-2).join(' ')}</span></>
+                <><span>{t('hero.titleStandardLead')}</span> <span className="text-primary">{t('hero.titleStandardHighlight')}</span></>
               )}
             </h1>
             <p className={`text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed transition-all duration-500 ${isScrolled ? 'opacity-60' : ''}`}>

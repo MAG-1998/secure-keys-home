@@ -54,8 +54,29 @@ const translations: Translations = {
   },
   'hero.titleHalal': {
     en: 'Find Your Perfect Home',
-    ru: 'Найди свой идеальный дом',
+    ru: 'Найдите идеальный дом',
     uz: 'Mukammal uyingizni toping'
+  },
+  // Split title parts for precise styling (avoid word-splitting bugs)
+  'hero.titleStandardLead': {
+    en: 'Find Your',
+    ru: 'Найдите',
+    uz: 'Toping'
+  },
+  'hero.titleStandardHighlight': {
+    en: 'Perfect Home',
+    ru: 'идеальный дом',
+    uz: 'mukammal uyingizni'
+  },
+  'hero.titleHalalLead': {
+    en: 'Find Your',
+    ru: 'Найдите',
+    uz: 'Toping'
+  },
+  'hero.titleHalalHighlight': {
+    en: 'Perfect Home',
+    ru: 'идеальный дом',
+    uz: 'mukammal uyingizni'
   },
   'hero.subtitleStandard': {
     en: 'Discover verified properties with transparent pricing',
