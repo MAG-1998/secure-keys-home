@@ -104,6 +104,25 @@ const [customDateTime, setCustomDateTime] = useState<string>("");
     return isNaN(nd.getTime()) ? norm : nd.toLocaleString();
   };
 
+  const availableTimesForDate = useMemo(() => {
+    if (!availableSlots?.length) return [] as string[];
+    const selectedDateStr = dateOnly ? format(dateOnly, "yyyy-MM-dd") : null;
+    const times = availableSlots
+      .map((iso) => {
+        try {
+          const d = parseISO((iso || "").replace(" ", "T"));
+          if (!isValid(d)) return null;
+          const dateStr = format(d, "yyyy-MM-dd");
+          if (selectedDateStr && dateStr !== selectedDateStr) return null;
+          return format(d, "HH:mm");
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean) as string[];
+    return Array.from(new Set(times));
+  }, [availableSlots, dateOnly]);
+
   useEffect(() => {
     const load = async () => {
       if (!id) return;
@@ -414,44 +433,39 @@ const [customDateTime, setCustomDateTime] = useState<string>("");
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium inline-flex items-center"><CalendarIcon className="h-4 w-4 mr-2" /> Request a visit</label>
-                  {availableSlots.length > 0 && (
-                    <select
-                      className="w-full rounded-md border bg-background p-2"
-                      value={selectedSlot}
-                      onChange={(e) => setSelectedSlot(e.target.value)}
-                    >
-                      <option value="">Select available slot</option>
-                      {availableSlots.map((iso, idx) => {
-                        const norm = iso.replace(" ", "T");
-                        return (
-                          <option value={norm} key={idx}>{formatSlotLabel(norm)}</option>
-                        );
-                      })}
-                    </select>
-                  )}
-                  <div className="text-xs text-muted-foreground">Or pick a custom time:</div>
-                  <Input type="datetime-local" value={customDateTime} onChange={(e) => setCustomDateTime(e.target.value)} />
-                  <div className="text-xs text-muted-foreground">Or choose date and time:</div>
-                  <div className="flex gap-2">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start font-normal">
-                          {dateOnly ? format(dateOnly, "PPP") : <span>Pick a date</span>}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <DatePickerCalendar
-                          mode="single"
-                          selected={dateOnly}
-                          onSelect={setDateOnly}
-                          initialFocus
-                          className="p-3 pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <Input type="time" value={timeOnly} onChange={(e) => setTimeOnly(e.target.value)} className="w-[140px]" />
+                  <div className="space-y-1">
+                    <div className="text-xs text-muted-foreground">Available time of visit</div>
+                    <datalist id="available-times">
+                      {availableTimesForDate.map((t, idx) => (
+                        <option key={idx} value={t} />
+                      ))}
+                    </datalist>
+                    <Input
+                      type="time"
+                      list="available-times"
+                      value={timeOnly}
+                      onChange={(e) => setTimeOnly(e.target.value)}
+                      className="w-[140px]"
+                    />
                   </div>
+                  <div className="text-xs text-muted-foreground">Then pick a date:</div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start font-normal">
+                        {dateOnly ? format(dateOnly, "PPP") : <span>Pick a date</span>}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <DatePickerCalendar
+                        mode="single"
+                        selected={dateOnly}
+                        onSelect={setDateOnly}
+                        initialFocus
+                        className="p-3 pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <Button className="w-full" onClick={requestVisit}>Send Request</Button>
                 </div>
               </CardContent>
