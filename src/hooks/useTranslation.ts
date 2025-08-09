@@ -48,24 +48,24 @@ const translations: Translations = {
 
   // Hero Section - Original functionality preserved
   'hero.titleStandard': {
-    en: 'Buy smart. Pay fair.',
-    ru: 'Покупай умно. Плати честно.',
-    uz: 'Aqlli xarid. Adolatli toʻlov.'
+    en: 'Find Your Perfect Home',
+    ru: 'Найдите идеальный дом',
+    uz: 'Mukammal uyingizni toping'
   },
   'hero.titleHalal': {
-    en: 'Find your home. Stay Halal.',
-    ru: 'Найди дом. Живи по шариату.',
-    uz: 'Uyingni top. Halol yashar.'
+    en: 'Find Your Perfect Home',
+    ru: 'Найдите идеальный дом',
+    uz: 'Mukammal uyingizni toping'
   },
   'hero.subtitleStandard': {
-    en: 'Discover verified homes with honest, interest-free financing options.',
-    ru: 'Проверенные дома с честным, беспроцентным финансированием.',
-    uz: 'Halol, foizsiz moliyalashtirish bilan tekshirilgan uylar.'
+    en: 'Discover verified properties with transparent pricing',
+    ru: 'Проверенные объекты с прозрачными ценами',
+    uz: 'Shaffof narxlar bilan tekshirilgan eʼlonlarni kashf eting'
   },
   'hero.subtitleHalal': {
-    en: 'Discover verified homes with Sharia-compliant financing options across Tashkent.',
-    ru: 'Проверенные дома с шариатским финансированием в Ташкенте.',
-    uz: 'Toshkentda shariatga mos moliya bilan tekshirilgan uylar.'
+    en: 'Search verified properties with halal financing options',
+    ru: 'Ищите проверенные объекты с халяль финансированием',
+    uz: 'Halol moliyalashtirish bilan tekshirilgan eʼlonlarni qidiring'
   },
   'hero.trustedBy': {
     en: 'Trusted by 50,000+ users',
