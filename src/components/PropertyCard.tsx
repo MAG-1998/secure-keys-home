@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MapPin, Bed, Bath, Square, Heart } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 interface PropertyCardProps {
   id: string
@@ -17,6 +18,7 @@ interface PropertyCardProps {
 }
 
 export const PropertyCard = ({
+  id,
   title,
   location,
   price,
@@ -27,18 +29,25 @@ export const PropertyCard = ({
   isVerified = true,
   isHalalFinanced = false
 }: PropertyCardProps) => {
+  const navigate = useNavigate()
+
+  const handleNavigate = () => navigate(`/property/${id}`)
+
   return (
-    <Card className="group hover:shadow-warm transition-all duration-300 cursor-pointer">
+    <Card onClick={handleNavigate} className="group hover:shadow-warm transition-all duration-300 cursor-pointer">
       <div className="relative">
         <img 
           src={imageUrl} 
           alt={title}
           className="w-full h-48 object-cover rounded-t-lg"
+          loading="lazy"
         />
         <Button 
           variant="ghost" 
           size="sm"
           className="absolute top-3 right-3 bg-background/80 backdrop-blur-sm hover:bg-background/90"
+          onClick={(e) => { e.stopPropagation(); }}
+          aria-label="Save property"
         >
           <Heart className="h-4 w-4" />
         </Button>
@@ -87,7 +96,7 @@ export const PropertyCard = ({
           </div>
         </div>
         
-        <Button className="w-full" variant="outline">
+        <Button className="w-full" variant="outline" onClick={(e) => { e.stopPropagation(); handleNavigate(); }}>
           View Details
         </Button>
       </CardContent>

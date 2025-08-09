@@ -67,6 +67,58 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          property_id: string | null
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          property_id?: string | null
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          property_id?: string | null
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       payment_audit_log: {
         Row: {
           amount: number
