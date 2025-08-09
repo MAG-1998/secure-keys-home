@@ -182,7 +182,7 @@ const Properties = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-primary">${'{'}p.price.toLocaleString(){'}'}</div>
+                      <div className="font-bold text-primary">${p.price?.toLocaleString()}</div>
                       {p.isHalal && (
                         <Badge variant="default" className="text-xs mt-1">Financing</Badge>
                       )}

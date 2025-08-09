@@ -286,7 +286,7 @@ const PropertyDetails = () => {
                   {property.bathrooms != null && (<span className="inline-flex items-center"><Bath className="h-4 w-4 mr-1" /> {property.bathrooms} bath</span>)}
                   {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} m²</span>)}
                 </div>
-                <div className="text-3xl font-bold text-primary">${'{'}Number(property.price).toLocaleString(){'}'}</div>
+                <div className="text-3xl font-bold text-primary">${Number(property.price).toLocaleString()}</div>
                 {property.description && (
                   <p className="text-foreground/80 leading-relaxed whitespace-pre-line">{property.description}</p>
                 )}
