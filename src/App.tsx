@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import OptimizedRoute from "./components/OptimizedRoute";
 import { UserProvider } from "./contexts/UserContext";
 import { MagitLogo } from "./components/MagitLogo";
+import { FaviconManager } from "./components/FaviconManager";
 
 // Lazy load heavy components
 const ListProperty = lazy(() => import("./pages/ListProperty"));
@@ -57,6 +58,8 @@ const App = () => (
         <UserProvider>
           <Toaster />
           <Sonner />
+          {/* Favicon manager updates the tab icon based on theme and Halal mode */}
+          <FaviconManager />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />

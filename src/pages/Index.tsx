@@ -14,10 +14,23 @@ const Index = () => {
   const [loading, setLoading] = useState(true)
   const { language, setLanguage, t } = useTranslation()
 
+  // Initialize Halal mode from persisted preference (if any)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('isHalalMode')
+      if (saved === 'true') setIsHalalMode(true)
+      if (saved === 'false') setIsHalalMode(false)
+    } catch {}
+  }, [])
+
   // Apply global design changes based on Halal mode
   useEffect(() => {
+    // Persist and expose globally
+    try { localStorage.setItem('isHalalMode', String(isHalalMode)); } catch {}
+    document.documentElement.setAttribute('data-halal-mode', String(isHalalMode));
+
     if (isHalalMode) {
-      document.documentElement.style.setProperty('--primary', '176 64% 45%') // More trust-focused
+      document.documentElement.style.setProperty('--primary', '176 64% 45%') // Trust-focused
       document.documentElement.style.setProperty('--accent', '176 44% 65%')
     } else {
       document.documentElement.style.setProperty('--primary', '25 85% 53%') // Original magit-warm
