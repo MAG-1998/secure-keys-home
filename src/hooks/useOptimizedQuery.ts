@@ -45,7 +45,7 @@ export function useUserCounts(userId: string | undefined) {
       const [savedResult, listedResult, requestsResult] = await Promise.all([
         supabase.from('saved_properties').select('id', { count: 'exact' }).eq('user_id', userId),
         supabase.from('properties').select('id', { count: 'exact' }).eq('user_id', userId),
-        supabase.from('property_visits').select('id', { count: 'exact' }).eq('visitor_id', userId)
+        supabase.from('property_visits').select('id', { count: 'exact' }).eq('visitor_id', userId).in('status', ['pending', 'confirmed'])
       ])
 
       return {

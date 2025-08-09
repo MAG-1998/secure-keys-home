@@ -17,6 +17,7 @@ import { FaviconManager } from "./components/FaviconManager";
 const ListProperty = lazy(() => import("./pages/ListProperty"));
 const MyProperties = lazy(() => import("./pages/MyProperties"));
 const SavedProperties = lazy(() => import("./pages/SavedProperties"));
+const MyRequests = lazy(() => import("./pages/MyRequests"));
 const ModeratorDashboard = lazy(() => import("./pages/ModeratorDashboard"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
@@ -94,6 +95,13 @@ const App = () => (
                 <OptimizedRoute>
                   <Suspense fallback={<PageLoading />}>
                     <SavedProperties />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/my-requests" element={
+                <OptimizedRoute>
+                  <Suspense fallback={<PageLoading />}>
+                    <MyRequests />
                   </Suspense>
                 </OptimizedRoute>
               } />

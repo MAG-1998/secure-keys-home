@@ -129,7 +129,7 @@ export const AuthenticatedView = memo(({
                   <div className="text-xs text-muted-foreground/70 mt-1">
                     Property listings, visits & verifications
                   </div>
-                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-properties')}>
+                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-requests')}>
                     View All Requests
                   </Button>
                 </CardContent>
