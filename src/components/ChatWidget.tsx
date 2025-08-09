@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { MessageSquare, X, Send, ChevronLeft, Headset } from "lucide-react";
+import { MessageSquare, X, Send, ChevronLeft, Headset, Check, CheckCheck, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -12,7 +12,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 
-// Simple message type matching DB
+// Simple message type matching DB (plus local UI status)
 interface DBMessage {
   id: string;
   sender_id: string;
@@ -20,6 +20,10 @@ interface DBMessage {
   content: string;
   created_at: string;
   property_id?: string | null;
+  read_at?: string | null;
+  // Local-only fields for optimistic UI
+  _localStatus?: 'sending' | 'error';
+  _tempId?: string;
 }
 
 // Derived conversation summary
@@ -99,12 +103,28 @@ export default function ChatWidget() {
       });
   }, [selectedOtherId, profilesById]);
 
+  const markThreadAsRead = useCallback(async (otherId: string) => {
+    if (!myId) return;
+    const now = new Date().toISOString();
+    try {
+      await supabase
+        .from('messages')
+        .update({ read_at: now } as any)
+        .is('read_at', null)
+        .eq('recipient_id', myId)
+        .eq('sender_id', otherId);
+    } catch {}
+    // Update local state immediately
+    setCurrentMessages((prev) => prev.map((m) => (m.sender_id === otherId && m.recipient_id === myId && !m.read_at ? { ...m, read_at: now } : m)));
+    setAllMyMessages((prev) => prev.map((m) => (m.sender_id === otherId && m.recipient_id === myId && !m.read_at ? { ...m, read_at: now } : m)));
+  }, [myId]);
+
   const loadMyMessages = useCallback(async () => {
     if (!myId) return;
     setLoading(true);
     const { data, error } = await supabase
       .from("messages")
-      .select("id,sender_id,recipient_id,content,created_at,property_id")
+      .select("id,sender_id,recipient_id,content,created_at,property_id,read_at")
       .or(`sender_id.eq.${myId},recipient_id.eq.${myId}`)
       .order("created_at", { ascending: false })
       .limit(200);
@@ -119,13 +139,15 @@ export default function ChatWidget() {
     if (!myId || !otherId) return;
     const { data, error } = await supabase
       .from("messages")
-      .select("id,sender_id,recipient_id,content,created_at,property_id")
+      .select("id,sender_id,recipient_id,content,created_at,property_id,read_at")
       .or(`and(sender_id.eq.${myId},recipient_id.eq.${otherId}),and(sender_id.eq.${otherId},recipient_id.eq.${myId})`)
       .order("created_at", { ascending: true });
     if (error) {
       toast({ title: "Could not load chat", description: error.message, variant: "destructive" });
     }
     setCurrentMessages(data || []);
+    // Mark as read for any unread incoming messages in this thread
+    await markThreadAsRead(otherId);
     // scroll to bottom after load
     setTimeout(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "auto" }), 0);
   }, [myId, toast]);
@@ -143,10 +165,13 @@ export default function ChatWidget() {
         { event: "INSERT", schema: "public", table: "messages", filter: `recipient_id=eq.${myId}` },
         (payload) => {
           const m = payload.new as DBMessage;
-          setAllMyMessages((prev) => [m, ...prev]);
+          // Dedupe and append globally
+          setAllMyMessages((prev) => (prev.some((x) => x.id === m.id) ? prev : [m, ...prev]));
           if (selectedOtherId && getOtherUserId(m, myId) === selectedOtherId) {
-            setCurrentMessages((prev) => [...prev, m]);
+            setCurrentMessages((prev) => (prev.some((x) => x.id === m.id) ? prev : [...prev, m]));
             setTimeout(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" }), 0);
+            // Mark as read if the thread is open
+            markThreadAsRead(selectedOtherId);
           }
         }
       )
@@ -155,11 +180,21 @@ export default function ChatWidget() {
         { event: "INSERT", schema: "public", table: "messages", filter: `sender_id=eq.${myId}` },
         (payload) => {
           const m = payload.new as DBMessage;
-          setAllMyMessages((prev) => [m, ...prev]);
+          // Avoid duplicates if already replaced via optimistic response
+          setAllMyMessages((prev) => (prev.some((x) => x.id === m.id) ? prev : [m, ...prev]));
           if (selectedOtherId && getOtherUserId(m, myId) === selectedOtherId) {
-            setCurrentMessages((prev) => [...prev, m]);
+            setCurrentMessages((prev) => (prev.some((x) => x.id === m.id) ? prev : [...prev, m]));
             setTimeout(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" }), 0);
           }
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "messages", filter: `sender_id=eq.${myId}` },
+        (payload) => {
+          const m = payload.new as DBMessage;
+          setAllMyMessages((prev) => prev.map((x) => (x.id === m.id ? { ...x, read_at: m.read_at } : x)));
+          setCurrentMessages((prev) => prev.map((x) => (x.id === m.id ? { ...x, read_at: m.read_at } : x)));
         }
       )
       .subscribe();
@@ -167,7 +202,7 @@ export default function ChatWidget() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [myId, selectedOtherId]);
+  }, [myId, selectedOtherId, markThreadAsRead]);
 
   // Auto-open when a new message notification arrives
   useEffect(() => {
@@ -192,14 +227,46 @@ export default function ChatWidget() {
     if (!myId || !selectedOtherId || !text.trim()) return;
     const msg = text.trim();
     setText("");
-    const { error } = await supabase.from("messages").insert({
+
+    const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const nowIso = new Date().toISOString();
+    const temp: DBMessage = {
+      id: tempId,
       sender_id: myId,
       recipient_id: selectedOtherId,
       content: msg,
-    } as any);
-    if (error) {
-      toast({ title: "Failed to send", description: error.message, variant: "destructive" });
+      created_at: nowIso,
+      property_id: null,
+      read_at: null,
+      _localStatus: 'sending',
+      _tempId: tempId,
+    };
+
+    // Optimistically render
+    setAllMyMessages((prev) => [temp, ...prev]);
+    setCurrentMessages((prev) => [...prev, temp]);
+    setTimeout(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" }), 0);
+
+    // Persist
+    const { data, error } = await supabase
+      .from("messages")
+      .insert({ sender_id: myId, recipient_id: selectedOtherId, content: msg } as any)
+      .select("id,sender_id,recipient_id,content,created_at,property_id,read_at")
+      .single();
+
+    if (error || !data) {
+      // Mark temp as failed
+      setAllMyMessages((prev) => prev.map((m) => (m.id === tempId ? { ...m, _localStatus: 'error' } : m)));
+      setCurrentMessages((prev) => prev.map((m) => (m.id === tempId ? { ...m, _localStatus: 'error' } : m)));
+      return toast({ title: "Failed to send", description: error?.message ?? "Please try again", variant: "destructive" });
     }
+
+    // Replace temp with real row
+    setAllMyMessages((prev) => {
+      const withoutDup = prev.filter((m) => m.id !== data.id && m.id !== tempId);
+      return [data as DBMessage, ...withoutDup];
+    });
+    setCurrentMessages((prev) => prev.map((m) => (m.id === tempId ? (data as DBMessage) : m)));
   }, [myId, selectedOtherId, text, toast]);
 
   const createTicket = useCallback(async () => {
@@ -280,7 +347,7 @@ export default function ChatWidget() {
             <div className="h-[calc(100%-2.5rem)] flex flex-col">
               <div className="px-3 py-2 border-b text-sm text-muted-foreground flex items-center justify-between">
                 <span>{loading ? "Loading…" : `${conversations.length} conversation${conversations.length === 1 ? "" : "s"}`}</span>
-                <Button variant="outline" size="sm" onClick={loadMyMessages}>
+                <Button variant="outline" size="sm" onClick={loadMyMessages} aria-label="Refresh conversations">
                   Refresh
                 </Button>
               </div>
@@ -330,14 +397,29 @@ export default function ChatWidget() {
                         key={m.id}
                         className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
                           mine
-                            ? "ml-auto bg-primary text-primary-foreground"
-                            : "mr-auto bg-muted"
+                            ? `ml-auto bg-primary text-primary-foreground ${m._localStatus === 'error' ? 'border border-destructive bg-destructive/10 text-destructive' : ''}`
+                            : 'mr-auto bg-muted'
                         }`}
                       >
                         {m.content}
                         <div className={`mt-1 text-[10px] opacity-70 ${mine ? "text-primary-foreground" : "text-muted-foreground"}`}>
                           {new Date(m.created_at).toLocaleString()}
                         </div>
+                        {mine && (
+                          <div className="mt-0.5 flex justify-end items-center gap-1 text-[10px]">
+                            {m._localStatus === 'error' ? (
+                              <span className="flex items-center gap-1 text-destructive">
+                                <AlertCircle className="h-3 w-3" /> Failed
+                              </span>
+                            ) : m.read_at ? (
+                              <CheckCheck className="h-3 w-3" aria-label="Read" />
+                            ) : m._localStatus === 'sending' ? (
+                              <Check className="h-3 w-3 opacity-60" aria-label="Sending" />
+                            ) : (
+                              <Check className="h-3 w-3" aria-label="Sent" />
+                            )}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -357,6 +439,7 @@ export default function ChatWidget() {
                     onChange={(e) => setText(e.target.value)}
                     placeholder="Type a message…"
                     aria-label="Message"
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } }}
                   />
                   <Button type="submit" disabled={!text.trim()} aria-label="Send message">
                     <Send className="h-4 w-4" />
@@ -367,11 +450,11 @@ export default function ChatWidget() {
           )}
         </Card>
         <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
-          <DialogContent>
+          <DialogContent aria-describedby="support-dialog-description">
             <DialogHeader>
               <DialogTitle>Contact Support</DialogTitle>
             </DialogHeader>
-            <div className="space-y-3">
+            <div id="support-dialog-description" className="space-y-3">
               <Textarea
                 value={supportText}
                 onChange={(e) => setSupportText(e.target.value)}
