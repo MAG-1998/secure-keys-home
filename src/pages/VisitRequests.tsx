@@ -63,7 +63,24 @@ const VisitRequests = () => {
         .eq('properties.user_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      setRequests((data as OwnerRequestRow[]) || []);
+      const rows = (data as OwnerRequestRow[]) || [];
+      const sorted = rows.sort((a, b) => {
+        const group = (r: OwnerRequestRow) => (!r.status || r.status === 'pending') ? 0 : (r.status === 'confirmed' ? 1 : 2);
+        const ga = group(a);
+        const gb = group(b);
+        if (ga !== gb) return ga - gb;
+        if (ga === 1) {
+          // Confirmed: sort by visit date ascending
+          return new Date(a.visit_date).getTime() - new Date(b.visit_date).getTime();
+        }
+        if (ga === 0) {
+          // Pending: sort by visit date ascending for relevance
+          return new Date(a.visit_date).getTime() - new Date(b.visit_date).getTime();
+        }
+        // Denied: newest first by created_at
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+      setRequests(sorted);
     } catch (e) {
       console.error(e);
       toast({ title: 'Error', description: 'Failed to load requests', variant: 'destructive' });
