@@ -391,7 +391,7 @@ export default function ChatWidget() {
           ) : (
             <div className="h-[calc(100%-2.5rem)] flex flex-col">
               <div ref={listRef} className="flex-1 overflow-y-auto">
-                <div className="p-3 space-y-2">
+                <div className="p-3 pb-16 space-y-2">
                   {currentMessages.map((m) => {
                     const mine = m.sender_id === myId;
                     return (
@@ -428,7 +428,7 @@ export default function ChatWidget() {
                 </div>
               </div>
 
-              <div className="p-2 border-t">
+              <div className="p-2 border-t sticky bottom-0 bg-card">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
