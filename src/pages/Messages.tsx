@@ -292,7 +292,6 @@ export default function MessagesPage() {
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
               aria-label="Message"
-              aria-label="Message"
             />
             <Button onClick={sendMessage} aria-label="Send message">Send</Button>
           </div>
