@@ -421,6 +421,63 @@ const translations: Translations = {
     uz: 'Yordam'
   },
 
+  // Dashboard (Authenticated quick stats)
+  'dashboard.yourJourney': {
+    en: 'Your Property Journey',
+    ru: 'Ваш путь к недвижимости',
+    uz: 'Ko‘chmas mulk sayohatingiz'
+  },
+  'dashboard.saved': {
+    en: 'Saved Properties',
+    ru: 'Сохранённые объекты',
+    uz: 'Saqlangan eʼlonlar'
+  },
+  'dashboard.viewSaved': {
+    en: 'View Saved Properties',
+    ru: 'Смотреть сохранённые',
+    uz: 'Saqlanganlarni ko‘rish'
+  },
+  'dashboard.listed': {
+    en: 'Properties Listed',
+    ru: 'Размещённые объекты',
+    uz: 'Joylashtirilgan eʼlonlar'
+  },
+  'dashboard.viewListed': {
+    en: 'View Listed Properties',
+    ru: 'Смотреть размещённые',
+    uz: 'Joylashtirilganlarni ko‘rish'
+  },
+  'dashboard.yourRequests': {
+    en: 'Your Visit Requests',
+    ru: 'Ваши заявки на просмотр',
+    uz: 'Sizning tashrif so‘rovlari'
+  },
+  'dashboard.pendingConfirmed': {
+    en: 'Pending and confirmed',
+    ru: 'В ожидании и подтверждено',
+    uz: 'Kutilmoqda va tasdiqlangan'
+  },
+  'dashboard.viewYourRequests': {
+    en: 'View Your Requests',
+    ru: 'Смотреть ваши заявки',
+    uz: 'So‘rovlaringizni ko‘rish'
+  },
+  'dashboard.incomingRequests': {
+    en: 'Requests To Your Properties',
+    ru: 'Заявки на ваши объекты',
+    uz: 'Sizning eʼlonlaringizga so‘rovlar'
+  },
+  'dashboard.ownerInbox': {
+    en: 'Owner inbox',
+    ru: 'Владельцу входящие',
+    uz: 'Egasi uchun kirish qutisi'
+  },
+  'dashboard.manageRequests': {
+    en: 'Manage Requests',
+    ru: 'Управлять заявками',
+    uz: 'So‘roqlarni boshqarish'
+  },
+
   // CTA
   'cta.title': {
     en: 'Ready to find your perfect home?',

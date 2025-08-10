@@ -103,42 +103,42 @@ export const AuthenticatedView = memo(({
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-8 text-center">
-              Your Property Journey
+              {t('dashboard.yourJourney')}
             </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card className="bg-background/50 border-border/50">
                   <CardContent className="p-6 text-center">
                     <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.saved}</div>
-                    <div className="text-muted-foreground">Saved Properties</div>
-                    <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/saved-properties')}>View Saved Properties</Button>
+                    <div className="text-muted-foreground">{t('dashboard.saved')}</div>
+                    <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/saved-properties')}>{t('dashboard.viewSaved')}</Button>
                   </CardContent>
                 </Card>
                 <Card className="bg-background/50 border-border/50">
                   <CardContent className="p-6 text-center">
                     <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.listed}</div>
-                    <div className="text-muted-foreground">Properties Listed</div>
+                    <div className="text-muted-foreground">{t('dashboard.listed')}</div>
                     <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-properties')}>
-                      View Listed Properties
+                      {t('dashboard.viewListed')}
                     </Button>
                   </CardContent>
                 </Card>
                 <Card className="bg-background/50 border-border/50">
                   <CardContent className="p-6 text-center">
                     <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.myRequests}</div>
-                    <div className="text-muted-foreground">Your Visit Requests</div>
-                    <div className="text-xs text-muted-foreground/70 mt-1">Pending and confirmed</div>
+                    <div className="text-muted-foreground">{t('dashboard.yourRequests')}</div>
+                    <div className="text-xs text-muted-foreground/70 mt-1">{t('dashboard.pendingConfirmed')}</div>
                     <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-requests')}>
-                      View Your Requests
+                      {t('dashboard.viewYourRequests')}
                     </Button>
                   </CardContent>
                 </Card>
                 <Card className="bg-background/50 border-border/50">
                   <CardContent className="p-6 text-center">
                     <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.incomingRequests}</div>
-                    <div className="text-muted-foreground">Requests To Your Properties</div>
-                    <div className="text-xs text-muted-foreground/70 mt-1">Owner inbox</div>
+                    <div className="text-muted-foreground">{t('dashboard.incomingRequests')}</div>
+                    <div className="text-xs text-muted-foreground/70 mt-1">{t('dashboard.ownerInbox')}</div>
                     <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/visit-requests')}>
-                      Manage Requests
+                      {t('dashboard.manageRequests')}
                     </Button>
                   </CardContent>
                 </Card>
