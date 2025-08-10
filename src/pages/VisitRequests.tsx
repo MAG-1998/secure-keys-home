@@ -307,7 +307,9 @@ const VisitRequests = () => {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => onDeny(r.id)}>Yes, deny</AlertDialogAction>
+                              <AlertDialogAction asChild>
+                                <Button onClick={() => onDeny(r.id)}>Yes, deny</Button>
+                              </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
