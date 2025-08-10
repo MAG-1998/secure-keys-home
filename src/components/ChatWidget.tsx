@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 // Simple message type matching DB (plus local UI status)
 interface DBMessage {
@@ -39,6 +39,7 @@ function getOtherUserId(m: DBMessage, myId: string) {
 export default function ChatWidget() {
   const { user } = useUser();
   const { toast } = useToast();
+  const location = useLocation();
   
   const { notifications } = useNotifications(10);
 
@@ -295,7 +296,8 @@ export default function ChatWidget() {
   }, [supportText, myId, loadThread, toast]);
 
   if (!myId) return null; // only for authenticated users
-
+  if (location.pathname.startsWith('/messages')) return null;
+  
   return (
     <div className="fixed z-50 right-4 bottom-4">
       {/* Floating button */}
@@ -380,7 +382,7 @@ export default function ChatWidget() {
                 </div>
               </ScrollArea>
 
-              <div className="p-2 border-t">
+              <div className="p-2 border-t sticky bottom-0 bg-card">
                 <Button variant="secondary" className="w-full" onClick={() => setSupportOpen(true)}>
                   <Headset className="mr-2 h-4 w-4" /> Contact Support
                 </Button>

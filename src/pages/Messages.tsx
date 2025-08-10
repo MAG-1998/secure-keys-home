@@ -8,7 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/hooks/use-toast";
-import { Check, CheckCheck, AlertCircle } from "lucide-react";
+import { Check, CheckCheck, AlertCircle, Headset } from "lucide-react";
+import { AuthenticatedHeader } from "@/components/AuthenticatedHeader";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface Message {
   id: string;
@@ -37,6 +39,10 @@ export default function MessagesPage() {
   const [newMessage, setNewMessage] = useState("");
   const [reportOpen, setReportOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [supportText, setSupportText] = useState("");
+  const { language, setLanguage } = useTranslation();
+  const [isHalalMode, setIsHalalMode] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -80,6 +86,28 @@ export default function MessagesPage() {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Initialize Halal mode from persisted preference (if any)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('isHalalMode');
+      if (saved === 'true') setIsHalalMode(true);
+      if (saved === 'false') setIsHalalMode(false);
+    } catch {}
+  }, []);
+
+  // Apply global design changes based on Halal mode
+  useEffect(() => {
+    try { localStorage.setItem('isHalalMode', String(isHalalMode)); } catch {}
+    document.documentElement.setAttribute('data-halal-mode', String(isHalalMode));
+    if (isHalalMode) {
+      document.documentElement.style.setProperty('--primary', '176 64% 45%');
+      document.documentElement.style.setProperty('--accent', '176 44% 65%');
+    } else {
+      document.documentElement.style.setProperty('--primary', '25 85% 53%');
+      document.documentElement.style.setProperty('--accent', '38 84% 60%');
+    }
+  }, [isHalalMode]);
 
   const fetchConversations = async () => {
     if (!user) return;
@@ -180,6 +208,27 @@ export default function MessagesPage() {
     setMessages((prev) => prev.map((m) => (m.id === tempId ? (data as Message) : m)));
   };
 
+  const createSupportTicket = async () => {
+    try {
+      const msg = supportText.trim();
+      if (!user || !msg) return;
+      const { data, error } = await supabase.functions.invoke('support-create-ticket', {
+        body: { message: msg },
+      });
+      if (error) throw error;
+      const assignedTo = (data as any)?.assigned_to as string | undefined;
+      setSupportOpen(false);
+      setSupportText('');
+      toast({ title: 'Ticket created', description: 'A moderator will assist you shortly.' });
+      if (assignedTo) {
+        setSelectedUserId(assignedTo);
+        await fetchMessagesWith(assignedTo);
+      }
+    } catch (e: any) {
+      toast({ title: 'Failed to create ticket', description: e?.message ?? 'Please try again', variant: 'destructive' });
+    }
+  };
+
   const submitReport = async () => {
     if (!user || !selectedUserId) return;
     const reason = reportReason.trim();
@@ -203,7 +252,9 @@ export default function MessagesPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+    <>
+      <AuthenticatedHeader user={user} language={language} setLanguage={setLanguage} isHalalMode={isHalalMode} />
+      <div className="container mx-auto py-6 grid grid-cols-1 md:grid-cols-3 gap-4">
       <Card className="md:col-span-1">
         <CardHeader>
           <CardTitle>Conversations</CardTitle>
@@ -298,5 +349,25 @@ export default function MessagesPage() {
         </CardContent>
       </Card>
     </div>
+    <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
+      <DialogContent aria-describedby="support-dialog-description">
+        <DialogHeader>
+          <DialogTitle>Contact Support</DialogTitle>
+        </DialogHeader>
+        <div id="support-dialog-description" className="space-y-3">
+          <Textarea
+            value={supportText}
+            onChange={(e) => setSupportText(e.target.value)}
+            placeholder="Describe your issue..."
+            aria-label="Support message"
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="secondary" onClick={() => setSupportOpen(false)}>Cancel</Button>
+          <Button onClick={createSupportTicket} disabled={!supportText.trim()}>Send</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
