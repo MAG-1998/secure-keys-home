@@ -179,8 +179,7 @@ const ListProperty = () => {
         latitude: formData.latitude,
         longitude: formData.longitude,
         halal_financing_requested: formData.halalFinancingRequested,
-        status: 'pending',
-        district: formData.district || extractDistrictFromText(formData.address)
+        status: 'pending'
       };
 
       const { data: property, error } = await supabase
