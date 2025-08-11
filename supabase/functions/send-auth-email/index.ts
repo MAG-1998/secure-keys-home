@@ -53,8 +53,11 @@ Deno.serve(async (req) => {
 
     // Compose content
     let htmlContent = "";
-    if (token_hash && redirect_to) {
-      const link = `${supabaseUrl}/auth/v1/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${encodeURIComponent(redirect_to)}`;
+    if (token_hash) {
+      let link = `${supabaseUrl}/auth/v1/verify?token=${token_hash}&type=${email_action_type}`;
+      if (redirect_to) {
+        link += `&redirect_to=${encodeURIComponent(redirect_to)}`;
+      }
       htmlContent = `
         <div style="font-family: Arial, sans-serif; line-height:1.5">
           <h2 style="margin:0 0 16px">${subject}</h2>
@@ -76,7 +79,7 @@ Deno.serve(async (req) => {
           <p style="color:#6b7280;font-size:12px">If you didn't request this, you can safely ignore this email.</p>
         </div>`;
     } else {
-      throw new Error("Unsupported email data: missing token or token_hash/redirect_to");
+      throw new Error("Unsupported email data: missing token or token_hash");
     }
 
     const brevoApiKey = Deno.env.get("BREVO_API_KEY");
