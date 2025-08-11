@@ -56,6 +56,10 @@ const [filters, setFilters] = useState({
   halalOnly: false
 });
 
+// Cache of computed districts from coords
+const [computedDistricts, setComputedDistricts] = useState<Record<string, string>>({});
+const geocodeCacheRef = useRef<Map<string, string>>(new Map());
+
   const halalMode = isHalalMode || filters.halalOnly;
   const { user } = useUser();
 
@@ -102,7 +106,7 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
   lat: Number(prop.latitude) || 41.2995,
   lng: Number(prop.longitude) || 69.2401,
   price: Number(prop.price) || 0,
-  district: (prop.district as string) || extractDistrictFromText(prop.location || ''),
+  district: computedDistricts[prop.id] || (prop.district as string) || extractDistrictFromText(prop.location || ''),
   type: prop.property_type || 'apartment',
   bedrooms: Number(prop.bedrooms) || 1,
   bathrooms: Number(prop.bathrooms) || 1,
@@ -183,6 +187,43 @@ useEffect(() => {
     };
   }, []);
 
+  // Auto-resolve districts from coordinates using Yandex geocoder
+  useEffect(() => {
+    if (!mapLoaded || !window.ymaps || !(dbProperties && dbProperties.length)) return;
+    try {
+      const unresolved = (dbProperties as any[])
+        .filter((p) => {
+          const initial = (p.district as string) || extractDistrictFromText(p.location || '');
+          return !initial || initial === 'Other';
+        })
+        .slice(0, 20); // limit per tick
+
+      unresolved.forEach((p: any) => {
+        if (!p.latitude || !p.longitude) return;
+        const key = `${p.latitude},${p.longitude}`;
+        const cached = geocodeCacheRef.current.get(key);
+        if (cached) {
+          setComputedDistricts((prev) => (prev[p.id] ? prev : { ...prev, [p.id]: cached }));
+          return;
+        }
+        window.ymaps
+          .geocode([Number(p.latitude), Number(p.longitude)], { kind: 'district', results: 1 })
+          .then((res: any) => {
+            const first = res?.geoObjects?.get?.(0);
+            const rawName =
+              (first?.properties && first.properties.get && first.properties.get('name')) ||
+              (first?.getName && first.getName()) ||
+              '';
+            const canon = extractDistrictFromText(String(rawName));
+            if (canon && canon !== 'Other') {
+              geocodeCacheRef.current.set(key, canon);
+              setComputedDistricts((prev) => ({ ...prev, [p.id]: canon }));
+            }
+          })
+          .catch(() => {});
+      });
+    } catch {}
+  }, [mapLoaded, dbProperties]);
 
   // Initialize map
   useEffect(() => {
