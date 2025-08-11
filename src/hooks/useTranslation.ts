@@ -1,4 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { supabase } from "@/integrations/supabase/client";
+import { useUser } from "@/contexts/UserContext";
+
 
 export type Language = 'en' | 'ru' | 'uz';
 
@@ -780,8 +783,70 @@ const translations: Translations = {
   }
 };
 
+const LANGUAGE_STORAGE_KEY = 'magit_language';
+const isSupportedLang = (val: any): val is Language => ['en', 'ru', 'uz'].includes(val);
+
+const getBrowserLang = (): Language => {
+  try {
+    const nav = (navigator.language || 'ru').split('-')[0];
+    return isSupportedLang(nav) ? nav : 'ru';
+  } catch {
+    return 'ru';
+  }
+};
+
+const getInitialLang = (): Language => {
+  try {
+    const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (saved && isSupportedLang(saved)) return saved;
+  } catch {}
+  return getBrowserLang();
+};
+
 export const useTranslation = () => {
-  const [language, setLanguage] = useState<Language>('ru');
+  const { user } = useUser();
+  const [language, setLanguageState] = useState<Language>(getInitialLang());
+
+  // Load user's saved language from Supabase when available
+  useEffect(() => {
+    const loadProfileLang = async () => {
+      if (!user) return;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('language')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!error && data?.language) {
+        const lang = data.language as Language;
+        if (isSupportedLang(lang) && lang !== language) {
+          setLanguageState(lang);
+          try { localStorage.setItem(LANGUAGE_STORAGE_KEY, lang); } catch {}
+        }
+      }
+    };
+    void loadProfileLang();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
+
+  const persistLanguage = async (lang: Language) => {
+    try { localStorage.setItem(LANGUAGE_STORAGE_KEY, lang); } catch {}
+    if (user) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ language: lang })
+        .eq('user_id', user.id);
+      if (error) {
+        // Non-blocking error
+        console.error('Failed to save language to profile', error);
+      }
+    }
+  };
+
+  const setLanguage = useCallback((lang: Language) => {
+    setLanguageState(lang);
+    void persistLanguage(lang);
+  }, [user?.id]);
 
   const t = useCallback((key: string): string => {
     return translations[key]?.[language] || key;
