@@ -598,6 +598,28 @@ export default function AdminDashboard() {
         </TabsContent>
 
         <TabsContent value="properties" className="space-y-6">
+          <Card>
+            <CardContent className="p-4 flex items-center justify-between gap-4">
+              <div>
+                <h3 className="font-semibold">District Backfill</h3>
+                <p className="text-sm text-muted-foreground">Auto-fill missing Tashkent districts from coordinates using Yandex.</p>
+              </div>
+              <Button
+                onClick={async () => {
+                  const { data, error } = await supabase.functions.invoke('backfill-districts', { body: { limit: 300 } });
+                  if (error || (data as any)?.error) {
+                    toast({ title: 'Error', description: (error as any)?.message || (data as any)?.error || 'Failed to backfill', variant: 'destructive' });
+                  } else {
+                    const res = data as any;
+                    toast({ title: 'Backfill complete', description: `Updated ${res.updated} of ${res.total} records.` });
+                    fetchProperties();
+                  }
+                }}
+              >
+                Run Backfill
+              </Button>
+            </CardContent>
+          </Card>
           {properties.length === 0 ? (
             <Card>
               <CardContent className="p-6 text-center">
