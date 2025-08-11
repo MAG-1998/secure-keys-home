@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp } from "lucide-react"
 import { useScroll } from "@/hooks/use-scroll"
 import { toast } from "@/components/ui/use-toast"
+import { supabase } from "@/integrations/supabase/client"
 
 interface SearchSectionProps {
   isHalalMode: boolean
@@ -45,12 +46,22 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
         body: JSON.stringify({ q }),
       })
 
-      const ct = res.headers.get('content-type') || ''
-      const isJson = ct.includes('application/json')
-      const data = isJson ? await res.json() : null
-      if (!res.ok) {
-        const errText = isJson ? JSON.stringify(data) : await res.text()
-        throw new Error(errText || `HTTP ${res.status} ${res.statusText}`)
+      let data: any = null
+      if (res.status === 404) {
+        // Fallback: call Supabase Edge Function
+        const { data: fxData, error } = await supabase.functions.invoke('ai-property-search', {
+          body: { q },
+        })
+        if (error) throw new Error(error.message || 'Edge function error')
+        data = fxData
+      } else {
+        const ct = res.headers.get('content-type') || ''
+        const isJson = ct.includes('application/json')
+        data = isJson ? await res.json() : null
+        if (!res.ok) {
+          const errText = isJson ? JSON.stringify(data) : await res.text()
+          throw new Error(errText || `HTTP ${res.status} ${res.statusText}`)
+        }
       }
 
       const count = Array.isArray(data?.results) ? data.results.length : 0
