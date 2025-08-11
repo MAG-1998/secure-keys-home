@@ -78,12 +78,34 @@ priceMin, priceMax, familySize, nearTashkent, maxDistanceKm, bedroomsMin, verifi
     let filters: ParsedFilters = {};
     try { filters = JSON.parse(raw); } catch { filters = {}; }
 
-    const dbResults: Property[] = await fakeDbQuery(filters, { cursor, pageSize });
+    const strictResults: Property[] = await fakeDbQuery(filters, { cursor, pageSize });
+
+    // If no strict matches, relax filters and pick best-fit candidates with explanations
+    let mode: 'strict' | 'relaxed' = 'strict'
+    let candidates: Property[] = strictResults
+
+    if (strictResults.length === 0) {
+      mode = 'relaxed'
+      const relaxed = await fakeDbQuery(relaxFilters(filters), { cursor, pageSize: 100 })
+      // Rank by closeness to original filters
+      candidates = relaxed
+        .map((p) => ({ p, score: scoreProperty(p, filters) }))
+        .sort((a, b) => a.score - b.score)
+        .slice(0, 5)
+        .map(({ p }) => p)
+    }
+
+    // Build per-item explanations
+    const resultsWithWhy = candidates.map((p) => ({
+      ...p,
+      whyGood: buildWhyGood(p, filters, mode),
+    }))
 
     const suggestionPrompt = `Пользовательский запрос: "${q}"
-Найдено объектов: ${dbResults.length}
+Найдено объектов: ${resultsWithWhy.length}
+Режим: ${mode}
 Фильтры: ${JSON.stringify(filters)}
-Дай 1–2 коротких совета: как улучшить поиск (например, расширить бюджет, район, кол-во комнат). Русский язык.`;
+Дай 1–2 коротких совета: как улучшить поиск (например, расширить бюджет, район, кол-во комнат). Русский язык.`
 
     const suggResp = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -99,20 +121,21 @@ priceMin, priceMax, familySize, nearTashkent, maxDistanceKm, bedroomsMin, verifi
           { role: 'user', content: suggestionPrompt }
         ]
       })
-    });
+    })
 
-    let aiSuggestion = '';
+    let aiSuggestion = ''
     if (suggResp.ok) {
-      const suggData = await suggResp.json();
-      aiSuggestion = suggData?.choices?.[0]?.message?.content?.trim() || '';
+      const suggData = await suggResp.json()
+      aiSuggestion = suggData?.choices?.[0]?.message?.content?.trim() || ''
     }
 
     res.status(200).json({
-      results: dbResults,
+      results: resultsWithWhy,
       aiSuggestion,
       filters,
-      nextCursor: null
-    });
+      mode,
+      nextCursor: null,
+    })
 
   } catch (e: any) {
     res.status(500).json({ error: e?.message || 'Unknown error' });
@@ -141,4 +164,93 @@ async function fakeDbQuery(f: ParsedFilters, opts: { cursor?: string; pageSize: 
 
 async function safeText(r: Response) {
   try { return await r.text(); } catch { return ''; }
+}
+
+function relaxFilters(f: ParsedFilters): ParsedFilters {
+  const r: ParsedFilters = { ...f }
+  if (f.priceMin) r.priceMin = Math.floor(f.priceMin * 0.85)
+  if (f.priceMax) r.priceMax = Math.ceil(f.priceMax * 1.15)
+  if (f.bedroomsMin) r.bedroomsMin = Math.max(0, f.bedroomsMin - 1)
+  if (f.nearTashkent) {
+    r.nearTashkent = true
+    r.maxDistanceKm = Math.ceil(((f.maxDistanceKm ?? 30) as number) * 1.5)
+  }
+  r.verifiedOnly = false
+  r.financing = false
+  // расширим районы, если пользователь указывал
+  r.districts = undefined
+  return r
+}
+
+function scoreProperty(p: Property, f: ParsedFilters): number {
+  let score = 0
+  if (f.priceMax && p.priceUsd > f.priceMax) {
+    score += ((p.priceUsd - f.priceMax) / f.priceMax) * 100
+  }
+  if (f.priceMin && p.priceUsd < f.priceMin) {
+    score += ((f.priceMin - p.priceUsd) / f.priceMin) * 20
+  }
+  if (f.nearTashkent) {
+    const limit = f.maxDistanceKm ?? 30
+    const d = (p.distanceToTashkentKm ?? 0) - limit
+    if (d > 0) score += d
+  }
+  if (typeof f.bedroomsMin === 'number' && typeof p.bedrooms === 'number' && p.bedrooms < f.bedroomsMin) {
+    score += (f.bedroomsMin - p.bedrooms) * 10
+  }
+  if (f.financing && !p.financingAvailable) score += 15
+  if (f.verifiedOnly && !p.verified) score += 10
+  if (f.districts?.length && p.district && !f.districts.includes(p.district)) score += 8
+
+  // небольшие бонусы
+  if (p.verified) score -= 2
+  if (p.financingAvailable) score -= 2
+  if (typeof f.bedroomsMin === 'number' && typeof p.bedrooms === 'number' && p.bedrooms >= f.bedroomsMin) score -= 2
+
+  return Math.max(0, Math.round(score))
+}
+
+function buildWhyGood(p: Property, f: ParsedFilters, mode: 'strict'|'relaxed'): string {
+  const pros: string[] = []
+  const cons: string[] = []
+
+  if (typeof f.priceMax === 'number' && p.priceUsd > f.priceMax) {
+    const perc = Math.round(((p.priceUsd - f.priceMax) / f.priceMax) * 100)
+    cons.push(`чуть выше бюджета (+${perc}%)`)
+  } else if (typeof f.priceMin === 'number' && p.priceUsd < f.priceMin) {
+    cons.push('ниже желаемого бюджета')
+  } else if (typeof f.priceMin === 'number' || typeof f.priceMax === 'number') {
+    pros.push('в пределах бюджета')
+  }
+
+  if (f.nearTashkent) {
+    const limit = f.maxDistanceKm ?? 30
+    const d = (p.distanceToTashkentKm ?? 0) - limit
+    if (d > 0) cons.push(`дальше лимита от Ташкента на ${Math.round(d)} км`)
+    else pros.push('близко к Ташкенту')
+  }
+
+  if (typeof f.bedroomsMin === 'number') {
+    if ((p.bedrooms ?? 0) < f.bedroomsMin) cons.push(`меньше спален (нужно ≥${f.bedroomsMin})`)
+    else pros.push(`${p.bedrooms ?? 0} спален — соответствует запросу`)
+  }
+
+  if (f.financing && !p.financingAvailable) cons.push('без халяль‑финансирования')
+  if (p.financingAvailable) pros.push('доступно финансирование')
+
+  if (f.verifiedOnly && !p.verified) cons.push('без верификации')
+  if (p.verified) pros.push('верифицированное объявление')
+
+  if (f.districts?.length) {
+    if (p.district && f.districts.includes(p.district)) pros.push('в желаемом районе')
+    else cons.push('другой район')
+  } else if (p.district) {
+    pros.push(`район: ${p.district}`)
+  }
+
+  if (mode === 'strict' && cons.length === 0) return 'Полное совпадение с запросом.'
+
+  const consStr = cons.length ? `Компромисс: ${cons.join(', ')}` : ''
+  const prosStr = pros.length ? `Плюсы: ${pros.join(', ')}` : ''
+  return [consStr, prosStr].filter(Boolean).join('; ')
 }

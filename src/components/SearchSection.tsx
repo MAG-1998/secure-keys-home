@@ -27,6 +27,9 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
   const { scrollY } = useScroll()
 
   const [searchLoading, setSearchLoading] = useState(false)
+  const [results, setResults] = useState<any[]>([])
+  const [aiSuggestion, setAiSuggestion] = useState("")
+  const [resultMode, setResultMode] = useState<"strict" | "relaxed" | null>(null)
 
   const handleSearch = async () => {
     const q = searchQuery.trim()
@@ -44,11 +47,15 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Request failed')
 
-      console.debug('AI search:', data)
       const count = Array.isArray(data?.results) ? data.results.length : 0
       const suggestion = data?.aiSuggestion || 'Подберите гибкие параметры для большего охвата.'
-      toast({ title: `Найдено: ${count}`, description: suggestion })
-      // TODO: передать результаты в список/поисковую страницу при необходимости
+      const mode = (data?.mode as 'strict' | 'relaxed') || 'strict'
+
+      setResults(data?.results || [])
+      setAiSuggestion(suggestion)
+      setResultMode(mode)
+
+      toast({ title: mode === 'relaxed' ? `Нашли близкие варианты: ${count}` : `Найдено: ${count}`, description: suggestion })
     } catch (e: any) {
       toast({ title: 'Ошибка поиска', description: e?.message || 'Не удалось выполнить AI‑поиск' })
     } finally {
@@ -314,6 +321,46 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
               )}
             </div>
           </div>
+
+          {/* Results */}
+          {resultMode && (
+            <div className="mt-8">
+              {resultMode === 'relaxed' && (
+                <div className="rounded-md border border-yellow-300/60 bg-yellow-50/60 p-3 text-sm">
+                  Прямых совпадений не нашли. Показали близкие варианты по вашему запросу.
+                </div>
+              )}
+              {aiSuggestion && (
+                <p className="mt-3 text-sm text-muted-foreground">{aiSuggestion}</p>
+              )}
+
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                {results.map((p) => (
+                  <Card key={p.id} className="border border-border/60">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="font-medium text-foreground">{p.title}</div>
+                          <div className="text-sm text-muted-foreground">{p.district || p.city}</div>
+                        </div>
+                        <div className="text-right font-semibold">${" "}{(p.priceUsd ?? 0).toLocaleString?.() || p.priceUsd}</div>
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {p.verified && <Badge variant="outline">Verified</Badge>}
+                        {p.financingAvailable && <Badge variant="trust">Financing</Badge>}
+                        {typeof p.bedrooms === 'number' && (
+                          <Badge variant="outline">{p.bedrooms} спален</Badge>
+                        )}
+                      </div>
+                      {p.whyGood && (
+                        <p className="mt-3 text-xs text-muted-foreground">Почему подходит: {p.whyGood}</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
