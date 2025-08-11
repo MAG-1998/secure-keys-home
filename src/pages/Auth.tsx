@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { MagitLogo } from "@/components/MagitLogo"
 import { Footer } from "@/components/Footer"
+import { Header } from "@/components/Header"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { Eye, EyeOff, ArrowLeft } from "lucide-react"
@@ -54,7 +55,7 @@ const Auth = () => {
 
   const handleSignUp = async () => {
     if (!email || !password || !fullName || !phone) {
-      setError("Please fill in all fields")
+      setError(t('auth.fillAllFields'))
       return
     }
 
@@ -90,15 +91,15 @@ const Auth = () => {
     if (signUpError) {
       const msg = (signUpError as any)?.message || ''
       if (/already\s*registered|already\s*exists/i.test(msg)) {
-        setError("User with this email is already registered. You can reset your password.")
+        setError(t('auth.userExists'))
         setShowResetOption(true)
       } else {
         setError(msg)
       }
     } else {
       toast({
-        title: "Account created successfully!",
-        description: "Please check your email to confirm your account.",
+        title: t('auth.accountCreatedTitle'),
+        description: t('auth.accountCreatedDesc'),
       })
       setShowResetOption(false)
       setIsLogin(true)
@@ -108,7 +109,7 @@ const Auth = () => {
 
   const handleSignIn = async () => {
     if (!email || !password) {
-      setError("Please fill in all fields")
+      setError(t('auth.fillAllFields'))
       return
     }
 
@@ -150,7 +151,7 @@ const Auth = () => {
         redirectTo: `${window.location.origin}/auth`
       })
       if (error) throw error
-      toast({ title: 'Password reset sent', description: 'Check your email for reset instructions.' })
+      toast({ title: t('common.passwordResetSent'), description: t('common.checkEmailReset') })
     } catch (e: any) {
       setError(e.message || 'Failed to send reset email')
     } finally {
@@ -169,6 +170,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero flex flex-col">
+      <Header />
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           {/* Back to home button */}
@@ -178,7 +180,7 @@ const Auth = () => {
             className="mb-6 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
+            {t('common.backToHome')}
           </Button>
 
           <Card className="shadow-warm border-0">
@@ -187,12 +189,12 @@ const Auth = () => {
                 <MagitLogo size="lg" />
               </div>
               <CardTitle className="text-2xl font-heading">
-                {isLogin ? "Welcome Back" : "Create Account"}
+                {isLogin ? t('auth.titleLogin') : t('auth.titleSignup')}
               </CardTitle>
               <p className="text-muted-foreground">
                 {isLogin 
-                  ? "Sign in to access your property dashboard" 
-                  : "Join Magit to start your property journey"
+                  ? t('auth.subtitleLogin') 
+                  : t('auth.subtitleSignup')
                 }
               </p>
             </CardHeader>
@@ -202,19 +204,19 @@ const Auth = () => {
                 {!isLogin && (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor="fullName">Full Name</Label>
+                      <Label htmlFor="fullName">{t('auth.fullName')}</Label>
                       <Input
                         id="fullName"
                         type="text"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        placeholder="Enter your full name"
+                        placeholder={t('auth.fullNamePlaceholder')}
                         required={!isLogin}
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
+                      <Label htmlFor="phone">{t('auth.phoneNumber')}</Label>
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none">
                           +998
@@ -224,7 +226,7 @@ const Auth = () => {
                           type="tel"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          placeholder="90 123 45 67"
+                          placeholder={t('auth.phonePlaceholder')}
                           className="pl-16"
                           required={!isLogin}
                         />
@@ -234,26 +236,26 @@ const Auth = () => {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('auth.email')}</Label>
                   <Input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder={t('auth.emailPlaceholder')}
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t('auth.password')}</Label>
                   <div className="relative">
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
+                      placeholder={t('auth.passwordPlaceholder')}
                       required
                     />
                     <Button
@@ -280,11 +282,11 @@ const Auth = () => {
                     <div className="flex flex-wrap gap-2">
                       {showResetOption && (
                         <Button type="button" variant="secondary" onClick={handleResetPassword} disabled={loading}>
-                          Reset password via email
+                          {t('auth.resetPassword')}
                         </Button>
                       )}
                       <Button type="button" variant="outline" onClick={() => window.open('mailto:support@magit.app?subject=Ban%20Appeal','_blank')}>
-                        Contact Support
+                        {t('common.contactSupport')}
                       </Button>
                     </div>
                   </div>
@@ -296,10 +298,10 @@ const Auth = () => {
                   disabled={loading}
                 >
                   {loading 
-                    ? "Loading..." 
+                    ? t('auth.loading')
                     : isLogin 
-                      ? "Sign In" 
-                      : "Create Account"
+                      ? t('auth.signIn')
+                      : t('auth.signUp')
                   }
                 </Button>
 
@@ -315,8 +317,8 @@ const Auth = () => {
                     className="text-primary hover:text-primary/80 transition-colors"
                   >
                     {isLogin 
-                      ? "Don't have an account? Sign up" 
-                      : "Already have an account? Sign in"
+                      ? t('auth.toggleToSignup')
+                      : t('auth.toggleToLogin')
                     }
                   </button>
                 </div>

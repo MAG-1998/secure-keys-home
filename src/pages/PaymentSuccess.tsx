@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle } from "lucide-react"
 import { Footer } from "@/components/Footer"
+import { Header } from "@/components/Header"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "@/hooks/useTranslation"
 
@@ -17,6 +18,7 @@ const PaymentSuccess = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <Header />
       <div className="flex-1 flex items-center justify-center">
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto">
@@ -26,19 +28,19 @@ const PaymentSuccess = () => {
                   <CheckCircle className="w-6 h-6 text-green-600" />
                 </div>
                 <CardTitle className="text-green-900 dark:text-green-100">
-                  Payment Successful!
+                  {t('payment.success.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-center space-y-4">
                 <p className="text-muted-foreground">
-                  Your payment has been processed successfully. Your property listing application is now being reviewed.
+                  {t('payment.success.desc')}
                 </p>
                 <div className="space-y-2">
                   <Button onClick={() => navigate("/")} className="w-full">
-                    Return to Home
+                    {t('common.returnHome')}
                   </Button>
                   <Button variant="outline" onClick={() => navigate("/list-property")} className="w-full">
-                    List Another Property
+                    {t('common.listAnotherProperty')}
                   </Button>
                 </div>
               </CardContent>

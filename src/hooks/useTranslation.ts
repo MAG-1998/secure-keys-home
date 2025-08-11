@@ -780,7 +780,49 @@ const translations: Translations = {
     en: 'My Listing',
     ru: 'Моё объявление',
     uz: 'Mening eʼlonim'
-  }
+  },
+
+  // Auth Page
+  'auth.titleLogin': { en: 'Welcome Back', ru: 'С возвращением', uz: 'Qaytganingiz bilan' },
+  'auth.titleSignup': { en: 'Create Account', ru: 'Создать аккаунт', uz: 'Hisob yaratish' },
+  'auth.subtitleLogin': { en: 'Sign in to access your property dashboard', ru: 'Войдите, чтобы получить доступ к панели управления', uz: 'Kabinetga kirish uchun tizimga kiring' },
+  'auth.subtitleSignup': { en: 'Join Magit to start your property journey', ru: 'Присоединяйтесь к Magit и начните свой путь в недвижимости', uz: 'Magitga qoʻshiling va uy-joy sayohatingizni boshlang' },
+  'auth.fullName': { en: 'Full Name', ru: 'Полное имя', uz: 'Toʻliq ism' },
+  'auth.phoneNumber': { en: 'Phone Number', ru: 'Номер телефона', uz: 'Telefon raqami' },
+  'auth.email': { en: 'Email', ru: 'Email', uz: 'Email' },
+  'auth.password': { en: 'Password', ru: 'Пароль', uz: 'Parol' },
+  'auth.fullNamePlaceholder': { en: 'Enter your full name', ru: 'Введите полное имя', uz: 'Toʻliq ismingizni kiriting' },
+  'auth.phonePlaceholder': { en: '90 123 45 67', ru: '90 123 45 67', uz: '90 123 45 67' },
+  'auth.emailPlaceholder': { en: 'Enter your email', ru: 'Введите email', uz: 'Emailingizni kiriting' },
+  'auth.passwordPlaceholder': { en: 'Enter your password', ru: 'Введите пароль', uz: 'Parolingizni kiriting' },
+  'auth.toggleToSignup': { en: "Don't have an account? Sign up", ru: 'Нет аккаунта? Зарегистрируйтесь', uz: 'Hisob yoʻqmi? Roʻyxatdan oʻting' },
+  'auth.toggleToLogin': { en: 'Already have an account? Sign in', ru: 'Уже есть аккаунт? Войти', uz: 'Allaqachon hisob bormi? Kirish' },
+  'auth.signIn': { en: 'Sign In', ru: 'Войти', uz: 'Kirish' },
+  'auth.signUp': { en: 'Create Account', ru: 'Создать аккаунт', uz: 'Roʻyxatdan oʻtish' },
+  'auth.loading': { en: 'Loading...', ru: 'Загрузка...', uz: 'Yuklanmoqda...' },
+  'auth.fillAllFields': { en: 'Please fill in all fields', ru: 'Пожалуйста, заполните все поля', uz: 'Iltimos, barcha maydonlarni toʻldiring' },
+  'auth.userExists': { en: 'User with this email is already registered. You can reset your password.', ru: 'Пользователь с таким email уже зарегистрирован. Вы можете сбросить пароль.', uz: 'Bu email bilan foydalanuvchi allaqachon roʻyxatdan oʻtgan. Parolingizni tiklashingiz mumkin.' },
+  'auth.accountCreatedTitle': { en: 'Account created successfully!', ru: 'Аккаунт успешно создан!', uz: 'Hisob muvaffaqiyatli yaratildi!' },
+  'auth.accountCreatedDesc': { en: 'Please check your email to confirm your account.', ru: 'Пожалуйста, подтвердите аккаунт по ссылке в письме.', uz: 'Hisobingizni tasdiqlash uchun emailingizni tekshiring.' },
+  'auth.resetPassword': { en: 'Reset password via email', ru: 'Сбросить пароль по email', uz: 'Email orqali parolni tiklash' },
+
+  // Common
+  'common.backToHome': { en: 'Back to Home', ru: 'На главную', uz: 'Bosh sahifaga qaytish' },
+  'common.returnHome': { en: 'Return to Home', ru: 'Вернуться на главную', uz: 'Bosh sahifaga qaytish' },
+  'common.tryAgain': { en: 'Try Again', ru: 'Повторить', uz: 'Qayta urinish' },
+  'common.contactSupport': { en: 'Contact Support', ru: 'Связаться с поддержкой', uz: 'Yordam bilan bogʻlanish' },
+  'common.passwordResetSent': { en: 'Password reset sent', ru: 'Письмо для сброса пароля отправлено', uz: 'Parolni tiklash xati yuborildi' },
+  'common.checkEmailReset': { en: 'Check your email for reset instructions.', ru: 'Проверьте почту для инструкций по сбросу.', uz: 'Tiklash yoʻriqnomasi uchun emailingizni tekshiring.' },
+  'common.listAnotherProperty': { en: 'List Another Property', ru: 'Разместить ещё объявление', uz: 'Yana bir eʼlon joylash' },
+
+  // Payment
+  'payment.cancelled.title': { en: 'Payment Cancelled', ru: 'Платёж отменён', uz: 'Toʻlov bekor qilindi' },
+  'payment.cancelled.desc': { en: 'Your payment was cancelled. You can try again or return to the application.', ru: 'Платёж был отменён. Вы можете попробовать снова или вернуться в приложение.', uz: 'Toʻlov bekor qilindi. Qayta urinishingiz yoki ilovaga qaytishingiz mumkin.' },
+  'payment.success.title': { en: 'Payment Successful!', ru: 'Платёж успешен!', uz: 'Toʻlov muvaffaqiyatli!' },
+  'payment.success.desc': { en: 'Your payment has been processed successfully. Your property listing application is now being reviewed.', ru: 'Ваш платёж успешно обработан. Ваша заявка на размещение объявления рассматривается.', uz: 'Toʻlovingiz muvaffaqiyatli amalga oshirildi. Eʼloningiz koʻrib chiqilmoqda.' },
+
+  // Not Found
+  'notFound.subtitle': { en: 'Oops! Page not found', ru: 'Упс! Страница не найдена', uz: 'Uzr! Sahifa topilmadi' }
 };
 
 const LANGUAGE_STORAGE_KEY = 'magit_language';

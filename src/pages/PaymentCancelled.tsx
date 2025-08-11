@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { XCircle } from "lucide-react"
 import { Footer } from "@/components/Footer"
+import { Header } from "@/components/Header"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "@/hooks/useTranslation"
 
@@ -11,6 +12,7 @@ const PaymentCancelled = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <Header />
       <div className="flex-1 flex items-center justify-center">
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto">
@@ -20,19 +22,19 @@ const PaymentCancelled = () => {
                   <XCircle className="w-6 h-6 text-red-600" />
                 </div>
                 <CardTitle className="text-red-900 dark:text-red-100">
-                  Payment Cancelled
+                  {t('payment.cancelled.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-center space-y-4">
                 <p className="text-muted-foreground">
-                  Your payment was cancelled. You can try again or return to the application.
+                  {t('payment.cancelled.desc')}
                 </p>
                 <div className="space-y-2">
                   <Button onClick={() => navigate("/list-property")} className="w-full">
-                    Try Again
+                    {t('common.tryAgain')}
                   </Button>
                   <Button variant="outline" onClick={() => navigate("/")} className="w-full">
-                    Return to Home
+                    {t('common.returnHome')}
                   </Button>
                 </div>
               </CardContent>
