@@ -179,6 +179,7 @@ const ListProperty = () => {
         latitude: formData.latitude,
         longitude: formData.longitude,
         halal_financing_requested: formData.halalFinancingRequested,
+        district: formData.district || extractDistrictFromText(formData.address),
         status: 'pending'
       };
 

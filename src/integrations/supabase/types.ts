@@ -243,6 +243,7 @@ export type Database = {
           bedrooms: number | null
           created_at: string
           description: string | null
+          district: string | null
           documents: Json | null
           halal_financing_requested: boolean | null
           halal_financing_status: string | null
@@ -272,6 +273,7 @@ export type Database = {
           bedrooms?: number | null
           created_at?: string
           description?: string | null
+          district?: string | null
           documents?: Json | null
           halal_financing_requested?: boolean | null
           halal_financing_status?: string | null
@@ -301,6 +303,7 @@ export type Database = {
           bedrooms?: number | null
           created_at?: string
           description?: string | null
+          district?: string | null
           documents?: Json | null
           halal_financing_requested?: boolean | null
           halal_financing_status?: string | null
