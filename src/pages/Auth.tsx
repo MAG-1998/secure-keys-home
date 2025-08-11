@@ -25,6 +25,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [showResetOption, setShowResetOption] = useState(false)
   const [user, setUser] = useState<User | null>(null)
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -87,12 +88,19 @@ const Auth = () => {
     })
 
     if (signUpError) {
-      setError(signUpError.message)
+      const msg = (signUpError as any)?.message || ''
+      if (/already\s*registered|already\s*exists/i.test(msg)) {
+        setError("User with this email is already registered. You can reset your password.")
+        setShowResetOption(true)
+      } else {
+        setError(msg)
+      }
     } else {
       toast({
         title: "Account created successfully!",
         description: "Please check your email to confirm your account.",
       })
+      setShowResetOption(false)
       setIsLogin(true)
     }
     setLoading(false)
@@ -132,6 +140,22 @@ const Auth = () => {
       // Redirect will be handled by auth state change listener
     }
     setLoading(false)
+  }
+
+  const handleResetPassword = async () => {
+    if (!email) return
+    try {
+      setLoading(true)
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth`
+      })
+      if (error) throw error
+      toast({ title: 'Password reset sent', description: 'Check your email for reset instructions.' })
+    } catch (e: any) {
+      setError(e.message || 'Failed to send reset email')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -253,9 +277,16 @@ const Auth = () => {
                     <Alert variant="destructive">
                       <AlertDescription>{error}</AlertDescription>
                     </Alert>
-                    <Button type="button" variant="outline" onClick={() => window.open('mailto:support@magit.app?subject=Ban%20Appeal','_blank')}>
-                      Contact Support
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      {showResetOption && (
+                        <Button type="button" variant="secondary" onClick={handleResetPassword} disabled={loading}>
+                          Reset password via email
+                        </Button>
+                      )}
+                      <Button type="button" variant="outline" onClick={() => window.open('mailto:support@magit.app?subject=Ban%20Appeal','_blank')}>
+                        Contact Support
+                      </Button>
+                    </div>
                   </div>
                 )}
 

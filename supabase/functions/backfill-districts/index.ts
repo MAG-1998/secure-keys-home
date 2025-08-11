@@ -40,7 +40,7 @@ serve(async (req) => {
   }
 
   try {
-    const { limit = 200 } = (await req.json().catch(() => ({}))) as { limit?: number };
+    const { limit = 200, preview = false, property_id } = (await req.json().catch(() => ({}))) as { limit?: number; preview?: boolean; property_id?: string };
 
     const supabaseAuth = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -54,40 +54,70 @@ serve(async (req) => {
     const token = authHeader.replace("Bearer ", "");
     const { data: userData } = await supabaseAuth.auth.getUser(token);
     const user = userData.user;
-    if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (!user)
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
 
     // Authorize: only admins or moderators
-    const { data: isAdmin } = await supabaseAuth.rpc("has_role", { _user_id: user.id, _role: "admin" });
-    const { data: isMod } = await supabaseAuth.rpc("has_role", { _user_id: user.id, _role: "moderator" });
+    const { data: isAdmin } = await supabaseAuth.rpc("has_role", {
+      _user_id: user.id,
+      _role: "admin",
+    });
+    const { data: isMod } = await supabaseAuth.rpc("has_role", {
+      _user_id: user.id,
+      _role: "moderator",
+    });
     if (!isAdmin && !isMod) {
-      return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Yandex Geocoder API
-    const Y_KEY = Deno.env.get("YANDEX_GEOCODER_API_KEY") || Deno.env.get("YANDEX_API_KEY") || "";
+    const Y_KEY =
+      Deno.env.get("YANDEX_GEOCODER_API_KEY") || Deno.env.get("YANDEX_API_KEY") || "";
     if (!Y_KEY) {
-      return new Response(JSON.stringify({ error: "Yandex Geocoder key not configured" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(
+        JSON.stringify({ error: "Yandex Geocoder key not configured" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
     const supabaseService = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false } }
+      { auth: { persistSession: false } },
     );
 
     // Fetch candidates
-    const { data: props, error: fetchErr } = await supabaseService
+    let query = supabaseService
       .from("properties")
-      .select("id, latitude, longitude, location, district")
-      .or("district.is.null,district.eq.")
-      .not("latitude", "is", null)
-      .not("longitude", "is", null)
-      .limit(Math.min(Math.max(limit, 1), 500));
+      .select("id, latitude, longitude, location, district");
 
+    if (property_id) {
+      query = query.eq("id", property_id);
+    } else {
+      query = query
+        .or("district.is.null,district.eq.")
+        .not("latitude", "is", null)
+        .not("longitude", "is", null)
+        .limit(Math.min(Math.max(limit, 1), 500));
+    }
+
+    const { data: props, error: fetchErr } = await query;
     if (fetchErr) throw fetchErr;
 
     const total = props?.length || 0;
     let updated = 0;
+    const suggestions: Array<{
+      id: string;
+      current_district: string | null;
+      suggested_district: string;
+      source: "geocoder" | "location";
+    }> = [];
 
     for (const p of props || []) {
       const lat = Number(p.latitude);
@@ -95,6 +125,7 @@ serve(async (req) => {
       if (!isFinite(lat) || !isFinite(lng)) continue;
 
       let canon: string | null = null;
+      let source: "geocoder" | "location" = "geocoder";
 
       // Call Yandex geocoder
       const url = new URL("https://geocode-maps.yandex.ru/1.x/");
@@ -112,8 +143,11 @@ serve(async (req) => {
         const member = json?.response?.GeoObjectCollection?.featureMember?.[0]?.GeoObject;
         const name = member?.name || member?.description || "";
         // Try from Address.Components if available
-        const comps: any[] = member?.metaDataProperty?.GeocoderMetaData?.Address?.Components || [];
-        const districtComp = comps.find((c) => (c?.kind || "").toLowerCase() === "district");
+        const comps: any[] =
+          member?.metaDataProperty?.GeocoderMetaData?.Address?.Components || [];
+        const districtComp = comps.find(
+          (c) => (c?.kind || "").toLowerCase() === "district",
+        );
         const rawCandidate = districtComp?.name || name;
         canon = canonicalizeDistrict(String(rawCandidate || ""));
       } catch (_) {
@@ -123,18 +157,38 @@ serve(async (req) => {
       // Fallback: try location text if geocoder failed
       if (!canon && p.location) {
         canon = canonicalizeDistrict(String(p.location));
+        if (canon) source = "location";
       }
 
       if (canon) {
-        const { error: updErr } = await supabaseService
-          .from("properties")
-          .update({ district: canon })
-          .eq("id", p.id);
-        if (!updErr) updated += 1;
+        if (preview) {
+          suggestions.push({
+            id: p.id,
+            current_district: p.district ?? null,
+            suggested_district: canon,
+            source,
+          });
+        } else {
+          const { error: updErr } = await supabaseService
+            .from("properties")
+            .update({ district: canon })
+            .eq("id", p.id);
+          if (!updErr) updated += 1;
+        }
       }
 
       // Be gentle with rate limits
       await sleep(80);
+    }
+
+    if (preview) {
+      return new Response(
+        JSON.stringify({ total, suggested: suggestions.length, suggestions }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        },
+      );
     }
 
     return new Response(JSON.stringify({ total, updated }), {
