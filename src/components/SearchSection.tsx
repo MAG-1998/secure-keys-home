@@ -44,8 +44,14 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ q }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Request failed')
+
+      const ct = res.headers.get('content-type') || ''
+      const isJson = ct.includes('application/json')
+      const data = isJson ? await res.json() : null
+      if (!res.ok) {
+        const errText = isJson ? JSON.stringify(data) : await res.text()
+        throw new Error(errText || `HTTP ${res.status} ${res.statusText}`)
+      }
 
       const count = Array.isArray(data?.results) ? data.results.length : 0
       const suggestion = data?.aiSuggestion || 'Подберите гибкие параметры для большего охвата.'
