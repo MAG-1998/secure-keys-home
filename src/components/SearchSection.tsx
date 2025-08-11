@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp } from "lucide-react"
 import { useScroll } from "@/hooks/use-scroll"
+import { toast } from "@/components/ui/use-toast"
 
 interface SearchSectionProps {
   isHalalMode: boolean
@@ -22,7 +23,38 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
   const [cashAmount, setCashAmount] = useState("")
   const [monthlyPayment, setMonthlyPayment] = useState("")
   const [monthlySalary, setMonthlySalary] = useState("")
+
   const { scrollY } = useScroll()
+
+  const [searchLoading, setSearchLoading] = useState(false)
+
+  const handleSearch = async () => {
+    const q = searchQuery.trim()
+    if (!q) {
+      toast({ title: 'Введите запрос', description: 'Опишите бюджет, районы или параметры.' })
+      return
+    }
+    try {
+      setSearchLoading(true)
+      const res = await fetch('/api/ai-property-search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ q }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Request failed')
+
+      console.debug('AI search:', data)
+      const count = Array.isArray(data?.results) ? data.results.length : 0
+      const suggestion = data?.aiSuggestion || 'Подберите гибкие параметры для большего охвата.'
+      toast({ title: `Найдено: ${count}`, description: suggestion })
+      // TODO: передать результаты в список/поисковую страницу при необходимости
+    } catch (e: any) {
+      toast({ title: 'Ошибка поиска', description: e?.message || 'Не удалось выполнить AI‑поиск' })
+    } finally {
+      setSearchLoading(false)
+    }
+  }
 
   const scrollProgress = Math.min(scrollY / 300, 1)
 
@@ -101,8 +133,8 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                     AI
                   </Badge>
                 </div>
-                <Button size="lg" className="px-8 shadow-warm">
-                  {t('search.searchBtn')}
+                <Button size="lg" className="px-8 shadow-warm" onClick={handleSearch} disabled={searchLoading}>
+                  {searchLoading ? 'Идёт поиск…' : t('search.searchBtn')}
                 </Button>
               </div>
 
