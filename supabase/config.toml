@@ -18,3 +18,5 @@ verify_jwt = true
 [functions.backfill-districts]
 verify_jwt = true
 
+[functions.env-check]
+verify_jwt = false
