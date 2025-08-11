@@ -849,6 +849,29 @@ export const useTranslation = () => {
   const { user } = useUser();
   const [language, setLanguageState] = useState<Language>(getInitialLang());
 
+  // Sync language across the entire app (same tab) and across tabs
+  useEffect(() => {
+    const onLangEvent = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent).detail as Language | undefined;
+        if (detail && isSupportedLang(detail) && detail !== language) {
+          setLanguageState(detail);
+        }
+      } catch {}
+    };
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === LANGUAGE_STORAGE_KEY && e.newValue && isSupportedLang(e.newValue) && e.newValue !== language) {
+        setLanguageState(e.newValue as Language);
+      }
+    };
+    window.addEventListener('magit:language', onLangEvent as EventListener);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener('magit:language', onLangEvent as EventListener);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, [language]);
+
   // Load user's saved language from Supabase when available
   useEffect(() => {
     const loadProfileLang = async () => {
@@ -887,6 +910,8 @@ export const useTranslation = () => {
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
+    // Broadcast change to all hook instances across the app
+    try { window.dispatchEvent(new CustomEvent('magit:language', { detail: lang })); } catch {}
     void persistLanguage(lang);
   }, [user?.id]);
 
