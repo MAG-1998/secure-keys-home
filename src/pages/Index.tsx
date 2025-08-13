@@ -4,14 +4,11 @@ import { AuthenticatedView } from "@/components/AuthenticatedView"
 import { UnauthenticatedView } from "@/components/UnauthenticatedView"
 import { Footer } from "@/components/Footer"
 import { useTranslation } from "@/hooks/useTranslation"
-import { supabase } from "@/integrations/supabase/client"
-import type { User, Session } from "@supabase/supabase-js"
+import { useUser } from "@/contexts/UserContext"
 
 const Index = () => {
   const [isHalalMode, setIsHalalMode] = useState(false)
-  const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { user, loading } = useUser()
   const { language, setLanguage, t } = useTranslation()
 
   // Initialize Halal mode from persisted preference (if any)
@@ -38,26 +35,6 @@ const Index = () => {
     }
   }, [isHalalMode])
 
-  // Authentication state management
-  useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session)
-        setUser(session?.user ?? null)
-        setLoading(false)
-      }
-    )
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
 
   if (loading) {
     return (
