@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -6,10 +6,15 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp } from "lucide-react"
+import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp, Clock, X, Star, BookmarkPlus } from "lucide-react"
 import { useScroll } from "@/hooks/use-scroll"
 import { toast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
+import { debounce } from "@/utils/debounce"
+import { useSearchHistory } from "@/hooks/useSearchHistory"
+import { useSearchFilters } from "@/hooks/useSearchFilters"
+import { useSearchCache } from "@/hooks/useSearchCache"
+import { getDistrictOptions } from "@/lib/districts"
 
 interface SearchSectionProps {
   isHalalMode: boolean
@@ -20,37 +25,111 @@ interface SearchSectionProps {
 export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSectionProps) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [showFilters, setShowFilters] = useState(false)
-  const [showAllProperties, setShowAllProperties] = useState(false)
-  const [cashAmount, setCashAmount] = useState("")
-  const [monthlyPayment, setMonthlyPayment] = useState("")
-  const [monthlySalary, setMonthlySalary] = useState("")
+  const [showSearchHistory, setShowSearchHistory] = useState(false)
+  const [showSuggestions, setShowSuggestions] = useState(false)
 
   const { scrollY } = useScroll()
+  const { 
+    history, 
+    savedSearches, 
+    addToHistory, 
+    saveSearch, 
+    getRecentSearches,
+    getSearchSuggestions 
+  } = useSearchHistory()
+  
+  const { 
+    filters, 
+    financingFilters, 
+    updateFilter, 
+    updateFinancingFilter,
+    hasActiveFilters,
+    getFilterCount,
+    applyFiltersToQuery
+  } = useSearchFilters()
+  
+  const { getCachedResult, setCachedResult } = useSearchCache()
 
   const [searchLoading, setSearchLoading] = useState(false)
   const [results, setResults] = useState<any[]>([])
   const [aiSuggestion, setAiSuggestion] = useState("")
   const [resultMode, setResultMode] = useState<"strict" | "relaxed" | null>(null)
 
-  const handleSearch = async () => {
-    const q = searchQuery.trim()
+  // District options for current language  
+  const districtOptions = useMemo(() => {
+    const lang = 'ru' // You can make this dynamic based on current language
+    return getDistrictOptions(lang as any)
+  }, [])
+
+  // Search suggestions based on input
+  const searchSuggestions = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2) return []
+    return getSearchSuggestions(searchQuery)
+  }, [searchQuery, getSearchSuggestions])
+
+  // Debounced search for auto-suggestions
+  const debouncedShowSuggestions = useMemo(
+    () => debounce(() => {
+      setShowSuggestions(searchQuery.length >= 2 && searchSuggestions.length > 0)
+    }, 300),
+    [searchQuery, searchSuggestions.length]
+  )
+
+  // Show suggestions when typing
+  useEffect(() => {
+    debouncedShowSuggestions()
+    return () => debouncedShowSuggestions.flush()
+  }, [debouncedShowSuggestions])
+
+  const handleSearch = async (queryOverride?: string) => {
+    const q = (queryOverride || searchQuery).trim()
     if (!q) {
       toast({ title: 'Введите запрос', description: 'Опишите бюджет, районы или параметры.' })
       return
     }
+
+    setShowSuggestions(false)
+    setShowSearchHistory(false)
+
+    // Apply filters to query
+    const enhancedQuery = hasActiveFilters ? applyFiltersToQuery(q) : q
+
+    // Check cache first
+    const cacheKey = { query: enhancedQuery, filters, financingFilters, isHalalMode }
+    const cached = getCachedResult(enhancedQuery, cacheKey)
+    
+    if (cached) {
+      setResults(cached.results)
+      setAiSuggestion(cached.aiSuggestion)
+      setResultMode(cached.mode as "strict" | "relaxed")
+      toast({ 
+        title: `Кэш: найдено ${cached.results.length}`, 
+        description: 'Результаты из кэша'
+      })
+      return
+    }
+
     try {
       setSearchLoading(true)
+      
+      const requestBody = {
+        q: enhancedQuery,
+        filters: hasActiveFilters ? filters : undefined,
+        financingFilters: isHalalMode ? financingFilters : undefined,
+        isHalalMode
+      }
+
       const res = await fetch('/api/ai-property-search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ q }),
+        body: JSON.stringify(requestBody),
       })
 
       let data: any = null
       if (res.status === 404) {
         // Fallback: call Supabase Edge Function
         const { data: fxData, error } = await supabase.functions.invoke('ai-property-search', {
-          body: { q },
+          body: requestBody,
         })
         if (error) throw new Error(error.message || 'Edge function error')
         data = fxData
@@ -72,12 +151,48 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
       setAiSuggestion(suggestion)
       setResultMode(mode)
 
-      toast({ title: mode === 'relaxed' ? `Нашли близкие варианты: ${count}` : `Найдено: ${count}`, description: suggestion })
+      // Cache the results
+      setCachedResult(enhancedQuery, cacheKey, data?.results || [], suggestion, mode)
+
+      // Add to search history
+      addToHistory({
+        query: q,
+        filters: hasActiveFilters ? filters : undefined,
+        isHalalMode,
+        resultCount: count
+      })
+
+      toast({ 
+        title: mode === 'relaxed' ? `Нашли близкие варианты: ${count}` : `Найдено: ${count}`, 
+        description: suggestion 
+      })
     } catch (e: any) {
       toast({ title: 'Ошибка поиска', description: e?.message || 'Не удалось выполнить AI‑поиск' })
     } finally {
       setSearchLoading(false)
     }
+  }
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion)
+    setShowSuggestions(false)
+    handleSearch(suggestion)
+  }
+
+  const handleSaveSearch = () => {
+    if (!searchQuery.trim()) return
+    
+    const searchItem = {
+      id: Date.now().toString(),
+      query: searchQuery,
+      filters: hasActiveFilters ? filters : undefined,
+      timestamp: Date.now(),
+      isHalalMode,
+      resultCount: results.length
+    }
+    
+    saveSearch(searchItem)
+    toast({ title: 'Поиск сохранён', description: 'Добавлен в избранные запросы' })
   }
 
   const scrollProgress = Math.min(scrollY / 300, 1)
@@ -150,33 +265,156 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                     placeholder={t('search.placeholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => setShowSearchHistory(true)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        handleSearch()
+                      }
+                      if (e.key === 'Escape') {
+                        setShowSuggestions(false)
+                        setShowSearchHistory(false)
+                      }
+                    }}
                     className="pl-10 h-12 text-base"
                   />
-                  <Badge variant="warning" className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-xs ${isHalalMode ? 'bg-magit-trust text-white' : ''}`}>
-                    <Sparkles className="h-3 w-3 mr-1" />
-                    AI
-                  </Badge>
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+                    {searchQuery && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                        onClick={handleSaveSearch}
+                      >
+                        <BookmarkPlus className="h-3 w-3" />
+                      </Button>
+                    )}
+                    <Badge variant="warning" className={`text-xs ${isHalalMode ? 'bg-magit-trust text-white' : ''}`}>
+                      <Sparkles className="h-3 w-3 mr-1" />
+                      AI
+                    </Badge>
+                  </div>
+
+                  {/* Search Suggestions */}
+                  {showSuggestions && searchSuggestions.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-lg z-50">
+                      {searchSuggestions.map((suggestion) => (
+                        <button
+                          key={suggestion.id}
+                          onClick={() => handleSuggestionClick(suggestion.query)}
+                          className="w-full px-3 py-2 text-left hover:bg-muted text-sm flex items-center gap-2"
+                        >
+                          <Clock className="h-3 w-3 text-muted-foreground" />
+                          {suggestion.query}
+                          {suggestion.resultCount && (
+                            <Badge variant="outline" className="ml-auto text-xs">
+                              {suggestion.resultCount}
+                            </Badge>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Search History */}
+                  {showSearchHistory && !showSuggestions && searchQuery.length < 2 && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-lg z-50">
+                      <div className="px-3 py-2 border-b">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Недавние поиски</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0"
+                            onClick={() => setShowSearchHistory(false)}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      {getRecentSearches(5).map((item) => (
+                        <button
+                          key={item.id}
+                          onClick={() => handleSuggestionClick(item.query)}
+                          className="w-full px-3 py-2 text-left hover:bg-muted text-sm flex items-center gap-2"
+                        >
+                          <Clock className="h-3 w-3 text-muted-foreground" />
+                          {item.query}
+                          {item.isHalalMode && (
+                            <Badge variant="trust" className="text-xs">Халяль</Badge>
+                          )}
+                          {item.resultCount && (
+                            <Badge variant="outline" className="ml-auto text-xs">
+                              {item.resultCount}
+                            </Badge>
+                          )}
+                        </button>
+                      ))}
+                      {savedSearches.length > 0 && (
+                        <>
+                          <div className="px-3 py-1 border-t">
+                            <span className="text-xs font-medium text-muted-foreground">Избранные</span>
+                          </div>
+                          {savedSearches.slice(0, 3).map((item) => (
+                            <button
+                              key={item.id}
+                              onClick={() => handleSuggestionClick(item.query)}
+                              className="w-full px-3 py-2 text-left hover:bg-muted text-sm flex items-center gap-2"
+                            >
+                              <Star className="h-3 w-3 text-yellow-500" />
+                              {item.query}
+                              {item.isHalalMode && (
+                                <Badge variant="trust" className="text-xs">Халяль</Badge>
+                              )}
+                            </button>
+                          ))}
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <Button size="lg" className="px-8 shadow-warm" onClick={handleSearch} disabled={searchLoading}>
+                <Button size="lg" className="px-8 shadow-warm" onClick={() => handleSearch()} disabled={searchLoading}>
                   {searchLoading ? 'Идёт поиск…' : t('search.searchBtn')}
                 </Button>
               </div>
 
               {/* Quick Filters */}
               <div className="flex flex-wrap gap-2 mb-4">
-                <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
+                <Button 
+                  variant={showFilters ? "default" : "outline"} 
+                  size="sm" 
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="relative"
+                >
                   <Filter className="h-4 w-4 mr-2" />
                   {t('search.filters')}
+                  {hasActiveFilters && (
+                    <Badge variant="destructive" className="absolute -top-1 -right-1 h-4 w-4 p-0 text-xs">
+                      {getFilterCount()}
+                    </Badge>
+                  )}
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant={filters.district === 'yunusobod' ? "default" : "outline"} 
+                  size="sm"
+                  onClick={() => updateFilter('district', filters.district === 'yunusobod' ? '' : 'yunusobod')}
+                >
                   <MapPin className="h-4 w-4 mr-2" />
                   {t('search.yunusobod')}
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant={filters.bedrooms ? "default" : "outline"} 
+                  size="sm"
+                  onClick={() => updateFilter('bedrooms', filters.bedrooms ? '' : '2-3')}
+                >
                   <Bed className="h-4 w-4 mr-2" />
                   {t('search.bedrooms')}
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant={filters.priceRange ? "default" : "outline"} 
+                  size="sm"
+                  onClick={() => updateFilter('priceRange', filters.priceRange ? '' : '$40k-60k')}
+                >
                   <DollarSign className="h-4 w-4 mr-2" />
                   {t('search.priceRange')}
                 </Button>
@@ -196,50 +434,50 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                       {t('search.financialProfile')}
                     </h3>
                     <div className={`grid md:grid-cols-3 gap-4 mb-4 transition-all duration-300 ${
-                      showAllProperties ? 'blur-sm pointer-events-none' : ''
+                      financingFilters.showAllProperties ? 'blur-sm pointer-events-none' : ''
                     }`}>
                       <div>
                         <Label className="text-sm font-medium mb-2 block">{t('search.cashAvailable')}</Label>
                         <Input
                           placeholder="e.g., 15,000"
-                          value={cashAmount}
-                          onChange={(e) => setCashAmount(e.target.value)}
+                          value={financingFilters.cashAmount || ''}
+                          onChange={(e) => updateFinancingFilter('cashAmount', e.target.value)}
                           className="h-10"
-                          disabled={showAllProperties}
+                          disabled={financingFilters.showAllProperties}
                         />
                       </div>
                       <div>
                         <Label className="text-sm font-medium mb-2 block">{t('search.monthlyPayment')}</Label>
                         <Input
                           placeholder="e.g., 500"
-                          value={monthlyPayment}
-                          onChange={(e) => setMonthlyPayment(e.target.value)}
+                          value={financingFilters.monthlyPayment || ''}
+                          onChange={(e) => updateFinancingFilter('monthlyPayment', e.target.value)}
                           className="h-10"
-                          disabled={showAllProperties}
+                          disabled={financingFilters.showAllProperties}
                         />
                       </div>
                       <div>
                         <Label className="text-sm font-medium mb-2 block">{t('search.monthlySalary')}</Label>
                         <Input
                           placeholder="e.g., 2,000"
-                          value={monthlySalary}
-                          onChange={(e) => setMonthlySalary(e.target.value)}
+                          value={financingFilters.monthlySalary || ''}
+                          onChange={(e) => updateFinancingFilter('monthlySalary', e.target.value)}
                           className="h-10"
-                          disabled={showAllProperties}
+                          disabled={financingFilters.showAllProperties}
                         />
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Switch
                         id="show-all"
-                        checked={showAllProperties}
-                        onCheckedChange={setShowAllProperties}
+                        checked={financingFilters.showAllProperties || false}
+                        onCheckedChange={(checked) => updateFinancingFilter('showAllProperties', checked)}
                         className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust [&>span]:data-[state=unchecked]:bg-magit-trust" : "data-[state=checked]:bg-primary data-[state=checked]:border-primary"}
                       />
                       <Label htmlFor="show-all" className="text-sm">
                         {t('search.showAll')}
                       </Label>
-                      {!showAllProperties && cashAmount && monthlyPayment && (
+                      {!financingFilters.showAllProperties && financingFilters.cashAmount && financingFilters.monthlyPayment && (
                         <Badge variant="trust" className="text-xs">
                           <TrendingUp className="h-3 w-3 mr-1" />
                           {t('search.smartMatch')}
@@ -256,22 +494,23 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   <div className="grid md:grid-cols-4 gap-4">
                     <div>
                       <Label className="text-sm font-medium mb-2 block">{t('filter.district')}</Label>
-                      <Select>
+                      <Select value={filters.district || ''} onValueChange={(value) => updateFilter('district', value)}>
                         <SelectTrigger>
                           <SelectValue placeholder={t('filter.chooseDistrict')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="yunusobod">Yunusobod</SelectItem>
-                          <SelectItem value="chilonzor">Chilonzor</SelectItem>
-                          <SelectItem value="shaykhontohur">Shaykhontohur</SelectItem>
-                          <SelectItem value="mirzo-ulugbek">Mirzo Ulugbek</SelectItem>
+                          {districtOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
                     
                     <div>
                       <Label className="text-sm font-medium mb-2 block">{t('filter.priceRange')}</Label>
-                      <Select>
+                      <Select value={filters.priceRange || ''} onValueChange={(value) => updateFilter('priceRange', value)}>
                         <SelectTrigger>
                           <SelectValue placeholder={t('filter.selectBudget')} />
                         </SelectTrigger>
@@ -286,7 +525,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
 
                     <div>
                       <Label className="text-sm font-medium mb-2 block">{t('filter.squareMeters')}</Label>
-                      <Select>
+                      <Select value={filters.area || ''} onValueChange={(value) => updateFilter('area', value)}>
                         <SelectTrigger>
                           <SelectValue placeholder={t('filter.size')} />
                         </SelectTrigger>
@@ -301,7 +540,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                     
                     <div>
                       <Label className="text-sm font-medium mb-2 block">{t('filter.propertyType')}</Label>
-                      <Select>
+                      <Select value={filters.propertyType || ''} onValueChange={(value) => updateFilter('propertyType', value)}>
                         <SelectTrigger>
                           <SelectValue placeholder={t('filter.type')} />
                         </SelectTrigger>
