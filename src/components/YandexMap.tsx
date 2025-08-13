@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,7 @@ declare global {
 }
 
 const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, onHalalModeChange, t, language }) => {
+  const navigate = useNavigate();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -583,7 +585,7 @@ const approvedRandom = useMemo(() => {
                   )}
                 </div>
 
-                <Button className="w-full mt-4" size="lg" onClick={() => (window.location.href = '/properties')}>
+                <Button className="w-full mt-4" size="lg" onClick={() => navigate('/properties')}>
                   <Search className="h-4 w-4 mr-2" />
                   {t('map.viewAllProperties')}
                 </Button>

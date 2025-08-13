@@ -1,4 +1,5 @@
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, ChangeEvent, useEffect, useCallback } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,8 +16,9 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import LocationPicker from "@/components/LocationPicker";
-import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail } from "lucide-react";
+import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail, Save, Trash2 } from "lucide-react";
 import { extractDistrictFromText, getDistrictOptions } from "@/lib/districts";
+import { debounce } from "@/utils/debounce";
 const sanitizeFilename = (name: string) => {
   const dot = name.lastIndexOf(".");
   const base = dot > 0 ? name.slice(0, dot) : name;
@@ -31,13 +33,14 @@ const sanitizeFilename = (name: string) => {
 };
 
 const ListProperty = () => {
-  const {
-    t, language
-  } = useTranslation();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { t, language } = useTranslation();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     // Property Details
     propertyType: "",
@@ -64,6 +67,64 @@ const ListProperty = () => {
     halalFinancingRequested: false
   });
   const totalSteps = 6;
+
+  // Persistence constants
+  const STORAGE_KEY = 'magit_property_draft';
+  const STEP_KEY = 'magit_property_step';
+
+  // Load saved data on mount
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem(STORAGE_KEY);
+      const savedStep = localStorage.getItem(STEP_KEY);
+      const urlStep = searchParams.get('step');
+      
+      if (savedData) {
+        const parsed = JSON.parse(savedData);
+        // Only restore non-file data
+        const { photos, documents, ...restData } = parsed;
+        setFormData(prev => ({ ...prev, ...restData }));
+        setLastSaved(new Date().toLocaleTimeString());
+      }
+      
+      if (urlStep && !isNaN(Number(urlStep))) {
+        setCurrentStep(Math.max(1, Math.min(Number(urlStep), totalSteps)));
+      } else if (savedStep && !isNaN(Number(savedStep))) {
+        setCurrentStep(Math.max(1, Math.min(Number(savedStep), totalSteps)));
+      }
+    } catch (error) {
+      console.warn('Failed to load saved draft:', error);
+    }
+  }, [searchParams]);
+
+  // Debounced save function
+  const saveToStorage = useCallback(
+    debounce((data: typeof formData, step: number) => {
+      try {
+        // Save form data (excluding files)
+        const { photos, documents, ...dataToSave } = data;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+        localStorage.setItem(STEP_KEY, step.toString());
+        setLastSaved(new Date().toLocaleTimeString());
+      } catch (error) {
+        console.warn('Failed to save draft:', error);
+      }
+    }, 1000),
+    []
+  );
+
+  // Save on form data changes
+  useEffect(() => {
+    saveToStorage(formData, currentStep);
+  }, [formData, currentStep, saveToStorage]);
+
+  // Update URL with current step
+  const updateStepInUrl = (step: number) => {
+    setSearchParams(prev => {
+      prev.set('step', step.toString());
+      return prev;
+    }, { replace: true });
+  };
   
   // Form validation
   const validateBeforeSubmit = () => {
@@ -86,18 +147,31 @@ const ListProperty = () => {
     return errors;
   };
   const nextStep = () => {
+    // Photo validation for step 3
+    if (currentStep === 3 && formData.photos.length < 5) {
+      toast({
+        title: "Photos Required",
+        description: "Please upload at least 5 photos before proceeding.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (currentStep < totalSteps) {
+      let nextStepNum = currentStep + 1;
       // Skip payment step if no paid features are selected
       if (currentStep === 4 && calculateTotalAmount() === 0) {
-        setCurrentStep(currentStep + 2);
-      } else {
-        setCurrentStep(currentStep + 1);
+        nextStepNum = currentStep + 2;
       }
+      setCurrentStep(nextStepNum);
+      updateStepInUrl(nextStepNum);
     }
   };
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      const prevStepNum = currentStep - 1;
+      setCurrentStep(prevStepNum);
+      updateStepInUrl(prevStepNum);
     }
   };
   const handleInputChange = (field: string, value: string) => {
@@ -105,6 +179,45 @@ const ListProperty = () => {
       ...prev,
       [field]: value
     }));
+  };
+
+  // Draft management functions
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STEP_KEY);
+      setLastSaved(null);
+      toast({ title: "Draft cleared", description: "Form has been reset to empty state." });
+      // Reset form
+      setFormData({
+        propertyType: "",
+        address: "",
+        district: "",
+        price: "",
+        bedrooms: "",
+        customBedrooms: "",
+        bathrooms: "",
+        customBathrooms: "",
+        area: "",
+        description: "",
+        latitude: null,
+        longitude: null,
+        documents: [],
+        photos: [],
+        visitHours: [],
+        virtualTour: false,
+        halalFinancingRequested: false
+      });
+      setCurrentStep(1);
+      updateStepInUrl(1);
+    } catch (error) {
+      console.warn('Failed to clear draft:', error);
+    }
+  };
+
+  const saveDraft = () => {
+    saveToStorage.flush();
+    toast({ title: "Draft saved", description: "Your progress has been saved." });
   };
 
   // Calculate total amount based on selected features
@@ -246,6 +359,13 @@ const ListProperty = () => {
           console.error('Error submitting halal financing request:', halalError);
         }
       }
+      // Clear draft after successful submission
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(STEP_KEY);
+        setLastSaved(null);
+      } catch {}
+
       setApplicationSubmitted(true);
       toast({
         title: "Success",
@@ -439,9 +559,14 @@ const ListProperty = () => {
                 <Button variant="outline" onClick={handleChoosePhotos}>
                   Choose Photos
                 </Button>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Selected: {formData.photos.length}/20
+                <p className={`text-sm mt-2 ${formData.photos.length < 5 ? 'text-orange-600 dark:text-orange-400' : 'text-muted-foreground'}`}>
+                  Selected: {formData.photos.length}/20 (minimum 5 required)
                 </p>
+                {formData.photos.length < 5 && (
+                  <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
+                    Upload at least {5 - formData.photos.length} more photo(s) to continue
+                  </p>
+                )}
               </div>
 
               {formData.photos.length > 0 && (
@@ -681,13 +806,21 @@ const ListProperty = () => {
           <div className="flex items-center justify-between">
             <div 
               className="cursor-pointer" 
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
             >
               <MagitLogo size="md" />
             </div>
-            <Button variant="ghost" onClick={() => window.location.href = '/'}>
-              Back to Home
-            </Button>
+            <div className="flex items-center gap-4">
+              {lastSaved && (
+                <span className="text-sm text-muted-foreground flex items-center gap-1">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  Saved {lastSaved}
+                </span>
+              )}
+              <Button variant="ghost" onClick={() => navigate('/')}>
+                Back to Home
+              </Button>
+            </div>
           </div>
         </div>
       </nav>
@@ -731,11 +864,33 @@ const ListProperty = () => {
             
             {/* Navigation Buttons */}
             <div className="flex items-center justify-between mt-8">
-              <Button variant="outline" onClick={prevStep} disabled={currentStep === 1}>
-                Previous
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={prevStep} disabled={currentStep === 1}>
+                  Previous
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={saveDraft}
+                  className="flex items-center gap-1"
+                >
+                  <Save className="w-4 h-4" />
+                  Save Draft
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={clearDraft}
+                  className="flex items-center gap-1 text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Clear
+                </Button>
+              </div>
               
-              {currentStep < totalSteps ? <Button onClick={nextStep} className="flex items-center gap-2">
+              {currentStep < totalSteps ? <Button 
+                  onClick={nextStep} 
+                  className="flex items-center gap-2"
+                  disabled={currentStep === 3 && formData.photos.length < 5}
+                >
                   Next Step
                   <ArrowRight className="w-4 h-4" />
                 </Button> : <Button

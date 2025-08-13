@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -23,6 +24,7 @@ interface UnauthenticatedViewProps {
 }
 
 export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsHalalMode, t }: UnauthenticatedViewProps) => {
+  const navigate = useNavigate()
   const { scrollY, isScrolled } = useScroll()
   const isMobile = useIsMobile()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -62,14 +64,14 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
               <div className="hidden lg:flex items-center space-x-3">
                 <Button
                   variant="ghost" 
-                  onClick={() => window.location.href = '/auth'}
+                  onClick={() => navigate('/auth')}
                   className="text-sm"
                 >
                   {t('nav.signIn')}
                 </Button>
                 <Button 
                   variant={isHalalMode ? "trust" : "default"}
-                  onClick={() => window.location.href = '/auth?signup=true'}
+                  onClick={() => navigate('/auth?signup=true')}
                   className="text-sm"
                 >
                   {t('nav.getStarted')}
@@ -126,14 +128,14 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
                       <div className="pt-4 border-t space-y-2">
                         <Button 
                           variant="ghost" 
-                          onClick={() => window.location.href = '/auth'}
+                          onClick={() => navigate('/auth')}
                           className="w-full"
                         >
                           {t('nav.signIn')}
                         </Button>
                         <Button 
                           variant={isHalalMode ? "trust" : "default"}
-                          onClick={() => window.location.href = '/auth?signup=true'}
+                          onClick={() => navigate('/auth?signup=true')}
                           className="w-full"
                         >
                           {t('nav.getStarted')}
@@ -305,7 +307,7 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
                 <Button 
                   size="lg" 
                   className="text-lg px-8 py-6 shadow-warm"
-                  onClick={() => window.location.href = '/auth?signup=true'}
+                  onClick={() => navigate('/auth?signup=true')}
                 >
                   {t('cta.button')}
                 </Button>
