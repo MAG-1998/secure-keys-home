@@ -3,6 +3,7 @@ import { AuthenticatedHeader } from "@/components/AuthenticatedHeader"
 import { AuthenticatedView } from "@/components/AuthenticatedView"
 import { UnauthenticatedView } from "@/components/UnauthenticatedView"
 import { Footer } from "@/components/Footer"
+import { OpenAIKeyTest } from "@/components/OpenAIKeyTest"
 import { useTranslation } from "@/hooks/useTranslation"
 import { supabase } from "@/integrations/supabase/client"
 import type { User, Session } from "@supabase/supabase-js"
@@ -100,6 +101,11 @@ const Index = () => {
           t={t}
         />
       )}
+      
+      {/* OpenAI Key Test Component */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <OpenAIKeyTest />
+      </div>
     </div>
   )
 }
