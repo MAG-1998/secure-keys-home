@@ -17,6 +17,19 @@ import { supabase } from "@/integrations/supabase/client";
 import LocationPicker from "@/components/LocationPicker";
 import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail } from "lucide-react";
 import { extractDistrictFromText, getDistrictOptions } from "@/lib/districts";
+const sanitizeFilename = (name: string) => {
+  const dot = name.lastIndexOf(".");
+  const base = dot > 0 ? name.slice(0, dot) : name;
+  const ext = dot > 0 ? name.slice(dot).toLowerCase() : "";
+  const cleaned = base.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+  const ascii = cleaned
+    .replace(/[^a-zA-Z0-9-_]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$|^\.+|\.+$/g, "")
+    .toLowerCase();
+  return (ascii || "file") + ext;
+};
+
 const ListProperty = () => {
   const {
     t, language
@@ -196,16 +209,20 @@ const ListProperty = () => {
         const uploadedUrls: string[] = [];
         for (let i = 0; i < formData.photos.length; i++) {
           const file = formData.photos[i];
-          const filePath = `${user.user.id}/${property.id}/${Date.now()}_${i}_${file.name}`;
+          const safeName = sanitizeFilename(file.name);
+          const filePath = `${user.user.id}/${property.id}/${Date.now()}_${i}_${safeName}`;
           const { data: uploadData, error: uploadError } = await supabase
             .storage
             .from('properties')
-            .upload(filePath, file, { contentType: file.type });
-          if (uploadError) throw uploadError;
+            .upload(filePath, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+          if (uploadError) {
+            console.error('Upload failed for', filePath, uploadError);
+            throw uploadError;
+          }
           const { data: publicUrlData } = supabase
             .storage
             .from('properties')
-            .getPublicUrl(uploadData.path);
+            .getPublicUrl(filePath);
           uploadedUrls.push(publicUrlData.publicUrl);
         }
 
