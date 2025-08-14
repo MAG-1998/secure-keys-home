@@ -744,6 +744,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_safe_profile_for_messaging: {
+        Args: { target_user_id: string }
+        Returns: {
+          created_at: string
+          display_name: string
+          user_id: string
+          user_type: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
