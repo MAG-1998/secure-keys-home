@@ -67,40 +67,46 @@ export default function ChatWidget() {
     return Array.from(map.entries()).map(([otherUserId, lastMessage]) => ({ otherUserId, lastMessage }));
   }, [allMyMessages, myId]);
 
-  // Fetch profiles for conversation participants
+  // Fetch profiles for conversation participants using secure function
   useEffect(() => {
     const ids = conversations.map((c) => c.otherUserId).filter(Boolean);
     const missing = ids.filter((id) => !profilesById[id]);
     if (!missing.length) return;
 
-    supabase
-      .from('profiles')
-      .select('user_id, full_name, email')
-      .in('user_id', missing)
-      .then(({ data, error }) => {
-        if (error) return;
-        const map: Record<string, { full_name?: string | null; email?: string | null }> = { ...profilesById };
-        (data || []).forEach((p: any) => {
-          map[p.user_id] = { full_name: p.full_name, email: p.email };
-        });
-        setProfilesById(map);
+    Promise.all(
+      missing.map(async (userId) => {
+        const { data } = await supabase.rpc('get_safe_profile_for_messaging', { target_user_id: userId });
+        return { userId, data: data?.[0] };
+      })
+    ).then((results) => {
+      const map: Record<string, { full_name?: string | null; email?: string | null }> = { ...profilesById };
+      results.forEach(({ userId, data }) => {
+        if (data) {
+          map[userId] = { 
+            full_name: data.display_name, 
+            email: data.display_name // Using display_name since email is now protected
+          };
+        }
       });
+      setProfilesById(map);
+    });
   }, [conversations, profilesById]);
 
-  // Ensure selected user's profile is loaded (e.g., support assignment)
+  // Ensure selected user's profile is loaded using secure function
   useEffect(() => {
     if (!selectedOtherId || profilesById[selectedOtherId]) return;
     supabase
-      .from('profiles')
-      .select('user_id, full_name, email')
-      .eq('user_id', selectedOtherId)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (error || !data) return;
-        setProfilesById((prev) => ({
-          ...prev,
-          [selectedOtherId]: { full_name: (data as any).full_name, email: (data as any).email },
-        }));
+      .rpc('get_safe_profile_for_messaging', { target_user_id: selectedOtherId })
+      .then(({ data }) => {
+        if (data?.[0]) {
+          setProfilesById((prev) => ({
+            ...prev,
+            [selectedOtherId]: { 
+              full_name: data[0].display_name, 
+              email: data[0].display_name // Using display_name since email is now protected
+            },
+          }));
+        }
       });
   }, [selectedOtherId, profilesById]);
 

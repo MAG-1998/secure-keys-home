@@ -126,12 +126,23 @@ export default function MessagesPage() {
 
     const userIds = Array.from(convMap.keys());
     if (userIds.length) {
-      const { data: profs } = await supabase
-        .from("profiles")
-        .select("user_id, full_name, email")
-        .in("user_id", userIds);
+      // Use secure function to get safe profile data
+      const profilePromises = userIds.map(async (userId) => {
+        const { data } = await supabase.rpc('get_safe_profile_for_messaging', { target_user_id: userId });
+        return { userId, profile: data?.[0] };
+      });
+      
+      const profileResults = await Promise.all(profilePromises);
       const byId: Record<string, any> = {};
-      (profs || []).forEach((p) => { byId[p.user_id] = p; });
+      profileResults.forEach(({ userId, profile }) => {
+        if (profile) {
+          byId[userId] = {
+            full_name: profile.display_name,
+            email: profile.display_name // Using display_name since email is now protected
+          };
+        }
+      });
+      
       const convs = Array.from(convMap.values()).map((c) => ({
         ...c,
         profile: byId[c.userId]
