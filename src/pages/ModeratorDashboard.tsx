@@ -116,11 +116,11 @@ export default function ModeratorDashboard() {
   }, []);
   const fetchApplications = async () => {
     try {
-      // First fetch property applications
+      // Only fetch pending applications so approved/rejected disappear from list
       const { data: applicationsData, error: applicationsError } = await supabase
         .from('properties')
         .select('*')
-        .in('status', ['pending', 'approved', 'rejected'])
+        .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
       if (applicationsError) throw applicationsError;
@@ -220,30 +220,45 @@ export default function ModeratorDashboard() {
 
   const handleApplicationReview = async (applicationId: string, status: 'approved' | 'rejected') => {
     try {
-      // Update application status
+      console.log(`Reviewing application ${applicationId} with status: ${status}`);
+      
+      const updateData: any = {
+        status: status === 'approved' ? 'active' : status,
+        moderator_notes: moderatorNotes[applicationId] || '',
+        reviewed_at: new Date().toISOString(),
+        reviewed_by: (await supabase.auth.getUser()).data.user?.id
+      };
+
+      // For rejected applications, ensure halal financing fields are properly set
+      if (status === 'rejected') {
+        updateData.halal_financing_status = 'denied';
+        updateData.is_halal_financed = false;
+      }
+
+      console.log('Update data:', updateData);
+
       const { error: appError } = await supabase
         .from('properties')
-        .update({
-          status: status === 'approved' ? 'active' : status,
-          moderator_notes: moderatorNotes[applicationId] || '',
-          reviewed_at: new Date().toISOString(),
-          reviewed_by: (await supabase.auth.getUser()).data.user?.id
-        })
+        .update(updateData)
         .eq('id', applicationId);
 
-      if (appError) throw appError;
+      if (appError) {
+        console.error('Supabase error:', appError);
+        throw appError;
+      }
 
       toast({
         title: "Success",
         description: `Application ${status} successfully`,
       });
 
+      // Refresh the applications list
       fetchApplications();
     } catch (error) {
       console.error('Error reviewing application:', error);
       toast({
         title: "Error",
-        description: "Failed to review application",
+        description: `Failed to ${status} application: ${error.message}`,
         variant: "destructive",
       });
     }
