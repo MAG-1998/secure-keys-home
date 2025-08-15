@@ -231,7 +231,7 @@ export default function ModeratorDashboard() {
 
       // For rejected applications, ensure halal financing fields are properly set
       if (status === 'rejected') {
-        updateData.halal_financing_status = 'denied';
+        updateData.halal_financing_status = 'rejected';
         updateData.is_halal_financed = false;
       }
 
