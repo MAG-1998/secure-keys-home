@@ -387,11 +387,14 @@ export type Database = {
           id: string
           is_custom_time: boolean | null
           notes: string | null
+          owner_review: string | null
           property_id: string
+          review_submitted_at: string | null
           status: string | null
           updated_at: string
           visit_date: string
           visitor_id: string
+          visitor_showed_up: boolean | null
         }
         Insert: {
           created_at?: string
@@ -400,11 +403,14 @@ export type Database = {
           id?: string
           is_custom_time?: boolean | null
           notes?: string | null
+          owner_review?: string | null
           property_id: string
+          review_submitted_at?: string | null
           status?: string | null
           updated_at?: string
           visit_date: string
           visitor_id: string
+          visitor_showed_up?: boolean | null
         }
         Update: {
           created_at?: string
@@ -413,11 +419,14 @@ export type Database = {
           id?: string
           is_custom_time?: boolean | null
           notes?: string | null
+          owner_review?: string | null
           property_id?: string
+          review_submitted_at?: string | null
           status?: string | null
           updated_at?: string
           visit_date?: string
           visitor_id?: string
+          visitor_showed_up?: boolean | null
         }
         Relationships: [
           {
