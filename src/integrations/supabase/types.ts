@@ -386,8 +386,11 @@ export type Database = {
           deposit_paid: boolean | null
           id: string
           is_custom_time: boolean | null
+          is_paid_visit: boolean | null
           notes: string | null
           owner_review: string | null
+          payment_amount: number | null
+          payment_status: string | null
           property_id: string
           review_submitted_at: string | null
           status: string | null
@@ -402,8 +405,11 @@ export type Database = {
           deposit_paid?: boolean | null
           id?: string
           is_custom_time?: boolean | null
+          is_paid_visit?: boolean | null
           notes?: string | null
           owner_review?: string | null
+          payment_amount?: number | null
+          payment_status?: string | null
           property_id: string
           review_submitted_at?: string | null
           status?: string | null
@@ -418,8 +424,11 @@ export type Database = {
           deposit_paid?: boolean | null
           id?: string
           is_custom_time?: boolean | null
+          is_paid_visit?: boolean | null
           notes?: string | null
           owner_review?: string | null
+          payment_amount?: number | null
+          payment_status?: string | null
           property_id?: string
           review_submitted_at?: string | null
           status?: string | null
@@ -724,6 +733,39 @@ export type Database = {
         }
         Relationships: []
       }
+      visit_restrictions: {
+        Row: {
+          created_at: string
+          id: string
+          is_permanent: boolean | null
+          reason: string | null
+          restricted_by: string
+          restricted_until: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_permanent?: boolean | null
+          reason?: string | null
+          restricted_by: string
+          restricted_until?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_permanent?: boolean | null
+          reason?: string | null
+          restricted_by?: string
+          restricted_until?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -736,6 +778,15 @@ export type Database = {
           target_user_id: string
         }
         Returns: boolean
+      }
+      can_user_create_visit_request: {
+        Args: { user_id_param: string }
+        Returns: {
+          can_create: boolean
+          free_visits_used: number
+          is_restricted: boolean
+          reason: string
+        }[]
       }
       create_property_from_application: {
         Args: { application_id: string }
