@@ -9,9 +9,11 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Check, Clock, MapPin, MessageSquare, X, Star, UserCheck, UserX } from "lucide-react";
+import { Calendar, Check, Clock, MapPin, MessageSquare, X, Star, UserCheck, UserX, Ban, CreditCard } from "lucide-react";
 import { MagitLogo } from "@/components/MagitLogo";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
+import { VisitRestrictionDialog } from "@/components/VisitRestrictionDialog";
 
 interface OwnerRequestRow {
   id: string;
@@ -25,6 +27,8 @@ interface OwnerRequestRow {
   visitor_showed_up: boolean | null;
   owner_review: string | null;
   review_submitted_at: string | null;
+  is_paid_visit: boolean | null;
+  payment_amount: number | null;
   properties?: {
     id: string;
     title: string;
@@ -42,7 +46,9 @@ interface VisitRequestCardProps {
   onMessage?: (id: string) => void;
   onAlternative?: (id: string) => void;
   onReview?: (id: string) => void;
+  onRestrictUser?: (userId: string, reason: string, isPermanent: boolean, restrictedUntil?: Date) => void;
   isFinished?: boolean;
+  currentUserRole?: string;
 }
 
 const VisitRequestCard = ({ 
@@ -53,7 +59,9 @@ const VisitRequestCard = ({
   onMessage, 
   onAlternative, 
   onReview,
-  isFinished = false 
+  onRestrictUser,
+  isFinished = false,
+  currentUserRole
 }: VisitRequestCardProps) => {
   return (
     <Card className="bg-background/80 backdrop-blur-sm border-border/50 hover:shadow-lg transition-all duration-300">
@@ -127,6 +135,14 @@ const VisitRequestCard = ({
                 )}
               </div>
             )}
+
+            {/* Payment info for paid visits */}
+            {r.is_paid_visit && (
+              <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                <CreditCard className="h-4 w-4" />
+                Paid visit ({r.payment_amount?.toLocaleString()} UZS)
+              </div>
+            )}
           </div>
         </div>
 
@@ -178,6 +194,15 @@ const VisitRequestCard = ({
               <Star className="w-4 h-4 mr-1" /> Leave Review
             </Button>
           )}
+
+          {/* Restrict user option for moderators/admins when visitor didn't show */}
+          {r.visitor_showed_up === false && onRestrictUser && (currentUserRole === 'admin' || currentUserRole === 'moderator') && (
+            <VisitRestrictionDialog
+              userId={r.visitor_id}
+              userName="User"
+              onRestrictUser={onRestrictUser}
+            />
+          )}
         </div>
       </CardContent>
     </Card>
@@ -197,6 +222,7 @@ const VisitRequests = () => {
   const [ownerReview, setOwnerReview] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useUser();
 
   useEffect(() => {
     document.title = "Visit Requests Inbox • Magit";
@@ -347,6 +373,26 @@ const VisitRequests = () => {
     }
   };
 
+  const handleRestrictUser = async (userId: string, reason: string, isPermanent: boolean, restrictedUntil?: Date) => {
+    try {
+      const { error } = await supabase
+        .from('visit_restrictions')
+        .insert({
+          user_id: userId,
+          restricted_by: user?.id,
+          reason,
+          is_permanent: isPermanent,
+          restricted_until: restrictedUntil?.toISOString()
+        });
+
+      if (error) throw error;
+      toast({ title: 'User restricted', description: 'User has been restricted from creating visit requests.' });
+      await refresh();
+    } catch (e) {
+      toast({ title: 'Error', description: 'Could not restrict user', variant: 'destructive' });
+    }
+  };
+
   // Categorize requests
   const now = new Date();
   const comingRequests = requests.filter(r => 
@@ -427,6 +473,8 @@ const VisitRequests = () => {
                       onDeny={onDeny}
                       onMessage={openMsg}
                       onAlternative={openAlt}
+                      onRestrictUser={handleRestrictUser}
+                      currentUserRole={user?.role}
                     />
                   ))}
                 </div>
@@ -447,6 +495,8 @@ const VisitRequests = () => {
                       request={r}
                       showActions={["message"]}
                       onMessage={openMsg}
+                      onRestrictUser={handleRestrictUser}
+                      currentUserRole={user?.role}
                     />
                   ))}
                 </div>
@@ -468,7 +518,9 @@ const VisitRequests = () => {
                       showActions={["message", "review"]}
                       onMessage={openMsg}
                       onReview={openReview}
+                      onRestrictUser={handleRestrictUser}
                       isFinished={true}
+                      currentUserRole={user?.role}
                     />
                   ))}
                 </div>
