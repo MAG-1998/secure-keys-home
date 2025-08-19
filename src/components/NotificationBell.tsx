@@ -43,12 +43,9 @@ export function NotificationBell() {
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <>
-              <span className="absolute -top-1 -right-1 min-w-[18px] h-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center">
-                {unreadCount}
-              </span>
-              <div className="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            </>
+            <span className="absolute -top-1 -right-1 min-w-[18px] h-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center">
+              {unreadCount}
+            </span>
           )}
         </Button>
       </DropdownMenuTrigger>
