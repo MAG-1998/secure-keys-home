@@ -61,6 +61,9 @@ const PropertyDetails = () => {
   const [dateOnly, setDateOnly] = useState<Date | undefined>();
   const [timeOnly, setTimeOnly] = useState<string>("");
   const [showCustomTime, setShowCustomTime] = useState(false);
+  
+  const [visitRequestSent, setVisitRequestSent] = useState(false);
+  const [hasPendingRequest, setHasPendingRequest] = useState(false);
 
   useEffect(() => {
     if (dateOnly && timeOnly) {
@@ -160,6 +163,18 @@ const PropertyDetails = () => {
             setIsSaved(true);
             setSavedId(saved.id);
           }
+
+          // Check for existing pending visit requests
+          const { data: existingRequest } = await supabase
+            .from("property_visits")
+            .select("id, status")
+            .eq("visitor_id", sUser.id)
+            .eq("property_id", id)
+            .in("status", ["pending", "confirmed"])
+            .maybeSingle();
+          if (existingRequest) {
+            setHasPendingRequest(true);
+          }
         }
       } catch (e: any) {
         console.error(e);
@@ -234,6 +249,8 @@ const PropertyDetails = () => {
           is_custom_time: !!customDateTime && !selectedSlot,
         });
       if (error) throw error;
+      setVisitRequestSent(true);
+      setHasPendingRequest(true);
       toast({ title: "Request sent", description: "The owner will be notified of your request" });
     } catch (e: any) {
       console.error(e);
@@ -561,8 +578,14 @@ const PropertyDetails = () => {
                       )}
                     </div>
 
-                        <Button className="w-full" onClick={requestVisit}>
-                          {showCustomTime && timeOnly && dateOnly ? 'Send Request (200k deposit)' : 'Send Request'}
+                        <Button 
+                          className="w-full" 
+                          onClick={requestVisit}
+                          disabled={visitRequestSent || hasPendingRequest}
+                        >
+                          {visitRequestSent ? 'Request Sent ✓' : 
+                           hasPendingRequest ? 'Request Already Pending' :
+                           (showCustomTime && timeOnly && dateOnly ? 'Send Request (200k deposit)' : 'Send Request')}
                         </Button>
                       </div>
                     </CardContent>
