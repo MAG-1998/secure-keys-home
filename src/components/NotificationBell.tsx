@@ -43,9 +43,12 @@ export function NotificationBell() {
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 min-w-[18px] h-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center">
-              {unreadCount}
-            </span>
+            <>
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center">
+                {unreadCount}
+              </span>
+              <div className="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            </>
           )}
         </Button>
       </DropdownMenuTrigger>
@@ -62,13 +65,16 @@ export function NotificationBell() {
         {notifications.slice(0, 10).map((n) => (
           <DropdownMenuItem
             key={n.id}
-            className={`flex items-start gap-3 py-3 px-3 ${!n.read_at ? 'bg-muted/40' : ''}`}
+            className={`flex items-start gap-3 py-3 px-3 relative ${!n.read_at ? 'bg-muted/40' : ''}`}
             onClick={async () => {
               await markAsRead(n.id)
               navigate(goTo(n.type, n.entity_id))
             }}
           >
-            <div className="mt-0.5">{iconFor(n.type)}</div>
+            {!n.read_at && (
+              <div className="absolute left-2 top-4 w-2 h-2 bg-green-500 rounded-full" />
+            )}
+            <div className={`mt-0.5 ${!n.read_at ? 'ml-2' : ''}`}>{iconFor(n.type)}</div>
             <div className="space-y-1">
               <div className="text-sm font-medium text-foreground">{n.title}</div>
               {n.body && <div className="text-xs text-muted-foreground">{n.body}</div>}

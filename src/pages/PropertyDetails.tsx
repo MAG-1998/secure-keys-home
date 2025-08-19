@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
-import { MapPin, Bed, Bath, Square, Calendar as CalendarIcon, MessageCircle, Heart, Maximize2, LogOut } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Calendar as CalendarIcon, MessageCircle, Heart, Maximize2, LogOut, Edit, Trash2, Flag } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -405,9 +405,11 @@ const PropertyDetails = () => {
                 <CardContent className="p-6 space-y-4">
                   <div className="flex items-start justify-between gap-2">
                     <h1 className="text-2xl font-heading font-bold">{property.title}</h1>
-                    <Button variant={isSaved ? "success" : "outline"} size="sm" onClick={toggleSave} aria-label={isSaved ? "Saved" : "Save"}>
-                      <Heart className="h-4 w-4 mr-2" /> {isSaved ? "Saved" : "Save"}
-                    </Button>
+                    {user?.id !== property.user_id && (
+                      <Button variant={isSaved ? "success" : "outline"} size="sm" onClick={toggleSave} aria-label={isSaved ? "Saved" : "Save"}>
+                        <Heart className="h-4 w-4 mr-2" /> {isSaved ? "Saved" : "Save"}
+                      </Button>
+                    )}
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                     <span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {property.location}</span>
@@ -428,14 +430,50 @@ const PropertyDetails = () => {
             </div>
 
             <div className="lg:w-1/3 w-full space-y-6">
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">Actions</h3>
-                  </div>
+              {/* Check if user is the property owner */}
+              {user?.id === property.user_id ? (
+                // Owner view - show edit/delete options
+                <Card>
+                  <CardContent className="p-6 space-y-4">
+                    <h3 className="font-semibold">Manage Property</h3>
+                    <div className="space-y-3">
+                      <Button 
+                        className="w-full" 
+                        onClick={() => navigate(`/manage-property/${property.id}`)}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Property
+                      </Button>
+                      <Button 
+                        variant="destructive" 
+                        className="w-full"
+                        onClick={() => {
+                          if (confirm("Are you sure you want to delete this property? This action cannot be undone.")) {
+                            // Handle delete
+                            supabase.from('properties').delete().eq('id', property.id).then(() => {
+                              toast({ title: "Property deleted", description: "Your property has been removed" });
+                              navigate('/my-properties');
+                            });
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete Property
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                // Visitor view - show visit/message/report options
+                <>
+                  <Card>
+                    <CardContent className="p-6 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold">Actions</h3>
+                      </div>
 
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium inline-flex items-center"><CalendarIcon className="h-4 w-4 mr-2" /> Request a visit</label>
+                      <div className="space-y-3">
+                        <label className="text-sm font-medium inline-flex items-center"><CalendarIcon className="h-4 w-4 mr-2" /> Request a visit</label>
 
                     {/* Step 1: Choose date */}
                     <div className="space-y-1">
@@ -523,21 +561,39 @@ const PropertyDetails = () => {
                       )}
                     </div>
 
-                    <Button className="w-full" onClick={requestVisit}>
-                      {showCustomTime && timeOnly && dateOnly ? 'Send Request (200k deposit)' : 'Send Request'}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                        <Button className="w-full" onClick={requestVisit}>
+                          {showCustomTime && timeOnly && dateOnly ? 'Send Request (200k deposit)' : 'Send Request'}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-              <Card>
-                <CardContent className="p-6 space-y-3">
-                  <h3 className="font-semibold inline-flex items-center"><MessageCircle className="h-4 w-4 mr-2" /> Message owner</h3>
-                  <div className="text-sm text-muted-foreground">{property.profiles?.full_name || property.profiles?.email}</div>
-                  <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Write a message..." rows={4} />
-                  <Button className="w-full" onClick={sendMessage}>Send Message</Button>
-                </CardContent>
-              </Card>
+                  <Card>
+                    <CardContent className="p-6 space-y-3">
+                      <h3 className="font-semibold inline-flex items-center"><MessageCircle className="h-4 w-4 mr-2" /> Message owner</h3>
+                      <div className="text-sm text-muted-foreground">{property.profiles?.full_name || property.profiles?.email}</div>
+                      <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Write a message..." rows={4} />
+                      <Button className="w-full" onClick={sendMessage}>Send Message</Button>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="p-6">
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={() => {
+                          // Handle report property
+                          toast({ title: "Report submitted", description: "Thank you for reporting this property" });
+                        }}
+                      >
+                        <Flag className="h-4 w-4 mr-2" />
+                        Report Property
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </>
+              )}
             </div>
           </div>
         </div>

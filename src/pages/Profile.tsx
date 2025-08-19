@@ -21,11 +21,13 @@ import {
   ArrowLeft,
   Edit2,
   Save,
-  X
+  X,
+  Calendar as CalendarIcon
 } from "lucide-react"
 import { Footer } from "@/components/Footer"
 import { useToast } from "@/hooks/use-toast"
 import { useTranslation } from "@/hooks/useTranslation"
+import { useVisitLimits } from "@/hooks/useVisitLimits"
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null)
@@ -40,6 +42,7 @@ const Profile = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { t } = useTranslation()
+  const { freeVisitsUsed, canCreate, isRestricted, loading: limitsLoading } = useVisitLimits()
 
   useEffect(() => {
     const getProfile = async () => {
@@ -320,6 +323,70 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Visit Limits & Plan */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CalendarIcon className="w-5 h-5" />
+                Visit Limits & Plan
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {limitsLoading ? (
+                <div className="animate-pulse space-y-2">
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
+                  <div className="h-4 bg-muted rounded w-1/2"></div>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">This Week's Visits</span>
+                      <Badge variant={freeVisitsUsed >= 5 ? "destructive" : "secondary"}>
+                        {freeVisitsUsed}/5 used
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">Free Visits Left</span>
+                      <Badge variant={freeVisitsUsed === 0 ? "success" : "outline"}>
+                        {freeVisitsUsed === 0 ? "1 free visit" : "0 free visits"}
+                      </Badge>
+                    </div>
+
+                    {isRestricted && (
+                      <Alert>
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          Your visit requests are currently restricted. Contact support for assistance.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
+
+                  <Separator />
+
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-sm">Current Plan: Free</h4>
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      <p>• 1 free visit request per week</p>
+                      <p>• Up to 5 paid visits per week</p>
+                      <p>• Basic property search</p>
+                    </div>
+                    
+                    <Button variant="outline" size="sm" className="w-full">
+                      Upgrade to Premium
+                    </Button>
+                    
+                    <div className="text-xs text-muted-foreground">
+                      Premium: Unlimited visits • Priority support • Advanced filters
+                    </div>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
