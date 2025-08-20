@@ -215,10 +215,25 @@ const translations: Translations = {
     ru: 'Месячный платеж ($)',
     uz: 'Oylik toʻlov ($)'
   },
-  'search.monthlySalary': {
-    en: 'Monthly Salary ($)',
-    ru: 'Месячная зарплата ($)',
-    uz: 'Oylik maosh ($)'
+  'search.financingPeriod': {
+    en: 'Financing Period',
+    ru: 'Период финансирования',
+    uz: 'Moliyalashtirish muddati'
+  },
+  'search.calculatedPayment': {
+    en: 'Required Monthly Payment',
+    ru: 'Требуемый месячный платеж',
+    uz: 'Talab qilinadigan oylik toʻlov'
+  },
+  'search.totalCost': {
+    en: 'Total Financing Cost',
+    ru: 'Общая стоимость финансирования',
+    uz: 'Umumiy moliyalashtirish narxi'
+  },
+  'search.breakdown': {
+    en: 'Payment Breakdown',
+    ru: 'Разбивка платежей',
+    uz: 'Toʻlov tafsiloti'
   },
   'search.showAll': {
     en: 'Show all properties (not just what I can afford)',

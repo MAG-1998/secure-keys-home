@@ -14,7 +14,9 @@ export interface SearchFilters {
 export interface FinancingFilters {
   cashAmount?: string
   monthlyPayment?: string
-  monthlySalary?: string
+  financingPeriod?: string
+  calculatedMonthlyPayment?: number
+  totalFinancingCost?: number
   showAllProperties?: boolean
 }
 
