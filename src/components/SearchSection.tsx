@@ -110,76 +110,36 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
 
   const handleSearch = async (queryOverride?: string) => {
     const q = (queryOverride || searchQuery).trim()
-    if (!q) {
-      toast({ title: 'Введите запрос', description: 'Опишите бюджет, районы или параметры.' })
+    
+    // In halal mode, require financing period
+    if (isHalalMode && !financingFilters.financingPeriod) {
+      toast({ title: 'Период обязателен', description: 'Выберите период финансирования для халяль поиска' })
       return
     }
 
     setShowSuggestions(false)
     setShowSearchHistory(false)
 
-    // Apply filters to query
-    const enhancedQuery = hasActiveFilters ? applyFiltersToQuery(q) : q
-
-    // Check cache first
-    const cacheKey = { query: enhancedQuery, filters, financingFilters, isHalalMode }
-    const cached = getCachedResult(enhancedQuery, cacheKey)
-    
-    if (cached) {
-      setResults(cached.results)
-      setAiSuggestion(cached.aiSuggestion)
-      setResultMode(cached.mode as "strict" | "relaxed")
-      toast({ 
-        title: `Кэш: найдено ${cached.results.length}`, 
-        description: 'Результаты из кэша'
-      })
-      return
-    }
-
     try {
       setSearchLoading(true)
       
-      const requestBody = {
-        q: enhancedQuery,
-        filters: hasActiveFilters ? filters : undefined,
-        financingFilters: isHalalMode ? financingFilters : undefined,
-        isHalalMode
-      }
+      // Use basic database search instead of AI
+      const { performBasicSearch } = await import('@/utils/basicSearch')
+      const results = await performBasicSearch(q, filters, financingFilters, isHalalMode)
 
-      const res = await fetch('/api/ai-property-search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-      })
+      const count = results.length
+      const suggestion = count > 0 
+        ? `Найдено ${count} объектов недвижимости` 
+        : 'Попробуйте изменить параметры поиска'
+      const mode = 'strict'
 
-      let data: any = null
-      if (res.status === 404) {
-        // Fallback: call Supabase Edge Function
-        const { data: fxData, error } = await supabase.functions.invoke('ai-property-search', {
-          body: requestBody,
-        })
-        if (error) throw new Error(error.message || 'Edge function error')
-        data = fxData
-      } else {
-        const ct = res.headers.get('content-type') || ''
-        const isJson = ct.includes('application/json')
-        data = isJson ? await res.json() : null
-        if (!res.ok) {
-          const errText = isJson ? JSON.stringify(data) : await res.text()
-          throw new Error(errText || `HTTP ${res.status} ${res.statusText}`)
-        }
-      }
-
-      const count = Array.isArray(data?.results) ? data.results.length : 0
-      const suggestion = data?.aiSuggestion || 'Подберите гибкие параметры для большего охвата.'
-      const mode = (data?.mode as 'strict' | 'relaxed') || 'strict'
-
-      setResults(data?.results || [])
+      setResults(results)
       setAiSuggestion(suggestion)
       setResultMode(mode)
 
       // Cache the results
-      setCachedResult(enhancedQuery, cacheKey, data?.results || [], suggestion, mode)
+      const cacheKey = { query: q, filters, financingFilters, isHalalMode }
+      setCachedResult(q, cacheKey, results, suggestion, mode)
 
       // Add to search history
       addToHistory({
@@ -190,11 +150,11 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
       })
 
       toast({ 
-        title: mode === 'relaxed' ? `Нашли близкие варианты: ${count}` : `Найдено: ${count}`, 
+        title: `Найдено: ${count}`, 
         description: suggestion 
       })
     } catch (e: any) {
-      toast({ title: 'Ошибка поиска', description: e?.message || 'Не удалось выполнить AI‑поиск' })
+      toast({ title: 'Ошибка поиска', description: e?.message || 'Не удалось выполнить поиск' })
     } finally {
       setSearchLoading(false)
     }
