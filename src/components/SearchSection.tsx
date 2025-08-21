@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp, Clock, X, Star, BookmarkPlus, Calculator } from "lucide-react"
+import { PropertyCard } from "@/components/PropertyCard"
 import { useScroll } from "@/hooks/use-scroll"
 import { toast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
@@ -622,27 +623,19 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
 
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 {results.map((p) => (
-                  <Card key={p.id} className="border border-border/60">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="font-medium text-foreground">{p.title}</div>
-                          <div className="text-sm text-muted-foreground">{p.district || p.city}</div>
-                        </div>
-                        <div className="text-right font-semibold">${" "}{(p.priceUsd ?? 0).toLocaleString?.() || p.priceUsd}</div>
-                      </div>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {p.verified && <Badge variant="outline">Verified</Badge>}
-                        {p.financingAvailable && <Badge variant="trust">Financing</Badge>}
-                        {typeof p.bedrooms === 'number' && (
-                          <Badge variant="outline">{p.bedrooms} спален</Badge>
-                        )}
-                      </div>
-                      {p.whyGood && (
-                        <p className="mt-3 text-xs text-muted-foreground">Почему подходит: {p.whyGood}</p>
-                      )}
-                    </CardContent>
-                  </Card>
+                  <PropertyCard
+                    key={p.id}
+                    id={p.id}
+                    title={p.title || 'Недвижимость'}
+                    location={p.district || p.city || p.location || 'Ташкент'}
+                    price={`$${(p.priceUsd ?? 0).toLocaleString?.() || p.priceUsd}`}
+                    bedrooms={p.bedrooms || 0}
+                    bathrooms={p.bathrooms || 0}
+                    area={p.area || 0}
+                    imageUrl={p.image_url || p.images?.[0] || '/placeholder.svg'}
+                    isVerified={p.verified || false}
+                    isHalalFinanced={p.financingAvailable || false}
+                  />
                 ))}
               </div>
             </div>

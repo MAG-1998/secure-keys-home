@@ -11,6 +11,10 @@ export interface SearchResult {
   bedrooms?: number
   bathrooms?: number
   sizeM2?: number
+  area?: number
+  location?: string
+  image_url?: string
+  images?: string[]
   verified: boolean
   financingAvailable: boolean
   propertyType?: string
@@ -109,6 +113,10 @@ export const performBasicSearch = async (
       bedrooms: property.bedrooms,
       bathrooms: property.bathrooms,
       sizeM2: property.area,
+      area: property.area,
+      location: property.location,
+      image_url: Array.isArray(property.photos) ? (property.photos[0] as string) : '/placeholder.svg',
+      images: Array.isArray(property.photos) ? (property.photos as string[]) : [],
       verified: property.is_verified || false,
       financingAvailable: property.is_halal_financed || false,
       propertyType: property.property_type,
