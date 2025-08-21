@@ -18,6 +18,7 @@ import { MagitLogo } from "@/components/MagitLogo";
 import { useTranslation } from "@/hooks/useTranslation";
 import { forceLocalSignOut } from "@/lib/auth";
 import { parseISO, isValid, format } from "date-fns";
+import { HalalFinancingBreakdown } from "@/components/HalalFinancingBreakdown";
 
 interface PropertyDetail {
   id: string;
@@ -64,6 +65,39 @@ const PropertyDetails = () => {
   
   const [visitRequestSent, setVisitRequestSent] = useState(false);
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
+
+  const handleRequestFinancing = async () => {
+    try {
+      const { data: { user: sUser } } = await supabase.auth.getUser();
+      if (!sUser) {
+        navigate("/auth");
+        return;
+      }
+      
+      // Create a halal financing request
+      const { error } = await supabase
+        .from("halal_financing_requests")
+        .insert({
+          property_id: id!,
+          user_id: sUser.id,
+          status: 'pending',
+          request_notes: `Financing request for property: ${property?.title}`
+        });
+      
+      if (error) throw error;
+      
+      toast({ 
+        title: "Financing request submitted", 
+        description: "Your halal financing request has been submitted for review" 
+      });
+    } catch (e: any) {
+      console.error(e);
+      toast({ 
+        title: "Error", 
+        description: e.message || "Failed to submit financing request" 
+      });
+    }
+  };
 
   useEffect(() => {
     if (dateOnly && timeOnly) {
@@ -599,6 +633,14 @@ const PropertyDetails = () => {
                       <Button className="w-full" onClick={sendMessage}>Send Message</Button>
                     </CardContent>
                   </Card>
+
+                  {/* Halal Financing Breakdown - only show for halal financed properties */}
+                  {property.is_halal_financed && (
+                    <HalalFinancingBreakdown 
+                      propertyPrice={property.price}
+                      onRequestFinancing={handleRequestFinancing}
+                    />
+                  )}
 
                   <Card>
                     <CardContent className="p-6">
