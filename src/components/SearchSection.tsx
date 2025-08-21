@@ -15,7 +15,7 @@ import { useSearchHistory } from "@/hooks/useSearchHistory"
 import { useSearchFilters } from "@/hooks/useSearchFilters"
 import { useSearchCache } from "@/hooks/useSearchCache"
 import { getDistrictOptions } from "@/lib/districts"
-import { calculateHalalFinancing, formatCurrency, getPeriodOptions } from "@/utils/halalFinancing"
+import { calculateHalalFinancing, formatCurrency, getPeriodOptions, calculatePropertyPriceFromCash, calculateCashFromMonthlyPayment } from "@/utils/halalFinancing"
 
 interface SearchSectionProps {
   isHalalMode: boolean
@@ -59,20 +59,28 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
   // Get period options for dropdown
   const periodOptions = getPeriodOptions()
   
-  // Calculate financing results
+  // Calculate financing results and property price
   const financingCalculation = useMemo(() => {
-    if (!financingFilters.cashAmount || !financingFilters.financingPeriod) {
+    if (!financingFilters.financingPeriod) {
       return null;
     }
     
-    const cashAvailable = parseFloat(financingFilters.cashAmount.replace(/,/g, '')) || 0;
     const periodMonths = parseInt(financingFilters.financingPeriod) || 0;
+    let propertyPrice = 50000; // default
+    let cashAvailable = 0;
     
-    // Use average property price of $50k for calculation demo
-    const averagePropertyPrice = 50000;
+    // Calculate property price and cash available based on available inputs
+    if (financingFilters.cashAmount) {
+      cashAvailable = parseFloat(financingFilters.cashAmount.replace(/,/g, '')) || 0;
+      propertyPrice = calculatePropertyPriceFromCash(cashAvailable);
+    } else if (financingFilters.monthlyPayment) {
+      const monthlyPayment = parseFloat(financingFilters.monthlyPayment.replace(/,/g, '')) || 0;
+      cashAvailable = calculateCashFromMonthlyPayment(monthlyPayment, periodMonths);
+      propertyPrice = calculatePropertyPriceFromCash(cashAvailable);
+    }
     
-    return calculateHalalFinancing(cashAvailable, averagePropertyPrice, periodMonths);
-  }, [financingFilters.cashAmount, financingFilters.financingPeriod])
+    return calculateHalalFinancing(cashAvailable, propertyPrice, periodMonths);
+  }, [financingFilters.cashAmount, financingFilters.monthlyPayment, financingFilters.financingPeriod])
   
   // Update calculated values when calculation changes
   useEffect(() => {
@@ -420,9 +428,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                       <Wallet className="h-4 w-4 mr-2" />
                       {t('search.financialProfile')}
                     </h3>
-                    <div className={`grid md:grid-cols-3 gap-4 mb-4 transition-all duration-300 ${
-                      financingFilters.showAllProperties ? 'blur-sm pointer-events-none' : ''
-                    }`}>
+                    <div className="grid md:grid-cols-3 gap-4 mb-4">
                       <div>
                         <Label className="text-sm font-medium mb-2 block">{t('search.cashAvailable')}</Label>
                         <Input
@@ -430,7 +436,6 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                           value={financingFilters.cashAmount || ''}
                           onChange={(e) => updateFinancingFilter('cashAmount', e.target.value)}
                           className="h-10"
-                          disabled={financingFilters.showAllProperties}
                         />
                       </div>
                       <div>
@@ -440,15 +445,13 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                           value={financingFilters.monthlyPayment || ''}
                           onChange={(e) => updateFinancingFilter('monthlyPayment', e.target.value)}
                           className="h-10"
-                          disabled={financingFilters.showAllProperties}
                         />
                       </div>
                       <div>
-                        <Label className="text-sm font-medium mb-2 block">{t('search.financingPeriod')}</Label>
+                        <Label className="text-sm font-medium mb-2 block">{t('search.financingPeriod')} *</Label>
                         <Select 
                           value={financingFilters.financingPeriod || ''} 
                           onValueChange={(value) => updateFinancingFilter('financingPeriod', value)}
-                          disabled={financingFilters.showAllProperties}
                         >
                           <SelectTrigger className="h-10">
                             <SelectValue placeholder="Select period" />
@@ -465,13 +468,19 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                     </div>
                     
                     {/* Financing Calculator Results */}
-                    {financingCalculation && financingCalculation.requiredMonthlyPayment > 0 && (
+                    {financingCalculation && financingCalculation.propertyPrice && financingCalculation.propertyPrice > 0 && (
                       <div className="bg-muted/50 rounded-lg p-4 mb-4 border border-border">
                         <div className="flex items-center gap-2 mb-3">
                           <Calculator className="h-4 w-4 text-primary" />
                           <span className="font-medium text-sm">{t('search.breakdown')}</span>
                         </div>
-                        <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <div className="grid md:grid-cols-3 gap-4 text-sm mb-4">
+                          <div>
+                            <span className="text-muted-foreground">Property Price:</span>
+                            <div className="font-semibold text-lg">
+                              {formatCurrency(financingCalculation.propertyPrice)}
+                            </div>
+                          </div>
                           <div>
                             <span className="text-muted-foreground">{t('search.calculatedPayment')}:</span>
                             <div className="font-semibold text-lg text-primary">
@@ -485,28 +494,26 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                             </div>
                           </div>
                         </div>
-                        <div className="mt-3 pt-3 border-t border-border text-xs text-muted-foreground">
-                          Based on property price of $50,000 • Financing amount: {formatCurrency(financingCalculation.financingAmount)}
+                        <div className="grid md:grid-cols-4 gap-3 text-xs">
+                          <div>
+                            <span className="text-muted-foreground">Financing:</span>
+                            <div className="font-medium">{formatCurrency(financingCalculation.financingAmount)}</div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Fixed Fee:</span>
+                            <div className="font-medium">{formatCurrency(financingCalculation.fixedFee)}</div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Service Fee:</span>
+                            <div className="font-medium">{formatCurrency(financingCalculation.serviceFee)}</div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">VAT:</span>
+                            <div className="font-medium">{formatCurrency(financingCalculation.vat)}</div>
+                          </div>
                         </div>
                       </div>
                     )}
-                    <div className="flex items-center space-x-3">
-                      <Switch
-                        id="show-all"
-                        checked={financingFilters.showAllProperties || false}
-                        onCheckedChange={(checked) => updateFinancingFilter('showAllProperties', checked)}
-                        className={isHalalMode ? "data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust [&>span]:data-[state=unchecked]:bg-magit-trust" : "data-[state=checked]:bg-primary data-[state=checked]:border-primary"}
-                      />
-                      <Label htmlFor="show-all" className="text-sm">
-                        {t('search.showAll')}
-                      </Label>
-                      {!financingFilters.showAllProperties && financingFilters.cashAmount && financingFilters.financingPeriod && (
-                        <Badge variant="trust" className="text-xs">
-                          <TrendingUp className="h-3 w-3 mr-1" />
-                          {t('search.smartMatch')}
-                        </Badge>
-                      )}
-                    </div>
                   </div>
                 </div>
               )}

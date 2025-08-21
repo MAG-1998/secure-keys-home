@@ -17,7 +17,6 @@ export interface FinancingFilters {
   financingPeriod?: string
   calculatedMonthlyPayment?: number
   totalFinancingCost?: number
-  showAllProperties?: boolean
 }
 
 export const useSearchFilters = () => {
