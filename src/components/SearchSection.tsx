@@ -21,10 +21,11 @@ import { calculateHalalFinancing, formatCurrency, getPeriodOptions, calculatePro
 interface SearchSectionProps {
   isHalalMode: boolean
   onHalalModeChange: (enabled: boolean) => void
+  onSearchResults?: (results: any[]) => void
   t: (key: string) => string
 }
 
-export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSectionProps) => {
+export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults, t }: SearchSectionProps) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [showFilters, setShowFilters] = useState(false)
   const [showSearchHistory, setShowSearchHistory] = useState(false)
@@ -145,6 +146,11 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
       setResults(results)
       setAiSuggestion(suggestion)
       setResultMode(mode)
+      
+      // Pass results to parent component (for map integration)
+      if (onSearchResults) {
+        onSearchResults(results)
+      }
 
       // Cache the results
       const cacheKey = { query: q, filters, financingFilters, isHalalMode }

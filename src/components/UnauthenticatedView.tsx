@@ -24,6 +24,7 @@ interface UnauthenticatedViewProps {
 }
 
 export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsHalalMode, t }: UnauthenticatedViewProps) => {
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const navigate = useNavigate()
   const { scrollY, isScrolled } = useScroll()
   const isMobile = useIsMobile()
@@ -203,14 +204,22 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
       <section id="search" className="relative z-10 pt-16">
         <SearchSection 
           isHalalMode={isHalalMode} 
-          onHalalModeChange={setIsHalalMode} 
+          onHalalModeChange={setIsHalalMode}
+          onSearchResults={setSearchResults}
           t={t}
         />
       </section>
 
       {/* Interactive Map Section */}
       <div id="map">
-        <LazyMapSection t={t} isHalalMode={isHalalMode} onHalalModeChange={setIsHalalMode} language={language} />
+        <LazyMapSection 
+          t={t} 
+          isHalalMode={isHalalMode} 
+          onHalalModeChange={setIsHalalMode} 
+          language={language}
+          searchResults={searchResults}
+          onSearchResultsChange={setSearchResults}
+        />
       </div>
 
       {/* Features Section */}

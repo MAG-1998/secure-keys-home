@@ -18,6 +18,8 @@ interface YandexMapProps {
   onHalalModeChange?: (enabled: boolean) => void;
   t: (key: string) => string;
   language: Language;
+  searchResults?: any[];
+  onSearchResultsChange?: (results: any[]) => void;
 }
 
 interface Property {
@@ -44,7 +46,7 @@ declare global {
   }
 }
 
-const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, onHalalModeChange, t, language }) => {
+const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, onHalalModeChange, t, language, searchResults, onSearchResultsChange }) => {
   const navigate = useNavigate();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
@@ -127,12 +129,18 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
   }
 
   const localizeDistrict = useCallback((district: string): string => {
-    return localizeDistrictLib(district as any, language);
+    return localizeDistrictLib(district, language as Language);
   }, [language]);
 
 // Apply filters (reactive to data and UI)
 const filteredProperties = useMemo(() => {
   let filtered = allProperties;
+
+  // If we have search results, prioritize those
+  if (searchResults && searchResults.length > 0) {
+    const searchIds = new Set(searchResults.map(r => r.id));
+    filtered = allProperties.filter(p => searchIds.has(p.id));
+  }
 
   // Only show approved/active listings on the map
   filtered = filtered.filter(p => ['active','approved'].includes(p.status));
@@ -157,7 +165,26 @@ const filteredProperties = useMemo(() => {
     filtered = filtered.filter(p => p.isHalal);
   }
   return filtered;
-}, [allProperties, filters, isHalalMode]);
+}, [allProperties, searchResults, filters, isHalalMode]);
+
+// Update search results when filtered properties change (for bidirectional sync)
+useEffect(() => {
+  if (onSearchResultsChange && !searchResults?.length) {
+    const searchFormattedResults = filteredProperties.map(p => ({
+      id: p.id,
+      title: p.title,
+      location: p.district,
+      priceUsd: p.price,
+      bedrooms: p.bedrooms,
+      bathrooms: p.bathrooms,
+      area: p.area,
+      verified: p.status === 'approved',
+      financingAvailable: p.isHalal,
+      image_url: p.photos && p.photos.length > 0 ? p.photos[0] : '/placeholder.svg'
+    }));
+    onSearchResultsChange(searchFormattedResults);
+  }
+}, [filteredProperties, onSearchResultsChange, searchResults?.length]);
 
 // Diagnostics to verify halal filtering
 useEffect(() => {
@@ -459,7 +486,7 @@ const approvedRandom = useMemo(() => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t('filter.allDistricts')}</SelectItem>
-                    {getDistrictOptions(language).map(({ value, label }) => (
+                    {getDistrictOptions(language as Language).map(({ value, label }) => (
                       <SelectItem key={value} value={value}>{label}</SelectItem>
                     ))}
                     <SelectItem value="Other">{localizeDistrict('Other')}</SelectItem>
