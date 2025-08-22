@@ -40,7 +40,7 @@ export const performBasicSearch = async (
       .select(`
         id, title, price, location, district, bedrooms, bathrooms, area,
         property_type, is_verified, is_halal_financed, status, description,
-        latitude, longitude, user_id, photos, created_at
+        latitude, longitude, user_id, photos, created_at, image_url
       `)
       .in('status', ['active', 'approved'])
 
@@ -115,7 +115,7 @@ export const performBasicSearch = async (
       sizeM2: property.area,
       area: property.area,
       location: property.location,
-      image_url: Array.isArray(property.photos) ? (property.photos[0] as string) : '/placeholder.svg',
+      image_url: property.image_url || (Array.isArray(property.photos) && property.photos.length > 0 ? (property.photos[0] as string) : '/placeholder.svg'),
       images: Array.isArray(property.photos) ? (property.photos as string[]) : [],
       verified: property.is_verified || false,
       financingAvailable: property.is_halal_financed || false,

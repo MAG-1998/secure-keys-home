@@ -35,6 +35,7 @@ interface Property {
   title: string;
   description: string;
   status: string;
+  photos?: string[];
 }
 
 declare global {
@@ -117,6 +118,7 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
   title: prop.title || 'Property',
   description: prop.description || '',
   status: prop.status || 'active',
+  photos: Array.isArray(prop.photos) ? prop.photos as string[] : [],
 }));
 
   // Helper function to extract district from location
@@ -357,6 +359,9 @@ const composePinImage = (color: string, priceText: string) => {
           balloonContentHeader: `<a href="/property/${property.id}" style="text-decoration: underline; color: hsl(var(--primary));" onclick="window.location.assign('/property/${property.id}'); return false;">${property.title}</a>`,
           balloonContentBody: `
             <div style="padding: 10px; font-family: system-ui;">
+              ${property.photos && property.photos.length > 0 ? `
+                <img src="${property.photos[0]}" alt="${property.title}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;" />
+              ` : ''}
               <div style="font-size: 18px; font-weight: bold; color: hsl(var(--primary)); margin-bottom: 8px;">
                 $${property.price.toLocaleString()}
               </div>
