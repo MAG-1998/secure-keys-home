@@ -244,6 +244,7 @@ const VisitRequests = () => {
           )
         `)
         .eq('properties.user_id', user.id)
+        .neq('visitor_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
       const rows = (data as OwnerRequestRow[]) || [];
