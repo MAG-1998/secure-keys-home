@@ -34,56 +34,13 @@ export const AuthenticatedView = memo(({
     return user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
   };
   return <>
-      {/* Welcome Hero Section */}
-      <section className="relative py-12 md:py-16 transition-all duration-700 ease-out" style={{
-      transform: `scale(${Math.max(0.85, 1 - scrollY * 0.0003)}) translateY(${scrollY * 0.1}px)`,
-      opacity: Math.max(0.3, 1 - scrollY * 0.002)
-    }}>
+      {/* Welcome Back - Simple */}
+      <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge variant="success" className={`mb-4 transition-all duration-500 ${isScrolled ? 'scale-90 opacity-70' : ''}`}>
+            <h1 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-2">
               {`${t('hero.welcomeBack')}, ${getUserDisplayName()}!`}
-            </Badge>
-            <h1 className={`font-heading font-bold text-3xl md:text-5xl text-foreground mb-4 leading-tight transition-all duration-500 ${isScrolled ? 'scale-95' : ''}`}>
-              {isHalalMode ? (
-                <><span>{t('hero.titleHalalLead')}</span> <span className="text-primary">{t('hero.titleHalalHighlight')}</span></>
-              ) : (
-                <><span>{t('hero.titleStandardLead')}</span> <span className="text-primary">{t('hero.titleStandardHighlight')}</span></>
-              )}
             </h1>
-            <p className={`text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed transition-all duration-500 ${isScrolled ? 'opacity-60' : ''}`}>
-              {isHalalMode ? t('hero.subtitleHalal') : t('hero.subtitleStandard')}
-            </p>
-            
-            {/* Quick Actions */}
-            <div className={`flex flex-col sm:flex-row gap-4 justify-center mb-8 transition-all duration-500 ${isScrolled ? 'opacity-60 scale-95' : ''}`}>
-              <Button size="lg" className="text-lg px-8 py-6 shadow-warm" onClick={() => document.getElementById('search')?.scrollIntoView({
-              behavior: 'smooth'
-            })}>
-                <Home className="w-5 h-5 mr-2" />
-                {t('actions.findProperties')}
-              </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6" onClick={() => navigate('/list-property')}>
-                <Plus className="w-5 h-5 mr-2" />
-                {t('actions.listProperty')}
-              </Button>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className={`flex flex-wrap justify-center gap-4 text-sm text-muted-foreground transition-all duration-500 ${isScrolled ? 'opacity-40 scale-90' : ''}`}>
-              <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
-                {t('features.verified')}
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
-                {isHalalMode ? t('hero.financingHalal') : t('hero.transparentPricing')}
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-magit-success mr-2" />
-                {t('features.secure')}
-              </div>
-            </div>
           </div>
         </div>
       </section>
