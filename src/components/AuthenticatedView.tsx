@@ -6,7 +6,7 @@ import LazyMapSection from "@/components/LazyMapSection";
 import { useNavigate } from "react-router-dom";
 import { useScroll } from "@/hooks/use-scroll";
 import { CheckCircle, Home, Plus } from "lucide-react";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useUserCounts } from "@/hooks/useOptimizedQuery";
 import type { User } from "@supabase/supabase-js";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -30,30 +30,55 @@ export const AuthenticatedView = memo(({
 
   const { data: counts = { saved: 0, listed: 0, requests: 0, myRequests: 0, incomingRequests: 0 } } = useUserCounts(user?.id);
   const { language } = useTranslation();
+  
+  // Shared search results state
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  
   const getUserDisplayName = () => {
     return user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
   };
   return <>
-      {/* Welcome Back - Simple */}
-      <section className="py-8">
+      {/* Welcome Back - Compact */}
+      <section className="py-4 bg-background/50">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-2">
+          <div className="max-w-6xl mx-auto">
+            <h1 className="font-heading font-bold text-xl text-foreground">
               {`${t('hero.welcomeBack')}, ${getUserDisplayName()}!`}
             </h1>
           </div>
         </div>
       </section>
 
-      {/* AI-Powered Search Section */}
-      <section id="search" className="relative z-10 pt-16">
-        <SearchSection isHalalMode={isHalalMode} onHalalModeChange={setIsHalalMode} t={t} />
+      {/* Unified Search & Map Section */}
+      <section id="search-map" className="relative">
+        <div className="container mx-auto px-4 py-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Search Panel */}
+              <div className="order-2 lg:order-1">
+                <SearchSection 
+                  isHalalMode={isHalalMode} 
+                  onHalalModeChange={setIsHalalMode} 
+                  onSearchResults={setSearchResults}
+                  t={t} 
+                />
+              </div>
+              
+              {/* Map Panel */}
+              <div className="order-1 lg:order-2">
+                <LazyMapSection 
+                  t={t} 
+                  isHalalMode={isHalalMode} 
+                  onHalalModeChange={setIsHalalMode} 
+                  language={language}
+                  searchResults={searchResults}
+                  onSearchResultsChange={setSearchResults}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
-
-      {/* Interactive Map Section */}
-      <div id="map">
-        <LazyMapSection t={t} isHalalMode={isHalalMode} onHalalModeChange={setIsHalalMode} language={language} />
-      </div>
 
       {/* Quick Stats for Authenticated Users */}
       <section className="py-16 bg-gradient-card">

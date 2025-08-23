@@ -200,60 +200,46 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
   const scrollProgress = Math.min(scrollY / 300, 1)
 
   return (
-    <section className={`py-12 transition-all duration-500 ${
+    <div className={`transition-all duration-500 ${
       isHalalMode 
-        ? 'bg-gradient-to-br from-magit-trust/10 to-primary/10' 
-        : 'bg-gradient-to-br from-background/50 to-muted/20'
-    }`}>
-      <div className="container mx-auto px-4">
-        {/* Halal Mode Toggle */}
-        <div className="flex justify-center mb-8">
-          <Card 
-            className={`border border-border shadow-lg transition-colors duration-300 max-w-fit mx-auto ${
-              isHalalMode ? 'bg-magit-trust/40' : 'bg-muted'
-            }`}
-            style={{
-              padding: isHalalMode ? '16px' : '12px'
-            }}
-          >
-            <div className={`flex items-center space-x-4 transition-all duration-300 ${
-              isHalalMode ? 'w-[360px]' : 'w-[220px]'
-            }`}>
-              <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap">
-                {t('search.halalMode')}
-              </Label>
-              <div className="flex items-center space-x-3 ml-auto">
-                <Switch
-                  id="halal-mode"
-                  checked={isHalalMode}
-                  onCheckedChange={onHalalModeChange}
-                  className="data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust dark:data-[state=checked]:border-white data-[state=unchecked]:border-border dark:data-[state=unchecked]:border-white/20 flex-shrink-0"
-                />
-                <div className={`transition-all duration-300 ${
-                  isHalalMode ? 'w-32 opacity-100' : 'w-0 opacity-0 overflow-hidden'
-                }`}>
-                  <Badge variant="trust" className="text-xs whitespace-nowrap">
-                    {t('search.halalBadge')}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Main Search */}
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-2">
+        ? 'bg-gradient-to-br from-magit-trust/10 to-primary/10 rounded-lg' 
+        : 'bg-gradient-to-br from-background/50 to-muted/20 rounded-lg'
+    } p-6`}>
+      <div className="space-y-6">
+        {/* Header with Halal Mode Toggle */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <div>
+            <h2 className="font-heading font-bold text-xl md:text-2xl text-foreground">
               {isHalalMode ? t('search.titleHalal') : t('search.titleStandard')}
             </h2>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-sm mt-1">
               {isHalalMode 
                 ? t('search.descHalal')
                 : t('search.descStandard')
               }
             </p>
           </div>
+          
+          <div className="flex items-center space-x-3 shrink-0">
+            <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap">
+              {t('search.halalMode')}
+            </Label>
+            <Switch
+              id="halal-mode"
+              checked={isHalalMode}
+              onCheckedChange={onHalalModeChange}
+              className="data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust dark:data-[state=checked]:border-white data-[state=unchecked]:border-border dark:data-[state=unchecked]:border-white/20"
+            />
+            {isHalalMode && (
+              <Badge variant="trust" className="text-xs whitespace-nowrap">
+                {t('search.halalBadge')}
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Main Search */}
+        <div>
 
           <Card 
             className="bg-background/80 backdrop-blur-sm border-0 shadow-warm"
@@ -380,8 +366,8 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
                 </Button>
               </div>
 
-              {/* Quick Filters */}
-              <div className="flex flex-wrap gap-2 mb-4">
+              {/* Filter Toggle */}
+              <div className="flex justify-center">
                 <Button 
                   variant={showFilters ? "default" : "outline"} 
                   size="sm" 
@@ -396,35 +382,6 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
                     </Badge>
                   )}
                 </Button>
-                <Button 
-                  variant={filters.district === 'yunusobod' ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => updateFilter('district', filters.district === 'yunusobod' ? '' : 'yunusobod')}
-                >
-                  <MapPin className="h-4 w-4 mr-2" />
-                  {t('search.yunusobod')}
-                </Button>
-                <Button 
-                  variant={filters.bedrooms ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => updateFilter('bedrooms', filters.bedrooms ? '' : '2-3')}
-                >
-                  <Bed className="h-4 w-4 mr-2" />
-                  {t('search.bedrooms')}
-                </Button>
-                <Button 
-                  variant={filters.priceRange ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => updateFilter('priceRange', filters.priceRange ? '' : '$40k-60k')}
-                >
-                  <DollarSign className="h-4 w-4 mr-2" />
-                  {t('search.priceRange')}
-                </Button>
-                {isHalalMode && (
-                  <Button variant="trust" size="sm">
-                    {t('search.halalFinancing')}
-                  </Button>
-                )}
               </div>
 
               {/* Halal Financing Inputs */}
@@ -648,6 +605,6 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
           )}
         </div>
       </div>
-    </section>
+    </div>
   )
 }
