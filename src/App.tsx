@@ -30,6 +30,7 @@ const Properties = lazy(() => import("./pages/Properties"));
 const ManageProperty = lazy(() => import("./pages/ManageProperty"));
 const PropertyDetails = lazy(() => import("./pages/PropertyDetails"));
 const Messages = lazy(() => import("./pages/Messages"));
+const AllResults = lazy(() => import("./pages/AllResults"));
 
 // Optimized QueryClient configuration
 const queryClient = new QueryClient({
@@ -162,6 +163,11 @@ const App = () => (
                     <ManageProperty />
                   </Suspense>
                 </OptimizedRoute>
+              } />
+              <Route path="/all-results" element={
+                <Suspense fallback={<PageLoading />}>
+                  <AllResults />
+                </Suspense>
               } />
               <Route path="*" element={
                 <Suspense fallback={<PageLoading />}> 

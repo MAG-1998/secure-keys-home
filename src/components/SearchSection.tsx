@@ -366,23 +366,6 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
                 </Button>
               </div>
 
-              {/* Filter Toggle */}
-              <div className="flex justify-center">
-                <Button 
-                  variant={showFilters ? "default" : "outline"} 
-                  size="sm" 
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="relative"
-                >
-                  <Filter className="h-4 w-4 mr-2" />
-                  {t('search.filters')}
-                  {hasActiveFilters && (
-                    <Badge variant="destructive" className="absolute -top-1 -right-1 h-4 w-4 p-0 text-xs">
-                      {getFilterCount()}
-                    </Badge>
-                  )}
-                </Button>
-              </div>
 
               {/* Halal Financing Inputs */}
               {isHalalMode && (
@@ -482,95 +465,9 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
                 </div>
               )}
 
-              {/* Advanced Filters */}
-              {showFilters && (
-                <div className="border-t pt-4 animate-fade-in">
-                  <div className="grid md:grid-cols-4 gap-4">
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">{t('filter.district')}</Label>
-                      <Select value={filters.district || ''} onValueChange={(value) => updateFilter('district', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('filter.chooseDistrict')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {districtOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">{t('filter.priceRange')}</Label>
-                      <Select value={filters.priceRange || ''} onValueChange={(value) => updateFilter('priceRange', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('filter.selectBudget')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="30-40">$30k - $40k</SelectItem>
-                          <SelectItem value="40-50">$40k - $50k</SelectItem>
-                          <SelectItem value="50-70">$50k - $70k</SelectItem>
-                          <SelectItem value="70+">$70k+</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">{t('filter.squareMeters')}</Label>
-                      <Select value={filters.area || ''} onValueChange={(value) => updateFilter('area', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('filter.size')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="30-50">30-50 m²</SelectItem>
-                          <SelectItem value="50-70">50-70 m²</SelectItem>
-                          <SelectItem value="70-100">70-100 m²</SelectItem>
-                          <SelectItem value="100+">100+ m²</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">{t('filter.propertyType')}</Label>
-                      <Select value={filters.propertyType || ''} onValueChange={(value) => updateFilter('propertyType', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('filter.type')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="apartment">{t('filter.apartment')}</SelectItem>
-                          <SelectItem value="house">{t('filter.house')}</SelectItem>
-                          <SelectItem value="studio">{t('filter.studio')}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-              )}
             </CardContent>
           </Card>
 
-          {/* Popular Searches */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground mb-3">{t('search.popularSearches')}</p>
-            <div className="flex flex-wrap justify-center gap-2">
-              <Badge variant="outline" className="cursor-pointer hover:bg-muted">
-                {t('search.popular1')}
-              </Badge>
-              <Badge variant="outline" className="cursor-pointer hover:bg-muted">
-                {t('search.popular2')}
-              </Badge>
-              <Badge variant="outline" className="cursor-pointer hover:bg-muted">
-                {t('search.popular3')}
-              </Badge>
-              {isHalalMode && (
-                <Badge variant="trust" className="cursor-pointer">
-                  {t('search.popular4')}
-                </Badge>
-              )}
-            </div>
-          </div>
 
           {/* Results */}
           {resultMode && (
@@ -585,7 +482,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
               )}
 
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                {results.map((p) => (
+                {results.slice(0, 10).map((p) => (
                   <PropertyCard
                     key={p.id}
                     id={p.id}
@@ -601,6 +498,27 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
                   />
                 ))}
               </div>
+              
+              {results.length > 10 && (
+                <div className="text-center mt-6">
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    onClick={() => {
+                      // Navigate to all results page with current search parameters
+                      const searchParams = new URLSearchParams({
+                        query: searchQuery,
+                        filters: JSON.stringify(filters),
+                        financingFilters: JSON.stringify(financingFilters),
+                        isHalalMode: isHalalMode.toString()
+                      });
+                      window.location.href = `/all-results?${searchParams.toString()}`;
+                    }}
+                  >
+                    View All {results.length} Results
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>
