@@ -40,7 +40,7 @@ export const AuthenticatedView = memo(({
       {/* Welcome Back - Compact */}
       <section className="py-4 bg-background/50">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-full mx-auto">
             <h1 className="font-heading font-bold text-xl text-foreground">
               {`${t('hero.welcomeBack')}, ${getUserDisplayName()}!`}
             </h1>
@@ -48,11 +48,10 @@ export const AuthenticatedView = memo(({
         </div>
       </section>
 
-      {/* Unified Search, Filters & Map Section - Vertical Layout */}
+      {/* Unified Search, Filters & Map Section - Full Width */}
       <section id="search-map" className="relative">
         <div className="container mx-auto px-4 py-6">
-          <div className="max-w-6xl mx-auto space-y-6">
-            {/* Unified Search, Filters & Map */}
+          <div className="max-w-full mx-auto">
             <UnifiedSearchMap 
               isHalalMode={isHalalMode} 
               onHalalModeChange={setIsHalalMode} 
