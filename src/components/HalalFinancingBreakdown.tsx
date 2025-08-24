@@ -13,15 +13,19 @@ interface HalalFinancingBreakdownProps {
   propertyPrice: number
   onRequestFinancing: () => void
   className?: string
+  initialCashAvailable?: string
+  initialPeriodMonths?: string
 }
 
 export const HalalFinancingBreakdown = ({ 
   propertyPrice, 
   onRequestFinancing,
-  className = "" 
+  className = "",
+  initialCashAvailable = "",
+  initialPeriodMonths = ""
 }: HalalFinancingBreakdownProps) => {
-  const [cashAmount, setCashAmount] = useState("")
-  const [financingPeriod, setFinancingPeriod] = useState("")
+  const [cashAmount, setCashAmount] = useState(initialCashAvailable)
+  const [financingPeriod, setFinancingPeriod] = useState(initialPeriodMonths)
 
   const periodOptions = getPeriodOptions()
 

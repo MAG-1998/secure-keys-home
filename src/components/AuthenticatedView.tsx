@@ -1,8 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { SearchSection } from "@/components/SearchSection";
-import LazyMapSection from "@/components/LazyMapSection";
+import { UnifiedSearchMap } from "@/components/UnifiedSearchMap";
 import { useNavigate } from "react-router-dom";
 import { useScroll } from "@/hooks/use-scroll";
 import { CheckCircle, Home, Plus } from "lucide-react";
@@ -49,33 +48,17 @@ export const AuthenticatedView = memo(({
         </div>
       </section>
 
-      {/* Unified Search & Map Section */}
+      {/* Unified Search, Filters & Map Section - Vertical Layout */}
       <section id="search-map" className="relative">
         <div className="container mx-auto px-4 py-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Search Panel */}
-              <div className="order-2 lg:order-1">
-                <SearchSection 
-                  isHalalMode={isHalalMode} 
-                  onHalalModeChange={setIsHalalMode} 
-                  onSearchResults={setSearchResults}
-                  t={t} 
-                />
-              </div>
-              
-              {/* Map Panel */}
-              <div className="order-1 lg:order-2">
-                <LazyMapSection 
-                  t={t} 
-                  isHalalMode={isHalalMode} 
-                  onHalalModeChange={setIsHalalMode} 
-                  language={language}
-                  searchResults={searchResults}
-                  onSearchResultsChange={setSearchResults}
-                />
-              </div>
-            </div>
+          <div className="max-w-6xl mx-auto space-y-6">
+            {/* Unified Search, Filters & Map */}
+            <UnifiedSearchMap 
+              isHalalMode={isHalalMode} 
+              onHalalModeChange={setIsHalalMode} 
+              t={t}
+              language={language}
+            />
           </div>
         </div>
       </section>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +19,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { forceLocalSignOut } from "@/lib/auth";
 import { parseISO, isValid, format } from "date-fns";
 import { HalalFinancingBreakdown } from "@/components/HalalFinancingBreakdown";
+import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore";
 
 interface PropertyDetail {
   id: string;
@@ -45,6 +46,8 @@ const PropertyDetails = () => {
   const { toast } = useToast();
   const { user } = useUser();
   const { language, setLanguage } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const financingStore = useHalalFinancingStore();
 
   const [property, setProperty] = useState<PropertyDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -66,12 +69,34 @@ const PropertyDetails = () => {
   const [visitRequestSent, setVisitRequestSent] = useState(false);
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
 
+  // Handle query parameters for halal financing
+  useEffect(() => {
+    if (searchParams.toString()) {
+      financingStore.setFromQueryParams(searchParams);
+    }
+  }, [searchParams, financingStore]);
+
   const handleRequestFinancing = async () => {
     try {
       const { data: { user: sUser } } = await supabase.auth.getUser();
       if (!sUser) {
         navigate("/auth");
         return;
+      }
+      
+      // Validate halal financing if in halal mode
+      if (financingStore.isHalalMode && property) {
+        const cashAvailable = parseFloat(financingStore.cashAvailable || '0');
+        const requiredCash = 0.5 * property.price;
+        
+        if (cashAvailable < requiredCash) {
+          toast({
+            title: "Недостаточно средств",
+            description: "Для халяль-финансирования нужно внести не менее 50% от стоимости.",
+            variant: "destructive"
+          });
+          return;
+        }
       }
       
       // Create a halal financing request
@@ -639,6 +664,8 @@ const PropertyDetails = () => {
                     <HalalFinancingBreakdown 
                       propertyPrice={property.price}
                       onRequestFinancing={handleRequestFinancing}
+                      initialCashAvailable={financingStore.cashAvailable}
+                      initialPeriodMonths={financingStore.periodMonths}
                     />
                   )}
 
