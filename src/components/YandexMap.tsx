@@ -1,10 +1,17 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MapPin, Search, Home, Bed, Bath } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
 import { useUser } from "@/contexts/UserContext";
 import type { Language } from "@/hooks/useTranslation";
-import { extractDistrictFromText, localizeDistrict as localizeDistrictLib } from "@/lib/districts";
+import { extractDistrictFromText, localizeDistrict as localizeDistrictLib, getDistrictOptions } from "@/lib/districts";
 
 interface YandexMapProps {
   isHalalMode?: boolean;
@@ -39,18 +46,39 @@ declare global {
   }
 }
 
-const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, t, language, searchResults, onSearchResultsChange }) => {
+const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, onHalalModeChange, t, language, searchResults, onSearchResultsChange }) => {
+  const navigate = useNavigate();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
-  const cssInjectedRef = useRef(false);
-  
-  // Cache of computed districts from coords
-  const [computedDistricts, setComputedDistricts] = useState<Record<string, string>>({});
-  const geocodeCacheRef = useRef<Map<string, string>>(new Map());
+const cssInjectedRef = useRef(false);
+const [filters, setFilters] = useState({
+  district: 'all',
+  minPrice: '',
+  maxPrice: '',
+  bedrooms: 'all',
+  halalOnly: false
+});
 
+// Cache of computed districts from coords
+const [computedDistricts, setComputedDistricts] = useState<Record<string, string>>({});
+const geocodeCacheRef = useRef<Map<string, string>>(new Map());
+
+  const halalMode = isHalalMode || filters.halalOnly;
   const { user } = useUser();
+
+  // Keep internal halal filter in sync with external prop
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, halalOnly: !!isHalalMode }));
+  }, [isHalalMode]);
+
+  // Unified handler so both toggle UIs behave the same
+const handleHalalToggle = (checked: boolean | string) => {
+  const val = checked === 'indeterminate' ? true : Boolean(checked);
+  setFilters(prev => ({ ...prev, halalOnly: val }));
+  onHalalModeChange?.(val);
+};
 
   // Fetch properties from database
   const { data: dbProperties, isLoading } = useOptimizedQuery(
@@ -95,6 +123,11 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
   photos: Array.isArray(prop.photos) ? prop.photos as string[] : [],
 }));
 
+  // Helper function to extract district from location
+  function extractDistrict(location: string): string {
+    return extractDistrictFromText(location);
+  }
+
   const localizeDistrict = useCallback((district: string): string => {
     return localizeDistrictLib(district, language as Language);
   }, [language]);
@@ -112,11 +145,27 @@ const filteredProperties = useMemo(() => {
   // Only show approved/active listings on the map
   filtered = filtered.filter(p => ['active','approved'].includes(p.status));
 
-  if (isHalalMode) {
+  if (filters.district !== 'all') {
+    filtered = filtered.filter(p => p.district === filters.district);
+  }
+  const min = filters.minPrice ? Number(filters.minPrice) : undefined;
+  const max = filters.maxPrice ? Number(filters.maxPrice) : undefined;
+  if (min !== undefined) {
+    filtered = filtered.filter(p => p.price >= min);
+  }
+  if (max !== undefined) {
+    filtered = filtered.filter(p => p.price <= max);
+  }
+
+  if (filters.bedrooms !== 'all') {
+    filtered = filtered.filter(p => p.bedrooms >= parseInt(filters.bedrooms));
+  }
+
+  if (halalMode) {
     filtered = filtered.filter(p => p.isHalal);
   }
   return filtered;
-}, [allProperties, searchResults, isHalalMode]);
+}, [allProperties, searchResults, filters, isHalalMode]);
 
 // Update search results when filtered properties change (for bidirectional sync)
 useEffect(() => {
@@ -140,8 +189,8 @@ useEffect(() => {
 // Diagnostics to verify halal filtering
 useEffect(() => {
   const halalApprovedCount = allProperties.filter(p => p.isHalal && ['active','approved'].includes(p.status)).length;
-  console.info('[Map] halalMode:', isHalalMode, 'total:', allProperties.length, 'halal+approved:', halalApprovedCount, 'shown:', filteredProperties.length);
-}, [isHalalMode, allProperties, filteredProperties]);
+  console.info('[Map] halalMode:', halalMode, 'total:', allProperties.length, 'halal+approved:', halalApprovedCount, 'shown:', filteredProperties.length);
+}, [halalMode, allProperties, filteredProperties]);
 
 
   // Load Yandex Maps API
@@ -382,22 +431,202 @@ const composePinImage = (color: string, priceText: string) => {
     }
   };
 
+  const refreshPins = async () => {
+    if (!map.current) return;
+    try {
+      map.current.geoObjects.removeAll();
+      composedPinCacheRef.current.clear();
+      await updateMarkers();
+      if (map.current?.container?.fitToViewport) {
+        map.current.container.fitToViewport();
+      }
+    } catch (e) {
+      console.error('[Map] Failed to refresh pins', e);
+    }
+  };
 
+const approvedRandom = useMemo(() => {
+  const pool = halalMode
+    ? filteredProperties
+    : (filteredProperties.length > 0
+        ? filteredProperties
+        : allProperties.filter(p => ['active', 'approved'].includes(p.status)));
+  if (pool.length <= 3) return pool;
+  const arr = [...pool];
+  return arr.sort(() => 0.5 - Math.random()).slice(0, 3);
+}, [halalMode, filteredProperties, allProperties]);
 
   return (
-    <div className="w-full relative">
-      <div ref={mapContainer} className="w-full h-[500px] md:h-[600px] lg:h-[700px] bg-muted rounded-lg ymaps-transparent-scope" />
-      {!mapLoaded || isLoading ? (
-        <div className="absolute inset-0 bg-background/90 flex items-center justify-center rounded-lg">
-          <div className="text-center">
-            <MapPin className="h-12 w-12 text-primary mx-auto mb-2 animate-pulse" />
-            <p className="text-muted-foreground font-medium">
-              {isLoading ? t('map.loadingProperties') : t('map.loadingMap')}
-            </p>
+    <section className={`py-16 transition-colors duration-500 ${
+      halalMode ? 'bg-magit-trust/5' : 'bg-background/50'
+    }`}>
+      <div className="container mx-auto px-4">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <Badge variant={halalMode ? "default" : "secondary"} className="mb-4">
+            {halalMode ? t('map.halalMarketplace') : t('map.liveMarketplace')}
+          </Badge>
+          <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
+            {t('map.title')}
+          </h2>
+          <p className="text-lg text-muted-foreground mb-6">
+            {t('map.description')}
+          </p>
+        </div>
+
+        {/* Filters */}
+        <Card className="mb-8">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">{t('filter.district')}</label>
+                <Select value={filters.district} onValueChange={(value) => setFilters(prev => ({ ...prev, district: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('filter.chooseDistrict')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('filter.allDistricts')}</SelectItem>
+                    {getDistrictOptions(language as Language).map(({ value, label }) => (
+                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                    ))}
+                    <SelectItem value="Other">{localizeDistrict('Other')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">{t('filter.priceRange')}</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    type="number"
+                    placeholder={t('common.min')}
+                    value={filters.minPrice}
+                    onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
+                  />
+                  <Input
+                    type="number"
+                    placeholder={t('common.max')}
+                    value={filters.maxPrice}
+                    onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">{t('filter.bedroomsLabel')}</label>
+                <Select value={filters.bedrooms} onValueChange={(value) => setFilters(prev => ({ ...prev, bedrooms: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('common.any')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('common.any')}</SelectItem>
+                    <SelectItem value="1">{t('filter.bedrooms1Plus')}</SelectItem>
+                    <SelectItem value="2">{t('filter.bedrooms2Plus')}</SelectItem>
+                    <SelectItem value="3">{t('filter.bedrooms3Plus')}</SelectItem>
+                    <SelectItem value="4">{t('filter.bedrooms4Plus')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-end">
+                <div className="flex items-center space-x-2 w-full">
+                  <Checkbox
+                    id="halal-mode"
+                    checked={halalMode}
+                    onCheckedChange={handleHalalToggle}
+                  />
+                  <label htmlFor="halal-mode" className="text-sm">{t('search.halalMode')}</label>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Map and Results */}
+        <div className="grid lg:grid-cols-[2fr_1fr] gap-8 items-start">
+          {/* Map */}
+          <div>
+            <Card className="bg-gradient-card border-0 shadow-warm">
+              <CardContent className="p-6 h-[36rem]">
+                <div className="relative rounded-lg h-full overflow-hidden">
+                  <div ref={mapContainer} className="absolute inset-0 rounded-lg ymaps-transparent-scope" />
+                  {!mapLoaded || isLoading ? (
+                    <div className="absolute inset-0 bg-background/90 flex items-center justify-center">
+                      <div className="text-center">
+                        <MapPin className="h-12 w-12 text-primary mx-auto mb-2 animate-pulse" />
+                        <p className="text-muted-foreground font-medium">
+                          {isLoading ? t('map.loadingProperties') : t('map.loadingMap')}
+                        </p>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Results Panel */}
+          <div>
+            <Card>
+              <CardContent className="p-6 h-[36rem] flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold">{t('map.propertiesFound')}</h3>
+                  <Badge variant="secondary">{filteredProperties.length}</Badge>
+                </div>
+                
+                <div className="space-y-4 flex-1 overflow-y-auto">
+              {halalMode && filteredProperties.length === 0 ? (
+                <div className="text-sm text-muted-foreground">{t('map.noHalalFound')}</div>
+              ) : (
+                    approvedRandom.map(property => (
+                      <div
+                        key={property.id}
+                        className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer"
+                        role="button"
+                        onClick={() => window.location.assign(`/property/${property.id}`)}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h4 className="font-medium text-sm">{property.title}</h4>
+                            <p className="text-xs text-muted-foreground">{localizeDistrict(property.district)}</p>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-bold text-primary">${property.price.toLocaleString()}</div>
+                              {property.isHalal && (
+                              <Badge variant="default" className="text-xs">{t('features.halalFinancing')}</Badge>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <span className="flex items-center">
+                            <Bed className="h-3 w-3 mr-1" />
+                            {property.bedrooms}
+                          </span>
+                          <span className="flex items-center">
+                            <Bath className="h-3 w-3 mr-1" />
+                            {property.bathrooms}
+                          </span>
+                          <span className="flex items-center">
+                            <Home className="h-3 w-3 mr-1" />
+                            {property.area}m²
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                <Button className="w-full mt-4" size="lg" onClick={() => navigate('/properties')}>
+                  <Search className="h-4 w-4 mr-2" />
+                  {t('map.viewAllProperties')}
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
-      ) : null}
-    </div>
+      </div>
+    </section>
   );
 };
 
