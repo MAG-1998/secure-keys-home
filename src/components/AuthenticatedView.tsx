@@ -31,8 +31,6 @@ export const AuthenticatedView = memo(({
   const { data: counts = { saved: 0, listed: 0, requests: 0, myRequests: 0, incomingRequests: 0 } } = useUserCounts(user?.id);
   const { language } = useTranslation();
   
-  // Shared search results state
-  const [searchResults, setSearchResults] = useState<any[]>([]);
   
   const getUserDisplayName = () => {
     return user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
@@ -58,7 +56,6 @@ export const AuthenticatedView = memo(({
               <SearchSection 
                 isHalalMode={isHalalMode} 
                 onHalalModeChange={setIsHalalMode} 
-                onSearchResults={setSearchResults}
                 t={t}
               />
             </div>
@@ -68,11 +65,8 @@ export const AuthenticatedView = memo(({
           <div className="w-full h-[500px] md:h-[600px]">
             <YandexMap 
               isHalalMode={isHalalMode} 
-              onHalalModeChange={setIsHalalMode} 
               t={t}
               language={language}
-              searchResults={searchResults}
-              onSearchResultsChange={setSearchResults}
             />
           </div>
         </div>

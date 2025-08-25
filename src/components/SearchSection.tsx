@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -6,29 +6,25 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp, Clock, X, Star, BookmarkPlus, Calculator } from "lucide-react"
+import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp, Clock, X, Star, BookmarkPlus, Calculator, ChevronDown, Home, Bath } from "lucide-react"
 import { PropertyCard } from "@/components/PropertyCard"
 import { useScroll } from "@/hooks/use-scroll"
 import { toast } from "@/components/ui/use-toast"
-import { supabase } from "@/integrations/supabase/client"
 import { debounce } from "@/utils/debounce"
 import { useSearchHistory } from "@/hooks/useSearchHistory"
-import { useSearchFilters } from "@/hooks/useSearchFilters"
-import { useSearchCache } from "@/hooks/useSearchCache"
 import { getDistrictOptions } from "@/lib/districts"
 import { calculateHalalFinancing, formatCurrency, getPeriodOptions, calculatePropertyPriceFromCash, calculateCashFromMonthlyPayment } from "@/utils/halalFinancing"
 import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore"
 import { useNavigate } from "react-router-dom"
+import { useSearchStore } from "@/hooks/useSearchStore"
 
 interface SearchSectionProps {
   isHalalMode: boolean
   onHalalModeChange: (enabled: boolean) => void
-  onSearchResults?: (results: any[]) => void
   t: (key: string) => string
 }
 
-export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults, t }: SearchSectionProps) => {
-  const [searchQuery, setSearchQuery] = useState("")
+export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSectionProps) => {
   const [showFilters, setShowFilters] = useState(false)
   const [showSearchHistory, setShowSearchHistory] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -43,56 +39,38 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
     getSearchSuggestions 
   } = useSearchHistory()
   
+  // Use unified search store
   const { 
     filters, 
-    financingFilters, 
-    updateFilter, 
-    updateFinancingFilter,
-    hasActiveFilters,
-    getFilterCount,
-    applyFiltersToQuery
-  } = useSearchFilters()
-  
-  const { getCachedResult, setCachedResult } = useSearchCache()
+    results, 
+    loading: searchLoading, 
+    setFilters, 
+    performSearch 
+  } = useSearchStore()
 
-  const [searchLoading, setSearchLoading] = useState(false)
-  const [results, setResults] = useState<any[]>([])
   const [aiSuggestion, setAiSuggestion] = useState("")
-  const [resultMode, setResultMode] = useState<"strict" | "relaxed" | null>(null)
   
   // Get period options for dropdown
   const periodOptions = getPeriodOptions()
   
   // Calculate financing results and property price
   const financingCalculation = useMemo(() => {
-    if (!financingFilters.financingPeriod) {
+    if (!filters.periodMonths) {
       return null;
     }
     
-    const periodMonths = parseInt(financingFilters.financingPeriod) || 0;
+    const periodMonths = parseInt(filters.periodMonths) || 0;
     let propertyPrice = 50000; // default
     let cashAvailable = 0;
     
     // Calculate property price and cash available based on available inputs
-    if (financingFilters.cashAmount) {
-      cashAvailable = parseFloat(financingFilters.cashAmount.replace(/,/g, '')) || 0;
-      propertyPrice = calculatePropertyPriceFromCash(cashAvailable);
-    } else if (financingFilters.monthlyPayment) {
-      const monthlyPayment = parseFloat(financingFilters.monthlyPayment.replace(/,/g, '')) || 0;
-      cashAvailable = calculateCashFromMonthlyPayment(monthlyPayment, periodMonths);
+    if (filters.cashAvailable) {
+      cashAvailable = parseFloat(filters.cashAvailable.replace(/,/g, '')) || 0;
       propertyPrice = calculatePropertyPriceFromCash(cashAvailable);
     }
     
     return calculateHalalFinancing(cashAvailable, propertyPrice, periodMonths);
-  }, [financingFilters.cashAmount, financingFilters.monthlyPayment, financingFilters.financingPeriod])
-  
-  // Update calculated values when calculation changes
-  useEffect(() => {
-    if (financingCalculation) {
-      updateFinancingFilter('calculatedMonthlyPayment', financingCalculation.requiredMonthlyPayment);
-      updateFinancingFilter('totalFinancingCost', financingCalculation.totalCost);
-    }
-  }, [financingCalculation, updateFinancingFilter])
+  }, [filters.cashAvailable, filters.periodMonths])
 
   // District options for current language  
   const districtOptions = useMemo(() => {
@@ -102,16 +80,16 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
 
   // Search suggestions based on input
   const searchSuggestions = useMemo(() => {
-    if (!searchQuery || searchQuery.length < 2) return []
-    return getSearchSuggestions(searchQuery)
-  }, [searchQuery, getSearchSuggestions])
+    if (!filters.q || filters.q.length < 2) return []
+    return getSearchSuggestions(filters.q)
+  }, [filters.q, getSearchSuggestions])
 
   // Debounced search for auto-suggestions
   const debouncedShowSuggestions = useMemo(
     () => debounce(() => {
-      setShowSuggestions(searchQuery.length >= 2 && searchSuggestions.length > 0)
+      setShowSuggestions((filters.q?.length || 0) >= 2 && searchSuggestions.length > 0)
     }, 300),
-    [searchQuery, searchSuggestions.length]
+    [filters.q, searchSuggestions.length]
   )
 
   // Show suggestions when typing
@@ -120,21 +98,49 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
     return () => debouncedShowSuggestions.flush()
   }, [debouncedShowSuggestions])
 
+  // Debounced filter search
+  const debouncedFilterSearch = useMemo(
+    () => debounce(() => {
+      performSearch()
+    }, 300),
+    [performSearch]
+  )
+
   const navigate = useNavigate()
   const halalStore = useHalalFinancingStore()
 
-  // Sync halal financing state with store
+  // Sync halal financing state with store and filters
   useEffect(() => {
+    setFilters({ halalMode: isHalalMode })
     if (isHalalMode) {
-      updateFinancingFilter('cashAmount', halalStore.cashAvailable)
-      updateFinancingFilter('financingPeriod', halalStore.periodMonths)
+      setFilters({
+        cashAvailable: halalStore.cashAvailable,
+        periodMonths: halalStore.periodMonths
+      })
     }
-  }, [isHalalMode, halalStore.cashAvailable, halalStore.periodMonths, updateFinancingFilter])
+  }, [isHalalMode, halalStore.cashAvailable, halalStore.periodMonths, setFilters])
+
+  // Update halal store when filters change
+  useEffect(() => {
+    if (isHalalMode && filters.cashAvailable) {
+      halalStore.updateState({ cashAvailable: filters.cashAvailable })
+    }
+    if (isHalalMode && filters.periodMonths) {
+      halalStore.updateState({ periodMonths: filters.periodMonths })
+    }
+  }, [filters.cashAvailable, filters.periodMonths, isHalalMode, halalStore])
+
+  // Auto-search when filters change (debounced)
+  useEffect(() => {
+    if (Object.keys(filters).length > 0) {
+      debouncedFilterSearch()
+    }
+  }, [filters, debouncedFilterSearch])
 
   // Handle property click with halal validation
   const handlePropertyClick = (property: any) => {
-    if (isHalalMode && financingFilters.cashAmount) {
-      const cashValue = parseFloat(financingFilters.cashAmount.replace(/,/g, '')) || 0;
+    if (isHalalMode && filters.cashAvailable) {
+      const cashValue = parseFloat(filters.cashAvailable.replace(/,/g, '')) || 0;
       const propertyPrice = property.priceUsd || 0;
       
       if (cashValue < 0.5 * propertyPrice) {
@@ -151,11 +157,11 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
     const params = new URLSearchParams();
     if (isHalalMode) {
       params.set('halal', '1');
-      if (financingFilters.cashAmount) {
-        params.set('cash', financingFilters.cashAmount);
+      if (filters.cashAvailable) {
+        params.set('cash', filters.cashAvailable);
       }
-      if (financingFilters.financingPeriod) {
-        params.set('period', financingFilters.financingPeriod);
+      if (filters.periodMonths) {
+        params.set('period', filters.periodMonths);
       }
     }
     
@@ -164,114 +170,48 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
   };
 
   const handleSearch = async (queryOverride?: string) => {
-    const q = (queryOverride || searchQuery).trim()
+    const q = queryOverride || filters.q || ""
     
     setShowSuggestions(false)
     setShowSearchHistory(false)
 
-    try {
-      setSearchLoading(true)
-      
-      // Build search query for Supabase
-      let query = supabase
-        .from('properties')
-        .select('*')
-        .not('latitude', 'is', null)
-        .not('longitude', 'is', null)
-        .in('status', ['active', 'approved'])
+    // Update query in filters and perform search
+    await performSearch({ q: q.trim() })
+    
+    const count = results.length
+    const suggestion = count > 0 
+      ? `Найдено ${count} объектов недвижимости` 
+      : 'Попробуйте изменить параметры поиска'
 
-      // Apply text search if query provided
-      if (q) {
-        query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%,location.ilike.%${q}%`)
-      }
+    setAiSuggestion(suggestion)
+    
+    // Add to search history
+    addToHistory({
+      query: q,
+      filters: Object.keys(filters).length > 1 ? filters : undefined,
+      isHalalMode,
+      resultCount: count
+    })
 
-      // Apply halal filtering
-      if (isHalalMode) {
-        query = query.or('is_halal_financed.eq.true,halal_financing_status.eq.approved')
-      }
-
-      // Apply other filters
-      if (filters.district && filters.district !== 'all') {
-        query = query.ilike('location', `%${filters.district}%`)
-      }
-      
-      if (filters.priceRange) {
-        const [min, max] = filters.priceRange.split('-').map(p => parseInt(p.replace(/[^0-9]/g, '')))
-        if (min) query = query.gte('price', min)
-        if (max && max !== 200000) query = query.lte('price', max)
-      }
-      
-      if (filters.bedrooms && filters.bedrooms !== 'all') {
-        query = query.gte('bedrooms', parseInt(filters.bedrooms))
-      }
-
-      const { data: searchResults, error } = await query
-
-      if (error) {
-        throw error
-      }
-
-      // Transform results to expected format
-      const results = (searchResults || []).map((prop: any) => ({
-        id: prop.id,
-        title: prop.title || 'Property',
-        location: prop.location || prop.district || 'Tashkent',
-        priceUsd: Number(prop.price) || 0,
-        bedrooms: Number(prop.bedrooms) || 1,
-        bathrooms: Number(prop.bathrooms) || 1,
-        area: Number(prop.area) || 50,
-        verified: prop.status === 'approved',
-        financingAvailable: prop.is_halal_financed || prop.halal_financing_status === 'approved',
-        image_url: Array.isArray(prop.photos) && prop.photos.length > 0 ? prop.photos[0] : '/placeholder.svg'
-      }))
-
-      const count = results.length
-      const suggestion = count > 0 
-        ? `Найдено ${count} объектов недвижимости` 
-        : 'Попробуйте изменить параметры поиска'
-
-      setResults(results)
-      setAiSuggestion(suggestion)
-      setResultMode('strict')
-      
-      // Pass results to parent component (for map integration)
-      if (onSearchResults) {
-        onSearchResults(results)
-      }
-
-      // Add to search history
-      addToHistory({
-        query: q,
-        filters: hasActiveFilters ? filters : undefined,
-        isHalalMode,
-        resultCount: count
-      })
-
-      toast({ 
-        title: `Найдено: ${count}`, 
-        description: suggestion 
-      })
-    } catch (e: any) {
-      console.error('Search error:', e)
-      toast({ title: 'Ошибка поиска', description: e?.message || 'Не удалось выполнить поиск' })
-    } finally {
-      setSearchLoading(false)
-    }
+    toast({ 
+      title: `Найдено: ${count}`, 
+      description: suggestion 
+    })
   }
 
   const handleSuggestionClick = (suggestion: string) => {
-    setSearchQuery(suggestion)
+    setFilters({ q: suggestion })
     setShowSuggestions(false)
     handleSearch(suggestion)
   }
 
   const handleSaveSearch = () => {
-    if (!searchQuery.trim()) return
+    if (!filters.q?.trim()) return
     
     const searchItem = {
       id: Date.now().toString(),
-      query: searchQuery,
-      filters: hasActiveFilters ? filters : undefined,
+      query: filters.q,
+      filters: Object.keys(filters).length > 1 ? filters : undefined,
       timestamp: Date.now(),
       isHalalMode,
       resultCount: results.length
@@ -279,6 +219,11 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
     
     saveSearch(searchItem)
     toast({ title: 'Поиск сохранён', description: 'Добавлен в избранные запросы' })
+  }
+
+  // Handle filter changes
+  const handleFilterChange = (key: string, value: any) => {
+    setFilters({ [key]: value })
   }
 
   const scrollProgress = Math.min(scrollY / 300, 1)
@@ -324,48 +269,47 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
 
         {/* Main Search */}
         <div>
-
           <Card 
             className="bg-background/80 backdrop-blur-sm border-0 shadow-warm"
           >
             <CardContent className="p-6">
               {/* Main Search Bar */}
               <div className="flex gap-3 mb-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder={t('search.placeholder')}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => setShowSearchHistory(true)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault()
-                        handleSearch()
-                      }
-                      if (e.key === 'Escape') {
-                        setShowSuggestions(false)
-                        setShowSearchHistory(false)
-                      }
-                    }}
-                    className="pl-10 h-12 text-base"
-                  />
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-                    {searchQuery && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0"
-                        onClick={handleSaveSearch}
-                      >
-                        <BookmarkPlus className="h-3 w-3" />
-                      </Button>
-                    )}
-                    <Badge variant="warning" className={`text-xs ${isHalalMode ? 'bg-magit-trust text-white' : ''}`}>
-                      <Sparkles className="h-3 w-3 mr-1" />
-                      AI
-                    </Badge>
-                  </div>
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder={t('search.placeholder')}
+                      value={filters.q || ''}
+                      onChange={(e) => handleFilterChange('q', e.target.value)}
+                      onFocus={() => setShowSearchHistory(true)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          handleSearch()
+                        }
+                        if (e.key === 'Escape') {
+                          setShowSuggestions(false)
+                          setShowSearchHistory(false)
+                        }
+                      }}
+                      className="pl-10 h-12 text-base"
+                    />
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+                      {filters.q && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={handleSaveSearch}
+                        >
+                          <BookmarkPlus className="h-3 w-3" />
+                        </Button>
+                      )}
+                      <Badge variant="warning" className={`text-xs ${isHalalMode ? 'bg-magit-trust text-white' : ''}`}>
+                        <Sparkles className="h-3 w-3 mr-1" />
+                        AI
+                      </Badge>
+                    </div>
 
                   {/* Search Suggestions */}
                   {showSuggestions && searchSuggestions.length > 0 && (
@@ -389,7 +333,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
                   )}
 
                   {/* Search History */}
-                  {showSearchHistory && !showSuggestions && searchQuery.length < 2 && (
+                  {showSearchHistory && !showSuggestions && (filters.q?.length || 0) < 2 && (
                     <div className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-lg z-50">
                       <div className="px-3 py-2 border-b">
                         <div className="flex items-center justify-between">
@@ -450,170 +394,258 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
                 </Button>
               </div>
 
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-3">
+                <Button 
+                  onClick={handleSearch} 
+                  disabled={searchLoading}
+                  className={`${
+                    isHalalMode 
+                      ? 'bg-magit-trust hover:bg-magit-trust/90 text-white' 
+                      : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                  } transition-all duration-300`}
+                >
+                  {searchLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                      {t('search.searching')}
+                    </>
+                  ) : (
+                    <>
+                      <Search className="h-4 w-4 mr-2" />
+                      {t('search.searchButton')}
+                    </>
+                  )}
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2"
+                >
+                  <Filter className="h-4 w-4" />
+                  {t('search.filters')}
+                  <ChevronDown className={`h-4 w-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* Halal Financing Inputs */}
-              {isHalalMode && (
-                <div className="border-t pt-4 mb-4 animate-fade-in">
-                  <div className="bg-magit-trust/5 p-4 rounded-lg">
-                    <h3 className="font-medium text-sm mb-3 flex items-center">
-                      <Wallet className="h-4 w-4 mr-2" />
-                      {t('search.financialProfile')}
-                    </h3>
-                    <div className="grid md:grid-cols-3 gap-4 mb-4">
-                      <div>
-                        <Label className="text-sm font-medium mb-2 block">{t('search.cashAvailable')}</Label>
-                        <Input
-                          placeholder="e.g., 15,000"
-                          value={financingFilters.cashAmount || ''}
-                          onChange={(e) => {
-                            updateFinancingFilter('cashAmount', e.target.value)
-                            halalStore.updateState({ cashAvailable: e.target.value })
-                          }}
-                          className="h-10"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium mb-2 block">{t('search.monthlyPayment')}</Label>
-                        <Input
-                          placeholder="e.g., 500"
-                          value={financingFilters.monthlyPayment || ''}
-                          onChange={(e) => {
-                            updateFinancingFilter('monthlyPayment', e.target.value)
-                            halalStore.updateState({ monthlyPayment: e.target.value })
-                          }}
-                          className="h-10"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium mb-2 block">{t('search.financingPeriod')} *</Label>
-                        <Select 
-                          value={financingFilters.financingPeriod || ''} 
-                          onValueChange={(value) => {
-                            updateFinancingFilter('financingPeriod', value)
-                            halalStore.updateState({ periodMonths: value })
-                          }}
-                        >
-                          <SelectTrigger className="h-10">
-                            <SelectValue placeholder="Select period" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {periodOptions.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+          {/* Integrated Filters */}
+          {showFilters && (
+            <Card className="bg-background/60 backdrop-blur-sm border-border/50">
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-lg">{t('search.advancedFilters')}</h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowFilters(false)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* District Filter */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        {t('search.district')}
+                      </Label>
+                      <Select 
+                        value={filters.district || 'all'} 
+                        onValueChange={(value) => handleFilterChange('district', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">{t('search.allDistricts')}</SelectItem>
+                          {districtOptions.map((district) => (
+                            <SelectItem key={district.value} value={district.value}>
+                              {district.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                    
-                    {/* Financing Calculator Results */}
-                    {financingCalculation && financingCalculation.propertyPrice && financingCalculation.propertyPrice > 0 && (
-                      <div className="bg-muted/50 rounded-lg p-4 mb-4 border border-border">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Calculator className="h-4 w-4 text-primary" />
-                          <span className="font-medium text-sm">{t('search.breakdown')}</span>
+
+                    {/* Price Min */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium flex items-center gap-2">
+                        <DollarSign className="h-4 w-4" />
+                        {t('search.priceMin')}
+                      </Label>
+                      <Input
+                        placeholder="20,000"
+                        value={filters.priceMin || ''}
+                        onChange={(e) => handleFilterChange('priceMin', e.target.value)}
+                      />
+                    </div>
+
+                    {/* Price Max */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium flex items-center gap-2">
+                        <DollarSign className="h-4 w-4" />
+                        {t('search.priceMax')}
+                      </Label>
+                      <Input
+                        placeholder="100,000"
+                        value={filters.priceMax || ''}
+                        onChange={(e) => handleFilterChange('priceMax', e.target.value)}
+                      />
+                    </div>
+
+                    {/* Bedrooms */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium flex items-center gap-2">
+                        <Bed className="h-4 w-4" />
+                        {t('search.bedrooms')}
+                      </Label>
+                      <Select 
+                        value={filters.bedrooms || 'all'} 
+                        onValueChange={(value) => handleFilterChange('bedrooms', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">{t('search.anyBedrooms')}</SelectItem>
+                          <SelectItem value="1">1+</SelectItem>
+                          <SelectItem value="2">2+</SelectItem>
+                          <SelectItem value="3">3+</SelectItem>
+                          <SelectItem value="4">4+</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Halal Financing Section */}
+                  {isHalalMode && (
+                    <div className="space-y-4 p-4 bg-magit-trust/5 rounded-lg border border-magit-trust/20">
+                      <h4 className="font-medium text-magit-trust flex items-center gap-2">
+                        <Calculator className="h-4 w-4" />
+                        {t('search.halalFinancing')}
+                      </h4>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Cash Available */}
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium flex items-center gap-2">
+                            <Wallet className="h-4 w-4" />
+                            {t('search.cashAvailable')}
+                          </Label>
+                          <div className="relative">
+                            <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              placeholder="35,000"
+                              value={filters.cashAvailable || ''}
+                              onChange={(e) => handleFilterChange('cashAvailable', e.target.value)}
+                              className="pl-9"
+                            />
+                          </div>
                         </div>
-                        <div className="grid md:grid-cols-3 gap-4 text-sm mb-4">
+
+                        {/* Financing Period */}
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium flex items-center gap-2">
+                            <Clock className="h-4 w-4" />
+                            {t('search.financingPeriod')}
+                          </Label>
+                          <Select 
+                            value={filters.periodMonths || '12'} 
+                            onValueChange={(value) => handleFilterChange('periodMonths', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {periodOptions.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      {/* Financing Calculation Display */}
+                      {financingCalculation && (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 bg-background/50 rounded-lg">
                           <div>
-                            <span className="text-muted-foreground">Property Price:</span>
-                            <div className="font-semibold text-lg">
-                              {formatCurrency(financingCalculation.propertyPrice)}
+                            <div className="text-xs text-muted-foreground">{t('search.propertyPrice')}</div>
+                            <div className="font-semibold text-magit-trust">
+                              {formatCurrency(financingCalculation.propertyPrice || 0)}
                             </div>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">{t('search.calculatedPayment')}:</span>
-                            <div className="font-semibold text-lg text-primary">
+                            <div className="text-xs text-muted-foreground">{t('search.monthlyPayment')}</div>
+                            <div className="font-semibold text-magit-trust">
                               {formatCurrency(financingCalculation.requiredMonthlyPayment)}
                             </div>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">{t('search.totalCost')}:</span>
-                            <div className="font-semibold text-lg">
+                            <div className="text-xs text-muted-foreground">{t('search.totalCost')}</div>
+                            <div className="font-semibold text-magit-trust">
                               {formatCurrency(financingCalculation.totalCost)}
                             </div>
                           </div>
                         </div>
-                        <div className="grid md:grid-cols-4 gap-3 text-xs">
-                          <div>
-                            <span className="text-muted-foreground">Financing:</span>
-                            <div className="font-medium">{formatCurrency(financingCalculation.financingAmount)}</div>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">Fixed Fee:</span>
-                            <div className="font-medium">{formatCurrency(financingCalculation.fixedFee)}</div>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">Service Fee:</span>
-                            <div className="font-medium">{formatCurrency(financingCalculation.serviceFee)}</div>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">VAT:</span>
-                            <div className="font-medium">{formatCurrency(financingCalculation.vat)}</div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              )}
+              </CardContent>
+            </Card>
+          )}
 
-            </CardContent>
-          </Card>
-
-
-          {/* Results */}
-          {resultMode && (
-            <div className="mt-8">
-              {resultMode === 'relaxed' && (
-                <div className="rounded-md border border-yellow-300/60 bg-yellow-50/60 p-3 text-sm">
-                  Прямых совпадений не нашли. Показали близкие варианты по вашему запросу.
+          {/* Search Results */}
+          {results.length > 0 && (
+            <Card className="bg-background/80 backdrop-blur-sm border-0 shadow-warm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="font-heading font-bold text-xl text-foreground">
+                    {t('search.propertiesFound')} ({results.length})
+                  </h3>
+                  {results.length >= 10 && (
+                    <Button 
+                      variant="outline" 
+                      onClick={() => navigate('/all-results')}
+                      className="flex items-center gap-2"
+                    >
+                      {t('search.viewAll')}
+                    </Button>
+                  )}
                 </div>
-              )}
-              {aiSuggestion && (
-                <p className="mt-3 text-sm text-muted-foreground">{aiSuggestion}</p>
-              )}
 
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                {results.slice(0, 10).map((p) => (
-                  <div key={p.id} onClick={() => handlePropertyClick(p)}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {results.slice(0, 10).map((property) => (
                     <PropertyCard
-                      id={p.id}
-                      title={p.title || 'Недвижимость'}
-                      location={p.district || p.city || p.location || 'Ташкент'}
-                      price={`$${(p.priceUsd ?? 0).toLocaleString?.() || p.priceUsd}`}
-                      bedrooms={p.bedrooms || 0}
-                      bathrooms={p.bathrooms || 0}
-                      area={p.area || 0}
-                      imageUrl={p.image_url || p.images?.[0] || '/placeholder.svg'}
-                      isVerified={p.verified || false}
-                      isHalalFinanced={p.financingAvailable || false}
+                      key={property.id}
+                      property={property}
+                      onClick={() => handlePropertyClick(property)}
+                      isHalalMode={isHalalMode}
+                      cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/,/g, '')) || 0 : 0}
                     />
-                  </div>
-                ))}
-              </div>
-              
-              {results.length > 10 && (
-                <div className="text-center mt-6">
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    onClick={() => {
-                      // Navigate to all results page with current search parameters
-                      const searchParams = new URLSearchParams({
-                        query: searchQuery,
-                        filters: JSON.stringify(filters),
-                        financingFilters: JSON.stringify(financingFilters),
-                        isHalalMode: isHalalMode.toString()
-                      });
-                      window.location.href = `/all-results?${searchParams.toString()}`;
-                    }}
-                  >
-                    View All {results.length} Results
-                  </Button>
+                  ))}
                 </div>
-              )}
-            </div>
+
+                {aiSuggestion && (
+                  <div className="mt-6 p-4 bg-muted/30 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <Badge variant="warning" className="mt-1">
+                        <Sparkles className="h-3 w-3 mr-1" />
+                        AI
+                      </Badge>
+                      <p className="text-sm text-muted-foreground">{aiSuggestion}</p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           )}
         </div>
       </div>

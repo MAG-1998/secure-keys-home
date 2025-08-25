@@ -1,25 +1,19 @@
-import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback, memo } from 'react';
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Search, Home, Bed, Bath } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
+import { LocateIcon as MyLocation, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
 import { useUser } from "@/contexts/UserContext";
 import type { Language } from "@/hooks/useTranslation";
-import { extractDistrictFromText, localizeDistrict as localizeDistrictLib, getDistrictOptions } from "@/lib/districts";
+import { extractDistrictFromText, localizeDistrict as localizeDistrictLib } from "@/lib/districts";
+import { useSearchStore } from "@/hooks/useSearchStore";
+import { toast } from "@/components/ui/use-toast";
 
 interface YandexMapProps {
   isHalalMode?: boolean;
-  onHalalModeChange?: (enabled: boolean) => void;
   t: (key: string) => string;
   language: Language;
-  searchResults?: any[];
-  onSearchResultsChange?: (results: any[]) => void;
 }
 
 interface Property {
@@ -46,39 +40,23 @@ declare global {
   }
 }
 
-const YandexMap: React.FC<YandexMapProps> = ({ isHalalMode = false, onHalalModeChange, t, language, searchResults, onSearchResultsChange }) => {
+const YandexMap: React.FC<YandexMapProps> = memo(({ isHalalMode = false, t, language }) => {
   const navigate = useNavigate();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
+  const clusterer = useRef<any>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [userLocationMarker, setUserLocationMarker] = useState<any>(null);
 
-const cssInjectedRef = useRef(false);
-const [filters, setFilters] = useState({
-  district: 'all',
-  minPrice: '',
-  maxPrice: '',
-  bedrooms: 'all',
-  halalOnly: false
-});
+  const cssInjectedRef = useRef(false);
+  
+  // Cache of computed districts from coords
+  const [computedDistricts, setComputedDistricts] = useState<Record<string, string>>({});
+  const geocodeCacheRef = useRef<Map<string, string>>(new Map());
 
-// Cache of computed districts from coords
-const [computedDistricts, setComputedDistricts] = useState<Record<string, string>>({});
-const geocodeCacheRef = useRef<Map<string, string>>(new Map());
-
-  const halalMode = isHalalMode || filters.halalOnly;
   const { user } = useUser();
-
-  // Keep internal halal filter in sync with external prop
-  useEffect(() => {
-    setFilters(prev => ({ ...prev, halalOnly: !!isHalalMode }));
-  }, [isHalalMode]);
-
-  // Unified handler so both toggle UIs behave the same
-const handleHalalToggle = (checked: boolean | string) => {
-  const val = checked === 'indeterminate' ? true : Boolean(checked);
-  setFilters(prev => ({ ...prev, halalOnly: val }));
-  onHalalModeChange?.(val);
-};
+  const { results: searchResults } = useSearchStore();
 
   // Fetch properties from database
   const { data: dbProperties, isLoading } = useOptimizedQuery(
@@ -132,65 +110,23 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
     return localizeDistrictLib(district, language as Language);
   }, [language]);
 
-// Apply filters (reactive to data and UI)
+// Apply filters (reactive to data and UI) - now just maps search results to properties
 const filteredProperties = useMemo(() => {
-  let filtered = allProperties;
-
-  // If we have search results, prioritize those
-  if (searchResults && searchResults.length > 0) {
-    const searchIds = new Set(searchResults.map(r => r.id));
-    filtered = allProperties.filter(p => searchIds.has(p.id));
+  if (!searchResults || searchResults.length === 0) {
+    // If no search results, show recent approved properties
+    return allProperties.filter(p => ['active','approved'].includes(p.status)).slice(0, 50);
   }
 
-  // Only show approved/active listings on the map
-  filtered = filtered.filter(p => ['active','approved'].includes(p.status));
+  // Map search results to properties
+  const searchIds = new Set(searchResults.map(r => r.id));
+  return allProperties.filter(p => searchIds.has(p.id) && ['active','approved'].includes(p.status));
+}, [allProperties, searchResults]);
 
-  if (filters.district !== 'all') {
-    filtered = filtered.filter(p => p.district === filters.district);
-  }
-  const min = filters.minPrice ? Number(filters.minPrice) : undefined;
-  const max = filters.maxPrice ? Number(filters.maxPrice) : undefined;
-  if (min !== undefined) {
-    filtered = filtered.filter(p => p.price >= min);
-  }
-  if (max !== undefined) {
-    filtered = filtered.filter(p => p.price <= max);
-  }
-
-  if (filters.bedrooms !== 'all') {
-    filtered = filtered.filter(p => p.bedrooms >= parseInt(filters.bedrooms));
-  }
-
-  if (halalMode) {
-    filtered = filtered.filter(p => p.isHalal);
-  }
-  return filtered;
-}, [allProperties, searchResults, filters, isHalalMode]);
-
-// Update search results when filtered properties change (for bidirectional sync)
-useEffect(() => {
-  if (onSearchResultsChange && !searchResults?.length) {
-    const searchFormattedResults = filteredProperties.map(p => ({
-      id: p.id,
-      title: p.title,
-      location: p.district,
-      priceUsd: p.price,
-      bedrooms: p.bedrooms,
-      bathrooms: p.bathrooms,
-      area: p.area,
-      verified: p.status === 'approved',
-      financingAvailable: p.isHalal,
-      image_url: p.photos && p.photos.length > 0 ? p.photos[0] : '/placeholder.svg'
-    }));
-    onSearchResultsChange(searchFormattedResults);
-  }
-}, [filteredProperties, onSearchResultsChange, searchResults?.length]);
-
-// Diagnostics to verify halal filtering
+// Diagnostics 
 useEffect(() => {
   const halalApprovedCount = allProperties.filter(p => p.isHalal && ['active','approved'].includes(p.status)).length;
-  console.info('[Map] halalMode:', halalMode, 'total:', allProperties.length, 'halal+approved:', halalApprovedCount, 'shown:', filteredProperties.length);
-}, [halalMode, allProperties, filteredProperties]);
+  console.info('[Map] isHalalMode:', isHalalMode, 'total:', allProperties.length, 'halal+approved:', halalApprovedCount, 'shown:', filteredProperties.length);
+}, [isHalalMode, allProperties, filteredProperties]);
 
 
   // Load Yandex Maps API
@@ -266,6 +202,17 @@ useEffect(() => {
       controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
     });
 
+    // Initialize clusterer for better performance
+    clusterer.current = new window.ymaps.Clusterer({
+      preset: 'islands#invertedVioletClusterIcons',
+      groupByCoordinates: false,
+      clusterDisableClickZoom: false,
+      clusterHideIconOnBalloonOpen: false,
+      geoObjectHideIconOnBalloonOpen: false
+    });
+
+    map.current.geoObjects.add(clusterer.current);
+
     // Inject transparent overrides for Yandex placemark containers
     if (mapContainer.current) {
       mapContainer.current.classList.add('ymaps-transparent-scope');
@@ -296,12 +243,74 @@ useEffect(() => {
     updateMarkers();
   }, [mapLoaded]);
 
-  // Update markers when filters change
-  useEffect(() => {
-    if (map.current) {
+  // Update markers when filters change (memoized to prevent excessive re-renders)
+  const memoizedUpdateMarkers = useCallback(() => {
+    if (map.current && clusterer.current) {
       updateMarkers();
     }
-  }, [filteredProperties]);
+  }, [filteredProperties.length, isHalalMode]);
+
+  useEffect(() => {
+    memoizedUpdateMarkers();
+  }, [memoizedUpdateMarkers]);
+
+  // User location functionality
+  const getUserLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      toast({
+        title: "Geolocation not supported",
+        description: "Your browser doesn't support location services",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const coords: [number, number] = [position.coords.latitude, position.coords.longitude];
+        setUserLocation(coords);
+        
+        if (map.current) {
+          // Create user location marker if it doesn't exist
+          if (userLocationMarker) {
+            map.current.geoObjects.remove(userLocationMarker);
+          }
+
+          const newMarker = new window.ymaps.Placemark(coords, {
+            hintContent: 'Your location',
+            balloonContent: 'You are here'
+          }, {
+            preset: 'islands#blueCircleDotIcon',
+            zIndex: 1000
+          });
+
+          map.current.geoObjects.add(newMarker);
+          setUserLocationMarker(newMarker);
+
+          // Center map on user location
+          map.current.setCenter(coords, 13);
+        }
+
+        toast({
+          title: "Location found",
+          description: "Map centered on your location"
+        });
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        toast({
+          title: "Location unavailable",
+          description: "Could not get your location. Please check your browser permissions.",
+          variant: "destructive"
+        });
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
+      }
+    );
+  }, [userLocationMarker, toast]);
 
   // Cache for composed pin images (key: `${baseKey}-${priceText}`)
   const composedPinCacheRef = useRef<Map<string, string>>(new Map());
@@ -348,13 +357,11 @@ const composePinImage = (color: string, priceText: string) => {
   return canvas.toDataURL('image/png');
 };
 
-  const updateMarkers = async () => {
-    if (!map.current) return;
+  const updateMarkers = useCallback(async () => {
+    if (!map.current || !clusterer.current) return;
 
-    // Clear existing markers
-    map.current.geoObjects.removeAll();
-
-    // Using vector pins; no base image preparation needed
+    // Clear existing markers from clusterer
+    clusterer.current.removeAll();
 
     // Price formatter for compact captions
     const formatPriceShort = (n: number) => {
@@ -420,16 +427,21 @@ const composePinImage = (color: string, priceText: string) => {
     });
 
     const placemarks = await Promise.all(placemarkPromises);
-    placemarks.forEach((pm) => map.current.geoObjects.add(pm));
+    
+    // Add to clusterer instead of directly to map
+    clusterer.current.add(placemarks);
 
     // Adjust map bounds to show all markers
     if (filteredProperties.length > 0) {
-      map.current.setBounds(map.current.geoObjects.getBounds(), {
-        checkZoomRange: true,
-        zoomMargin: 50
-      });
+      const bounds = clusterer.current.getBounds();
+      if (bounds) {
+        map.current.setBounds(bounds, {
+          checkZoomRange: true,
+          zoomMargin: 50
+        });
+      }
     }
-  };
+  }, [filteredProperties, user?.id, isHalalMode, t, localizeDistrict]);
 
   const refreshPins = async () => {
     if (!map.current) return;
@@ -445,24 +457,27 @@ const composePinImage = (color: string, priceText: string) => {
     }
   };
 
-const approvedRandom = useMemo(() => {
-  const pool = halalMode
-    ? filteredProperties
-    : (filteredProperties.length > 0
-        ? filteredProperties
-        : allProperties.filter(p => ['active', 'approved'].includes(p.status)));
-  if (pool.length <= 3) return pool;
-  const arr = [...pool];
-  return arr.sort(() => 0.5 - Math.random()).slice(0, 3);
-}, [halalMode, filteredProperties, allProperties]);
-
   return (
-    <div className="w-full h-full">
+    <div className="relative w-full min-h-[50vh] md:min-h-[60vh] lg:min-h-[65vh]">
       <div 
         ref={mapContainer}
         className="w-full h-full"
         style={{ minHeight: '400px' }}
       />
+      
+      {/* Locate Me Button */}
+      {mapLoaded && (
+        <Button
+          onClick={getUserLocation}
+          className="absolute top-4 right-4 z-10 bg-background/90 hover:bg-background shadow-lg"
+          variant="outline"
+          size="sm"
+        >
+          <MyLocation className="h-4 w-4 mr-2" />
+          {t('map.locateMe')}
+        </Button>
+      )}
+      
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/50">
           <div className="text-muted-foreground">Loading map...</div>
@@ -470,6 +485,6 @@ const approvedRandom = useMemo(() => {
       )}
     </div>
   );
-};
+});
 
 export default YandexMap;
