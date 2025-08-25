@@ -457,176 +457,18 @@ const approvedRandom = useMemo(() => {
 }, [halalMode, filteredProperties, allProperties]);
 
   return (
-    <section className={`py-16 transition-colors duration-500 ${
-      halalMode ? 'bg-magit-trust/5' : 'bg-background/50'
-    }`}>
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <Badge variant={halalMode ? "default" : "secondary"} className="mb-4">
-            {halalMode ? t('map.halalMarketplace') : t('map.liveMarketplace')}
-          </Badge>
-          <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
-            {t('map.title')}
-          </h2>
-          <p className="text-lg text-muted-foreground mb-6">
-            {t('map.description')}
-          </p>
+    <div className="w-full h-full">
+      <div 
+        ref={mapContainer}
+        className="w-full h-full"
+        style={{ minHeight: '400px' }}
+      />
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background/50">
+          <div className="text-muted-foreground">Loading map...</div>
         </div>
-
-        {/* Filters */}
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">{t('filter.district')}</label>
-                <Select value={filters.district} onValueChange={(value) => setFilters(prev => ({ ...prev, district: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('filter.chooseDistrict')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t('filter.allDistricts')}</SelectItem>
-                    {getDistrictOptions(language as Language).map(({ value, label }) => (
-                      <SelectItem key={value} value={value}>{label}</SelectItem>
-                    ))}
-                    <SelectItem value="Other">{localizeDistrict('Other')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">{t('filter.priceRange')}</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <Input
-                    type="number"
-                    placeholder={t('common.min')}
-                    value={filters.minPrice}
-                    onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
-                  />
-                  <Input
-                    type="number"
-                    placeholder={t('common.max')}
-                    value={filters.maxPrice}
-                    onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">{t('filter.bedroomsLabel')}</label>
-                <Select value={filters.bedrooms} onValueChange={(value) => setFilters(prev => ({ ...prev, bedrooms: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('common.any')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t('common.any')}</SelectItem>
-                    <SelectItem value="1">{t('filter.bedrooms1Plus')}</SelectItem>
-                    <SelectItem value="2">{t('filter.bedrooms2Plus')}</SelectItem>
-                    <SelectItem value="3">{t('filter.bedrooms3Plus')}</SelectItem>
-                    <SelectItem value="4">{t('filter.bedrooms4Plus')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-end">
-                <div className="flex items-center space-x-2 w-full">
-                  <Checkbox
-                    id="halal-mode"
-                    checked={halalMode}
-                    onCheckedChange={handleHalalToggle}
-                  />
-                  <label htmlFor="halal-mode" className="text-sm">{t('search.halalMode')}</label>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Map and Results */}
-        <div className="grid lg:grid-cols-[2fr_1fr] gap-8 items-start">
-          {/* Map */}
-          <div>
-            <Card className="bg-gradient-card border-0 shadow-warm">
-              <CardContent className="p-6 h-[36rem]">
-                <div className="relative rounded-lg h-full overflow-hidden">
-                  <div ref={mapContainer} className="absolute inset-0 rounded-lg ymaps-transparent-scope" />
-                  {!mapLoaded || isLoading ? (
-                    <div className="absolute inset-0 bg-background/90 flex items-center justify-center">
-                      <div className="text-center">
-                        <MapPin className="h-12 w-12 text-primary mx-auto mb-2 animate-pulse" />
-                        <p className="text-muted-foreground font-medium">
-                          {isLoading ? t('map.loadingProperties') : t('map.loadingMap')}
-                        </p>
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Results Panel */}
-          <div>
-            <Card>
-              <CardContent className="p-6 h-[36rem] flex flex-col">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold">{t('map.propertiesFound')}</h3>
-                  <Badge variant="secondary">{filteredProperties.length}</Badge>
-                </div>
-                
-                <div className="space-y-4 flex-1 overflow-y-auto">
-              {halalMode && filteredProperties.length === 0 ? (
-                <div className="text-sm text-muted-foreground">{t('map.noHalalFound')}</div>
-              ) : (
-                    approvedRandom.map(property => (
-                      <div
-                        key={property.id}
-                        className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer"
-                        role="button"
-                        onClick={() => window.location.assign(`/property/${property.id}`)}
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h4 className="font-medium text-sm">{property.title}</h4>
-                            <p className="text-xs text-muted-foreground">{localizeDistrict(property.district)}</p>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-bold text-primary">${property.price.toLocaleString()}</div>
-                              {property.isHalal && (
-                              <Badge variant="default" className="text-xs">{t('features.halalFinancing')}</Badge>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span className="flex items-center">
-                            <Bed className="h-3 w-3 mr-1" />
-                            {property.bedrooms}
-                          </span>
-                          <span className="flex items-center">
-                            <Bath className="h-3 w-3 mr-1" />
-                            {property.bathrooms}
-                          </span>
-                          <span className="flex items-center">
-                            <Home className="h-3 w-3 mr-1" />
-                            {property.area}m²
-                          </span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-
-                <Button className="w-full mt-4" size="lg" onClick={() => navigate('/properties')}>
-                  <Search className="h-4 w-4 mr-2" />
-                  {t('map.viewAllProperties')}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </section>
+      )}
+    </div>
   );
 };
 

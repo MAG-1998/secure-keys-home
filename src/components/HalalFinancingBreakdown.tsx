@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,6 +26,16 @@ export const HalalFinancingBreakdown = ({
 }: HalalFinancingBreakdownProps) => {
   const [cashAmount, setCashAmount] = useState(initialCashAvailable)
   const [financingPeriod, setFinancingPeriod] = useState(initialPeriodMonths)
+
+  // Update state when initial values change (from URL params)
+  useEffect(() => {
+    if (initialCashAvailable) {
+      setCashAmount(initialCashAvailable);
+    }
+    if (initialPeriodMonths) {
+      setFinancingPeriod(initialPeriodMonths);
+    }
+  }, [initialCashAvailable, initialPeriodMonths]);
 
   const periodOptions = getPeriodOptions()
 

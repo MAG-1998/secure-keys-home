@@ -1,7 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { UnifiedSearchMap } from "@/components/UnifiedSearchMap";
+import { SearchSection } from "@/components/SearchSection";
+import YandexMap from "@/components/YandexMap";
 import { useNavigate } from "react-router-dom";
 import { useScroll } from "@/hooks/use-scroll";
 import { CheckCircle, Home, Plus } from "lucide-react";
@@ -48,16 +49,30 @@ export const AuthenticatedView = memo(({
         </div>
       </section>
 
-      {/* Unified Search, Filters & Map Section - Vertical Layout */}
-      <section id="search-map" className="relative">
-        <div className="container mx-auto px-4 py-6">
-          <div className="max-w-6xl mx-auto space-y-6">
-            {/* Unified Search, Filters & Map */}
-            <UnifiedSearchMap 
+      {/* Unified Search & Map Section - Full Width */}
+      <section id="search-map" className="w-full">
+        <div className="w-full space-y-6">
+          {/* Search Section */}
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              <SearchSection 
+                isHalalMode={isHalalMode} 
+                onHalalModeChange={setIsHalalMode} 
+                onSearchResults={setSearchResults}
+                t={t}
+              />
+            </div>
+          </div>
+          
+          {/* Map Section - Full Width */}
+          <div className="w-full h-[500px] md:h-[600px]">
+            <YandexMap 
               isHalalMode={isHalalMode} 
               onHalalModeChange={setIsHalalMode} 
               t={t}
               language={language}
+              searchResults={searchResults}
+              onSearchResultsChange={setSearchResults}
             />
           </div>
         </div>

@@ -49,6 +49,14 @@ const PropertyDetails = () => {
   const [searchParams] = useSearchParams();
   const financingStore = useHalalFinancingStore();
 
+  // Initialize halal mode and financing from URL params
+  useEffect(() => {
+    const halalParam = searchParams.get('halal');
+    if (halalParam === '1') {
+      financingStore.setFromQueryParams(searchParams);
+    }
+  }, [searchParams, financingStore]);
+
   const [property, setProperty] = useState<PropertyDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(false);

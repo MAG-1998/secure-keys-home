@@ -17,6 +17,8 @@ import { useSearchFilters } from "@/hooks/useSearchFilters"
 import { useSearchCache } from "@/hooks/useSearchCache"
 import { getDistrictOptions } from "@/lib/districts"
 import { calculateHalalFinancing, formatCurrency, getPeriodOptions, calculatePropertyPriceFromCash, calculateCashFromMonthlyPayment } from "@/utils/halalFinancing"
+import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore"
+import { useNavigate } from "react-router-dom"
 
 interface SearchSectionProps {
   isHalalMode: boolean
@@ -118,43 +120,124 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
     return () => debouncedShowSuggestions.flush()
   }, [debouncedShowSuggestions])
 
+  const navigate = useNavigate()
+  const halalStore = useHalalFinancingStore()
+
+  // Sync halal financing state with store
+  useEffect(() => {
+    if (isHalalMode) {
+      updateFinancingFilter('cashAmount', halalStore.cashAvailable)
+      updateFinancingFilter('financingPeriod', halalStore.periodMonths)
+    }
+  }, [isHalalMode, halalStore.cashAvailable, halalStore.periodMonths, updateFinancingFilter])
+
+  // Handle property click with halal validation
+  const handlePropertyClick = (property: any) => {
+    if (isHalalMode && financingFilters.cashAmount) {
+      const cashValue = parseFloat(financingFilters.cashAmount.replace(/,/g, '')) || 0;
+      const propertyPrice = property.priceUsd || 0;
+      
+      if (cashValue < 0.5 * propertyPrice) {
+        toast({
+          title: "Недостаточно средств",
+          description: "Для халяль-финансирования нужно внести не менее 50% от стоимости.",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+    
+    // Navigate with halal financing parameters
+    const params = new URLSearchParams();
+    if (isHalalMode) {
+      params.set('halal', '1');
+      if (financingFilters.cashAmount) {
+        params.set('cash', financingFilters.cashAmount);
+      }
+      if (financingFilters.financingPeriod) {
+        params.set('period', financingFilters.financingPeriod);
+      }
+    }
+    
+    const queryString = params.toString();
+    navigate(`/property/${property.id}${queryString ? `?${queryString}` : ''}`);
+  };
+
   const handleSearch = async (queryOverride?: string) => {
     const q = (queryOverride || searchQuery).trim()
     
-    // In halal mode, require financing period
-    if (isHalalMode && !financingFilters.financingPeriod) {
-      toast({ title: 'Период обязателен', description: 'Выберите период финансирования для халяль поиска' })
-      return
-    }
-
     setShowSuggestions(false)
     setShowSearchHistory(false)
 
     try {
       setSearchLoading(true)
       
-      // Use basic database search instead of AI
-      const { performBasicSearch } = await import('@/utils/basicSearch')
-      const results = await performBasicSearch(q, filters, financingFilters, isHalalMode)
+      // Build search query for Supabase
+      let query = supabase
+        .from('properties')
+        .select('*')
+        .not('latitude', 'is', null)
+        .not('longitude', 'is', null)
+        .in('status', ['active', 'approved'])
+
+      // Apply text search if query provided
+      if (q) {
+        query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%,location.ilike.%${q}%`)
+      }
+
+      // Apply halal filtering
+      if (isHalalMode) {
+        query = query.or('is_halal_financed.eq.true,halal_financing_status.eq.approved')
+      }
+
+      // Apply other filters
+      if (filters.district && filters.district !== 'all') {
+        query = query.ilike('location', `%${filters.district}%`)
+      }
+      
+      if (filters.priceRange) {
+        const [min, max] = filters.priceRange.split('-').map(p => parseInt(p.replace(/[^0-9]/g, '')))
+        if (min) query = query.gte('price', min)
+        if (max && max !== 200000) query = query.lte('price', max)
+      }
+      
+      if (filters.bedrooms && filters.bedrooms !== 'all') {
+        query = query.gte('bedrooms', parseInt(filters.bedrooms))
+      }
+
+      const { data: searchResults, error } = await query
+
+      if (error) {
+        throw error
+      }
+
+      // Transform results to expected format
+      const results = (searchResults || []).map((prop: any) => ({
+        id: prop.id,
+        title: prop.title || 'Property',
+        location: prop.location || prop.district || 'Tashkent',
+        priceUsd: Number(prop.price) || 0,
+        bedrooms: Number(prop.bedrooms) || 1,
+        bathrooms: Number(prop.bathrooms) || 1,
+        area: Number(prop.area) || 50,
+        verified: prop.status === 'approved',
+        financingAvailable: prop.is_halal_financed || prop.halal_financing_status === 'approved',
+        image_url: Array.isArray(prop.photos) && prop.photos.length > 0 ? prop.photos[0] : '/placeholder.svg'
+      }))
 
       const count = results.length
       const suggestion = count > 0 
         ? `Найдено ${count} объектов недвижимости` 
         : 'Попробуйте изменить параметры поиска'
-      const mode = 'strict'
 
       setResults(results)
       setAiSuggestion(suggestion)
-      setResultMode(mode)
+      setResultMode('strict')
       
       // Pass results to parent component (for map integration)
       if (onSearchResults) {
         onSearchResults(results)
       }
-
-      // Cache the results
-      const cacheKey = { query: q, filters, financingFilters, isHalalMode }
-      setCachedResult(q, cacheKey, results, suggestion, mode)
 
       // Add to search history
       addToHistory({
@@ -169,6 +252,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
         description: suggestion 
       })
     } catch (e: any) {
+      console.error('Search error:', e)
       toast({ title: 'Ошибка поиска', description: e?.message || 'Не удалось выполнить поиск' })
     } finally {
       setSearchLoading(false)
@@ -381,7 +465,10 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
                         <Input
                           placeholder="e.g., 15,000"
                           value={financingFilters.cashAmount || ''}
-                          onChange={(e) => updateFinancingFilter('cashAmount', e.target.value)}
+                          onChange={(e) => {
+                            updateFinancingFilter('cashAmount', e.target.value)
+                            halalStore.updateState({ cashAvailable: e.target.value })
+                          }}
                           className="h-10"
                         />
                       </div>
@@ -390,7 +477,10 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
                         <Input
                           placeholder="e.g., 500"
                           value={financingFilters.monthlyPayment || ''}
-                          onChange={(e) => updateFinancingFilter('monthlyPayment', e.target.value)}
+                          onChange={(e) => {
+                            updateFinancingFilter('monthlyPayment', e.target.value)
+                            halalStore.updateState({ monthlyPayment: e.target.value })
+                          }}
                           className="h-10"
                         />
                       </div>
@@ -398,7 +488,10 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
                         <Label className="text-sm font-medium mb-2 block">{t('search.financingPeriod')} *</Label>
                         <Select 
                           value={financingFilters.financingPeriod || ''} 
-                          onValueChange={(value) => updateFinancingFilter('financingPeriod', value)}
+                          onValueChange={(value) => {
+                            updateFinancingFilter('financingPeriod', value)
+                            halalStore.updateState({ periodMonths: value })
+                          }}
                         >
                           <SelectTrigger className="h-10">
                             <SelectValue placeholder="Select period" />
@@ -483,19 +576,20 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, onSearchResults,
 
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 {results.slice(0, 10).map((p) => (
-                  <PropertyCard
-                    key={p.id}
-                    id={p.id}
-                    title={p.title || 'Недвижимость'}
-                    location={p.district || p.city || p.location || 'Ташкент'}
-                    price={`$${(p.priceUsd ?? 0).toLocaleString?.() || p.priceUsd}`}
-                    bedrooms={p.bedrooms || 0}
-                    bathrooms={p.bathrooms || 0}
-                    area={p.area || 0}
-                    imageUrl={p.image_url || p.images?.[0] || '/placeholder.svg'}
-                    isVerified={p.verified || false}
-                    isHalalFinanced={p.financingAvailable || false}
-                  />
+                  <div key={p.id} onClick={() => handlePropertyClick(p)}>
+                    <PropertyCard
+                      id={p.id}
+                      title={p.title || 'Недвижимость'}
+                      location={p.district || p.city || p.location || 'Ташкент'}
+                      price={`$${(p.priceUsd ?? 0).toLocaleString?.() || p.priceUsd}`}
+                      bedrooms={p.bedrooms || 0}
+                      bathrooms={p.bathrooms || 0}
+                      area={p.area || 0}
+                      imageUrl={p.image_url || p.images?.[0] || '/placeholder.svg'}
+                      isVerified={p.verified || false}
+                      isHalalFinanced={p.financingAvailable || false}
+                    />
+                  </div>
                 ))}
               </div>
               
