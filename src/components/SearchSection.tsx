@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp, Clock, X, Star, BookmarkPlus, Calculator, ChevronDown, Home, Bath } from "lucide-react"
+import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp, Clock, X, Star, BookmarkPlus, Calculator, ChevronDown, Home, Bath, Building } from "lucide-react"
 import { PropertyCard } from "@/components/PropertyCard"
 import { useScroll } from "@/hooks/use-scroll"
 import { toast } from "@/components/ui/use-toast"
@@ -25,7 +25,6 @@ interface SearchSectionProps {
 }
 
 export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSectionProps) => {
-  const [showFilters, setShowFilters] = useState(false)
   const [showSearchHistory, setShowSearchHistory] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(false)
 
@@ -389,218 +388,211 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                     </div>
                   )}
                 </div>
-                <Button size="lg" className="px-8 shadow-warm" onClick={() => handleSearch()} disabled={searchLoading}>
-                  {searchLoading ? 'Идёт поиск…' : t('search.searchBtn')}
-                </Button>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3">
                 <Button 
-                  onClick={() => handleSearch()} 
-                  disabled={searchLoading}
-                  className={`${
+                  size="lg" 
+                  className={`px-8 shadow-warm ${
                     isHalalMode 
                       ? 'bg-magit-trust hover:bg-magit-trust/90 text-white' 
                       : 'bg-primary hover:bg-primary/90 text-primary-foreground'
                   } transition-all duration-300`}
+                  onClick={() => handleSearch()} 
+                  disabled={searchLoading}
                 >
                   {searchLoading ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
-                      {t('search.searching')}
+                      Поиск...
                     </>
                   ) : (
                     <>
                       <Search className="h-4 w-4 mr-2" />
-                      {t('search.searchButton')}
+                      Найти
                     </>
                   )}
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2"
-                >
-                  <Filter className="h-4 w-4" />
-                  {t('search.filters')}
-                  <ChevronDown className={`h-4 w-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Integrated Filters */}
-          {showFilters && (
-            <Card className="bg-background/60 backdrop-blur-sm border-border/50">
-              <CardContent className="p-6">
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-lg">{t('search.advancedFilters')}</h3>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowFilters(false)}
+          {/* Always Visible Filters */}
+          <Card className="bg-background/60 backdrop-blur-sm border-border/50">
+            <CardContent className="p-6">
+              <div className="space-y-6">
+                <h3 className="font-semibold text-lg">Фильтры</h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* District Filter */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <MapPin className="h-4 w-4" />
+                      Районы
+                    </Label>
+                    <Select 
+                      value={filters.district || 'all'} 
+                      onValueChange={(value) => handleFilterChange('district', value === 'all' ? '' : value)}
                     >
-                      <X className="h-4 w-4" />
-                    </Button>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Все районы" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Все районы</SelectItem>
+                        {districtOptions.map((district) => (
+                          <SelectItem key={district.value} value={district.value}>
+                            {district.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {/* District Filter */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium flex items-center gap-2">
-                        <MapPin className="h-4 w-4" />
-                        {t('search.district')}
-                      </Label>
-                      <Select 
-                        value={filters.district || 'all'} 
-                        onValueChange={(value) => handleFilterChange('district', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">{t('search.allDistricts')}</SelectItem>
-                          {districtOptions.map((district) => (
-                            <SelectItem key={district.value} value={district.value}>
-                              {district.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  {/* Property Type */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <Building className="h-4 w-4" />
+                      Тип недвижимости
+                    </Label>
+                    <Select 
+                      value={filters.propertyType || 'all'} 
+                      onValueChange={(value) => handleFilterChange('propertyType', value === 'all' ? '' : value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Все типы" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Все типы</SelectItem>
+                        <SelectItem value="house">Дом</SelectItem>
+                        <SelectItem value="apartment">Квартира</SelectItem>
+                        <SelectItem value="studio">Студия</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                    {/* Price Min */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium flex items-center gap-2">
-                        <DollarSign className="h-4 w-4" />
-                        {t('search.priceMin')}
-                      </Label>
+                  {/* Bedrooms */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <Bed className="h-4 w-4" />
+                      Спальни
+                    </Label>
+                    <Select 
+                      value={filters.bedrooms || 'all'} 
+                      onValueChange={(value) => handleFilterChange('bedrooms', value === 'all' ? '' : value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Любое количество" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Любое количество</SelectItem>
+                        <SelectItem value="0">0+</SelectItem>
+                        <SelectItem value="1">1+</SelectItem>
+                        <SelectItem value="2">2+</SelectItem>
+                        <SelectItem value="3">3+</SelectItem>
+                        <SelectItem value="4">4+</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Price Range */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <DollarSign className="h-4 w-4" />
+                      Цена (USD)
+                    </Label>
+                    <div className="flex gap-2">
                       <Input
-                        placeholder="20,000"
+                        placeholder="Мин"
                         value={filters.priceMin || ''}
                         onChange={(e) => handleFilterChange('priceMin', e.target.value)}
+                        className="flex-1"
                       />
-                    </div>
-
-                    {/* Price Max */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium flex items-center gap-2">
-                        <DollarSign className="h-4 w-4" />
-                        {t('search.priceMax')}
-                      </Label>
                       <Input
-                        placeholder="100,000"
+                        placeholder="Макс"
                         value={filters.priceMax || ''}
                         onChange={(e) => handleFilterChange('priceMax', e.target.value)}
+                        className="flex-1"
                       />
                     </div>
-
-                    {/* Bedrooms */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium flex items-center gap-2">
-                        <Bed className="h-4 w-4" />
-                        {t('search.bedrooms')}
-                      </Label>
-                      <Select 
-                        value={filters.bedrooms || 'all'} 
-                        onValueChange={(value) => handleFilterChange('bedrooms', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">{t('search.anyBedrooms')}</SelectItem>
-                          <SelectItem value="1">1+</SelectItem>
-                          <SelectItem value="2">2+</SelectItem>
-                          <SelectItem value="3">3+</SelectItem>
-                          <SelectItem value="4">4+</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
                   </div>
+                </div>
 
-                  {/* Halal Financing Section */}
-                  {isHalalMode && (
-                    <div className="space-y-4 p-4 bg-magit-trust/5 rounded-lg border border-magit-trust/20">
-                      <h4 className="font-medium text-magit-trust flex items-center gap-2">
-                        <Calculator className="h-4 w-4" />
-                        {t('search.halalFinancing')}
-                      </h4>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Cash Available */}
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium flex items-center gap-2">
-                            <Wallet className="h-4 w-4" />
-                            {t('search.cashAvailable')}
-                          </Label>
-                          <div className="relative">
-                            <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              placeholder="35,000"
-                              value={filters.cashAvailable || ''}
-                              onChange={(e) => handleFilterChange('cashAvailable', e.target.value)}
-                              className="pl-9"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Financing Period */}
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium flex items-center gap-2">
-                            <Clock className="h-4 w-4" />
-                            {t('search.financingPeriod')}
-                          </Label>
-                          <Select 
-                            value={filters.periodMonths || '12'} 
-                            onValueChange={(value) => handleFilterChange('periodMonths', value)}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {periodOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                {/* Halal Financing Section */}
+                {isHalalMode && (
+                  <div className="space-y-4 p-4 bg-magit-trust/5 rounded-lg border border-magit-trust/20">
+                    <h4 className="font-medium text-magit-trust flex items-center gap-2">
+                      <Calculator className="h-4 w-4" />
+                      Халяль финансирование
+                    </h4>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Cash Available */}
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium flex items-center gap-2">
+                          <Wallet className="h-4 w-4" />
+                          Наличные средства
+                        </Label>
+                        <div className="relative">
+                          <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="35,000"
+                            value={filters.cashAvailable || ''}
+                            onChange={(e) => handleFilterChange('cashAvailable', e.target.value)}
+                            className="pl-9"
+                          />
                         </div>
                       </div>
 
-                      {/* Financing Calculation Display */}
-                      {financingCalculation && (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 bg-background/50 rounded-lg">
-                          <div>
-                            <div className="text-xs text-muted-foreground">{t('search.propertyPrice')}</div>
-                            <div className="font-semibold text-magit-trust">
-                              {formatCurrency(financingCalculation.propertyPrice || 0)}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-xs text-muted-foreground">{t('search.monthlyPayment')}</div>
-                            <div className="font-semibold text-magit-trust">
-                              {formatCurrency(financingCalculation.requiredMonthlyPayment)}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-xs text-muted-foreground">{t('search.totalCost')}</div>
-                            <div className="font-semibold text-magit-trust">
-                              {formatCurrency(financingCalculation.totalCost)}
-                            </div>
+                      {/* Financing Period */}
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          Период финансирования
+                        </Label>
+                        <Select 
+                          value={filters.periodMonths || '12'} 
+                          onValueChange={(value) => handleFilterChange('periodMonths', value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {periodOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    {/* Financing Calculation Display */}
+                    {financingCalculation && (
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 bg-background/50 rounded-lg">
+                        <div>
+                          <div className="text-xs text-muted-foreground">Стоимость недвижимости</div>
+                          <div className="font-semibold text-magit-trust">
+                            {formatCurrency(financingCalculation.propertyPrice || 0)}
                           </div>
                         </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                        <div>
+                          <div className="text-xs text-muted-foreground">Ежемесячный платёж</div>
+                          <div className="font-semibold text-magit-trust">
+                            {formatCurrency(financingCalculation.requiredMonthlyPayment)}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Общая стоимость</div>
+                          <div className="font-semibold text-magit-trust">
+                            {formatCurrency(financingCalculation.totalCost)}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
 
           {/* Search Results */}
           {results.length > 0 && (

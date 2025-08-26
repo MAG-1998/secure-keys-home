@@ -7,6 +7,7 @@ export interface SearchFilters {
   priceMin?: string
   priceMax?: string
   bedrooms?: string
+  propertyType?: string
   hasParking?: boolean
   isNewConstruction?: boolean
   hasGarden?: boolean
@@ -83,7 +84,11 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
 
       // Apply other filters
       if (searchFilters.district && searchFilters.district !== 'all') {
-        query = query.ilike('location', `%${searchFilters.district}%`)
+        query = query.or(`location.ilike.%${searchFilters.district}%,district.ilike.%${searchFilters.district}%`)
+      }
+
+      if (searchFilters.propertyType && searchFilters.propertyType !== 'all') {
+        query = query.eq('property_type', searchFilters.propertyType)
       }
       
       if (searchFilters.priceMin) {
@@ -97,7 +102,10 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
       }
       
       if (searchFilters.bedrooms && searchFilters.bedrooms !== 'all') {
-        query = query.gte('bedrooms', parseInt(searchFilters.bedrooms))
+        const bedroomCount = parseInt(searchFilters.bedrooms)
+        if (!isNaN(bedroomCount)) {
+          query = query.gte('bedrooms', bedroomCount)
+        }
       }
 
       const { data: searchResults, error } = await query.order('created_at', { ascending: false })
