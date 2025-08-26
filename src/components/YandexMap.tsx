@@ -14,6 +14,8 @@ interface YandexMapProps {
   isHalalMode?: boolean;
   t: (key: string) => string;
   language: Language;
+  searchResults?: any[];
+  onSearchResultsChange?: (results: any[]) => void;
 }
 
 interface Property {
@@ -40,7 +42,7 @@ declare global {
   }
 }
 
-const YandexMap: React.FC<YandexMapProps> = memo(({ isHalalMode = false, t, language }) => {
+const YandexMap: React.FC<YandexMapProps> = memo(({ isHalalMode = false, t, language, searchResults: propSearchResults, onSearchResultsChange }) => {
   const navigate = useNavigate();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
@@ -56,7 +58,10 @@ const YandexMap: React.FC<YandexMapProps> = memo(({ isHalalMode = false, t, lang
   const geocodeCacheRef = useRef<Map<string, string>>(new Map());
 
   const { user } = useUser();
-  const { results: searchResults } = useSearchStore();
+  const { results: storeResults } = useSearchStore();
+  
+  // Use prop results if provided, otherwise fall back to store results
+  const searchResults = propSearchResults || storeResults;
 
   // Fetch properties from database
   const { data: dbProperties, isLoading } = useOptimizedQuery(

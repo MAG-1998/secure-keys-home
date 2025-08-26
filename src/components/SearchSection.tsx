@@ -397,7 +397,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3">
                 <Button 
-                  onClick={handleSearch} 
+                  onClick={() => handleSearch()} 
                   disabled={searchLoading}
                   className={`${
                     isHalalMode 
@@ -625,10 +625,17 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   {results.slice(0, 10).map((property) => (
                     <PropertyCard
                       key={property.id}
-                      property={property}
+                      id={property.id}
+                      title={property.title}
+                      location={property.location}
+                      price={property.priceUsd}
+                      bedrooms={property.bedrooms}
+                      bathrooms={property.bathrooms}
+                      area={property.area}
+                      imageUrl={property.image_url}
+                      isVerified={property.verified}
+                      isHalalFinanced={property.financingAvailable}
                       onClick={() => handlePropertyClick(property)}
-                      isHalalMode={isHalalMode}
-                      cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/,/g, '')) || 0 : 0}
                     />
                   ))}
                 </div>

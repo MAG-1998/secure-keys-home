@@ -8,13 +8,19 @@ interface PropertyCardProps {
   id: string
   title: string
   location: string
-  price: string
+  price: string | number
+  priceUsd?: number
   bedrooms: number
   bathrooms: number
   area: number
-  imageUrl: string
+  imageUrl?: string
+  image_url?: string
   isVerified?: boolean
   isHalalFinanced?: boolean
+  verified?: boolean
+  financingAvailable?: boolean
+  onClick?: () => void
+  property?: any // For backward compatibility
 }
 
 export const PropertyCard = ({
@@ -22,23 +28,47 @@ export const PropertyCard = ({
   title,
   location,
   price,
+  priceUsd,
   bedrooms,
   bathrooms,
   area,
   imageUrl,
-  isVerified = true,
-  isHalalFinanced = false
+  image_url,
+  isVerified,
+  isHalalFinanced,
+  verified,
+  financingAvailable,
+  onClick,
+  property
 }: PropertyCardProps) => {
   const navigate = useNavigate()
 
-  const handleNavigate = () => navigate(`/property/${id}`)
+  // Handle backward compatibility with property prop
+  const actualId = id || property?.id
+  const actualTitle = title || property?.title || 'Property'
+  const actualLocation = location || property?.location || property?.district || 'Tashkent'
+  const actualPrice = price || (priceUsd ? `$${priceUsd.toLocaleString()}` : property?.priceUsd ? `$${property.priceUsd.toLocaleString()}` : '$0')
+  const actualBedrooms = bedrooms || property?.bedrooms || 0
+  const actualBathrooms = bathrooms || property?.bathrooms || 0
+  const actualArea = area || property?.area || 0
+  const actualImageUrl = imageUrl || image_url || property?.image_url || '/placeholder.svg'
+  const actualIsVerified = isVerified ?? verified ?? property?.verified ?? false
+  const actualIsHalalFinanced = isHalalFinanced ?? financingAvailable ?? property?.financingAvailable ?? false
+
+  const handleNavigate = () => {
+    if (onClick) {
+      onClick()
+    } else {
+      navigate(`/property/${actualId}`)
+    }
+  }
 
   return (
     <Card onClick={handleNavigate} className="group hover:shadow-warm transition-all duration-300 cursor-pointer">
       <div className="relative">
         <img 
-          src={imageUrl} 
-          alt={title}
+          src={actualImageUrl} 
+          alt={actualTitle}
           className="w-full h-48 object-cover rounded-t-lg"
           loading="lazy"
         />
@@ -52,12 +82,12 @@ export const PropertyCard = ({
           <Heart className="h-4 w-4" />
         </Button>
         <div className="absolute bottom-3 left-3 flex gap-2">
-          {isVerified && (
+          {actualIsVerified && (
             <Badge variant="success" className="text-xs">
               ✓ Verified
             </Badge>
           )}
-          {isHalalFinanced && (
+          {actualIsHalalFinanced && (
             <Badge variant="trust" className="text-xs">
               Halal Financing
             </Badge>
@@ -68,31 +98,31 @@ export const PropertyCard = ({
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-2">
           <h3 className="font-heading font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
-            {title}
+            {actualTitle}
           </h3>
           <div className="text-right">
-            <div className="font-heading font-bold text-xl text-primary">{price}</div>
+            <div className="font-heading font-bold text-xl text-primary">{actualPrice}</div>
             <div className="text-xs text-muted-foreground">Total</div>
           </div>
         </div>
         
         <div className="flex items-center text-muted-foreground mb-3">
           <MapPin className="h-4 w-4 mr-1" />
-          <span className="text-sm">{location}</span>
+          <span className="text-sm">{actualLocation}</span>
         </div>
         
         <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
           <div className="flex items-center">
             <Bed className="h-4 w-4 mr-1" />
-            {bedrooms}
+            {actualBedrooms}
           </div>
           <div className="flex items-center">
             <Bath className="h-4 w-4 mr-1" />
-            {bathrooms}
+            {actualBathrooms}
           </div>
           <div className="flex items-center">
             <Square className="h-4 w-4 mr-1" />
-            {area}m²
+            {actualArea}m²
           </div>
         </div>
         

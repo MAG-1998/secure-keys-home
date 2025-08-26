@@ -303,7 +303,6 @@ export const UnifiedSearchMap = ({
           <LazyMapSection 
             t={t} 
             isHalalMode={isHalalMode} 
-            onHalalModeChange={onHalalModeChange} 
             language={language}
             searchResults={searchResults}
             onSearchResultsChange={setSearchResults}

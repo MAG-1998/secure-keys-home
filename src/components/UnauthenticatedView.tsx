@@ -205,7 +205,6 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
         <SearchSection 
           isHalalMode={isHalalMode} 
           onHalalModeChange={setIsHalalMode}
-          onSearchResults={setSearchResults}
           t={t}
         />
       </section>
@@ -215,7 +214,6 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
         <LazyMapSection 
           t={t} 
           isHalalMode={isHalalMode} 
-          onHalalModeChange={setIsHalalMode} 
           language={language}
           searchResults={searchResults}
           onSearchResultsChange={setSearchResults}
