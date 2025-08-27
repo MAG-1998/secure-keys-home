@@ -425,17 +425,17 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   <div className="space-y-2">
                     <Label className="text-sm font-medium flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
-                      Районы
+                      {t('filter.district')}
                     </Label>
                     <Select 
                       value={filters.district || 'all'} 
                       onValueChange={(value) => handleFilterChange('district', value === 'all' ? '' : value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Все районы" />
+                        <SelectValue placeholder={t('filter.chooseDistrict')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Все районы</SelectItem>
+                        <SelectItem value="all">{t('common.any')}</SelectItem>
                         {districtOptions.map((district) => (
                           <SelectItem key={district.value} value={district.value}>
                             {district.label}
@@ -449,20 +449,20 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   <div className="space-y-2">
                     <Label className="text-sm font-medium flex items-center gap-2">
                       <Building className="h-4 w-4" />
-                      Тип недвижимости
+                      {t('filter.propertyType')}
                     </Label>
                     <Select 
                       value={filters.propertyType || 'all'} 
                       onValueChange={(value) => handleFilterChange('propertyType', value === 'all' ? '' : value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Все типы" />
+                        <SelectValue placeholder={t('filter.chooseType')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Все типы</SelectItem>
-                        <SelectItem value="house">Дом</SelectItem>
-                        <SelectItem value="apartment">Квартира</SelectItem>
-                        <SelectItem value="studio">Студия</SelectItem>
+                        <SelectItem value="all">{t('common.any')}</SelectItem>
+                        <SelectItem value="house">{t('filter.house')}</SelectItem>
+                        <SelectItem value="apartment">{t('filter.apartment')}</SelectItem>
+                        <SelectItem value="studio">{t('filter.studio')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -471,17 +471,17 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   <div className="space-y-2">
                     <Label className="text-sm font-medium flex items-center gap-2">
                       <Bed className="h-4 w-4" />
-                      Спальни
+                      {t('filter.bedrooms')}
                     </Label>
                     <Select 
                       value={filters.bedrooms || 'all'} 
                       onValueChange={(value) => handleFilterChange('bedrooms', value === 'all' ? '' : value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Любое количество" />
+                        <SelectValue placeholder={t('filter.chooseBedrooms')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Любое количество</SelectItem>
+                        <SelectItem value="all">{t('common.any')}</SelectItem>
                         <SelectItem value="0">0+</SelectItem>
                         <SelectItem value="1">1+</SelectItem>
                         <SelectItem value="2">2+</SelectItem>
@@ -495,7 +495,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   <div className="space-y-2">
                     <Label className="text-sm font-medium flex items-center gap-2">
                       <DollarSign className="h-4 w-4" />
-                      Цена (USD)
+                      {t('filter.priceRange')}
                     </Label>
                     <div className="flex gap-2">
                       <Input
@@ -600,7 +600,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-heading font-bold text-xl text-foreground">
-                    {t('search.propertiesFound')} ({results.length})
+                    {results.length} {isHalalMode ? t('search.eligibleProperties') : t('search.propertiesFound')}
                   </h3>
                   {results.length >= 10 && (
                     <Button 
@@ -613,24 +613,28 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {results.slice(0, 10).map((property) => (
-                    <PropertyCard
-                      key={property.id}
-                      id={property.id}
-                      title={property.title}
-                      location={property.location}
-                      price={property.priceUsd}
-                      bedrooms={property.bedrooms}
-                      bathrooms={property.bathrooms}
-                      area={property.area}
-                      imageUrl={property.image_url}
-                      isVerified={property.verified}
-                      isHalalFinanced={property.financingAvailable}
-                      onClick={() => handlePropertyClick(property)}
-                    />
-                  ))}
-                </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {results.slice(0, 10).map((property) => (
+                      <PropertyCard
+                        key={property.id}
+                        id={property.id}
+                        title={property.title}
+                        location={property.location}
+                        price={property.priceUsd}
+                        priceUsd={property.priceUsd}
+                        bedrooms={property.bedrooms}
+                        bathrooms={property.bathrooms}
+                        area={property.area}
+                        imageUrl={property.image_url}
+                        isVerified={property.verified}
+                        isHalalFinanced={property.financingAvailable}
+                        isHalalMode={isHalalMode}
+                        cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined}
+                        financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined}
+                        onClick={() => handlePropertyClick(property)}
+                      />
+                    ))}
+                  </div>
 
                 {aiSuggestion && (
                   <div className="mt-6 p-4 bg-muted/30 rounded-lg">

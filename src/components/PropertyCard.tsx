@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MapPin, Bed, Bath, Square, Heart } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { calculateHalalFinancing } from "@/utils/halalFinancing"
 
 interface PropertyCardProps {
   id: string
@@ -21,6 +22,11 @@ interface PropertyCardProps {
   financingAvailable?: boolean
   onClick?: () => void
   property?: any // For backward compatibility
+  // Halal financing specific props
+  isHalalMode?: boolean
+  cashAvailable?: number
+  financingPeriod?: number
+  monthlyPayment?: number
 }
 
 export const PropertyCard = ({
@@ -39,7 +45,11 @@ export const PropertyCard = ({
   verified,
   financingAvailable,
   onClick,
-  property
+  property,
+  isHalalMode,
+  cashAvailable,
+  financingPeriod,
+  monthlyPayment
 }: PropertyCardProps) => {
   const navigate = useNavigate()
 
@@ -47,7 +57,23 @@ export const PropertyCard = ({
   const actualId = id || property?.id
   const actualTitle = title || property?.title || 'Property'
   const actualLocation = location || property?.location || property?.district || 'Tashkent'
-  const actualPrice = price || (priceUsd ? `$${priceUsd.toLocaleString()}` : property?.priceUsd ? `$${property.priceUsd.toLocaleString()}` : '$0')
+  
+  // Calculate display price based on halal mode
+  let displayPrice = '';
+  let displaySubtext = '';
+  
+  if (isHalalMode && cashAvailable && financingPeriod && priceUsd) {
+    // Show calculated price based on halal financing
+    const calculation = calculateHalalFinancing(cashAvailable, priceUsd, financingPeriod);
+    displayPrice = `$${calculation.requiredMonthlyPayment.toLocaleString()}`;
+    displaySubtext = 'Monthly Payment';
+  } else {
+    // Standard price display
+    const basePrice = price || priceUsd || property?.priceUsd || 0;
+    displayPrice = typeof basePrice === 'string' ? basePrice : `$${basePrice.toLocaleString()}`;
+    displaySubtext = 'Total';
+  }
+  
   const actualBedrooms = bedrooms || property?.bedrooms || 0
   const actualBathrooms = bathrooms || property?.bathrooms || 0
   const actualArea = area || property?.area || 0
@@ -101,8 +127,8 @@ export const PropertyCard = ({
             {actualTitle}
           </h3>
           <div className="text-right">
-            <div className="font-heading font-bold text-xl text-primary">{actualPrice}</div>
-            <div className="text-xs text-muted-foreground">Total</div>
+            <div className="font-heading font-bold text-xl text-primary">{displayPrice}</div>
+            <div className="text-xs text-muted-foreground">{displaySubtext}</div>
           </div>
         </div>
         

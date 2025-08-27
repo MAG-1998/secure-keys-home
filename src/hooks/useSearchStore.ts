@@ -115,7 +115,7 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
       }
 
       // Transform results to expected format
-      const results: Property[] = (searchResults || []).map((prop: any) => ({
+      let results: Property[] = (searchResults || []).map((prop: any) => ({
         id: prop.id,
         title: prop.title || 'Property',
         location: prop.location || prop.district || 'Tashkent',
@@ -129,6 +129,17 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
         latitude: Number(prop.latitude),
         longitude: Number(prop.longitude)
       }))
+
+      // Filter for halal financing eligibility if halal mode is active
+      if (searchFilters.halalMode && searchFilters.cashAvailable) {
+        const cashAmount = parseFloat(searchFilters.cashAvailable.replace(/[^0-9.]/g, '')) || 0;
+        if (cashAmount > 0) {
+          results = results.filter(property => {
+            // Only show properties where cash is at least 50% of property price
+            return cashAmount >= (property.priceUsd * 0.5);
+          });
+        }
+      }
 
       set({ 
         results, 

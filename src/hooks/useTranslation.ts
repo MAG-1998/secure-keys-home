@@ -155,6 +155,16 @@ const translations: Translations = {
     ru: 'Режим халяль финансов',
     uz: 'Halol moliya rejimi'
   },
+  'search.propertiesFound': {
+    en: 'properties found',
+    ru: 'объектов найдено',
+    uz: 'eʼlon topildi'
+  },
+  'search.eligibleProperties': {
+    en: 'eligible properties',
+    ru: 'подходящих объектов',
+    uz: 'mos eʼlonlar'
+  },
   'search.halalBadge': {
     en: '✓ Sharia Compliant',
     ru: '✓ По шариату',
@@ -316,6 +326,28 @@ const translations: Translations = {
     en: 'Studio',
     ru: 'Студия',
     uz: 'Studiya'
+  },
+  'filter.bedrooms': {
+    en: 'Bedrooms',
+    ru: 'Комнаты',
+    uz: 'Xonalar'
+  },
+  'filter.chooseBedrooms': {
+    en: 'Choose bedrooms',
+    ru: 'Выберите количество комнат',
+    uz: 'Xonalar sonini tanlang'
+  },
+  'filter.chooseType': {
+    en: 'Choose type',
+    ru: 'Выберите тип',
+    uz: 'Turini tanlang'
+  },
+
+  // Common
+  'common.any': {
+    en: 'Any',
+    ru: 'Любой',
+    uz: 'Istalgan'
   },
 
   // Popular searches
@@ -731,12 +763,6 @@ const translations: Translations = {
     uz: 'Manzilingizni qidiring, xaritaga bosing yoki Joylashuvimdan foydalaning. Markerni sudrab sozlashingiz mumkin.'
   },
 
-  // Common
-  'common.any': {
-    en: 'Any',
-    ru: 'Любой',
-    uz: 'Har qanday'
-  },
   'common.min': {
     en: 'Min',
     ru: 'Мин',
