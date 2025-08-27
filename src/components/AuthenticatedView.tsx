@@ -62,7 +62,7 @@ export const AuthenticatedView = memo(({
           </div>
           
           {/* Map Section - Full Width */}
-          <div className="w-full h-[500px] md:h-[600px]">
+          <div className="w-full h-[500px] md:h-[600px] border border-border rounded-lg overflow-hidden">
             <YandexMap 
               isHalalMode={isHalalMode} 
               t={t}

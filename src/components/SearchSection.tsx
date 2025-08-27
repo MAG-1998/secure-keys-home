@@ -418,7 +418,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
           <Card className="bg-background/60 backdrop-blur-sm border-border/50">
             <CardContent className="p-6">
               <div className="space-y-6">
-                <h3 className="font-semibold text-lg">Фильтры</h3>
+                <h3 className="font-semibold text-lg">{t('search.filters')}</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* District Filter */}

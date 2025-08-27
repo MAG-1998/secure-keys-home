@@ -482,7 +482,7 @@ const composePinImage = (color: string, priceText: string) => {
   };
 
   return (
-    <div className="relative w-full min-h-[50vh] md:min-h-[60vh] lg:min-h-[65vh]">
+    <div className="relative w-full h-full">
       <div 
         ref={mapContainer}
         className="w-full h-full"
