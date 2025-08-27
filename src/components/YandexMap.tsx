@@ -141,23 +141,42 @@ useEffect(() => {
       return;
     }
 
+    // Check if script is already loading or loaded
+    const existingScript = document.querySelector('script[src*="api-maps.yandex.ru"]');
+    if (existingScript) {
+      if (window.ymaps) {
+        setMapLoaded(true);
+      } else {
+        // Wait for existing script to load
+        existingScript.addEventListener('load', () => {
+          if (window.ymaps) {
+            window.ymaps.ready(() => {
+              setMapLoaded(true);
+            });
+          }
+        });
+      }
+      return;
+    }
+
     const ymLang = language === 'ru' ? 'ru_RU' : (language === 'uz' ? 'uz_UZ' : 'en_US');
     const script = document.createElement('script');
     script.src = `https://api-maps.yandex.ru/2.1/?apikey=8baec550-0c9b-458c-b9bd-e9893af7beb7&lang=${ymLang}`;
     script.async = true;
     script.onload = () => {
-      window.ymaps.ready(() => {
-        setMapLoaded(true);
-      });
+      if (window.ymaps) {
+        window.ymaps.ready(() => {
+          setMapLoaded(true);
+        });
+      }
+    };
+    script.onerror = () => {
+      console.error('Failed to load Yandex Maps API');
     };
     document.head.appendChild(script);
 
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
-  }, []);
+    // Don't remove script on cleanup to prevent race conditions
+  }, [language]);
 
   // Auto-resolve districts from coordinates using Yandex geocoder
   useEffect(() => {
