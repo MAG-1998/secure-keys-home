@@ -61,12 +61,23 @@ export const PropertyCard = ({
   // Calculate display price based on halal mode
   let displayPrice = '';
   let displaySubtext = '';
+  let totalCostDisplay = '';
   
-  if (isHalalMode && cashAvailable && financingPeriod && priceUsd) {
-    // Show calculated price based on halal financing
-    const calculation = calculateHalalFinancing(cashAvailable, priceUsd, financingPeriod);
-    displayPrice = `$${calculation.requiredMonthlyPayment.toLocaleString()}`;
-    displaySubtext = 'Monthly Payment';
+  if (isHalalMode && priceUsd) {
+    if (cashAvailable && financingPeriod) {
+      // Show total property price after financing when boxes are filled
+      const calculation = calculateHalalFinancing(cashAvailable, priceUsd, financingPeriod);
+      const totalPropertyPrice = priceUsd + calculation.fixedFee + calculation.serviceFee + calculation.vat;
+      displayPrice = `$${totalPropertyPrice.toLocaleString()}`;
+      displaySubtext = 'Total after financing';
+      totalCostDisplay = `$${calculation.requiredMonthlyPayment.toLocaleString()}/month`;
+    } else {
+      // Show "starting from" with default 90% cash available and 6 month financing scenario
+      const defaultCash = priceUsd * 0.9;
+      const calculation = calculateHalalFinancing(defaultCash, priceUsd, 6);
+      displayPrice = `Starting from $${calculation.requiredMonthlyPayment.toLocaleString()}`;
+      displaySubtext = 'Monthly Payment';
+    }
   } else {
     // Standard price display
     const basePrice = price || priceUsd || property?.priceUsd || 0;
@@ -129,6 +140,9 @@ export const PropertyCard = ({
           <div className="text-right">
             <div className="font-heading font-bold text-xl text-primary">{displayPrice}</div>
             <div className="text-xs text-muted-foreground">{displaySubtext}</div>
+            {totalCostDisplay && (
+              <div className="text-xs text-muted-foreground mt-1">{totalCostDisplay}</div>
+            )}
           </div>
         </div>
         

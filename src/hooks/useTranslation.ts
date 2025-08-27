@@ -343,6 +343,43 @@ const translations: Translations = {
     uz: 'Turini tanlang'
   },
 
+  // Halal financing translations
+  'halal.financing': {
+    en: 'Halal Financing',
+    ru: 'Халяль финансирование',
+    uz: 'Halol moliyalashtirish'
+  },
+  'halal.cashAvailable': {
+    en: 'Cash Available',
+    ru: 'Наличные средства',
+    uz: 'Naqd pul'
+  },
+  'halal.financingPeriod': {
+    en: 'Financing Period',
+    ru: 'Период финансирования',
+    uz: 'Moliyalashtirish muddati'
+  },
+  'halal.propertyPrice': {
+    en: 'Property Price',
+    ru: 'Стоимость недвижимости',
+    uz: 'Uy narxi'
+  },
+  'halal.monthlyPayment': {
+    en: 'Monthly Payment',
+    ru: 'Ежемесячный платёж',
+    uz: 'Oylik toʻlov'
+  },
+  'halal.totalCost': {
+    en: 'Total Cost',
+    ru: 'Общая стоимость',
+    uz: 'Umumiy narx'
+  },
+  'halal.startingFrom': {
+    en: 'Starting from',
+    ru: 'От',
+    uz: 'Dan boshlab'
+  },
+
   // Common
   'common.any': {
     en: 'Any',

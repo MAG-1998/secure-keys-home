@@ -519,7 +519,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                   <div className="space-y-4 p-4 bg-magit-trust/5 rounded-lg border border-magit-trust/20">
                     <h4 className="font-medium text-magit-trust flex items-center gap-2">
                       <Calculator className="h-4 w-4" />
-                      Халяль финансирование
+                      {t('halal.financing')}
                     </h4>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -527,7 +527,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                       <div className="space-y-2">
                         <Label className="text-sm font-medium flex items-center gap-2">
                           <Wallet className="h-4 w-4" />
-                          Наличные средства
+                          {t('halal.cashAvailable')}
                         </Label>
                         <div className="relative">
                           <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -544,7 +544,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                       <div className="space-y-2">
                         <Label className="text-sm font-medium flex items-center gap-2">
                           <Clock className="h-4 w-4" />
-                          Период финансирования
+                          {t('halal.financingPeriod')}
                         </Label>
                         <Select 
                           value={filters.periodMonths || '12'} 
@@ -563,30 +563,6 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                         </Select>
                       </div>
                     </div>
-
-                    {/* Financing Calculation Display */}
-                    {financingCalculation && (
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 bg-background/50 rounded-lg">
-                        <div>
-                          <div className="text-xs text-muted-foreground">Стоимость недвижимости</div>
-                          <div className="font-semibold text-magit-trust">
-                            {formatCurrency(financingCalculation.propertyPrice || 0)}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground">Ежемесячный платёж</div>
-                          <div className="font-semibold text-magit-trust">
-                            {formatCurrency(financingCalculation.requiredMonthlyPayment)}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground">Общая стоимость</div>
-                          <div className="font-semibold text-magit-trust">
-                            {formatCurrency(financingCalculation.totalCost)}
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
