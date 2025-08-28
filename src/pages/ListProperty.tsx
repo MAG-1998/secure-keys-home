@@ -43,6 +43,7 @@ const ListProperty = () => {
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     // Property Details
+    displayName: "",
     propertyType: "",
     address: "",
     district: "",
@@ -83,7 +84,11 @@ const ListProperty = () => {
         const parsed = JSON.parse(savedData);
         // Only restore non-file data
         const { photos, documents, ...restData } = parsed;
-        setFormData(prev => ({ ...prev, ...restData }));
+        setFormData(prev => ({ 
+          ...prev, 
+          ...restData,
+          displayName: restData.displayName || ""
+        }));
         setLastSaved(new Date().toLocaleTimeString());
       }
       
@@ -103,7 +108,10 @@ const ListProperty = () => {
       try {
         // Save form data (excluding files)
         const { photos, documents, ...dataToSave } = data;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          ...dataToSave,
+          displayName: dataToSave.displayName || ""
+        }));
         localStorage.setItem(STEP_KEY, step.toString());
         setLastSaved(new Date().toLocaleTimeString());
       } catch (error) {
@@ -134,6 +142,7 @@ const ListProperty = () => {
     const bedrooms = formData.bedrooms === 'custom' ? Number(formData.customBedrooms) : Number(formData.bedrooms);
     const bathrooms = formData.bathrooms === 'custom' ? Number(formData.customBathrooms) : Number(formData.bathrooms);
 
+    if (!formData.displayName.trim()) errors.push('Please enter a property name');
     if (!formData.propertyType) errors.push('Please select a property type');
     if (!formData.address) errors.push('Please enter the property address');
     if (!Number.isFinite(price) || price <= 0) errors.push('Please enter a valid price');
@@ -190,6 +199,7 @@ const ListProperty = () => {
       toast({ title: "Draft cleared", description: "Form has been reset to empty state." });
       // Reset form
       setFormData({
+        displayName: "",
         propertyType: "",
         address: "",
         district: "",
@@ -292,7 +302,8 @@ const ListProperty = () => {
 
       const insertPayload: any = {
         user_id: user.user.id,
-        title: `${formData.propertyType} in ${formData.address}`,
+        title: formData.displayName,
+        display_name: formData.displayName,
         location: formData.address,
         property_type: formData.propertyType,
         price: parseFloat(formData.price),
@@ -395,6 +406,16 @@ const ListProperty = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+                  <div>
+                <Label htmlFor="displayName">Property Name</Label>
+                <Input 
+                  id="displayName" 
+                  placeholder="Enter property name" 
+                  value={formData.displayName || ""} 
+                  onChange={e => handleInputChange("displayName", e.target.value)} 
+                />
+              </div>
+              
               <div>
                 <Label htmlFor="propertyType">Property Type</Label>
                 <Select value={formData.propertyType} onValueChange={value => handleInputChange("propertyType", value)}>
@@ -404,7 +425,6 @@ const ListProperty = () => {
                   <SelectContent>
                     <SelectItem value="apartment">Apartment</SelectItem>
                     <SelectItem value="house">House</SelectItem>
-                    <SelectItem value="villa">Villa</SelectItem>
                     <SelectItem value="studio">Studio</SelectItem>
                   </SelectContent>
                 </Select>

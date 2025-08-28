@@ -1,0 +1,266 @@
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { Upload, X, GripVertical } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import {
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+interface PhotoItem {
+  url: string;
+  order_index: number;
+}
+
+interface DragDropPhotoManagerProps {
+  photos: PhotoItem[];
+  onPhotosChange: (photos: PhotoItem[]) => void;
+  propertyId: string;
+  userId: string;
+}
+
+const SortablePhotoItem = ({ photo, onRemove, index }: { 
+  photo: PhotoItem; 
+  onRemove: () => void; 
+  index: number;
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: photo.url });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="relative group border rounded-lg overflow-hidden bg-card"
+    >
+      <div className="relative">
+        <img
+          src={photo.url}
+          alt={`Property photo ${index + 1}`}
+          className="w-full h-32 object-cover"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div className="flex items-center space-x-2">
+            <Button
+              {...attributes}
+              {...listeners}
+              variant="secondary"
+              size="sm"
+              className="cursor-grab active:cursor-grabbing"
+            >
+              <GripVertical className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={onRemove}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+        {index === 0 && (
+          <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
+            Primary
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userId }: DragDropPhotoManagerProps) => {
+  const { toast } = useToast();
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = photos.findIndex((photo) => photo.url === active.id);
+      const newIndex = photos.findIndex((photo) => photo.url === over?.id);
+
+      const reorderedPhotos = arrayMove(photos, oldIndex, newIndex).map((photo, index) => ({
+        ...photo,
+        order_index: index
+      }));
+
+      onPhotosChange(reorderedPhotos);
+    }
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    if (photos.length + files.length > 20) {
+      toast({
+        title: "Too many photos",
+        description: "Maximum 20 photos allowed",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const uploadedPhotos: PhotoItem[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}_${i}.${fileExt}`;
+        const filePath = `${userId}/properties/${propertyId}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('properties')
+          .upload(filePath, file, { upsert: false });
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('properties')
+          .getPublicUrl(filePath);
+
+        uploadedPhotos.push({
+          url: publicUrl,
+          order_index: photos.length + i
+        });
+      }
+
+      onPhotosChange([...photos, ...uploadedPhotos]);
+      
+      toast({
+        title: "Photos uploaded",
+        description: `${uploadedPhotos.length} photo(s) uploaded successfully`
+      });
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload photos",
+        variant: "destructive"
+      });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    if (photos.length <= 1) {
+      toast({
+        title: "Cannot remove",
+        description: "At least one photo is required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newPhotos = photos.filter((_, i) => i !== index).map((photo, i) => ({
+      ...photo,
+      order_index: i
+    }));
+    
+    onPhotosChange(newPhotos);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Property Photos</h3>
+        <Button
+          variant="outline"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading || photos.length >= 20}
+        >
+          <Upload className="h-4 w-4 mr-2" />
+          {uploading ? "Uploading..." : "Add Photos"}
+        </Button>
+      </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+
+      {photos.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-sm text-muted-foreground">
+            Drag to reorder • First photo will be the primary image • {photos.length}/20 photos
+          </p>
+          
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext items={photos.map(p => p.url)} strategy={verticalListSortingStrategy}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {photos.map((photo, index) => (
+                  <SortablePhotoItem
+                    key={photo.url}
+                    photo={photo}
+                    index={index}
+                    onRemove={() => removePhoto(index)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </div>
+      )}
+
+      {photos.length === 0 && (
+        <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
+          <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <p className="text-muted-foreground">No photos uploaded yet</p>
+          <p className="text-sm text-muted-foreground mt-1">Click "Add Photos" to upload property images</p>
+        </div>
+      )}
+    </div>
+  );
+};

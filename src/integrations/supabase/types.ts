@@ -244,20 +244,24 @@ export type Database = {
           area: number | null
           bathrooms: number | null
           bedrooms: number | null
+          cash_min_percent: number | null
           created_at: string
           description: string | null
+          display_name: string
           district: string | null
           documents: Json | null
           halal_financing_requested: boolean | null
           halal_financing_status: string | null
           id: string
           image_url: string | null
+          is_halal_available: boolean | null
           is_halal_financed: boolean | null
           is_verified: boolean | null
           latitude: number | null
           location: string
           longitude: number | null
           moderator_notes: string | null
+          period_options: Json | null
           photos: Json | null
           price: number
           property_type: string | null
@@ -274,20 +278,24 @@ export type Database = {
           area?: number | null
           bathrooms?: number | null
           bedrooms?: number | null
+          cash_min_percent?: number | null
           created_at?: string
           description?: string | null
+          display_name: string
           district?: string | null
           documents?: Json | null
           halal_financing_requested?: boolean | null
           halal_financing_status?: string | null
           id?: string
           image_url?: string | null
+          is_halal_available?: boolean | null
           is_halal_financed?: boolean | null
           is_verified?: boolean | null
           latitude?: number | null
           location: string
           longitude?: number | null
           moderator_notes?: string | null
+          period_options?: Json | null
           photos?: Json | null
           price: number
           property_type?: string | null
@@ -304,20 +312,24 @@ export type Database = {
           area?: number | null
           bathrooms?: number | null
           bedrooms?: number | null
+          cash_min_percent?: number | null
           created_at?: string
           description?: string | null
+          display_name?: string
           district?: string | null
           documents?: Json | null
           halal_financing_requested?: boolean | null
           halal_financing_status?: string | null
           id?: string
           image_url?: string | null
+          is_halal_available?: boolean | null
           is_halal_financed?: boolean | null
           is_verified?: boolean | null
           latitude?: number | null
           location?: string
           longitude?: number | null
           moderator_notes?: string | null
+          period_options?: Json | null
           photos?: Json | null
           price?: number
           property_type?: string | null
@@ -337,6 +349,41 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      property_photos: {
+        Row: {
+          created_at: string | null
+          id: string
+          order_index: number
+          property_id: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          order_index?: number
+          property_id: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          order_index?: number
+          property_id?: string
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_photos_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
           },
         ]
       }

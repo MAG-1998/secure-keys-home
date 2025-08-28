@@ -20,11 +20,13 @@ import { forceLocalSignOut } from "@/lib/auth";
 import { parseISO, isValid, format } from "date-fns";
 import { HalalFinancingBreakdown } from "@/components/HalalFinancingBreakdown";
 import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore";
+import { PropertyEditDialog } from "@/components/PropertyEditDialog";
 
 interface PropertyDetail {
   id: string;
   user_id: string;
   title: string;
+  display_name?: string;
   description: string | null;
   location: string;
   price: number;
@@ -36,7 +38,11 @@ interface PropertyDetail {
   visit_hours: any;
   is_verified?: boolean | null;
   is_halal_financed?: boolean | null;
+  is_halal_available?: boolean | null;
   halal_financing_status?: string | null;
+  cash_min_percent?: number;
+  period_options?: string[];
+  property_type?: string;
   profiles?: { full_name?: string | null; email?: string | null; user_id?: string } | null;
 }
 
@@ -76,6 +82,8 @@ const PropertyDetails = () => {
   
   const [visitRequestSent, setVisitRequestSent] = useState(false);
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   // Handle query parameters for halal financing
   useEffect(() => {
@@ -231,17 +239,27 @@ const PropertyDetails = () => {
             setSavedId(saved.id);
           }
 
-          // Check for existing pending visit requests
-          const { data: existingRequest } = await supabase
-            .from("property_visits")
-            .select("id, status")
-            .eq("visitor_id", sUser.id)
-            .eq("property_id", id)
-            .in("status", ["pending", "confirmed"])
-            .maybeSingle();
-          if (existingRequest) {
-            setHasPendingRequest(true);
-          }
+        // Check for existing pending visit requests
+        const { data: existingRequest } = await supabase
+          .from("property_visits")
+          .select("id, status")
+          .eq("visitor_id", sUser.id)
+          .eq("property_id", id)
+          .in("status", ["pending", "confirmed"])
+          .maybeSingle();
+        if (existingRequest) {
+          setHasPendingRequest(true);
+        }
+
+        // Get user role
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("user_id", sUser.id)
+          .maybeSingle();
+        if (profile) {
+          setUserRole(profile.role);
+        }
         }
       } catch (e: any) {
         console.error(e);
@@ -383,6 +401,16 @@ const PropertyDetails = () => {
     }
   };
 
+  const handlePropertyUpdate = (updatedProperty: PropertyDetail) => {
+    setProperty(updatedProperty);
+  };
+
+  const canEdit = user && (
+    property?.user_id === user.id || 
+    userRole === 'admin' || 
+    userRole === 'moderator'
+  );
+
   if (loading) {
     return (
       <section className="py-10">
@@ -514,40 +542,43 @@ const PropertyDetails = () => {
             </div>
 
             <div className="lg:w-1/3 w-full space-y-6">
-              {/* Check if user is the property owner */}
-              {user?.id === property.user_id ? (
-                // Owner view - show edit/delete options
+              {/* Edit button for property owner or moderators/admins */}
+              {canEdit && (
                 <Card>
                   <CardContent className="p-6 space-y-4">
                     <h3 className="font-semibold">Manage Property</h3>
                     <div className="space-y-3">
                       <Button 
                         className="w-full" 
-                        onClick={() => navigate(`/manage-property/${property.id}`)}
+                        onClick={() => setIsEditDialogOpen(true)}
                       >
                         <Edit className="h-4 w-4 mr-2" />
                         Edit Property
                       </Button>
-                      <Button 
-                        variant="destructive" 
-                        className="w-full"
-                        onClick={() => {
-                          if (confirm("Are you sure you want to delete this property? This action cannot be undone.")) {
-                            // Handle delete
-                            supabase.from('properties').delete().eq('id', property.id).then(() => {
-                              toast({ title: "Property deleted", description: "Your property has been removed" });
-                              navigate('/my-properties');
-                            });
-                          }
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete Property
-                      </Button>
+                      {user?.id === property.user_id && (
+                        <Button 
+                          variant="destructive" 
+                          className="w-full"
+                          onClick={() => {
+                            if (confirm("Are you sure you want to delete this property? This action cannot be undone.")) {
+                              supabase.from('properties').delete().eq('id', property.id).then(() => {
+                                toast({ title: "Property deleted", description: "Your property has been removed" });
+                                navigate('/my-properties');
+                              });
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Property
+                        </Button>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
-              ) : (
+              )}
+
+              {/* Visitor actions (or if not owner/admin) */}
+              {!canEdit && (
                 // Visitor view - show visit/message/report options
                 <>
                   <Card>
@@ -715,6 +746,14 @@ const PropertyDetails = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Property Edit Dialog */}
+        <PropertyEditDialog
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          property={property}
+          onPropertyUpdate={handlePropertyUpdate}
+        />
       </main>
     </>
   );

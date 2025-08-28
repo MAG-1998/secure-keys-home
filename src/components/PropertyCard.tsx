@@ -8,6 +8,7 @@ import { calculateHalalFinancing } from "@/utils/halalFinancing"
 interface PropertyCardProps {
   id: string
   title: string
+  display_name?: string
   location: string
   price: string | number
   priceUsd?: number
@@ -32,6 +33,7 @@ interface PropertyCardProps {
 export const PropertyCard = ({
   id,
   title,
+  display_name,
   location,
   price,
   priceUsd,
@@ -55,7 +57,7 @@ export const PropertyCard = ({
 
   // Handle backward compatibility with property prop
   const actualId = id || property?.id
-  const actualTitle = title || property?.title || 'Property'
+  const actualTitle = display_name || title || property?.display_name || property?.title || 'Property'
   const actualLocation = location || property?.location || property?.district || 'Tashkent'
   
   // Calculate display price based on halal mode
