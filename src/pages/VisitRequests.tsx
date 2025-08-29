@@ -431,7 +431,11 @@ const VisitRequests = () => {
               </div>
               <h1 className="font-heading font-bold text-xl text-foreground">{title}</h1>
             </div>
-            <Button variant="outline" onClick={() => navigate('/my-properties')}>My Listings</Button>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={() => navigate('/my-properties')}>
+                My Listings
+              </Button>
+            </div>
           </div>
         </div>
       </header>

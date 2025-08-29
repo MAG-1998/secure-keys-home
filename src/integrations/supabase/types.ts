@@ -14,6 +14,144 @@ export type Database = {
   }
   public: {
     Tables: {
+      finance_doc_requests: {
+        Row: {
+          created_at: string | null
+          deadline_at: string | null
+          description: string | null
+          document_type: string
+          file_url: string | null
+          financing_request_id: string
+          id: string
+          requested_by: string
+          response_notes: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          deadline_at?: string | null
+          description?: string | null
+          document_type: string
+          file_url?: string | null
+          financing_request_id: string
+          id?: string
+          requested_by: string
+          response_notes?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          deadline_at?: string | null
+          description?: string | null
+          document_type?: string
+          file_url?: string | null
+          financing_request_id?: string
+          id?: string
+          requested_by?: string
+          response_notes?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "finance_doc_requests_financing_request_id_fkey"
+            columns: ["financing_request_id"]
+            isOneToOne: false
+            referencedRelation: "financing_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financing_activity_log: {
+        Row: {
+          action_type: string
+          actor_id: string
+          created_at: string | null
+          details: Json | null
+          financing_request_id: string
+          id: string
+        }
+        Insert: {
+          action_type: string
+          actor_id: string
+          created_at?: string | null
+          details?: Json | null
+          financing_request_id: string
+          id?: string
+        }
+        Update: {
+          action_type?: string
+          actor_id?: string
+          created_at?: string | null
+          details?: Json | null
+          financing_request_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financing_activity_log_financing_request_id_fkey"
+            columns: ["financing_request_id"]
+            isOneToOne: false
+            referencedRelation: "financing_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financing_requests: {
+        Row: {
+          admin_notes: string | null
+          cash_available: number | null
+          created_at: string | null
+          id: string
+          period_months: number | null
+          property_id: string
+          requested_amount: number | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          cash_available?: number | null
+          created_at?: string | null
+          id?: string
+          period_months?: number | null
+          property_id: string
+          requested_amount?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          cash_available?: number | null
+          created_at?: string | null
+          id?: string
+          period_months?: number | null
+          property_id?: string
+          requested_amount?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financing_requests_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       halal_financing_requests: {
         Row: {
           admin_notes: string | null
@@ -250,8 +388,12 @@ export type Database = {
           display_name: string
           district: string | null
           documents: Json | null
+          halal_approved_at: string | null
+          halal_approved_by: string | null
+          halal_approved_once: boolean | null
           halal_financing_requested: boolean | null
           halal_financing_status: string | null
+          halal_status: string | null
           id: string
           image_url: string | null
           is_halal_available: boolean | null
@@ -284,8 +426,12 @@ export type Database = {
           display_name: string
           district?: string | null
           documents?: Json | null
+          halal_approved_at?: string | null
+          halal_approved_by?: string | null
+          halal_approved_once?: boolean | null
           halal_financing_requested?: boolean | null
           halal_financing_status?: string | null
+          halal_status?: string | null
           id?: string
           image_url?: string | null
           is_halal_available?: boolean | null
@@ -318,8 +464,12 @@ export type Database = {
           display_name?: string
           district?: string | null
           documents?: Json | null
+          halal_approved_at?: string | null
+          halal_approved_by?: string | null
+          halal_approved_once?: boolean | null
           halal_financing_requested?: boolean | null
           halal_financing_status?: string | null
+          halal_status?: string | null
           id?: string
           image_url?: string | null
           is_halal_available?: boolean | null
@@ -825,6 +975,10 @@ export type Database = {
           target_user_id: string
         }
         Returns: boolean
+      }
+      auto_expire_visits: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       can_user_create_visit_request: {
         Args: { user_id_param: string }

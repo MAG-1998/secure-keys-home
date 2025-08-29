@@ -194,6 +194,14 @@ const SavedProperties = () => {
               </div>
               <h1 className="font-heading font-bold text-xl text-foreground">Saved Properties</h1>
             </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={() => navigate('/my-requests')}>
+                My Requests
+              </Button>
+              <Button variant="outline" onClick={() => navigate('/properties')}>
+                Browse More
+              </Button>
+            </div>
           </div>
         </div>
       </header>

@@ -22,6 +22,7 @@ const MyRequests = lazy(() => import("./pages/MyRequests"));
 const VisitRequests = lazy(() => import("./pages/VisitRequests"));
 const ModeratorDashboard = lazy(() => import("./pages/ModeratorDashboard"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const AdminFinancing = lazy(() => import("./pages/AdminFinancing"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentCancelled = lazy(() => import("./pages/PaymentCancelled"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -134,6 +135,20 @@ const App = () => (
                 <OptimizedRoute requiredRoles={['admin']}>
                   <Suspense fallback={<PageLoading />}>
                     <AdminDashboard />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/admin/financing" element={
+                <OptimizedRoute requiredRoles={['admin', 'moderator']}>
+                  <Suspense fallback={<PageLoading />}>
+                    <AdminFinancing />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/admin/financing/:requestId" element={
+                <OptimizedRoute requiredRoles={['admin', 'moderator']}>
+                  <Suspense fallback={<PageLoading />}>
+                    <AdminFinancing />
                   </Suspense>
                 </OptimizedRoute>
               } />

@@ -316,13 +316,15 @@ const MyProperties = () => {
                     </TabsContent>
                   </Tabs>
                   
-                  <Button 
-                    variant="outline" 
-                    className="w-full mt-4"
-                    onClick={() => navigate(`/property/${property.id}/manage`)}
-                  >
-                    Manage Property
-                  </Button>
+                  <div className="flex gap-2 mt-4">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => navigate(`/property/${property.id}/manage`)}
+                    >
+                      Manage Property
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}

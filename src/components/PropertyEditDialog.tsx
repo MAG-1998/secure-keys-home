@@ -24,9 +24,7 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
     display_name: "",
     price: 0,
     property_type: "",
-    is_halal_available: false,
-    cash_min_percent: 50,
-    period_options: ["6", "9", "12", "18", "24"]
+    is_halal_available: false
   });
   const [photos, setPhotos] = useState<{ url: string; order_index: number }[]>([]);
 
@@ -36,9 +34,7 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
         display_name: property.display_name || property.title || "",
         price: property.price || 0,
         property_type: property.property_type || "",
-        is_halal_available: property.is_halal_available || false,
-        cash_min_percent: property.cash_min_percent || 50,
-        period_options: property.period_options || ["6", "9", "12", "18", "24"]
+        is_halal_available: property.is_halal_available || false
       });
       
       // Load photos from property_photos table if exists, otherwise from photos field
@@ -77,19 +73,39 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
   const handleSave = async () => {
     setSaving(true);
     try {
+      // Handle halal financing toggle logic
+      let updateData: any = {
+        display_name: formData.display_name,
+        title: formData.display_name, // Keep title in sync
+        price: formData.price,
+        property_type: formData.property_type,
+        image_url: photos.length > 0 ? photos[0].url : null
+      };
+
+      // Halal financing approval logic
+      if (formData.is_halal_available !== property.is_halal_available) {
+        if (formData.is_halal_available) {
+          // Turning ON halal financing
+          if (!property.halal_approved_once) {
+            // First time enabling - requires approval
+            updateData.halal_status = 'pending_approval';
+            updateData.is_halal_available = false; // Keep false until approved
+          } else {
+            // Previously approved - can enable immediately
+            updateData.halal_status = 'approved';
+            updateData.is_halal_available = true;
+          }
+        } else {
+          // Turning OFF halal financing
+          updateData.halal_status = 'disabled';
+          updateData.is_halal_available = false;
+        }
+      }
+
       // Update property
       const { error: propertyError } = await supabase
         .from("properties")
-        .update({
-          display_name: formData.display_name,
-          title: formData.display_name, // Keep title in sync
-          price: formData.price,
-          property_type: formData.property_type,
-          is_halal_available: formData.is_halal_available,
-          cash_min_percent: formData.cash_min_percent,
-          period_options: formData.period_options,
-          image_url: photos.length > 0 ? photos[0].url : null
-        })
+        .update(updateData)
         .eq("id", property.id);
 
       if (propertyError) throw propertyError;
@@ -124,7 +140,7 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
 
       const updatedProperty = {
         ...property,
-        ...formData,
+        ...updateData,
         title: formData.display_name,
         photos: photos.map(p => p.url),
         image_url: photos.length > 0 ? photos[0].url : null
@@ -226,49 +242,20 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
               <Label htmlFor="is_halal_available">Enable Halal Financing</Label>
             </div>
             
-            {formData.is_halal_available && (
-              <>
-                <div>
-                  <Label htmlFor="cash_min_percent">Minimum Cash Percentage (%)</Label>
-                  <Input
-                    id="cash_min_percent"
-                    type="number"
-                    min="1"
-                    max="100"
-                    value={formData.cash_min_percent}
-                    onChange={(e) => setFormData(prev => ({ ...prev, cash_min_percent: Number(e.target.value) }))}
-                  />
-                </div>
-                
-                <div>
-                  <Label>Available Periods (months)</Label>
-                  <div className="grid grid-cols-3 gap-2 mt-2">
-                    {["6", "9", "12", "18", "24"].map((period) => (
-                      <div key={period} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id={`period_${period}`}
-                          checked={formData.period_options.includes(period)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setFormData(prev => ({
-                                ...prev,
-                                period_options: [...prev.period_options, period]
-                              }));
-                            } else {
-                              setFormData(prev => ({
-                                ...prev,
-                                period_options: prev.period_options.filter(p => p !== period)
-                              }));
-                            }
-                          }}
-                        />
-                        <Label htmlFor={`period_${period}`}>{period} months</Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
+            {property.halal_status === 'pending_approval' && (
+              <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg">
+                <p className="text-sm text-warning">
+                  Halal financing approval is pending. You will be notified once it's reviewed.
+                </p>
+              </div>
+            )}
+            
+            {property.halal_approved_once && (
+              <div className="p-3 bg-success/10 border border-success/20 rounded-lg">
+                <p className="text-sm text-success">
+                  Halal financing has been approved for this property. You can now enable/disable it freely.
+                </p>
+              </div>
             )}
           </TabsContent>
         </Tabs>
