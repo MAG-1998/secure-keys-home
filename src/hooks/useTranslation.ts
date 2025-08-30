@@ -384,7 +384,7 @@ const translations: Translations = {
   'common.any': {
     en: 'Any',
     ru: 'Любой',
-    uz: 'Istalgan'
+    uz: 'Hammasi'
   },
 
   // Popular searches
