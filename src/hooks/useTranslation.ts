@@ -900,7 +900,67 @@ const translations: Translations = {
   'payment.success.desc': { en: 'Your payment has been processed successfully. Your property listing application is now being reviewed.', ru: 'Ваш платёж успешно обработан. Ваша заявка на размещение объявления рассматривается.', uz: 'Toʻlovingiz muvaffaqiyatli amalga oshirildi. Eʼloningiz koʻrib chiqilmoqda.' },
 
   // Not Found
-  'notFound.subtitle': { en: 'Oops! Page not found', ru: 'Упс! Страница не найдена', uz: 'Uzr! Sahifa topilmadi' }
+  'notFound.subtitle': { en: 'Oops! Page not found', ru: 'Упс! Страница не найдена', uz: 'Uzr! Sahifa topilmadi' },
+
+  // Property Edit
+  'edit.enableHalalFinancing': { en: 'Enable Halal Financing', ru: 'Включить Халяль финансирование', uz: 'Halol moliyani yoqish' },
+  'edit.halalPendingApproval': { en: 'Halal financing approval is pending. You will be notified once it\'s reviewed.', ru: 'Одобрение халяль финансирования ожидается. Вы получите уведомление после рассмотрения.', uz: 'Halol moliya tasdiqlanishi kutilmoqda. Ko\'rib chiqilgandan so\'ng sizga xabar beriladi.' },
+  'edit.halalApproved': { en: 'Halal financing has been approved for this property. You can toggle it on/off as needed.', ru: 'Халяль финансирование одобрено для этого объекта. Вы можете включать/выключать по необходимости.', uz: 'Ushbu mulk uchun halol moliya tasdiqlangan. Kerak bo\'lganda yoqib/o\'chirib turishingiz mumkin.' },
+
+  // Visit status
+  'visit.confirmed': { en: 'confirmed', ru: 'подтверждено', uz: 'tasdiqlangan' },
+  'visit.pending': { en: 'pending', ru: 'ожидается', uz: 'kutilmoqda' },
+  'visit.cancelled': { en: 'cancelled', ru: 'отменено', uz: 'bekor qilingan' },
+  'visit.completed': { en: 'completed', ru: 'завершено', uz: 'tugallangan' },
+  'visit.expired': { en: 'expired', ru: 'истекло', uz: 'muddati tugagan' },
+
+  // General UI
+  'common.noUpcomingVisits': { en: 'No upcoming visits', ru: 'Нет предстоящих визитов', uz: 'Kelgusidagi tashriflar yo\'q' },
+  'common.moreVisits': { en: 'more visits', ru: 'ещё визитов', uz: 'yana tashriflar' },
+  'common.additionalNotes': { en: 'Additional notes (optional)', ru: 'Дополнительные заметки (необязательно)', uz: 'Qo\'shimcha eslatmalar (ixtiyoriy)' },
+  'common.shareExperience': { en: 'Share your experience or notes about this visit...', ru: 'Поделитесь опытом или заметками об этом визите...', uz: 'Ushbu tashrif haqida tajribangiz yoki eslatmalaringizni ulashing...' },
+  'common.cancel': { en: 'Cancel', ru: 'Отмена', uz: 'Bekor qilish' },
+
+  // Admin
+  'admin.pending': { en: 'pending', ru: 'ожидает', uz: 'kutilmoqda' },
+  'admin.approved': { en: 'approved', ru: 'одобрено', uz: 'tasdiqlangan' },
+  'admin.rejected': { en: 'rejected', ru: 'отклонено', uz: 'rad etilgan' },
+  'admin.saveFailed': { en: 'Failed to save review', ru: 'Не удалось сохранить отзыв', uz: 'Sharhni saqlash muvaffaqiyatsiz' },
+
+  // Property Management
+  'property.edit': { en: 'Edit', ru: 'Редактировать', uz: 'Tahrirlash' },
+  'property.save': { en: 'Save Changes', ru: 'Сохранить изменения', uz: 'O\'zgarishlarni saqlash' },
+  'property.generalInfo': { en: 'General Info', ru: 'Общая информация', uz: 'Umumiy ma\'lumot' },
+  'property.photos': { en: 'Photos', ru: 'Фотографии', uz: 'Suratlar' },
+  'property.financing': { en: 'Financing', ru: 'Финансирование', uz: 'Moliyalashtirish' },
+  'property.displayName': { en: 'Display Name', ru: 'Отображаемое имя', uz: 'Ko\'rsatiladigan nom' },
+  'property.displayNamePlaceholder': { en: 'Enter property name', ru: 'Введите название объекта', uz: 'Mulk nomini kiriting' },
+  'property.price': { en: 'Price (USD)', ru: 'Цена (USD)', uz: 'Narx (USD)' },
+  'property.description': { en: 'Description', ru: 'Описание', uz: 'Tavsif' },
+
+  // Photo management
+  'photo.dragToReorder': { en: 'Drag to reorder • First photo will be the primary image', ru: 'Перетащите для изменения порядка • Первое фото станет главным', uz: 'Tartibni o\'zgartirish uchun sudrang • Birinchi surat asosiy bo\'ladi' },
+  'photo.uploading': { en: 'Uploading...', ru: 'Загрузка...', uz: 'Yuklanmoqda...' },
+  'photo.addPhotos': { en: 'Add Photos', ru: 'Добавить фото', uz: 'Surat qo\'shish' },
+  'photo.propertyPhotos': { en: 'Property Photos', ru: 'Фотографии объекта', uz: 'Mulk suratlari' },
+  'photo.primary': { en: 'Primary', ru: 'Главное', uz: 'Asosiy' },
+  'photo.tooMany': { en: 'Too many photos', ru: 'Слишком много фото', uz: 'Juda ko\'p surat' },
+  'photo.maxAllowed': { en: 'Maximum 20 photos allowed', ru: 'Максимум 20 фотографий', uz: 'Maksimum 20 ta surat mumkin' },
+  'photo.uploaded': { en: 'Photos uploaded', ru: 'Фото загружены', uz: 'Suratlar yuklandi' },
+  'photo.uploadedSuccess': { en: 'photo(s) uploaded successfully', ru: 'фото успешно загружены', uz: 'surat muvaffaqiyatli yuklandi' },
+  'photo.uploadFailed': { en: 'Upload failed', ru: 'Загрузка не удалась', uz: 'Yuklash muvaffaqiyatsiz' },
+  'photo.failedToUpload': { en: 'Failed to upload photos', ru: 'Не удалось загрузить фото', uz: 'Suratlarni yuklash muvaffaqiyatsiz' },
+  'photo.cannotRemove': { en: 'Cannot remove', ru: 'Нельзя удалить', uz: 'O\'chirib bo\'lmaydi' },
+  'photo.oneRequired': { en: 'At least one photo is required', ru: 'Требуется минимум одно фото', uz: 'Kamida bitta surat kerak' },
+  'photo.noPhotos': { en: 'No photos uploaded yet', ru: 'Фото пока не загружены', uz: 'Hali suratlar yuklanmagan' },
+  'photo.clickToUpload': { en: 'Click "Add Photos" to upload property images', ru: 'Нажмите "Добавить фото" для загрузки изображений объекта', uz: 'Mulk suratlarini yuklash uchun "Surat qo\'shish" tugmasini bosing' },
+
+  // Missing common translations
+  'common.saving': { en: 'Saving...', ru: 'Сохранение...', uz: 'Saqlanmoqda...' },
+  'common.success': { en: 'Success', ru: 'Успех', uz: 'Muvaffaqiyat' },
+  'common.error': { en: 'Error', ru: 'Ошибка', uz: 'Xato' },
+  'common.updated': { en: 'Property updated successfully', ru: 'Объект успешно обновлен', uz: 'Mulk muvaffaqiyatli yangilandi' },
+  'common.updateFailed': { en: 'Failed to update property', ru: 'Не удалось обновить объект', uz: 'Mulkni yangilash muvaffaqiyatsiz' }
 };
 
 const LANGUAGE_STORAGE_KEY = 'magit_language';

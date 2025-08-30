@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import { supabase } from "@/integrations/supabase/client";
 import { DragDropPhotoManager } from "./DragDropPhotoManager";
 
@@ -19,6 +20,7 @@ interface PropertyEditDialogProps {
 
 export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpdate }: PropertyEditDialogProps) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     display_name: "",
@@ -150,14 +152,14 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
       onOpenChange(false);
       
       toast({
-        title: "Success",
-        description: "Property updated successfully"
+        title: t('common.success'),
+        description: t('common.updated')
       });
     } catch (error: any) {
       console.error("Error updating property:", error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to update property",
+        title: t('common.error'),
+        description: error.message || t('common.updateFailed'),
         variant: "destructive"
       });
     } finally {
@@ -173,29 +175,29 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Property</DialogTitle>
+          <DialogTitle>{t('property.edit')}</DialogTitle>
         </DialogHeader>
         
         <Tabs defaultValue="general" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="photos">Photos</TabsTrigger>
-            <TabsTrigger value="financing">Financing</TabsTrigger>
+            <TabsTrigger value="general">{t('property.generalInfo')}</TabsTrigger>
+            <TabsTrigger value="photos">{t('property.photos')}</TabsTrigger>
+            <TabsTrigger value="financing">{t('property.financing')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="general" className="space-y-4">
             <div>
-              <Label htmlFor="display_name">Property Name</Label>
+              <Label htmlFor="display_name">{t('property.displayName')}</Label>
               <Input
                 id="display_name"
                 value={formData.display_name}
                 onChange={(e) => setFormData(prev => ({ ...prev, display_name: e.target.value }))}
-                placeholder="Enter property name"
+                placeholder={t('property.displayNamePlaceholder')}
               />
             </div>
             
             <div>
-              <Label htmlFor="price">Price (USD)</Label>
+              <Label htmlFor="price">{t('property.price')}</Label>
               <Input
                 id="price"
                 type="number"
@@ -206,18 +208,18 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
             </div>
             
             <div>
-              <Label htmlFor="property_type">Property Type</Label>
+              <Label htmlFor="property_type">{t('filter.propertyType')}</Label>
               <Select 
                 value={formData.property_type} 
                 onValueChange={(value) => setFormData(prev => ({ ...prev, property_type: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select property type" />
+                  <SelectValue placeholder={t('filter.chooseType')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="apartment">Apartment</SelectItem>
-                  <SelectItem value="house">House</SelectItem>
-                  <SelectItem value="studio">Studio</SelectItem>
+                  <SelectItem value="apartment">{t('propertyType.apartment')}</SelectItem>
+                  <SelectItem value="house">{t('propertyType.house')}</SelectItem>
+                  <SelectItem value="studio">{t('propertyType.studio')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -239,13 +241,13 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
                 checked={formData.is_halal_available}
                 onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_halal_available: checked }))}
               />
-              <Label htmlFor="is_halal_available">Enable Halal Financing</Label>
+              <Label htmlFor="is_halal_available">{t('edit.enableHalalFinancing')}</Label>
             </div>
             
             {property.halal_status === 'pending_approval' && (
               <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg">
                 <p className="text-sm text-warning">
-                  Halal financing approval is pending. You will be notified once it's reviewed.
+                  {t('edit.halalPendingApproval')}
                 </p>
               </div>
             )}
@@ -253,7 +255,7 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
             {property.halal_approved_once && (
               <div className="p-3 bg-success/10 border border-success/20 rounded-lg">
                 <p className="text-sm text-success">
-                  Halal financing has been approved for this property. You can now enable/disable it freely.
+                  {t('edit.halalApproved')}
                 </p>
               </div>
             )}
@@ -262,10 +264,10 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
         
         <div className="flex justify-end space-x-2 pt-4 border-t">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={saving}>
-            {saving ? "Saving..." : "Save Changes"}
+            {saving ? t('common.saving') : t('property.save')}
           </Button>
         </div>
       </DialogContent>

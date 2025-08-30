@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import { supabase } from "@/integrations/supabase/client";
 import { Upload, X, GripVertical } from "lucide-react";
 import {
@@ -35,10 +36,11 @@ interface DragDropPhotoManagerProps {
   userId: string;
 }
 
-const SortablePhotoItem = ({ photo, onRemove, index }: { 
+const SortablePhotoItem = ({ photo, onRemove, index, t }: { 
   photo: PhotoItem; 
   onRemove: () => void; 
   index: number;
+  t: (key: string) => string;
 }) => {
   const {
     attributes,
@@ -90,7 +92,7 @@ const SortablePhotoItem = ({ photo, onRemove, index }: {
         </div>
         {index === 0 && (
           <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
-            Primary
+            {t('photo.primary')}
           </div>
         )}
       </div>
@@ -100,6 +102,7 @@ const SortablePhotoItem = ({ photo, onRemove, index }: {
 
 export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userId }: DragDropPhotoManagerProps) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -132,8 +135,8 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
 
     if (photos.length + files.length > 20) {
       toast({
-        title: "Too many photos",
-        description: "Maximum 20 photos allowed",
+        title: t('photo.tooMany'),
+        description: t('photo.maxAllowed'),
         variant: "destructive"
       });
       return;
@@ -168,14 +171,14 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
       onPhotosChange([...photos, ...uploadedPhotos]);
       
       toast({
-        title: "Photos uploaded",
-        description: `${uploadedPhotos.length} photo(s) uploaded successfully`
+        title: t('photo.uploaded'),
+        description: `${uploadedPhotos.length} ${t('photo.uploadedSuccess')}`
       });
     } catch (error: any) {
       console.error("Upload error:", error);
       toast({
-        title: "Upload failed",
-        description: error.message || "Failed to upload photos",
+        title: t('photo.uploadFailed'),
+        description: error.message || t('photo.failedToUpload'),
         variant: "destructive"
       });
     } finally {
@@ -189,8 +192,8 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
   const removePhoto = (index: number) => {
     if (photos.length <= 1) {
       toast({
-        title: "Cannot remove",
-        description: "At least one photo is required",
+        title: t('photo.cannotRemove'),
+        description: t('photo.oneRequired'),
         variant: "destructive"
       });
       return;
@@ -207,14 +210,14 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Property Photos</h3>
+        <h3 className="text-lg font-semibold">{t('photo.propertyPhotos')}</h3>
         <Button
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading || photos.length >= 20}
         >
           <Upload className="h-4 w-4 mr-2" />
-          {uploading ? "Uploading..." : "Add Photos"}
+          {uploading ? t('photo.uploading') : t('photo.addPhotos')}
         </Button>
       </div>
 
@@ -230,7 +233,7 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
       {photos.length > 0 && (
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground">
-            Drag to reorder • First photo will be the primary image • {photos.length}/20 photos
+            {t('photo.dragToReorder')} • {photos.length}/20 photos
           </p>
           
           <DndContext
@@ -245,6 +248,7 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
                     key={photo.url}
                     photo={photo}
                     index={index}
+                    t={t}
                     onRemove={() => removePhoto(index)}
                   />
                 ))}
@@ -257,8 +261,8 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
       {photos.length === 0 && (
         <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
           <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">No photos uploaded yet</p>
-          <p className="text-sm text-muted-foreground mt-1">Click "Add Photos" to upload property images</p>
+          <p className="text-muted-foreground">{t('photo.noPhotos')}</p>
+          <p className="text-sm text-muted-foreground mt-1">{t('photo.clickToUpload')}</p>
         </div>
       )}
     </div>
