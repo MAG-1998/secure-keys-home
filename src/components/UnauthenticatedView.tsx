@@ -237,7 +237,7 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
               icon={Shield}
               title={t('features.verified')}
               description={t('features.verifiedDesc')}
-              badge="Verified"
+              badge={t('common.verified')}
               badgeVariant="success"
             />
             <FeatureCard
@@ -251,7 +251,7 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
               icon={MapPin}
               title={t('features.map')}
               description={t('features.mapDesc')}
-              badge="Live"
+              badge={t('common.live')}
               badgeVariant="warning"
             />
             <FeatureCard
@@ -268,7 +268,7 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
               icon={CheckCircle}
               title={t('features.secure')}
               description={t('features.secureDesc')}
-              badge="Protected"
+              badge={t('common.protected')}
               badgeVariant="success"
             />
           </div>

@@ -121,8 +121,8 @@ const Properties = () => {
               <div>
                 <label className="text-sm font-medium mb-2 block">Price (USD)</label>
                 <div className="grid grid-cols-2 gap-2">
-                  <Input type="number" placeholder="Min" value={filters.minPrice} onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))} />
-                  <Input type="number" placeholder="Max" value={filters.maxPrice} onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))} />
+                  <Input type="number" placeholder={t('common.min')} value={filters.minPrice} onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))} />
+                  <Input type="number" placeholder={t('common.max')} value={filters.maxPrice} onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))} />
                 </div>
               </div>
 

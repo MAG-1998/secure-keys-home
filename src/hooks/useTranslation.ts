@@ -960,7 +960,28 @@ const translations: Translations = {
   'common.success': { en: 'Success', ru: 'Успех', uz: 'Muvaffaqiyat' },
   'common.error': { en: 'Error', ru: 'Ошибка', uz: 'Xato' },
   'common.updated': { en: 'Property updated successfully', ru: 'Объект успешно обновлен', uz: 'Mulk muvaffaqiyatli yangilandi' },
-  'common.updateFailed': { en: 'Failed to update property', ru: 'Не удалось обновить объект', uz: 'Mulkni yangilash muvaffaqiyatsiz' }
+  'common.updateFailed': { en: 'Failed to update property', ru: 'Не удалось обновить объект', uz: 'Mulkni yangilash muvaffaqiyatsiz' },
+
+  'common.live': {
+    en: 'Live',
+    ru: 'Вживую', 
+    uz: 'Jonli'
+  },
+  'common.verified': {
+    en: 'Verified',
+    ru: 'Проверено',
+    uz: 'Tekshirilgan'
+  },
+  'common.protected': {
+    en: 'Protected',
+    ru: 'Защищено',
+    uz: 'Himoyalangan'
+  },
+  'search.find': {
+    en: 'Find',
+    ru: 'Найти',
+    uz: 'Topish'
+  }
 };
 
 const LANGUAGE_STORAGE_KEY = 'magit_language';
