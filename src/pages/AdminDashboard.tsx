@@ -521,7 +521,7 @@ export default function AdminDashboard() {
               </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
             Users & Roles ({users.length})
@@ -537,6 +537,10 @@ export default function AdminDashboard() {
           <TabsTrigger value="requests" className="flex items-center gap-2">
             <Settings className="w-4 h-4" />
             Property Requests ({applications.length})
+          </TabsTrigger>
+          <TabsTrigger value="financing" className="flex items-center gap-2">
+            <Banknote className="w-4 h-4" />
+            Financing
           </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
@@ -884,6 +888,29 @@ export default function AdminDashboard() {
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="financing" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Banknote className="w-5 h-5" />
+                Financing Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Manage all financing requests, document requests, and approval processes.
+              </p>
+              <Button 
+                onClick={() => navigate('/admin-financing')}
+                className="flex items-center gap-2"
+              >
+                <Banknote className="w-4 h-4" />
+                Open Financing Dashboard
+              </Button>
+            </CardContent>
+          </Card>
         </TabsContent>
 
               <TabsContent value="security" className="space-y-6">

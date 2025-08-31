@@ -361,7 +361,7 @@ export default function ModeratorDashboard() {
               </div>
 
       <Tabs defaultValue="applications" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="applications" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
             Property Applications
@@ -369,6 +369,10 @@ export default function ModeratorDashboard() {
           <TabsTrigger value="halal" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
             Halal Financing
+          </TabsTrigger>
+          <TabsTrigger value="financing" className="flex items-center gap-2">
+            <Home className="w-4 h-4" />
+            Financing Requests
           </TabsTrigger>
           <TabsTrigger value="reports" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
@@ -539,6 +543,29 @@ export default function ModeratorDashboard() {
               </Card>
             ))}
           </div>
+        </TabsContent>
+
+        <TabsContent value="financing" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Home className="w-5 h-5" />
+                Financing Requests Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Manage financing requests, review documents, and handle approval processes.
+              </p>
+              <Button 
+                onClick={() => navigate('/admin-financing')}
+                className="flex items-center gap-2"
+              >
+                <Home className="w-4 h-4" />
+                Open Financing Dashboard
+              </Button>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="reports" className="space-y-6">

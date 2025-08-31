@@ -10,6 +10,7 @@ import { memo, useState } from "react";
 import { useUserCounts } from "@/hooks/useOptimizedQuery";
 import type { User } from "@supabase/supabase-js";
 import { useTranslation } from "@/hooks/useTranslation";
+import { FinancingRequestsSection } from "@/components/FinancingRequestsSection";
 interface AuthenticatedViewProps {
   user: User;
   isHalalMode: boolean;
@@ -120,6 +121,9 @@ export const AuthenticatedView = memo(({
           </div>
         </div>
       </section>
+
+      {/* Financing Requests Section */}
+      <FinancingRequestsSection userId={user.id} t={t} />
     </>;
 });
 
