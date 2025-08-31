@@ -76,44 +76,64 @@ export const AuthenticatedView = memo(({
       {/* Quick Stats for Authenticated Users */}
       <section className="py-16 bg-gradient-card">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-8 text-center">
               {t('dashboard.yourJourney')}
             </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
                 <Card className="bg-background/50 border-border/50">
-                  <CardContent className="p-6 text-center">
-                    <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.saved}</div>
-                    <div className="text-muted-foreground">{t('dashboard.saved')}</div>
-                    <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/saved-properties')}>{t('dashboard.viewSaved')}</Button>
+                  <CardContent className="p-6 text-center flex flex-col h-full">
+                    <div className="flex-grow">
+                      <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.saved}</div>
+                      <div className="text-muted-foreground">{t('dashboard.saved')}</div>
+                    </div>
+                    <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('/saved-properties')}>{t('dashboard.viewSaved')}</Button>
                   </CardContent>
                 </Card>
                 <Card className="bg-background/50 border-border/50">
-                  <CardContent className="p-6 text-center">
-                    <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.listed}</div>
-                    <div className="text-muted-foreground">{t('dashboard.listed')}</div>
-                    <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-properties')}>
+                  <CardContent className="p-6 text-center flex flex-col h-full">
+                    <div className="flex-grow">
+                      <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.listed}</div>
+                      <div className="text-muted-foreground">{t('dashboard.listed')}</div>
+                    </div>
+                    <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('/my-properties')}>
                       {t('dashboard.viewListed')}
                     </Button>
                   </CardContent>
                 </Card>
                 <Card className="bg-background/50 border-border/50">
-                  <CardContent className="p-6 text-center">
-                    <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.myRequests}</div>
-                    <div className="text-muted-foreground">{t('dashboard.yourRequests')}</div>
-                    <div className="text-xs text-muted-foreground/70 mt-1">{t('dashboard.pendingConfirmed')}</div>
-                    <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/my-requests')}>
+                  <CardContent className="p-6 text-center flex flex-col h-full">
+                    <div className="flex-grow">
+                      <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.myRequests}</div>
+                      <div className="text-muted-foreground">{t('dashboard.yourRequests')}</div>
+                      <div className="text-xs text-muted-foreground/70 mt-1">{t('dashboard.pendingConfirmed')}</div>
+                    </div>
+                    <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('/my-requests')}>
                       {t('dashboard.viewYourRequests')}
                     </Button>
                   </CardContent>
                 </Card>
                 <Card className="bg-background/50 border-border/50">
-                  <CardContent className="p-6 text-center">
-                    <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.incomingRequests}</div>
-                    <div className="text-muted-foreground">{t('dashboard.incomingRequests')}</div>
-                    <div className="text-xs text-muted-foreground/70 mt-1">{t('dashboard.ownerInbox')}</div>
-                    <Button variant="ghost" size="sm" className="mt-2" onClick={() => navigate('/visit-requests')}>
+                  <CardContent className="p-6 text-center flex flex-col h-full">
+                    <div className="flex-grow">
+                      <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.incomingRequests}</div>
+                      <div className="text-muted-foreground">{t('dashboard.incomingRequests')}</div>
+                      <div className="text-xs text-muted-foreground/70 mt-1">{t('dashboard.ownerInbox')}</div>
+                    </div>
+                    <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('/visit-requests')}>
                       {t('dashboard.manageRequests')}
+                    </Button>
+                  </CardContent>
+                </Card>
+                <Card className="bg-background/50 border-border/50">
+                  <CardContent className="p-6 text-center flex flex-col h-full">
+                    <div className="flex-grow">
+                      <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.requests || 0}</div>
+                      <div className="text-muted-foreground">Financing Requests</div>
+                      <div className="text-xs text-muted-foreground/70 mt-1">Active applications</div>
+                    </div>
+                    <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('/admin-financing')}>
+                      View Financing
                     </Button>
                   </CardContent>
                 </Card>
@@ -121,9 +141,6 @@ export const AuthenticatedView = memo(({
           </div>
         </div>
       </section>
-
-      {/* Financing Requests Section */}
-      <FinancingRequestsSection userId={user.id} t={t} />
     </>;
 });
 
