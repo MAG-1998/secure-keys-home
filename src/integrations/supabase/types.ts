@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       finance_doc_requests: {
         Row: {
+          communication_id: string | null
           created_at: string | null
           deadline_at: string | null
           description: string | null
@@ -23,12 +24,14 @@ export type Database = {
           file_url: string | null
           financing_request_id: string
           id: string
+          priority: string | null
           requested_by: string
           response_notes: string | null
           status: string | null
           updated_at: string | null
         }
         Insert: {
+          communication_id?: string | null
           created_at?: string | null
           deadline_at?: string | null
           description?: string | null
@@ -36,12 +39,14 @@ export type Database = {
           file_url?: string | null
           financing_request_id: string
           id?: string
+          priority?: string | null
           requested_by: string
           response_notes?: string | null
           status?: string | null
           updated_at?: string | null
         }
         Update: {
+          communication_id?: string | null
           created_at?: string | null
           deadline_at?: string | null
           description?: string | null
@@ -49,12 +54,20 @@ export type Database = {
           file_url?: string | null
           financing_request_id?: string
           id?: string
+          priority?: string | null
           requested_by?: string
           response_notes?: string | null
           status?: string | null
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "finance_doc_requests_communication_id_fkey"
+            columns: ["communication_id"]
+            isOneToOne: false
+            referencedRelation: "financing_communications"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "finance_doc_requests_financing_request_id_fkey"
             columns: ["financing_request_id"]
@@ -99,6 +112,57 @@ export type Database = {
           },
         ]
       }
+      financing_communications: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          file_urls: Json | null
+          financing_request_id: string
+          id: string
+          is_internal: boolean | null
+          message_type: string
+          sender_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          file_urls?: Json | null
+          financing_request_id: string
+          id?: string
+          is_internal?: boolean | null
+          message_type?: string
+          sender_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          file_urls?: Json | null
+          financing_request_id?: string
+          id?: string
+          is_internal?: boolean | null
+          message_type?: string
+          sender_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financing_communications_financing_request_id_fkey"
+            columns: ["financing_request_id"]
+            isOneToOne: false
+            referencedRelation: "financing_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financing_communications_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       financing_requests: {
         Row: {
           admin_notes: string | null
@@ -108,8 +172,10 @@ export type Database = {
           period_months: number | null
           property_id: string
           requested_amount: number | null
+          responsible_person_id: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          stage: string | null
           status: string | null
           updated_at: string | null
           user_id: string
@@ -122,8 +188,10 @@ export type Database = {
           period_months?: number | null
           property_id: string
           requested_amount?: number | null
+          responsible_person_id?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          stage?: string | null
           status?: string | null
           updated_at?: string | null
           user_id: string
@@ -136,8 +204,10 @@ export type Database = {
           period_months?: number | null
           property_id?: string
           requested_amount?: number | null
+          responsible_person_id?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          stage?: string | null
           status?: string | null
           updated_at?: string | null
           user_id?: string
@@ -149,6 +219,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "properties"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financing_requests_responsible_person_id_fkey"
+            columns: ["responsible_person_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
