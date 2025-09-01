@@ -10,9 +10,11 @@ interface FinancingRequest {
   id: string;
   property_id: string;
   status: string;
+  stage: string;
   created_at: string;
   updated_at: string;
   reviewed_at?: string;
+  responsible_person_id?: string;
   property?: {
     title: string;
     image_url?: string;
@@ -80,18 +82,29 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
+  const getStatusBadge = (status: string, stage?: string) => {
+    const currentStage = stage || status;
+    switch (currentStage) {
+      case 'submitted':
+        return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />Submitted</Badge>;
+      case 'assigned':
+        return <Badge variant="outline"><FileText className="w-3 h-3 mr-1" />Assigned</Badge>;
+      case 'document_collection':
+        return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" />Documents Required</Badge>;
+      case 'under_review':
+        return <Badge variant="default"><Clock className="w-3 h-3 mr-1" />Under Review</Badge>;
+      case 'final_approval':
+        return <Badge variant="outline"><FileText className="w-3 h-3 mr-1" />Final Approval</Badge>;
       case 'approved':
-        return <Badge variant="default"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>;
+        return <Badge variant="default" className="bg-green-600 hover:bg-green-700"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>;
       case 'denied':
         return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Denied</Badge>;
+      case 'pending':
+        return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
       case 'in_review':
         return <Badge variant="outline"><FileText className="w-3 h-3 mr-1" />In Review</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="outline">{currentStage}</Badge>;
     }
   };
 
@@ -169,15 +182,20 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
 
           {/* Recent Financing Requests */}
           <div className="grid gap-6">
-            {requests.map((request) => (
-              <Card key={request.id} className="bg-background/80 border-border/50">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">
-                      {request.property?.title || 'Property Financing Request'}
-                    </CardTitle>
-                    {getStatusBadge(request.status)}
-                  </div>
+            {requests.map((request) => {
+              const needsDocuments = request.stage === 'document_collection';
+              const isApproved = request.stage === 'approved';
+              const borderClass = needsDocuments ? 'border-red-500 border-2' : isApproved ? 'border-green-500 border-2' : 'border-border/50';
+              
+              return (
+                <Card key={request.id} className={`bg-background/80 ${borderClass}`}>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">
+                        {request.property?.title || 'Property Financing Request'}
+                      </CardTitle>
+                      {getStatusBadge(request.status, request.stage)}
+                    </div>
                   <p className="text-sm text-muted-foreground">
                     Submitted: {formatDate(request.created_at)}
                     {request.reviewed_at && (
@@ -197,10 +215,11 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
                     >
                       View Details
                     </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {requests.length === 0 && (

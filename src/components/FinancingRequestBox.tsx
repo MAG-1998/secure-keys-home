@@ -8,10 +8,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
-import { FileText, Upload, Calendar, User, MessageSquare, CheckCircle, XCircle, Clock } from "lucide-react";
+import { 
+  FileText, 
+  Upload, 
+  Calendar, 
+  User, 
+  MessageSquare, 
+  CheckCircle, 
+  XCircle, 
+  Clock, 
+  AlertCircle,
+  Send,
+  Download,
+  ArrowRight,
+  Users
+} from "lucide-react";
 
 interface FinancingRequestBoxProps {
   financingRequestId: string;
@@ -23,6 +39,8 @@ interface FinancingRequest {
   property_id: string;
   user_id: string;
   status: string;
+  stage: string;
+  responsible_person_id?: string;
   requested_amount: number;
   cash_available: number;
   period_months: number;
@@ -40,6 +58,32 @@ interface FinancingRequest {
     full_name: string | null;
     email: string;
   };
+  responsible_person?: {
+    user_id: string;
+    full_name: string | null;
+    email: string;
+  };
+}
+
+interface Communication {
+  id: string;
+  sender_id: string;
+  message_type: string;
+  content?: string;
+  file_urls: any;
+  is_internal: boolean;
+  created_at: string;
+  sender?: {
+    full_name?: string;
+    email: string;
+  };
+}
+
+interface StaffMember {
+  user_id: string;
+  full_name?: string;
+  email: string;
+  role: string;
 }
 
 interface DocRequest {
@@ -68,18 +112,24 @@ interface ActivityItem {
 export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRequestBoxProps) => {
   const [request, setRequest] = useState<FinancingRequest | null>(null);
   const [docRequests, setDocRequests] = useState<DocRequest[]>([]);
+  const [communications, setCommunications] = useState<Communication[]>([]);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
+  const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [newDocType, setNewDocType] = useState("");
   const [newDocDescription, setNewDocDescription] = useState("");
   const [newDocDeadline, setNewDocDeadline] = useState("");
+  const [newMessage, setNewMessage] = useState("");
   const [responseNotes, setResponseNotes] = useState("");
   const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
   const { toast } = useToast();
   const { user, role } = useUser();
 
   const isStaff = role === 'admin' || role === 'moderator';
+  const isAdmin = role === 'admin';
   const isOwner = request?.user_id === user?.id;
+  const isResponsiblePerson = request?.responsible_person_id === user?.id;
+  const canManage = isAdmin || isResponsiblePerson;
 
   useEffect(() => {
     if (financingRequestId) {
@@ -97,13 +147,39 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
         .select(`
           *,
           properties (title, location, price),
-          profiles!financing_requests_user_id_fkey (full_name, email)
+          profiles!financing_requests_user_id_fkey (full_name, email),
+          responsible_person:responsible_person_id (user_id, full_name, email)
         `)
         .eq('id', financingRequestId)
         .single();
 
       if (requestError) throw requestError;
       setRequest(requestData as unknown as FinancingRequest);
+
+      // Fetch communications
+      const { data: commData, error: commError } = await supabase
+        .from('financing_communications')
+        .select(`
+          *,
+          sender:sender_id (full_name, email)
+        `)
+        .eq('financing_request_id', financingRequestId)
+        .order('created_at', { ascending: true });
+
+      if (commError) throw commError;
+      setCommunications((commData || []).map(comm => ({
+        ...comm,
+        file_urls: Array.isArray(comm.file_urls) ? comm.file_urls : []
+      })));
+
+      // Fetch staff members for assignment
+      const { data: staffData, error: staffError } = await supabase
+        .from('profiles')
+        .select('user_id, full_name, email, role')
+        .in('role', ['admin', 'moderator']);
+
+      if (staffError) throw staffError;
+      setStaffMembers(staffData || []);
 
       // Fetch document requests
       const { data: docsData, error: docsError } = await supabase
@@ -189,16 +265,15 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
     }
   };
 
-  const updateRequestStatus = async (newStatus: string) => {
-    if (!isStaff) return;
+  const updateStage = async (newStage: string) => {
+    if (!canManage) return;
 
     try {
       const { error } = await supabase
         .from('financing_requests')
         .update({
-          status: newStatus,
-          reviewed_at: new Date().toISOString(),
-          reviewed_by: user?.id
+          stage: newStage,
+          updated_at: new Date().toISOString()
         })
         .eq('id', financingRequestId);
 
@@ -210,34 +285,110 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
         .insert({
           financing_request_id: financingRequestId,
           actor_id: user?.id,
-          action_type: 'status_changed',
-          details: { old_status: request?.status, new_status: newStatus }
+          action_type: 'stage_change',
+          details: { old_stage: request?.stage, new_stage: newStage }
         });
 
       toast({
         title: "Success",
-        description: `Request ${newStatus}`
+        description: `Request stage updated to ${newStage}`
       });
 
       fetchData();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update request status",
+        description: "Failed to update request stage",
         variant: "destructive"
       });
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const variants: Record<string, any> = {
-      pending: 'warning',
-      in_review: 'outline',
-      approved: 'success',
-      denied: 'destructive',
-      needs_docs: 'secondary'
-    };
-    return <Badge variant={variants[status] || 'outline'}>{status.replace('_', ' ')}</Badge>;
+  const assignResponsiblePerson = async (personId: string) => {
+    if (!isAdmin) return;
+
+    try {
+      const { error } = await supabase
+        .from('financing_requests')
+        .update({
+          responsible_person_id: personId,
+          stage: 'assigned',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', financingRequestId);
+
+      if (error) throw error;
+
+      await supabase
+        .from('financing_activity_log')
+        .insert({
+          financing_request_id: financingRequestId,
+          actor_id: user?.id,
+          action_type: 'assignment',
+          details: { assigned_to: personId }
+        });
+
+      toast({
+        title: "Success",
+        description: "Responsible person assigned successfully"
+      });
+
+      fetchData();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to assign responsible person",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!newMessage.trim()) return;
+
+    try {
+      const { error } = await supabase
+        .from('financing_communications')
+        .insert({
+          financing_request_id: financingRequestId,
+          sender_id: user?.id,
+          message_type: 'message',
+          content: newMessage,
+          is_internal: isStaff && !isOwner
+        });
+
+      if (error) throw error;
+
+      setNewMessage("");
+      fetchData();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send message",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const getStatusBadge = (stage: string) => {
+    switch (stage) {
+      case 'submitted':
+        return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />Submitted</Badge>;
+      case 'assigned':
+        return <Badge variant="outline"><User className="w-3 h-3 mr-1" />Assigned</Badge>;
+      case 'document_collection':
+        return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" />Documents Required</Badge>;
+      case 'under_review':
+        return <Badge variant="default"><Clock className="w-3 h-3 mr-1" />Under Review</Badge>;
+      case 'final_approval':
+        return <Badge variant="outline"><FileText className="w-3 h-3 mr-1" />Final Approval</Badge>;
+      case 'approved':
+        return <Badge variant="default" className="bg-green-600 hover:bg-green-700"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>;
+      case 'denied':
+        return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Denied</Badge>;
+      default:
+        return <Badge variant="outline">{stage}</Badge>;
+    }
   };
 
   const formatCurrency = (amount: number) => {
@@ -274,15 +425,15 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            Financing Request - {request.properties.title}
-          </CardTitle>
-          <div className="flex items-center gap-2">
-            {getStatusBadge(request.status)}
+          <div>
+            <CardTitle className="text-2xl">{request.properties.title}</CardTitle>
+            <p className="text-muted-foreground">{request.properties.location}</p>
+          </div>
+          <div className="flex items-center gap-4">
+            {getStatusBadge(request.stage)}
             {onClose && (
-              <Button variant="ghost" size="sm" onClick={onClose}>
-                ×
+              <Button variant="outline" onClick={onClose}>
+                Close
               </Button>
             )}
           </div>
@@ -291,8 +442,9 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
       
       <CardContent>
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="communications">Communications</TabsTrigger>
             <TabsTrigger value="documents">Documents ({docRequests.length})</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
           </TabsList>
@@ -326,34 +478,171 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
               </div>
             </div>
 
+            {/* Assignment and Actions */}
             {isStaff && (
-              <div className="flex gap-2 pt-4">
-                <Button
-                  variant="secondary"
-                  onClick={() => updateRequestStatus('approved')}
-                  disabled={request.status === 'approved'}
-                >
-                  <CheckCircle className="w-4 h-4 mr-2" />
-                  Approve
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={() => updateRequestStatus('denied')}
-                  disabled={request.status === 'denied'}
-                >
-                  <XCircle className="w-4 h-4 mr-2" />
-                  Deny
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => updateRequestStatus('in_review')}
-                  disabled={request.status === 'in_review'}
-                >
-                  <Clock className="w-4 h-4 mr-2" />
-                  Mark In Review
-                </Button>
-              </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Assignment & Actions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Responsible Person Assignment */}
+                  <div className="flex items-center gap-4">
+                    <Label htmlFor="responsible">Responsible Person:</Label>
+                    {request.responsible_person ? (
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">
+                          <User className="w-3 h-3 mr-1" />
+                          {request.responsible_person.full_name || request.responsible_person.email}
+                        </Badge>
+                        {isAdmin && (
+                          <Select onValueChange={assignResponsiblePerson}>
+                            <SelectTrigger className="w-48">
+                              <SelectValue placeholder="Reassign..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {staffMembers.map(member => (
+                                <SelectItem key={member.user_id} value={member.user_id}>
+                                  {member.full_name || member.email} ({member.role})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </div>
+                    ) : isAdmin ? (
+                      <Select onValueChange={assignResponsiblePerson}>
+                        <SelectTrigger className="w-64">
+                          <SelectValue placeholder="Assign responsible person..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {staffMembers.map(member => (
+                            <SelectItem key={member.user_id} value={member.user_id}>
+                              {member.full_name || member.email} ({member.role})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Badge variant="secondary">Not assigned</Badge>
+                    )}
+                  </div>
+
+                  {/* Stage Actions */}
+                  {canManage && (
+                    <div className="flex flex-wrap gap-2">
+                      {request.stage === 'submitted' && (
+                        <Button onClick={() => updateStage('assigned')} size="sm">
+                          <ArrowRight className="w-4 h-4 mr-1" />
+                          Mark as Assigned
+                        </Button>
+                      )}
+                      {request.stage === 'assigned' && (
+                        <Button onClick={() => updateStage('document_collection')} size="sm">
+                          <FileText className="w-4 h-4 mr-1" />
+                          Request Documents
+                        </Button>
+                      )}
+                      {request.stage === 'document_collection' && (
+                        <Button onClick={() => updateStage('under_review')} size="sm">
+                          <Clock className="w-4 h-4 mr-1" />
+                          Start Review
+                        </Button>
+                      )}
+                      {request.stage === 'under_review' && isResponsiblePerson && (
+                        <Button onClick={() => updateStage('final_approval')} size="sm">
+                          <ArrowRight className="w-4 h-4 mr-1" />
+                          Send for Final Approval
+                        </Button>
+                      )}
+                      {request.stage === 'final_approval' && isAdmin && (
+                        <>
+                          <Button onClick={() => updateStage('approved')} size="sm" className="bg-green-600 hover:bg-green-700">
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Approve
+                          </Button>
+                          <Button onClick={() => updateStage('denied')} size="sm" variant="destructive">
+                            <XCircle className="w-4 h-4 mr-1" />
+                            Deny
+                          </Button>
+                          <Button onClick={() => updateStage('under_review')} size="sm" variant="outline">
+                            <ArrowRight className="w-4 h-4 mr-1" />
+                            Send Back for Review
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="communications" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5" />
+                  Communications
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-96 mb-4">
+                  <div className="space-y-4">
+                    {communications.map((comm) => (
+                      <div key={comm.id} className={`flex gap-3 ${comm.is_internal ? 'opacity-60' : ''}`}>
+                        <Avatar className="w-8 h-8">
+                          <AvatarFallback>{comm.sender?.full_name?.[0] || comm.sender?.email[0]}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-sm font-medium">
+                              {comm.sender?.full_name || comm.sender?.email}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(comm.created_at).toLocaleString()}
+                            </span>
+                            {comm.is_internal && (
+                              <Badge variant="outline" className="text-xs">Internal</Badge>
+                            )}
+                          </div>
+                          <p className="text-sm">{comm.content}</p>
+                          {comm.file_urls.length > 0 && (
+                            <div className="mt-2 space-y-1">
+                              {comm.file_urls.map((url, index) => (
+                                <a
+                                  key={index}
+                                  href={url}
+                                  className="flex items-center gap-1 text-xs text-blue-600 hover:underline"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <Download className="w-3 h-3" />
+                                  File {index + 1}
+                                </a>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+
+                {/* Message Input */}
+                <div className="flex gap-2">
+                  <Textarea
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Type your message..."
+                    className="flex-1"
+                    rows={2}
+                  />
+                  <Button onClick={sendMessage} disabled={!newMessage.trim()}>
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
           
           <TabsContent value="documents" className="space-y-4">
