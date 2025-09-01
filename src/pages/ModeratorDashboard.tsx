@@ -558,7 +558,7 @@ export default function ModeratorDashboard() {
                 Manage financing requests, review documents, and handle approval processes.
               </p>
               <Button 
-                onClick={() => navigate('/admin-financing')}
+                onClick={() => navigate('/admin/financing')}
                 className="flex items-center gap-2"
               >
                 <Home className="w-4 h-4" />

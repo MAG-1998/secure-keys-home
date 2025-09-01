@@ -903,7 +903,7 @@ export default function AdminDashboard() {
                 Manage all financing requests, document requests, and approval processes.
               </p>
               <Button 
-                onClick={() => navigate('/admin-financing')}
+                onClick={() => navigate('/admin/financing')}
                 className="flex items-center gap-2"
               >
                 <Banknote className="w-4 h-4" />

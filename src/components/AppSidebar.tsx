@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom"
-import { Shield, Users, FileCheck, Settings, Home } from "lucide-react"
+import { Shield, Users, FileCheck, Settings, Home, CreditCard } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -33,6 +33,7 @@ export function AppSidebar() {
         ...baseItems,
         { title: "Admin Panel", url: "/admin", icon: Shield },
         { title: "Review Applications", url: "/moderator", icon: FileCheck },
+        { title: "Financing Requests", url: "/admin/financing", icon: CreditCard },
         { title: "User Management", url: "/admin", icon: Users },
       ]
     }
@@ -41,6 +42,7 @@ export function AppSidebar() {
       return [
         ...baseItems,
         { title: "Review Applications", url: "/moderator", icon: FileCheck },
+        { title: "Financing Requests", url: "/admin/financing", icon: CreditCard },
         { title: "Property Management", url: "/moderator", icon: Settings },
       ]
     }

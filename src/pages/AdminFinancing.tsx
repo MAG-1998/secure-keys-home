@@ -39,7 +39,6 @@ const AdminFinancing = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const navigate = useNavigate();
   const { requestId } = useParams();
   const { toast } = useToast();
@@ -55,11 +54,6 @@ const AdminFinancing = () => {
     fetchRequests();
   }, [isStaff]);
 
-  useEffect(() => {
-    if (requestId) {
-      setSelectedRequestId(requestId);
-    }
-  }, [requestId]);
 
   useEffect(() => {
     filterRequests();
@@ -129,7 +123,7 @@ const AdminFinancing = () => {
     }).format(amount);
   };
 
-  if (selectedRequestId) {
+  if (requestId) {
     return (
       <div className="min-h-screen bg-gradient-hero">
         <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-40">
@@ -141,7 +135,7 @@ const AdminFinancing = () => {
                 </div>
                 <h1 className="font-heading font-bold text-xl text-foreground">Financing Request Details</h1>
               </div>
-              <Button variant="outline" onClick={() => setSelectedRequestId(null)}>
+              <Button variant="outline" onClick={() => navigate('/admin/financing')}>
                 Back to List
               </Button>
             </div>
@@ -150,8 +144,8 @@ const AdminFinancing = () => {
         
         <div className="container mx-auto px-4 py-8">
           <FinancingRequestBox
-            financingRequestId={selectedRequestId}
-            onClose={() => setSelectedRequestId(null)}
+            financingRequestId={requestId}
+            onClose={() => navigate('/admin/financing')}
           />
         </div>
       </div>
@@ -288,7 +282,7 @@ const AdminFinancing = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setSelectedRequestId(request.id)}
+                          onClick={() => navigate(`/admin/financing/${request.id}`)}
                         >
                           <Eye className="w-4 h-4 mr-2" />
                           View Details

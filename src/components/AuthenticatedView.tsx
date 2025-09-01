@@ -132,7 +132,7 @@ export const AuthenticatedView = memo(({
                       <div className="text-muted-foreground">Financing Requests</div>
                       <div className="text-xs text-muted-foreground/70 mt-1">Active applications</div>
                     </div>
-                    <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('/admin-financing')}>
+                    <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('/admin/financing')}>
                       View Financing
                     </Button>
                   </CardContent>

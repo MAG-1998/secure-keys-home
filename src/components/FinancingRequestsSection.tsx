@@ -117,7 +117,7 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
             </h2>
             <Button 
               variant="outline" 
-              onClick={() => navigate('/admin-financing')}
+              onClick={() => navigate('/admin/financing')}
               className="flex items-center gap-2"
             >
               <FileText className="w-4 h-4" />
@@ -156,7 +156,7 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
                       </div>
                       <Button 
                         size="sm" 
-                        onClick={() => navigate(`/admin-financing?requestId=${doc.financing_request_id}`)}
+                        onClick={() => navigate(`/admin/financing/${doc.financing_request_id}`)}
                       >
                         Upload
                       </Button>
@@ -193,7 +193,7 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => navigate(`/admin-financing?requestId=${request.id}`)}
+                      onClick={() => navigate(`/admin/financing/${request.id}`)}
                     >
                       View Details
                     </Button>
