@@ -21,7 +21,7 @@ import { parseISO, isValid, format } from "date-fns";
 import { HalalFinancingBreakdown } from "@/components/HalalFinancingBreakdown";
 import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore";
 import { PropertyEditDialog } from "@/components/PropertyEditDialog";
-import { formatCurrency, calculateHalalFinancing } from "@/utils/halalFinancing";
+import { formatCurrency } from "@/utils/halalFinancing";
 
 interface PropertyDetail {
   id: string;
@@ -127,9 +127,7 @@ const PropertyDetails = () => {
         return;
       }
       
-      // Calculate the total financing amount including all fees
-      const calculation = calculateHalalFinancing(cashAvailable, property.price, periodMonths);
-      const requestedAmount = calculation.totalCost - cashAvailable; // Total financing needed including all fees
+      const requestedAmount = property.price - cashAvailable;
       
       // Create a halal financing request
       const { error } = await supabase
