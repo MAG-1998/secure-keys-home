@@ -62,17 +62,58 @@ const AdminFinancing = () => {
   const fetchRequests = async () => {
     try {
       setLoading(true);
+      console.log('Fetching requests - User:', user?.id, 'Role:', role, 'IsStaff:', isStaff);
+      
+      // First try a simple query without joins to debug
+      const { data: simpleData, error: simpleError } = await supabase
+        .from('halal_financing_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      console.log('Simple query result:', { data: simpleData, error: simpleError });
+
+      if (simpleError) {
+        console.error('Simple query failed:', simpleError);
+        throw simpleError;
+      }
+
+      if (!simpleData || simpleData.length === 0) {
+        console.log('No financing requests found');
+        setRequests([]);
+        return;
+      }
+
+      // Now try with joins using a different approach
       const { data, error } = await supabase
         .from('halal_financing_requests')
         .select(`
           *,
-          properties (title, location, price),
-          profiles!user_id (full_name, email)
+          properties (title, location, price)
         `)
         .order('created_at', { ascending: false });
 
+      console.log('Query with properties join:', { data, error });
+
       if (error) throw error;
-      setRequests((data || []) as unknown as FinancingRequest[]);
+
+      // Manually fetch user profiles for each request
+      const requestsWithProfiles = await Promise.all(
+        (data || []).map(async (request) => {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name, email')
+            .eq('user_id', request.user_id)
+            .single();
+
+          return {
+            ...request,
+            profiles: profile || { full_name: null, email: 'Unknown' }
+          };
+        })
+      );
+
+      console.log('Final requests with profiles:', requestsWithProfiles);
+      setRequests(requestsWithProfiles as unknown as FinancingRequest[]);
     } catch (error) {
       console.error('Error fetching financing requests:', error);
       toast({
