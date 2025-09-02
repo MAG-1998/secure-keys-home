@@ -29,15 +29,15 @@ export const HalalFinancingBreakdown = ({
   const [financingPeriod, setFinancingPeriod] = useState(initialPeriodMonths)
   const financingStore = useHalalFinancingStore()
 
-  // Update state when initial values change (from URL params)
+  // Update state when initial values change (from URL params) - only on mount
   useEffect(() => {
-    if (initialCashAvailable) {
+    if (initialCashAvailable && !cashAmount) {
       setCashAmount(initialCashAvailable);
     }
-    if (initialPeriodMonths) {
+    if (initialPeriodMonths && !financingPeriod) {
       setFinancingPeriod(initialPeriodMonths);
     }
-  }, [initialCashAvailable, initialPeriodMonths]);
+  }, []); // Empty dependency array to run only on mount
 
   const periodOptions = getPeriodOptions()
 
