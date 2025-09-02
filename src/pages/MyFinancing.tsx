@@ -12,7 +12,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
 import { MagitLogo } from "@/components/MagitLogo";
 import { FinancingRequestBox } from "@/components/FinancingRequestBox";
-import { FileText, Search, Filter, Eye, Plus } from "lucide-react";
+import { FileText, Search, Filter, Eye, Plus, MoreVertical, Edit, Trash2 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { calculateHalalFinancing } from "@/utils/halalFinancing";
 
 interface FinancingRequest {
@@ -23,6 +25,7 @@ interface FinancingRequest {
   requested_amount: number;
   cash_available: number;
   period_months: number;
+  responsible_person_id?: string;
   created_at: string;
   updated_at: string;
   properties: {
@@ -80,7 +83,36 @@ const MyFinancing = () => {
       setLoading(false);
     }
   };
+  
+  const handleDeleteRequest = async (requestId: string) => {
+    try {
+      const { error } = await supabase
+        .from('halal_financing_requests')
+        .delete()
+        .eq('id', requestId);
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Request deleted",
+        description: "Your financing request has been deleted successfully."
+      });
+      
+      // Refresh the list
+      fetchRequests();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
 
+  const canEditOrDelete = (request: FinancingRequest) => {
+    return !request.responsible_person_id && 
+           (request.status === 'pending' || request.stage === 'submitted');
+  };
   const filterRequests = () => {
     let filtered = requests;
 
@@ -259,64 +291,119 @@ const MyFinancing = () => {
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
-                  {filteredRequests.map((request) => (
-                    <TableRow key={request.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{request.properties.title}</div>
-                          <div className="text-sm text-muted-foreground">{request.properties.location}</div>
-                          <div className="text-sm font-bold">{formatCurrency(request.properties.price)}</div>
-                        </div>
-                      </TableCell>
+                 <TableBody>
+                   {filteredRequests.map((request) => (
+                     <TableRow key={request.id}>
                        <TableCell>
                          <div>
-                           <div className="font-medium">
-                             {request.cash_available != null && request.period_months != null
-                               ? (() => {
-                                   const calculation = calculateHalalFinancing(
-                                     request.cash_available || 0,
-                                     request.properties.price || 0,
-                                     request.period_months || 12
-                                   );
-                                   return formatCurrency(calculation.totalCost);
-                                 })()
-                               : <span className="text-muted-foreground">Not specified</span>
-                             }
-                           </div>
-                           <div className="text-sm text-muted-foreground">
-                             Cash: {request.cash_available != null 
-                               ? formatCurrency(request.cash_available || 0)
-                               : "Not specified"
-                             }
+                           <div className="font-medium">{request.properties.title}</div>
+                           <div className="text-sm text-muted-foreground">{request.properties.location}</div>
+                           <div className="text-sm font-bold">{formatCurrency(request.properties.price)}</div>
+                           {/* Mobile view details button */}
+                           <div className="mt-2 sm:hidden">
+                             <Button
+                               variant="outline"
+                               size="sm"
+                               onClick={() => navigate(`/my-financing/${request.id}`)}
+                               className="w-full"
+                             >
+                               <Eye className="w-4 h-4 mr-2" />
+                               View Details
+                             </Button>
                            </div>
                          </div>
                        </TableCell>
-                      <TableCell>
-                        <div className="font-medium">
-                          {request.period_months != null 
-                            ? `${request.period_months} months`
-                            : <span className="text-muted-foreground">Not specified</span>
-                          }
-                        </div>
-                      </TableCell>
-                      <TableCell>{getStatusBadge(request.status, request.stage)}</TableCell>
-                      <TableCell>
-                        {new Date(request.updated_at).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => navigate(`/my-financing/${request.id}`)}
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          View Details
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">
+                              {request.cash_available != null && request.period_months != null
+                                ? (() => {
+                                    const calculation = calculateHalalFinancing(
+                                      request.cash_available || 0,
+                                      request.properties.price || 0,
+                                      request.period_months || 12
+                                    );
+                                    return formatCurrency(calculation.totalCost);
+                                  })()
+                                : <span className="text-muted-foreground">Not specified</span>
+                              }
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              Cash: {request.cash_available != null 
+                                ? formatCurrency(request.cash_available || 0)
+                                : "Not specified"
+                              }
+                            </div>
+                          </div>
+                        </TableCell>
+                       <TableCell>
+                         <div className="font-medium">
+                           {request.period_months != null 
+                             ? `${request.period_months} months`
+                             : <span className="text-muted-foreground">Not specified</span>
+                           }
+                         </div>
+                       </TableCell>
+                       <TableCell>{getStatusBadge(request.status, request.stage)}</TableCell>
+                       <TableCell>
+                         {new Date(request.updated_at).toLocaleDateString()}
+                       </TableCell>
+                       <TableCell>
+                         <div className="flex items-center gap-2">
+                           {/* Desktop view details button */}
+                           <Button
+                             variant="outline"
+                             size="sm"
+                             onClick={() => navigate(`/my-financing/${request.id}`)}
+                             className="hidden sm:flex"
+                           >
+                             <Eye className="w-4 h-4 mr-2" />
+                             View Details
+                           </Button>
+                           
+                           {/* Edit/Delete dropdown for unassigned requests */}
+                           {canEditOrDelete(request) && (
+                             <DropdownMenu>
+                               <DropdownMenuTrigger asChild>
+                                 <Button variant="ghost" size="sm">
+                                   <MoreVertical className="w-4 h-4" />
+                                 </Button>
+                               </DropdownMenuTrigger>
+                               <DropdownMenuContent align="end">
+                                 <DropdownMenuItem onClick={() => navigate(`/properties/${request.property_id}?editFinancing=${request.id}`)}>
+                                   <Edit className="w-4 h-4 mr-2" />
+                                   Edit Request
+                                 </DropdownMenuItem>
+                                 <AlertDialog>
+                                   <AlertDialogTrigger asChild>
+                                     <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                       <Trash2 className="w-4 h-4 mr-2" />
+                                       Delete Request
+                                     </DropdownMenuItem>
+                                   </AlertDialogTrigger>
+                                   <AlertDialogContent>
+                                     <AlertDialogHeader>
+                                       <AlertDialogTitle>Delete Financing Request</AlertDialogTitle>
+                                       <AlertDialogDescription>
+                                         Are you sure you want to delete this financing request? This action cannot be undone.
+                                       </AlertDialogDescription>
+                                     </AlertDialogHeader>
+                                     <AlertDialogFooter>
+                                       <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                       <AlertDialogAction onClick={() => handleDeleteRequest(request.id)}>
+                                         Delete
+                                       </AlertDialogAction>
+                                     </AlertDialogFooter>
+                                   </AlertDialogContent>
+                                 </AlertDialog>
+                               </DropdownMenuContent>
+                             </DropdownMenu>
+                           )}
+                         </div>
+                       </TableCell>
+                     </TableRow>
+                   ))}
+                 </TableBody>
               </Table>
             )}
           </CardContent>
