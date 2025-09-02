@@ -399,7 +399,7 @@ const MyRequests = () => {
                     <MyRequestCard
                       key={r.id}
                       request={r}
-                      onCancel={r.status === 'pending' ? onCancel : undefined}
+                      onCancel={(r.status === 'pending' || r.status === 'confirmed') ? onCancel : undefined}
                       onMessage={openMsg}
                     />
                   ))}
