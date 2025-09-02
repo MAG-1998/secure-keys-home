@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SearchSection } from "@/components/SearchSection";
-import YandexMap from "@/components/YandexMap";
+import LazyMapSection from "@/components/LazyMapSection";
 import { useNavigate } from "react-router-dom";
 import { useScroll } from "@/hooks/use-scroll";
 import { CheckCircle, Home, Plus } from "lucide-react";
@@ -64,9 +64,9 @@ export const AuthenticatedView = memo(({
           
           {/* Map Section - Full Width */}
           <div className="w-full px-4">
-            <YandexMap 
+            <LazyMapSection 
+              t={t} 
               isHalalMode={isHalalMode} 
-              t={t}
               language={language}
             />
           </div>
