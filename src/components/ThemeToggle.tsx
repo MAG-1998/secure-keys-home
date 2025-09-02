@@ -32,6 +32,7 @@ export const ThemeToggle = ({
   }, [setTheme]);
 
   // Auto theme switching when in auto mode
+  // Remove auto-refresh for better performance - only update when manually triggered
   useEffect(() => {
     if (!isAutoMode) return;
     const setAutoTheme = () => {
@@ -39,10 +40,8 @@ export const ThemeToggle = ({
       const isDarkTime = hour < 7 || hour >= 19;
       setTheme(isDarkTime ? "dark" : "light");
     };
-
-    // Check every hour for theme changes
-    const interval = setInterval(setAutoTheme, 3600000);
-    return () => clearInterval(interval);
+    // Set theme once when auto mode is enabled
+    setAutoTheme();
   }, [isAutoMode, setTheme]);
   const handleThemeToggle = (checked: boolean) => {
     const newTheme = checked ? "dark" : "light";

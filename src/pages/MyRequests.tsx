@@ -11,6 +11,7 @@ import { Calendar, Check, Clock, MapPin, MessageSquare, X, Star } from "lucide-r
 import { MagitLogo } from "@/components/MagitLogo";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
+import { AlternativeTimeOffer } from "@/components/AlternativeTimeOffer";
 
 interface VisitorRequestRow {
   id: string;
@@ -52,104 +53,123 @@ const MyRequestCard = ({
   const imageUrl = r.properties?.image_url || (r.properties?.photos && r.properties.photos.length > 0 ? r.properties.photos[0] : '/placeholder.svg');
   
   return (
-    <Card className="bg-background/80 backdrop-blur-sm border-border/50 hover:shadow-lg transition-all duration-300">
-      <div className="relative">
-        <img
-          src={imageUrl}
-          alt={r.properties?.title || 'Property'}
-          className="w-full h-48 object-cover rounded-t-lg"
-          loading="lazy"
+    <div>
+      {/* Show alternative time offer if applicable */}
+      {r.is_custom_time && r.status === 'pending' && (
+        <AlternativeTimeOffer 
+          request={r} 
+          onRefresh={() => window.location.reload()} 
         />
-      </div>
-      <CardContent className="p-6">
-        <div className="flex gap-4 items-start">
-          {/* Left: Status indicator */}
-          <div className="shrink-0">
-            <Badge
-              variant={r.status === 'confirmed' ? 'success' : r.status === 'denied' ? 'destructive' : 'warning'}
-              className="px-3 py-1.5 text-sm md:text-base rounded-md capitalize"
-            >
-              {r.status === 'confirmed' ? (
-                <span className="inline-flex items-center">
-                  <Check className="w-4 h-4 mr-1" /> 
-                  {isFinished ? 'finished' : 'confirmed'}
-                </span>
-              ) : r.status === 'denied' ? (
-                <span className="inline-flex items-center"><X className="w-4 h-4 mr-1" /> denied</span>
-              ) : (
-                <span className="inline-flex items-center"><Clock className="w-4 h-4 mr-1" /> pending</span>
-              )}
-            </Badge>
-          </div>
-
-          {/* Right: Property details and visit time */}
-          <div className="flex-1">
-            <h3 className="font-heading font-bold text-lg text-foreground mb-1">{r.properties?.title || 'Property'}</h3>
-            <div className="flex items-center text-muted-foreground mb-3">
-              <MapPin className="w-4 h-4 mr-1" />
-              <span className="text-sm">{r.properties?.location || 'Location not available'}</span>
-            </div>
-
-            <div className="flex items-center text-muted-foreground mb-4">
-              <Calendar className="w-4 h-4 mr-1" />
-              <span className="text-sm">
-                {new Date(r.visit_date).toLocaleDateString()} at {new Date(r.visit_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                {r.is_custom_time && <span className="ml-2 text-xs text-warning">(Alternative time)</span>}
-              </span>
-            </div>
-
-            {r.notes && (
-              <div className="mb-4 p-3 bg-muted/50 rounded-lg">
-                <p className="text-sm text-muted-foreground">Note: {r.notes}</p>
-              </div>
-            )}
-
-            {r.is_paid_visit && r.payment_amount && (
-              <div className="mb-4">
-                <Badge variant="secondary">Paid Visit - ${r.payment_amount.toLocaleString()}</Badge>
-              </div>
-            )}
-
-            {isFinished && r.owner_review && (
-              <div className="mb-4 p-3 bg-primary/5 rounded-lg">
-                <div className="flex items-center mb-2">
-                  <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                  <span className="text-sm font-medium">Owner's Review</span>
-                </div>
-                <p className="text-sm text-muted-foreground">{r.owner_review}</p>
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="flex gap-2 mt-4">
-              {onMessage && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onMessage(r.id)}
-                  className="flex items-center"
-                >
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  Message
-                </Button>
-              )}
-              
-              {!isFinished && r.status === 'pending' && onCancel && (
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => onCancel(r.id)}
-                  className="flex items-center"
-                >
-                  <X className="w-4 h-4 mr-2" />
-                  Cancel
-                </Button>
-              )}
-            </div>
-          </div>
+      )}
+      
+      <Card className="bg-background/80 backdrop-blur-sm border-border/50 hover:shadow-lg transition-all duration-300">
+        <div className="relative">
+          <img
+            src={imageUrl}
+            alt={r.properties?.title || 'Property'}
+            className="w-full h-48 object-cover rounded-t-lg"
+            loading="lazy"
+          />
         </div>
-      </CardContent>
-    </Card>
+        <CardContent className="p-6">
+          <div className="flex gap-4 items-start">
+            {/* Left: Status indicator */}
+            <div className="shrink-0">
+              <Badge
+                variant={r.status === 'confirmed' ? 'success' : r.status === 'denied' ? 'destructive' : 'warning'}
+                className="px-3 py-1.5 text-sm md:text-base rounded-md capitalize"
+              >
+                {r.status === 'confirmed' ? (
+                  <span className="inline-flex items-center">
+                    <Check className="w-4 h-4 mr-1" /> 
+                    {isFinished ? 'finished' : 'confirmed'}
+                  </span>
+                ) : r.status === 'denied' ? (
+                  <span className="inline-flex items-center"><X className="w-4 h-4 mr-1" /> denied</span>
+                ) : (
+                  <span className="inline-flex items-center">
+                    <Clock className="w-4 h-4 mr-1" /> 
+                    {r.is_custom_time ? 'awaiting response' : 'pending'}
+                  </span>
+                )}
+              </Badge>
+            </div>
+
+            {/* Right: Property details and visit time */}
+            <div className="flex-1">
+              <h3 className="font-heading font-bold text-lg text-foreground mb-1">{r.properties?.title || 'Property'}</h3>
+              <div className="flex items-center text-muted-foreground mb-3">
+                <MapPin className="w-4 h-4 mr-1" />
+                <span className="text-sm">{r.properties?.location || 'Location not available'}</span>
+              </div>
+
+              <div className="flex items-center text-muted-foreground mb-4">
+                <Calendar className="w-4 h-4 mr-1" />
+                <span className="text-sm">
+                  {new Date(r.visit_date).toLocaleDateString()} at {new Date(r.visit_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {r.is_custom_time && (
+                    <Badge variant="warning" className="ml-2 text-xs">
+                      Alternative time
+                    </Badge>
+                  )}
+                </span>
+              </div>
+
+              {r.notes && (
+                <div className="mb-4 p-3 bg-muted/50 rounded-lg">
+                  <p className="text-sm text-muted-foreground">Note: {r.notes}</p>
+                </div>
+              )}
+
+              {r.is_paid_visit && r.payment_amount && (
+                <div className="mb-4">
+                  <Badge variant="secondary">Paid Visit - ${r.payment_amount.toLocaleString()}</Badge>
+                </div>
+              )}
+
+              {isFinished && r.owner_review && (
+                <div className="mb-4 p-3 bg-primary/5 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                    <span className="text-sm font-medium">Owner's Review</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{r.owner_review}</p>
+                </div>
+              )}
+
+              {/* Actions - only show if not alternative time pending */}
+              {!r.is_custom_time && (
+                <div className="flex gap-2 mt-4">
+                  {onMessage && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onMessage(r.id)}
+                      className="flex items-center"
+                    >
+                      <MessageSquare className="w-4 h-4 mr-2" />
+                      Message
+                    </Button>
+                  )}
+                  
+                  {!isFinished && r.status === 'pending' && onCancel && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => onCancel(r.id)}
+                      className="flex items-center"
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Cancel
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

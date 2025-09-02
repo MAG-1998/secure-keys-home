@@ -36,6 +36,10 @@ interface OwnerRequestRow {
     image_url: string | null;
     user_id: string;
   } | null;
+  visitor_profile?: {
+    display_name: string;
+    user_type: string;
+  } | null;
 }
 
 interface VisitRequestCardProps {
@@ -102,6 +106,18 @@ const VisitRequestCard = ({
               <span className="text-sm">{r.properties?.location}</span>
             </div>
 
+            {/* Visitor name */}
+            {r.visitor_profile && (
+              <div className="flex items-center text-muted-foreground mb-3">
+                <span className="text-sm font-medium">
+                  Requested by: {r.visitor_profile.display_name}
+                </span>
+                <Badge variant="outline" className="ml-2 text-xs">
+                  {r.visitor_profile.user_type}
+                </Badge>
+              </div>
+            )}
+
             <div className="rounded-lg border border-border bg-muted/40 px-3 py-2">
               <div className="flex items-center text-foreground font-semibold">
                 <Calendar className="w-5 h-5 mr-2" />
@@ -110,7 +126,7 @@ const VisitRequestCard = ({
               <div className="flex items-center text-primary font-bold mt-1">
                 <Clock className="w-5 h-5 mr-2" />
                 {new Date(r.visit_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                {r.is_custom_time ? <Badge variant="warning" className="ml-2">custom</Badge> : null}
+                {r.is_custom_time ? <Badge variant="warning" className="ml-2">alternative time</Badge> : null}
               </div>
             </div>
 
@@ -199,7 +215,7 @@ const VisitRequestCard = ({
           {r.visitor_showed_up === false && onRestrictUser && (currentUserRole === 'admin' || currentUserRole === 'moderator') && (
             <VisitRestrictionDialog
               userId={r.visitor_id}
-              userName="User"
+              userName={r.visitor_profile?.display_name || "User"}
               onRestrictUser={onRestrictUser}
             />
           )}
@@ -247,8 +263,27 @@ const VisitRequests = () => {
         .neq('visitor_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
+      
+      // Fetch visitor profiles for each request
       const rows = (data as OwnerRequestRow[]) || [];
-      const sorted = rows.sort((a, b) => {
+      const requestsWithProfiles = await Promise.all(
+        rows.map(async (request) => {
+          try {
+            const { data: profileData } = await supabase.rpc('get_safe_profile_for_messaging', { 
+              target_user_id: request.visitor_id 
+            });
+            return {
+              ...request,
+              visitor_profile: profileData?.[0] || null
+            };
+          } catch (error) {
+            console.error('Error fetching visitor profile:', error);
+            return request;
+          }
+        })
+      );
+      
+      const sorted = requestsWithProfiles.sort((a, b) => {
         const group = (r: OwnerRequestRow) => (!r.status || r.status === 'pending') ? 0 : (r.status === 'confirmed' ? 1 : 2);
         const ga = group(a);
         const gb = group(b);
@@ -307,12 +342,22 @@ const VisitRequests = () => {
     if (!altForId || !altDate || !altTime) return;
     try {
       const visit_date = new Date(`${altDate}T${altTime}`).toISOString();
+      
+      // When offering alternative time, deny the original request and create notification for visitor
       const { error } = await supabase
         .from('property_visits')
-        .update({ visit_date, is_custom_time: true })
+        .update({ 
+          visit_date, 
+          is_custom_time: true, 
+          status: 'pending' // Reset to pending so visitor can accept/reject
+        })
         .eq('id', altForId);
       if (error) throw error;
-      toast({ title: 'Proposed new time', description: 'The visitor will see the updated time.' });
+      
+      toast({ 
+        title: 'Alternative time proposed', 
+        description: 'The visitor will be notified and can accept or propose another time.' 
+      });
       setAltForId(null);
       await refresh();
     } catch (e) {
