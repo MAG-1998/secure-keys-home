@@ -103,7 +103,7 @@ export const PropertyCard = ({
   }
 
   return (
-    <Card onClick={handleNavigate} className="group hover:shadow-warm transition-all duration-300 cursor-pointer">
+    <Card onClick={handleNavigate} className="group hover:shadow-warm transition-all duration-300 cursor-pointer min-w-[250px] max-w-[400px]">
       <div className="relative">
         <img 
           src={actualImageUrl} 
