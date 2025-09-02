@@ -942,6 +942,45 @@ export type Database = {
         }
         Relationships: []
       }
+      visit_penalties: {
+        Row: {
+          applied_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          moderator_id: string | null
+          notes: string | null
+          penalty_level: number
+          penalty_type: string
+          user_id: string
+          visit_id: string
+        }
+        Insert: {
+          applied_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          moderator_id?: string | null
+          notes?: string | null
+          penalty_level: number
+          penalty_type: string
+          user_id: string
+          visit_id: string
+        }
+        Update: {
+          applied_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          moderator_id?: string | null
+          notes?: string | null
+          penalty_level?: number
+          penalty_type?: string
+          user_id?: string
+          visit_id?: string
+        }
+        Relationships: []
+      }
       visit_restrictions: {
         Row: {
           created_at: string
@@ -992,12 +1031,23 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      calculate_penalty_level: {
+        Args: { user_id_param: string }
+        Returns: number
+      }
       can_user_create_visit_request: {
         Args: { user_id_param: string }
         Returns: {
           can_create: boolean
           free_visits_used: number
           is_restricted: boolean
+          reason: string
+        }[]
+      }
+      can_user_request_halal_financing: {
+        Args: { user_id_param: string }
+        Returns: {
+          can_request: boolean
           reason: string
         }[]
       }
@@ -1025,6 +1075,18 @@ export type Database = {
           user_id: string
           user_type: string
         }[]
+      }
+      handle_no_show_penalty: {
+        Args: {
+          moderator_id_param: string
+          user_id_param: string
+          visit_id_param: string
+        }
+        Returns: Json
+      }
+      handle_visit_cancellation: {
+        Args: { user_id_param: string; visit_id_param: string }
+        Returns: Json
       }
       has_role: {
         Args: {

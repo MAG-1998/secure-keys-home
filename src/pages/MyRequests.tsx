@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { VisitWarningDialog } from "@/components/VisitWarningDialog";
 import { Calendar, Check, Clock, MapPin, MessageSquare, X, Star } from "lucide-react";
 import { MagitLogo } from "@/components/MagitLogo";
 import { useToast } from "@/hooks/use-toast";
@@ -178,6 +179,7 @@ const MyRequests = () => {
   const [loading, setLoading] = useState(true);
   const [msgForId, setMsgForId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+  const [cancelWarning, setCancelWarning] = useState<{ open: boolean; visitId?: string }>({ open: false });
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useUser();
@@ -216,15 +218,77 @@ const MyRequests = () => {
 
   useEffect(() => { refresh(); }, []);
 
-  const onCancel = async (id: string) => {
-    try {
-      const { error } = await supabase.from('property_visits').delete().eq('id', id);
-      if (error) throw error;
-      toast({ title: 'Cancelled', description: 'Visit request cancelled.' });
-      await refresh();
-    } catch (e) {
-      toast({ title: 'Error', description: 'Could not cancel request', variant: 'destructive' });
+  const onCancel = async (visitId: string) => {
+    // Check if this is a confirmed visit that needs penalty handling
+    const visit = requests.find(r => r.id === visitId);
+    if (visit?.status === 'confirmed') {
+      setCancelWarning({ open: true, visitId });
+      return;
     }
+
+    // For non-confirmed visits, cancel normally
+    await cancelVisit(visitId);
+  };
+
+  const cancelVisit = async (visitId: string) => {
+    try {
+      const visit = requests.find(r => r.id === visitId);
+      
+      if (visit?.status === 'confirmed') {
+        // Apply penalty for confirmed visit cancellation
+        const { data: penaltyData, error: penaltyError } = await supabase
+          .rpc('handle_visit_cancellation', {
+            visit_id_param: visitId,
+            user_id_param: user?.id
+          });
+
+        if (penaltyError) {
+          console.error('Error applying penalty:', penaltyError);
+        } else if (penaltyData) {
+          const penalty = penaltyData as { message: string; penalty_level: number };
+          toast({
+            title: "Штраф применен",
+            description: penalty.message,
+            variant: penalty.penalty_level > 1 ? "destructive" : "default",
+          });
+        }
+      }
+
+      // Cancel the visit
+      const { error } = await supabase
+        .from('property_visits')
+        .update({ status: 'cancelled' })
+        .eq('id', visitId);
+      
+      if (error) {
+        console.error('Error cancelling visit:', error);
+        toast({
+          title: "Ошибка",
+          description: "Не удалось отменить заявку на посещение",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Посещение отменено",
+          description: "Ваша заявка на посещение была отменена",
+        });
+        refresh();
+      }
+    } catch (error) {
+      console.error('Error in cancelVisit:', error);
+      toast({
+        title: "Ошибка",
+        description: "Произошла ошибка при отмене посещения",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleCancelConfirm = () => {
+    if (cancelWarning.visitId) {
+      cancelVisit(cancelWarning.visitId);
+    }
+    setCancelWarning({ open: false });
   };
 
   const openMsg = (id: string) => {
@@ -394,6 +458,13 @@ const MyRequests = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        <VisitWarningDialog
+          open={cancelWarning.open}
+          onOpenChange={(open) => setCancelWarning({ open })}
+          onConfirm={handleCancelConfirm}
+          type="cancel"
+        />
       </main>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription } from "@/components/ui/alert-dialog";
 import { VisitPaymentDialog } from "./VisitPaymentDialog";
+import { VisitWarningDialog } from "./VisitWarningDialog";
 import { useVisitLimits } from "@/hooks/useVisitLimits";
 import { Clock, Ban, CreditCard } from "lucide-react";
 
@@ -15,6 +16,7 @@ export const VisitLimitChecker = ({ propertyId, onRequestSubmit, children }: Vis
   const { canCreate, reason, freeVisitsUsed, isRestricted, loading } = useVisitLimits();
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [showRestrictedDialog, setShowRestrictedDialog] = useState(false);
+  const [showWarningDialog, setShowWarningDialog] = useState(false);
   const [pendingVisitDate, setPendingVisitDate] = useState<Date | null>(null);
 
   const handleVisitRequest = (visitDate: Date) => {
@@ -30,12 +32,20 @@ export const VisitLimitChecker = ({ propertyId, onRequestSubmit, children }: Vis
       return;
     }
 
+    // Show warning dialog first before proceeding
+    setPendingVisitDate(visitDate);
+    setShowWarningDialog(true);
+  };
+
+  const handleWarningConfirm = () => {
+    setShowWarningDialog(false);
+    
     if (freeVisitsUsed === 0) {
       // Free visit
-      onRequestSubmit(visitDate, false);
+      onRequestSubmit(pendingVisitDate!, false);
+      setPendingVisitDate(null);
     } else {
       // Paid visit required
-      setPendingVisitDate(visitDate);
       setShowPaymentDialog(true);
     }
   };
@@ -53,6 +63,13 @@ export const VisitLimitChecker = ({ propertyId, onRequestSubmit, children }: Vis
         onVisitRequest: handleVisitRequest,
         disabled: loading || (!canCreate && freeVisitsUsed >= 5),
       })}
+
+      <VisitWarningDialog
+        open={showWarningDialog}
+        onOpenChange={setShowWarningDialog}
+        onConfirm={handleWarningConfirm}
+        type="request"
+      />
 
       <VisitPaymentDialog
         open={showPaymentDialog}

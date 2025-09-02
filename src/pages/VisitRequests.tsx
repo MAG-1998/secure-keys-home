@@ -402,6 +402,7 @@ const VisitRequests = () => {
   const submitReview = async () => {
     if (!reviewForId || showedUp === null) return;
     try {
+      // Update visit status
       const { error } = await supabase
         .from('property_visits')
         .update({
@@ -411,7 +412,35 @@ const VisitRequests = () => {
         })
         .eq('id', reviewForId);
       if (error) throw error;
-      toast({ title: 'Review saved', description: 'Thank you for your feedback.' });
+
+      // If visitor didn't show up, apply penalty
+      if (!showedUp) {
+        const visit = requests.find(r => r.id === reviewForId);
+        if (visit) {
+          const { data: penaltyData, error: penaltyError } = await supabase
+            .rpc('handle_no_show_penalty', {
+              visit_id_param: reviewForId,
+              user_id_param: visit.visitor_id,
+              moderator_id_param: user?.id
+            });
+
+          if (penaltyError) {
+            console.error('Error applying no-show penalty:', penaltyError);
+          } else if (penaltyData) {
+            const penalty = penaltyData as { message: string; penalty_level: number };
+            toast({
+              title: "Штраф применен",
+              description: `Пользователь получил штраф уровня ${penalty.penalty_level} за неявку`,
+              variant: "default",
+            });
+          }
+        }
+      }
+
+      toast({ 
+        title: 'Review saved', 
+        description: showedUp ? 'Thank you for your feedback.' : 'Review saved and penalty applied for no-show.' 
+      });
       setReviewForId(null);
       await refresh();
     } catch (e) {
