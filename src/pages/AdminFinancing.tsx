@@ -67,7 +67,7 @@ const AdminFinancing = () => {
         .select(`
           *,
           properties (title, location, price),
-          profiles!halal_financing_requests_user_id_fkey (full_name, email)
+          profiles!user_id (full_name, email)
         `)
         .order('created_at', { ascending: false });
 
