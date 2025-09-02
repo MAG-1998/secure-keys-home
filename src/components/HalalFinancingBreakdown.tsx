@@ -108,7 +108,7 @@ export const HalalFinancingBreakdown = ({
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Total Property Price:</span>
-                  <span className="font-medium">{formatCurrency(calculation.totalCost)}</span>
+                  <span className="font-medium">{formatCurrency(calculation.propertyPrice! + calculation.serviceFee + calculation.fixedFee + calculation.vat)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Cash Payment:</span>
