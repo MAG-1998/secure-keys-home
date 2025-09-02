@@ -11,7 +11,7 @@ import { Calculator, FileText } from "lucide-react"
 
 interface HalalFinancingBreakdownProps {
   propertyPrice: number
-  onRequestFinancing: () => void
+  onRequestFinancing: (cashAvailable: number, periodMonths: number) => void
   className?: string
   initialCashAvailable?: string
   initialPeriodMonths?: string
@@ -128,7 +128,7 @@ export const HalalFinancingBreakdown = ({
             </div>
 
             <Button 
-              onClick={onRequestFinancing} 
+              onClick={() => onRequestFinancing(parseFloat(cashAmount) || 0, parseInt(financingPeriod) || 0)} 
               className="w-full" 
               size="lg"
             >

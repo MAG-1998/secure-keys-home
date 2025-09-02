@@ -93,7 +93,7 @@ const PropertyDetails = () => {
     }
   }, [searchParams, financingStore]);
 
-  const handleRequestFinancing = async () => {
+  const handleRequestFinancing = async (actualCashAvailable?: number, actualPeriodMonths?: number) => {
     try {
       const { data: { user: sUser } } = await supabase.auth.getUser();
       if (!sUser) {
@@ -103,8 +103,9 @@ const PropertyDetails = () => {
       
       if (!property) return;
       
-      const cashAvailable = parseFloat(financingStore.cashAvailable || '0');
-      const periodMonths = parseInt(financingStore.periodMonths || '0');
+      // Use the actual values passed from the component or fallback to store values
+      const cashAvailable = actualCashAvailable ?? parseFloat(financingStore.cashAvailable || '0');
+      const periodMonths = actualPeriodMonths ?? parseInt(financingStore.periodMonths || '0');
       const requiredCash = 0.5 * property.price;
       
       // Validate minimum 50% cash requirement
@@ -723,7 +724,9 @@ const PropertyDetails = () => {
                   {property.is_halal_financed && (
                     <HalalFinancingBreakdown 
                       propertyPrice={property.price}
-                      onRequestFinancing={handleRequestFinancing}
+                      onRequestFinancing={(cashAvailable, periodMonths) => {
+                        handleRequestFinancing(cashAvailable, periodMonths);
+                      }}
                       initialCashAvailable={financingStore.cashAvailable}
                       initialPeriodMonths={financingStore.periodMonths}
                     />
