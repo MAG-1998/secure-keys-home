@@ -21,6 +21,7 @@ import { parseISO, isValid, format } from "date-fns";
 import { HalalFinancingBreakdown } from "@/components/HalalFinancingBreakdown";
 import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore";
 import { PropertyEditDialog } from "@/components/PropertyEditDialog";
+import { formatCurrency } from "@/utils/halalFinancing";
 
 interface PropertyDetail {
   id: string;
@@ -100,20 +101,33 @@ const PropertyDetails = () => {
         return;
       }
       
-      // Validate halal financing if in halal mode
-      if (financingStore.isHalalMode && property) {
-        const cashAvailable = parseFloat(financingStore.cashAvailable || '0');
-        const requiredCash = 0.5 * property.price;
-        
-        if (cashAvailable < requiredCash) {
-          toast({
-            title: "Недостаточно средств",
-            description: "Для халяль-финансирования нужно внести не менее 50% от стоимости.",
-            variant: "destructive"
-          });
-          return;
-        }
+      if (!property) return;
+      
+      const cashAvailable = parseFloat(financingStore.cashAvailable || '0');
+      const periodMonths = parseInt(financingStore.periodMonths || '0');
+      const requiredCash = 0.5 * property.price;
+      
+      // Validate minimum 50% cash requirement
+      if (cashAvailable < requiredCash) {
+        toast({
+          title: "Insufficient Cash Available",
+          description: `Halal financing requires at least 50% (${formatCurrency(requiredCash)}) of the property price as cash. You entered ${formatCurrency(cashAvailable)}.`,
+          variant: "destructive"
+        });
+        return;
       }
+      
+      // Validate period is selected
+      if (!periodMonths || periodMonths <= 0) {
+        toast({
+          title: "Period Required",
+          description: "Please select a financing period.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      const requestedAmount = property.price - cashAvailable;
       
       // Create a halal financing request
       const { error } = await supabase
@@ -122,6 +136,10 @@ const PropertyDetails = () => {
           property_id: id!,
           user_id: sUser.id,
           status: 'pending',
+          stage: 'submitted',
+          cash_available: cashAvailable,
+          period_months: periodMonths,
+          requested_amount: requestedAmount,
           request_notes: `Financing request for property: ${property?.title}`
         });
       
@@ -131,6 +149,9 @@ const PropertyDetails = () => {
         title: "Financing request submitted", 
         description: "Your halal financing request has been submitted for review" 
       });
+      
+      // Navigate to the financing requests page
+      navigate('/my-financing');
     } catch (e: any) {
       console.error(e);
       toast({ 

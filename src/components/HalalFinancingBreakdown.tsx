@@ -47,6 +47,12 @@ export const HalalFinancingBreakdown = ({
       return null
     }
 
+    // Validate minimum 50% cash requirement
+    const requiredCash = 0.5 * propertyPrice;
+    if (cash < requiredCash) {
+      return null; // Don't show calculation if insufficient cash
+    }
+
     return calculateHalalFinancing(cash, propertyPrice, period)
   }, [cashAmount, financingPeriod, propertyPrice])
 
@@ -161,6 +167,15 @@ export const HalalFinancingBreakdown = ({
               <FileText className="h-4 w-4 mr-2" />
               Request Halal Financing
             </Button>
+          </div>
+        )}
+
+        {/* Show insufficient cash error */}
+        {!calculation && financingPeriod && cashAmount && parseFloat(cashAmount) < propertyPrice && parseFloat(cashAmount) < (0.5 * propertyPrice) && (
+          <div className="text-center py-4">
+            <Badge variant="destructive" className="text-sm">
+              Minimum 50% cash required - Need at least {formatCurrency(0.5 * propertyPrice)}
+            </Badge>
           </div>
         )}
 
