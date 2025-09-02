@@ -513,7 +513,7 @@ const composePinImage = (color: string, priceText: string) => {
       {mapLoaded && (
         <Button
           onClick={getUserLocation}
-          className="absolute top-4 right-4 z-10 bg-background/90 hover:bg-background shadow-lg"
+          className="absolute top-4 left-4 z-10 bg-background/90 hover:bg-background shadow-lg"
           variant="outline"
           size="sm"
         >
