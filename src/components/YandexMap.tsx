@@ -136,7 +136,8 @@ useEffect(() => {
 
   // Load Yandex Maps API
   useEffect(() => {
-    if (window.ymaps) {
+    // Check if ymaps is already available
+    if (window.ymaps && window.ymaps.Map) {
       setMapLoaded(true);
       return;
     }
@@ -144,17 +145,19 @@ useEffect(() => {
     // Check if script is already loading or loaded
     const existingScript = document.querySelector('script[src*="api-maps.yandex.ru"]');
     if (existingScript) {
-      if (window.ymaps) {
-        setMapLoaded(true);
+      // Script already exists, wait for it to load
+      const handleLoad = () => {
+        if (window.ymaps && window.ymaps.Map) {
+          window.ymaps.ready(() => {
+            setMapLoaded(true);
+          });
+        }
+      };
+
+      if (window.ymaps && window.ymaps.Map) {
+        handleLoad();
       } else {
-        // Wait for existing script to load
-        existingScript.addEventListener('load', () => {
-          if (window.ymaps) {
-            window.ymaps.ready(() => {
-              setMapLoaded(true);
-            });
-          }
-        });
+        existingScript.addEventListener('load', handleLoad, { once: true });
       }
       return;
     }
@@ -164,7 +167,7 @@ useEffect(() => {
     script.src = `https://api-maps.yandex.ru/2.1/?apikey=8baec550-0c9b-458c-b9bd-e9893af7beb7&lang=${ymLang}`;
     script.async = true;
     script.onload = () => {
-      if (window.ymaps) {
+      if (window.ymaps && window.ymaps.Map) {
         window.ymaps.ready(() => {
           setMapLoaded(true);
         });
@@ -172,10 +175,16 @@ useEffect(() => {
     };
     script.onerror = () => {
       console.error('Failed to load Yandex Maps API');
+      setMapLoaded(false);
     };
     document.head.appendChild(script);
 
-    // Don't remove script on cleanup to prevent race conditions
+    // Cleanup function - but don't remove script immediately
+    return () => {
+      // Only remove event listeners, not the script itself
+      script.removeEventListener('load', script.onload as any);
+      script.removeEventListener('error', script.onerror as any);
+    };
   }, [language]);
 
   // Auto-resolve districts from coordinates using Yandex geocoder
@@ -220,11 +229,22 @@ useEffect(() => {
   useEffect(() => {
     if (!mapLoaded || !mapContainer.current || map.current) return;
 
-    map.current = new window.ymaps.Map(mapContainer.current, {
-      center: [41.2995, 69.2401], // Tashkent coordinates
-      zoom: 11,
-      controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
-    });
+    // Double check that ymaps.Map is available before creating
+    if (!window.ymaps || !window.ymaps.Map) {
+      console.error('Yandex Maps API not fully loaded');
+      return;
+    }
+
+    try {
+      map.current = new window.ymaps.Map(mapContainer.current, {
+        center: [41.2995, 69.2401], // Tashkent coordinates
+        zoom: 11,
+        controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
+      });
+    } catch (error) {
+      console.error('Failed to create Yandex Map:', error);
+      return;
+    }
 
     // Initialize clusterer for better performance
     clusterer.current = new window.ymaps.Clusterer({
