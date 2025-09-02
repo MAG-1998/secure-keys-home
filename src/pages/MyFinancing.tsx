@@ -395,27 +395,27 @@ const MyFinancing = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredRequests.map((request) => (
-                      <TableRow key={request.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{request.properties.title}</div>
-                            <div className="text-sm text-muted-foreground">{request.properties.location}</div>
-                            <div className="text-sm font-bold">
-                              {request.cash_available != null && request.period_months != null
-                                ? (() => {
-                                    const calculation = calculateHalalFinancing(
-                                      request.cash_available || 0,
-                                      request.properties.price || 0,
-                                      request.period_months || 12
-                                    );
-                                    return formatCurrency(calculation.totalCost);
-                                  })()
-                                : formatCurrency(request.properties.price)
-                              }
-                            </div>
-                          </div>
-                        </TableCell>
+                     {filteredRequests.map((request) => (
+                       <TableRow key={request.id}>
+                         <TableCell>
+                           <div>
+                             <div className="font-medium">{request.properties.title}</div>
+                             <div className="text-sm text-muted-foreground">{request.properties.location}</div>
+                             <div className="text-sm font-bold">
+                               {request.cash_available != null && request.period_months != null
+                                 ? (() => {
+                                     const calculation = calculateHalalFinancing(
+                                       request.cash_available || 0,
+                                       request.properties.price || 0,
+                                       request.period_months || 12
+                                     );
+                                     return formatCurrency(calculation.totalCost + (request.cash_available || 0));
+                                   })()
+                                 : formatCurrency(request.properties.price)
+                               }
+                             </div>
+                           </div>
+                         </TableCell>
                          <TableCell>
                            <div>
                              <div className="font-medium">
