@@ -105,9 +105,9 @@ export const HalalFinancingBreakdown = ({
             <div className="space-y-2">
               <h4 className="font-semibold text-foreground">Payment Breakdown</h4>
               
-              <div className="space-y-1 text-sm">
+              <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Property Price:</span>
+                  <span className="text-muted-foreground">Total Property Price:</span>
                   <span className="font-medium">{formatCurrency(calculation.propertyPrice!)}</span>
                 </div>
                 <div className="flex justify-between">
@@ -115,42 +115,10 @@ export const HalalFinancingBreakdown = ({
                   <span className="font-medium">{formatCurrency(parseFloat(cashAmount))}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Financing Amount:</span>
-                  <span className="font-medium">{formatCurrency(calculation.financingAmount)}</span>
-                </div>
-              </div>
-
-              <Separator className="my-2" />
-
-              <div className="space-y-1 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Fixed Fee:</span>
-                  <span>{formatCurrency(calculation.fixedFee)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Service Fee:</span>
-                  <span>{formatCurrency(calculation.serviceFee)}</span>
-                </div>
-                <div className="flex justify-between">
                   <span className="text-muted-foreground">VAT (12%):</span>
-                  <span>{formatCurrency(calculation.vat)}</span>
+                  <span className="font-medium">{formatCurrency(calculation.vat)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Total Overpay:</span>
-                  <span>{formatCurrency(calculation.overpay)}</span>
-                </div>
-              </div>
-
-              <Separator className="my-2" />
-
-              <div className="space-y-1">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold">Total Cost:</span>
-                  <Badge variant="outline" className="text-base px-3 py-1">
-                    {formatCurrency(calculation.totalCost)}
-                  </Badge>
-                </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center pt-2 border-t">
                   <span className="font-semibold">Monthly Payment:</span>
                   <Badge variant="default" className="text-base px-3 py-1">
                     {formatCurrency(calculation.requiredMonthlyPayment)}
