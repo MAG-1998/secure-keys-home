@@ -314,7 +314,7 @@ const MyFinancing = () => {
                                     request.properties.price || 0,
                                     request.period_months || 12
                                   );
-                                  return formatCurrency(calculation.totalCost);
+                                  return formatCurrency(calculation.totalCost + (request.cash_available || 0));
                                 })()
                               : formatCurrency(request.properties.price)
                             }
@@ -435,14 +435,14 @@ const MyFinancing = () => {
                            <div>
                              <div className="font-medium">
                                {request.cash_available != null && request.period_months != null
-                                 ? (() => {
-                                     const calculation = calculateHalalFinancing(
-                                       request.cash_available || 0,
-                                       request.properties.price || 0,
-                                       request.period_months || 12
-                                     );
-                                     return formatCurrency(calculation.totalCost);
-                                   })()
+                                  ? (() => {
+                                      const calculation = calculateHalalFinancing(
+                                        request.cash_available || 0,
+                                        request.properties.price || 0,
+                                        request.period_months || 12
+                                      );
+                                      return formatCurrency(calculation.totalCost + (request.cash_available || 0));
+                                    })()
                                  : <span className="text-muted-foreground">Not specified</span>
                                }
                              </div>
