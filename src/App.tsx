@@ -19,6 +19,7 @@ const ListProperty = lazy(() => import("./pages/ListProperty"));
 const MyProperties = lazy(() => import("./pages/MyProperties"));
 const SavedProperties = lazy(() => import("./pages/SavedProperties"));
 const MyRequests = lazy(() => import("./pages/MyRequests"));
+const MyFinancing = lazy(() => import("./pages/MyFinancing"));
 const VisitRequests = lazy(() => import("./pages/VisitRequests"));
 const ModeratorDashboard = lazy(() => import("./pages/ModeratorDashboard"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
@@ -107,6 +108,20 @@ const App = () => (
                 <OptimizedRoute>
                   <Suspense fallback={<PageLoading />}>
                     <MyRequests />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/my-financing" element={
+                <OptimizedRoute>
+                  <Suspense fallback={<PageLoading />}>
+                    <MyFinancing />
+                  </Suspense>
+                </OptimizedRoute>
+              } />
+              <Route path="/my-financing/:requestId" element={
+                <OptimizedRoute>
+                  <Suspense fallback={<PageLoading />}>
+                    <MyFinancing />
                   </Suspense>
                 </OptimizedRoute>
               } />
