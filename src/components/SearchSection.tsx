@@ -228,11 +228,12 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
   const scrollProgress = Math.min(scrollY / 300, 1)
 
   return (
-    <div className={`transition-all duration-500 ${
-      isHalalMode 
-        ? 'bg-gradient-to-br from-magit-trust/10 to-primary/10 rounded-lg' 
-        : 'bg-gradient-to-br from-background/50 to-muted/20 rounded-lg'
-    } p-6`}>
+    <div className="w-full">
+      <div className={`transition-all duration-500 ${
+        isHalalMode 
+          ? 'bg-gradient-to-br from-magit-trust/10 to-primary/10 rounded-lg' 
+          : 'bg-gradient-to-br from-background/50 to-muted/20 rounded-lg'
+      } p-4 md:p-6`}>
       <div className="space-y-6">
         {/* Header with Halal Mode Toggle */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
@@ -639,6 +640,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
             </Card>
           )}
         </div>
+      </div>
       </div>
     </div>
   )
