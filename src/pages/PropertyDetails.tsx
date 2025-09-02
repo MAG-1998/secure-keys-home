@@ -22,6 +22,7 @@ import { parseISO, isValid, format } from "date-fns";
 import { HalalFinancingBreakdown } from "@/components/HalalFinancingBreakdown";
 import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore";
 import { PropertyEditDialog } from "@/components/PropertyEditDialog";
+import { VisitLimitChecker } from "@/components/VisitLimitChecker";
 import { formatCurrency } from "@/utils/halalFinancing";
 
 interface PropertyDetail {
@@ -83,7 +84,6 @@ const PropertyDetails = () => {
   const [showCustomTime, setShowCustomTime] = useState(false);
   
   const [visitRequestSent, setVisitRequestSent] = useState(false);
-  const [hasPendingRequest, setHasPendingRequest] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
@@ -264,17 +264,7 @@ const PropertyDetails = () => {
             setSavedId(saved.id);
           }
 
-        // Check for existing pending visit requests
-        const { data: existingRequest } = await supabase
-          .from("property_visits")
-          .select("id, status")
-          .eq("visitor_id", sUser.id)
-          .eq("property_id", id)
-          .in("status", ["pending", "confirmed"])
-          .maybeSingle();
-        if (existingRequest) {
-          setHasPendingRequest(true);
-        }
+        // Property-specific visit request checking is now handled by VisitLimitChecker
 
         // Get user role
         const { data: profile } = await supabase
@@ -360,7 +350,6 @@ const PropertyDetails = () => {
         });
       if (error) throw error;
       setVisitRequestSent(true);
-      setHasPendingRequest(true);
       toast({ title: "Request sent", description: "The owner will be notified of your request" });
     } catch (e: any) {
       console.error(e);
@@ -744,15 +733,24 @@ const PropertyDetails = () => {
                       )}
                     </div>
 
-                        <Button 
-                          className="w-full" 
-                          onClick={requestVisit}
-                          disabled={visitRequestSent || hasPendingRequest}
+                        <VisitLimitChecker
+                          propertyId={id!}
+                          onRequestSubmit={(visitDate) => {
+                            // Convert the passed date to the format expected by requestVisit
+                            const pickRaw = selectedSlot || customDateTime;
+                            if (pickRaw) {
+                              requestVisit();
+                            }
+                          }}
                         >
-                          {visitRequestSent ? 'Request Sent ✓' : 
-                           hasPendingRequest ? 'Request Already Pending' :
-                           (showCustomTime && timeOnly && dateOnly ? 'Send Request (200k deposit)' : 'Send Request')}
-                        </Button>
+                          <Button 
+                            className="w-full"
+                            disabled={visitRequestSent}
+                          >
+                            {visitRequestSent ? 'Request Sent ✓' : 
+                             (showCustomTime && timeOnly && dateOnly ? 'Send Request (200k deposit)' : 'Send Request')}
+                          </Button>
+                        </VisitLimitChecker>
                       </div>
                     </CardContent>
                   </Card>

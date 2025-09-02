@@ -10,7 +10,7 @@ interface VisitLimitInfo {
   loading: boolean;
 }
 
-export const useVisitLimits = () => {
+export const useVisitLimits = (propertyId?: string) => {
   const { user } = useUser();
   const [limitInfo, setLimitInfo] = useState<VisitLimitInfo>({
     canCreate: false,
@@ -34,7 +34,10 @@ export const useVisitLimits = () => {
 
     try {
       const { data, error } = await supabase
-        .rpc('can_user_create_visit_request', { user_id_param: user.id });
+        .rpc('can_user_create_visit_request', { 
+          user_id_param: user.id,
+          property_id_param: propertyId || null
+        });
 
       if (error) throw error;
 
@@ -62,7 +65,7 @@ export const useVisitLimits = () => {
 
   useEffect(() => {
     checkLimits();
-  }, [user?.id]);
+  }, [user?.id, propertyId]);
 
   return { ...limitInfo, recheckLimits: checkLimits };
 };

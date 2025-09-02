@@ -13,7 +13,7 @@ interface VisitLimitCheckerProps {
 }
 
 export const VisitLimitChecker = ({ propertyId, onRequestSubmit, children }: VisitLimitCheckerProps) => {
-  const { canCreate, reason, freeVisitsUsed, isRestricted, loading } = useVisitLimits();
+  const { canCreate, reason, freeVisitsUsed, isRestricted, loading } = useVisitLimits(propertyId);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [showRestrictedDialog, setShowRestrictedDialog] = useState(false);
   const [showWarningDialog, setShowWarningDialog] = useState(false);
