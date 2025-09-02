@@ -63,16 +63,29 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ isHalalMode = false, t 
         // Create a marker element
         const markerElement = document.createElement('div');
         markerElement.className = 'w-8 h-8 bg-primary rounded-full border-2 border-background shadow-lg cursor-pointer flex items-center justify-center text-white text-xs font-bold';
-        markerElement.innerHTML = '$';
+        markerElement.textContent = '$';
 
-        // Create popup
-        const popup = new (mapboxgl as any).Popup({ offset: 25 }).setHTML(`
-          <div class="p-2">
-            <h3 class="font-semibold text-sm">$${property.price.toLocaleString()}</h3>
-            <p class="text-xs text-gray-600">${property.district}</p>
-            <p class="text-xs text-gray-500 capitalize">${property.type}</p>
-          </div>
-        `);
+        // Create popup content safely
+        const popupContainer = document.createElement('div');
+        popupContainer.className = 'p-2';
+        
+        const priceElement = document.createElement('h3');
+        priceElement.className = 'font-semibold text-sm';
+        priceElement.textContent = `$${property.price.toLocaleString()}`;
+        
+        const districtElement = document.createElement('p');
+        districtElement.className = 'text-xs text-gray-600';
+        districtElement.textContent = property.district;
+        
+        const typeElement = document.createElement('p');
+        typeElement.className = 'text-xs text-gray-500 capitalize';
+        typeElement.textContent = property.type;
+        
+        popupContainer.appendChild(priceElement);
+        popupContainer.appendChild(districtElement);
+        popupContainer.appendChild(typeElement);
+        
+        const popup = new (mapboxgl as any).Popup({ offset: 25 }).setDOMContent(popupContainer);
 
         // Add marker to map
         new (mapboxgl as any).Marker(markerElement)
