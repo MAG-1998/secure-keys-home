@@ -803,7 +803,14 @@ const PropertyDetails = () => {
                 <CarouselContent>
                   {images.map((src, idx) => (
                     <CarouselItem key={idx} className="flex items-center justify-center bg-black">
-                      <img src={src} alt={`${property.title} ${idx + 1}`} className="max-h-[80vh] w-auto object-contain" />
+                      <img 
+                        src={src} 
+                        alt={`${property.title} ${idx + 1}`} 
+                        className="max-h-[80vh] w-auto object-contain"
+                        onError={(e) => {
+                          e.currentTarget.src = '/placeholder.svg'
+                        }}
+                      />
                     </CarouselItem>
                   ))}
                 </CarouselContent>

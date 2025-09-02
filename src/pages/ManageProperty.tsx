@@ -270,7 +270,15 @@ if (loading) {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         {photos.map((url, idx) => (
           <div key={url + idx} className="relative group border rounded-md overflow-hidden">
-            <img src={url} alt={`Property photo ${idx + 1}`} className="w-full h-32 object-cover" loading="lazy" />
+            <img 
+              src={url} 
+              alt={`Property photo ${idx + 1}`} 
+              className="w-full h-32 object-cover" 
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = '/placeholder.svg'
+              }}
+            />
             <div className="absolute inset-x-0 bottom-0 p-2 bg-background/70 backdrop-blur-sm flex items-center justify-between">
               <div className="space-x-2">
                 <Button size="sm" variant="outline" onClick={() => movePhoto(idx, 'up')} disabled={idx === 0}>

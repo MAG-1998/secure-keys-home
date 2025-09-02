@@ -69,6 +69,9 @@ const SortablePhotoItem = ({ photo, onRemove, index, t }: {
           alt={`Property photo ${index + 1}`}
           className="w-full h-32 object-cover"
           loading="lazy"
+          onError={(e) => {
+            e.currentTarget.src = '/placeholder.svg'
+          }}
         />
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
           <div className="flex items-center space-x-2">
@@ -129,6 +132,35 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
     }
   };
 
+  const convertHeicToJpeg = async (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx?.drawImage(img, 0, 0);
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const jpegFile = new File([blob], file.name.replace(/\.(heic|heif)$/i, '.jpg'), {
+              type: 'image/jpeg',
+              lastModified: Date.now(),
+            });
+            resolve(jpegFile);
+          } else {
+            reject(new Error('Failed to convert image'));
+          }
+        }, 'image/jpeg', 0.9);
+      };
+      
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -147,7 +179,17 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
       const uploadedPhotos: PhotoItem[] = [];
 
       for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+        let file = files[i];
+        
+        // Convert HEIC/HEIF files to JPEG
+        if (/\.(heic|heif)$/i.test(file.name)) {
+          try {
+            file = await convertHeicToJpeg(file);
+          } catch (conversionError) {
+            console.warn('Failed to convert HEIC file, uploading as is:', conversionError);
+          }
+        }
+        
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}_${i}.${fileExt}`;
         const filePath = `${userId}/properties/${propertyId}/${fileName}`;

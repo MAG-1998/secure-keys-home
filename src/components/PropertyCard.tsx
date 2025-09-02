@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -91,6 +92,8 @@ export const PropertyCard = ({
   const actualBathrooms = bathrooms || property?.bathrooms || 0
   const actualArea = area || property?.area || 0
   const actualImageUrl = imageUrl || image_url || property?.image_url || '/placeholder.svg'
+  const [imageError, setImageError] = useState(false)
+  const [imageLoading, setImageLoading] = useState(true)
   const actualIsVerified = isVerified ?? verified ?? property?.verified ?? false
   const actualIsHalalFinanced = isHalalFinanced ?? financingAvailable ?? property?.financingAvailable ?? false
 
@@ -106,11 +109,21 @@ export const PropertyCard = ({
     <Card onClick={handleNavigate} className="group hover:shadow-warm transition-all duration-300 cursor-pointer min-w-[250px] max-w-[400px] flex flex-col">
       <div className="relative">
         <img 
-          src={actualImageUrl} 
+          src={imageError ? '/placeholder.svg' : actualImageUrl} 
           alt={actualTitle}
-          className="w-full h-48 object-cover rounded-t-lg"
+          className="w-full h-48 object-cover"
           loading="lazy"
+          onLoad={() => setImageLoading(false)}
+          onError={() => {
+            setImageError(true)
+            setImageLoading(false)
+          }}
         />
+        {imageLoading && (
+          <div className="absolute inset-0 bg-muted animate-pulse flex items-center justify-center">
+            <div className="text-muted-foreground text-sm">Loading...</div>
+          </div>
+        )}
         <Button 
           variant="ghost" 
           size="sm"

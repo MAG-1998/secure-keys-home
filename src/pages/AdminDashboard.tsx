@@ -637,6 +637,9 @@ export default function AdminDashboard() {
                                   alt="Property photo thumbnail"
                                   loading="lazy"
                                   className="h-16 w-20 rounded-md object-cover border border-border"
+                                  onError={(e) => {
+                                    e.currentTarget.src = '/placeholder.svg'
+                                  }}
                                 />
                               ))}
                           </div>
@@ -712,6 +715,9 @@ export default function AdminDashboard() {
                                   alt="Property photo thumbnail"
                                   loading="lazy"
                                   className="h-16 w-20 rounded-md object-cover border border-border"
+                                  onError={(e) => {
+                                    e.currentTarget.src = '/placeholder.svg'
+                                  }}
                                 />
                               ))}
                           </div>
