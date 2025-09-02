@@ -897,26 +897,87 @@ export default function AdminDashboard() {
         </TabsContent>
 
         <TabsContent value="financing" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Banknote className="w-5 h-5" />
-                Financing Management
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Manage all financing requests, document requests, and approval processes.
-              </p>
-              <Button 
-                onClick={() => navigate('/admin/financing')}
-                className="flex items-center gap-2"
-              >
-                <Banknote className="w-4 h-4" />
-                Open Financing Dashboard
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Banknote className="w-5 h-5" />
+                  Financing Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Manage the complete financing workflow with stage-based processing, document collection, and approval management.
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-accent/20 rounded-lg">
+                    <span className="text-sm font-medium">Total Requests</span>
+                    <Badge variant="outline">{halalRequests.length}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <span className="text-sm font-medium">Submitted (Need Assignment)</span>
+                    <Badge variant="secondary">{halalRequests.filter(r => r.stage === 'submitted').length}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                    <span className="text-sm font-medium">Final Approval Pending</span>
+                    <Badge variant="outline">{halalRequests.filter(r => r.stage === 'final_approval').length}</Badge>
+                  </div>
+                </div>
+                <Button 
+                  onClick={() => navigate('/admin/financing')}
+                  className="w-full mt-4 flex items-center gap-2"
+                  size="lg"
+                >
+                  <Banknote className="w-4 h-4" />
+                  Open Financing Dashboard
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="w-5 h-5" />
+                  Workflow Overview
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  New 7-stage workflow for comprehensive financing review process.
+                </p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                    <span>1. Submitted → Admin assigns responsible person</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                    <span>2. Assigned → Specialist begins review</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <span>3. Document Collection → Request & collect docs</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                    <span>4. Under Review → Specialist assessment</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
+                    <span>5. Final Approval → Admin decision</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span>6. Approved → Process complete</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <span>7. Denied → Declined with reason</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
               <TabsContent value="security" className="space-y-6">

@@ -6,22 +6,26 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
 import { MagitLogo } from "@/components/MagitLogo";
 import { EnhancedFinancingRequestBox } from "@/components/EnhancedFinancingRequestBox";
-import { FileText, Search, Filter, Eye } from "lucide-react";
+import { FileText, Search, Filter, Eye, UserCheck, Clock, CheckCircle, XCircle, AlertCircle, FileSearch, ArrowRight } from "lucide-react";
 
 interface FinancingRequest {
   id: string;
   property_id: string;
   user_id: string;
+  stage: 'submitted' | 'assigned' | 'document_collection' | 'under_review' | 'final_approval' | 'approved' | 'denied';
   status: string;
   requested_amount: number;
   cash_available: number;
   period_months: number;
   created_at: string;
+  updated_at: string;
+  responsible_person_id?: string;
   properties: {
     title: string;
     location: string;
@@ -33,12 +37,31 @@ interface FinancingRequest {
   };
 }
 
+interface StageStats {
+  submitted: number;
+  assigned: number;
+  document_collection: number;
+  under_review: number;
+  final_approval: number;
+  approved: number;
+  denied: number;
+}
+
 const AdminFinancing = () => {
   const [requests, setRequests] = useState<FinancingRequest[]>([]);
   const [filteredRequests, setFilteredRequests] = useState<FinancingRequest[]>([]);
+  const [stageStats, setStageStats] = useState<StageStats>({
+    submitted: 0,
+    assigned: 0,
+    document_collection: 0,
+    under_review: 0,
+    final_approval: 0,
+    approved: 0,
+    denied: 0
+  });
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [stageFilter, setStageFilter] = useState("all");
   const navigate = useNavigate();
   const { requestId } = useParams();
   const { toast } = useToast();
@@ -57,42 +80,21 @@ const AdminFinancing = () => {
 
   useEffect(() => {
     filterRequests();
-  }, [requests, searchTerm, statusFilter]);
+    calculateStageStats();
+  }, [requests, searchTerm, stageFilter]);
 
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      console.log('Fetching requests - User:', user?.id, 'Role:', role, 'IsStaff:', isStaff);
       
-      // First try a simple query without joins to debug
-      const { data: simpleData, error: simpleError } = await supabase
-        .from('halal_financing_requests')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      console.log('Simple query result:', { data: simpleData, error: simpleError });
-
-      if (simpleError) {
-        console.error('Simple query failed:', simpleError);
-        throw simpleError;
-      }
-
-      if (!simpleData || simpleData.length === 0) {
-        console.log('No financing requests found');
-        setRequests([]);
-        return;
-      }
-
-      // Now try with joins using a different approach
+      // Fetch halal financing requests with joins
       const { data, error } = await supabase
         .from('halal_financing_requests')
         .select(`
           *,
           properties (title, location, price)
         `)
-        .order('created_at', { ascending: false });
-
-      console.log('Query with properties join:', { data, error });
+        .order('updated_at', { ascending: false });
 
       if (error) throw error;
 
@@ -107,12 +109,12 @@ const AdminFinancing = () => {
 
           return {
             ...request,
+            properties: request.properties || { title: 'Unknown Property', location: 'Unknown', price: 0 },
             profiles: profile || { full_name: null, email: 'Unknown' }
           };
         })
       );
 
-      console.log('Final requests with profiles:', requestsWithProfiles);
       setRequests(requestsWithProfiles as unknown as FinancingRequest[]);
     } catch (error) {
       console.error('Error fetching financing requests:', error);
@@ -138,28 +140,55 @@ const AdminFinancing = () => {
       );
     }
 
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(request => request.status === statusFilter);
+    if (stageFilter !== 'all') {
+      filtered = filtered.filter(request => request.stage === stageFilter);
     }
 
     setFilteredRequests(filtered);
   };
 
-  const getStatusBadge = (status: string, stage?: string) => {
-    const currentStage = stage || status;
-    const variants: Record<string, any> = {
-      submitted: 'secondary',
-      assigned: 'outline', 
-      document_collection: 'destructive',
-      under_review: 'default',
-      final_approval: 'outline',
-      approved: 'default',
-      denied: 'destructive',
-      pending: 'warning',
-      in_review: 'outline',
-      needs_docs: 'destructive'
+  const calculateStageStats = () => {
+    const stats: StageStats = {
+      submitted: 0,
+      assigned: 0,
+      document_collection: 0,
+      under_review: 0,
+      final_approval: 0,
+      approved: 0,
+      denied: 0
     };
-    return <Badge variant={variants[currentStage] || 'outline'}>{currentStage.replace('_', ' ')}</Badge>;
+
+    requests.forEach(request => {
+      if (request.stage && stats.hasOwnProperty(request.stage)) {
+        stats[request.stage]++;
+      }
+    });
+
+    setStageStats(stats);
+  };
+
+  const getStageInfo = (stage: string) => {
+    const stageConfig = {
+      submitted: { label: 'Submitted', color: 'bg-blue-500', icon: FileText, progress: 14 },
+      assigned: { label: 'Assigned', color: 'bg-orange-500', icon: UserCheck, progress: 28 },
+      document_collection: { label: 'Documents', color: 'bg-yellow-500', icon: FileSearch, progress: 42 },
+      under_review: { label: 'Under Review', color: 'bg-purple-500', icon: Clock, progress: 57 },
+      final_approval: { label: 'Final Approval', color: 'bg-indigo-500', icon: AlertCircle, progress: 85 },
+      approved: { label: 'Approved', color: 'bg-green-500', icon: CheckCircle, progress: 100 },
+      denied: { label: 'Denied', color: 'bg-red-500', icon: XCircle, progress: 100 }
+    };
+    return stageConfig[stage] || stageConfig.submitted;
+  };
+
+  const getStatusBadge = (stage: string) => {
+    const stageInfo = getStageInfo(stage);
+    const Icon = stageInfo.icon;
+    return (
+      <Badge variant="outline" className="flex items-center gap-1">
+        <Icon className="w-3 h-3" />
+        {stageInfo.label}
+      </Badge>
+    );
   };
 
   const formatCurrency = (amount: number) => {
@@ -228,12 +257,44 @@ const AdminFinancing = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 space-y-6">
+        {/* Dashboard Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4">
+          {Object.entries(stageStats).map(([stage, count]) => {
+            const stageInfo = getStageInfo(stage);
+            const Icon = stageInfo.icon;
+            const isActionNeeded = ['submitted', 'final_approval'].includes(stage) && count > 0;
+            
+            return (
+              <Card 
+                key={stage} 
+                className={`cursor-pointer transition-all hover:shadow-md ${isActionNeeded ? 'ring-2 ring-primary' : ''}`}
+                onClick={() => setStageFilter(stage)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className={`w-8 h-8 rounded-full ${stageInfo.color} flex items-center justify-center mb-2`}>
+                        <Icon className="w-4 h-4 text-white" />
+                      </div>
+                      <p className="text-2xl font-bold">{count}</p>
+                      <p className="text-xs text-muted-foreground">{stageInfo.label}</p>
+                    </div>
+                    {isActionNeeded && (
+                      <AlertCircle className="w-4 h-4 text-primary" />
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="w-5 h-5" />
-              Financing Requests Inbox
+              Financing Requests Management
             </CardTitle>
             
             <div className="flex gap-4">
@@ -248,16 +309,18 @@ const AdminFinancing = () => {
                   />
                 </div>
               </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select value={stageFilter} onValueChange={setStageFilter}>
                 <SelectTrigger className="w-48">
                   <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Filter by status" />
+                  <SelectValue placeholder="Filter by stage" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="in_review">In Review</SelectItem>
-                  <SelectItem value="needs_docs">Needs Documents</SelectItem>
+                  <SelectItem value="all">All Stages</SelectItem>
+                  <SelectItem value="submitted">Submitted</SelectItem>
+                  <SelectItem value="assigned">Assigned</SelectItem>
+                  <SelectItem value="document_collection">Documents</SelectItem>
+                  <SelectItem value="under_review">Under Review</SelectItem>
+                  <SelectItem value="final_approval">Final Approval</SelectItem>
                   <SelectItem value="approved">Approved</SelectItem>
                   <SelectItem value="denied">Denied</SelectItem>
                 </SelectContent>
@@ -286,57 +349,76 @@ const AdminFinancing = () => {
                     <TableHead>Property</TableHead>
                     <TableHead>Applicant</TableHead>
                     <TableHead>Amount</TableHead>
-                    <TableHead>Period</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
+                    <TableHead>Workflow Progress</TableHead>
+                    <TableHead>Updated</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredRequests.map((request) => (
-                    <TableRow key={request.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{request.properties.title}</div>
-                          <div className="text-sm text-muted-foreground">{request.properties.location}</div>
-                          <div className="text-sm font-bold">{formatCurrency(request.properties.price)}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">
-                            {request.profiles.full_name || request.profiles.email}
+                  {filteredRequests.map((request) => {
+                    const stageInfo = getStageInfo(request.stage);
+                    const needsAction = request.stage === 'submitted' || request.stage === 'final_approval';
+                    
+                    return (
+                      <TableRow key={request.id} className={needsAction ? 'bg-accent/20' : ''}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{request.properties.title}</div>
+                            <div className="text-sm text-muted-foreground">{request.properties.location}</div>
+                            <div className="text-sm font-bold">{formatCurrency(request.properties.price)}</div>
                           </div>
-                          {request.profiles.full_name && (
-                            <div className="text-sm text-muted-foreground">{request.profiles.email}</div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{formatCurrency(request.requested_amount || 0)}</div>
-                          <div className="text-sm text-muted-foreground">
-                            Cash: {formatCurrency(request.cash_available)}
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">
+                              {request.profiles.full_name || request.profiles.email}
+                            </div>
+                            {request.profiles.full_name && (
+                              <div className="text-sm text-muted-foreground">{request.profiles.email}</div>
+                            )}
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{request.period_months} months</TableCell>
-                      <TableCell>{getStatusBadge(request.status)}</TableCell>
-                      <TableCell>
-                        {new Date(request.created_at).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => navigate(`/admin/financing/${request.id}`)}
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          View Details
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{formatCurrency(request.requested_amount || 0)}</div>
+                            <div className="text-sm text-muted-foreground">
+                              Cash: {formatCurrency(request.cash_available)} ({request.period_months}m)
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              {getStatusBadge(request.stage)}
+                              {needsAction && (
+                                <AlertCircle className="w-4 h-4 text-orange-500" />
+                              )}
+                            </div>
+                            <div className="w-full">
+                              <Progress value={stageInfo.progress} className="h-2" />
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            {new Date(request.updated_at).toLocaleDateString()}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant={needsAction ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => navigate(`/admin/financing/${request.id}`)}
+                            className={needsAction ? "bg-primary text-primary-foreground" : ""}
+                          >
+                            <Eye className="w-4 h-4 mr-2" />
+                            {needsAction ? 'Take Action' : 'View Details'}
+                            {needsAction && <ArrowRight className="w-4 h-4 ml-2" />}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             )}
