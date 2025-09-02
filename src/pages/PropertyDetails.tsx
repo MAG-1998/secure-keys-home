@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
@@ -84,6 +85,8 @@ const PropertyDetails = () => {
   const [visitRequestSent, setVisitRequestSent] = useState(false);
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
   const [userRole, setUserRole] = useState<string | null>(null);
 
   // Handle query parameters for halal financing
@@ -427,6 +430,49 @@ const PropertyDetails = () => {
     setProperty(updatedProperty);
   };
 
+  const handleReportProperty = async () => {
+    try {
+      const { data: { user: sUser } } = await supabase.auth.getUser();
+      if (!sUser) {
+        navigate("/auth");
+        return;
+      }
+
+      if (!reportReason.trim()) {
+        toast({
+          title: "Report reason required",
+          description: "Please provide a reason for reporting this property.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from("user_reports")
+        .insert({
+          reporter_id: sUser.id,
+          reported_user_id: property?.user_id,
+          reason: reportReason.trim()
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Property reported",
+        description: "Your report has been submitted and will be reviewed by our team."
+      });
+
+      setIsReportDialogOpen(false);
+      setReportReason("");
+    } catch (e: any) {
+      console.error(e);
+      toast({
+        title: "Error",
+        description: e.message || "Failed to submit report"
+      });
+    }
+  };
+
   const canEdit = user && (
     property?.user_id === user.id || 
     userRole === 'admin' || 
@@ -736,11 +782,8 @@ const PropertyDetails = () => {
                     <CardContent className="p-6">
                       <Button 
                         variant="outline" 
-                        className="w-full"
-                        onClick={() => {
-                          // Handle report property
-                          toast({ title: "Report submitted", description: "Thank you for reporting this property" });
-                        }}
+                        className="w-full" 
+                        onClick={() => setIsReportDialogOpen(true)}
                       >
                         <Flag className="h-4 w-4 mr-2" />
                         Report Property
@@ -779,6 +822,44 @@ const PropertyDetails = () => {
           onPropertyUpdate={handlePropertyUpdate}
         />
       </main>
+
+      {/* Report Dialog */}
+      <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
+        <DialogContent>
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-lg font-semibold">Report Property</h2>
+              <p className="text-sm text-muted-foreground">
+                Please provide a reason for reporting this property. Our team will review your report.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="report-reason">Reason for reporting</Label>
+              <Textarea
+                id="report-reason"
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                placeholder="Please describe why you are reporting this property..."
+                rows={4}
+              />
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setIsReportDialogOpen(false);
+                  setReportReason("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleReportProperty}>
+                Submit Report
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
