@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
+import { DocumentUploadManager } from "@/components/DocumentUploadManager";
 import { 
   FileText, 
   Upload, 
@@ -94,6 +95,8 @@ interface DocRequest {
   status: string;
   file_url: string | null;
   response_notes: string | null;
+  user_file_urls?: any[];
+  submitted_at: string | null;
   created_at: string;
 }
 
@@ -146,32 +149,65 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
         .from('halal_financing_requests')
         .select(`
           *,
-          properties (title, location, price),
-          profiles!user_id (full_name, email),
-          responsible_person:profiles!responsible_person_id (user_id, full_name, email)
+          properties (title, location, price)
         `)
         .eq('id', financingRequestId)
         .single();
 
       if (requestError) throw requestError;
-      setRequest(requestData as unknown as FinancingRequest);
+
+      // Manually fetch user profile
+      const { data: userProfile } = await supabase
+        .from('profiles')
+        .select('full_name, email')
+        .eq('user_id', requestData.user_id)
+        .single();
+
+      // Manually fetch responsible person if assigned
+      let responsiblePerson = null;
+      if (requestData.responsible_person_id) {
+        const { data: respProfile } = await supabase
+          .from('profiles')
+          .select('user_id, full_name, email')
+          .eq('user_id', requestData.responsible_person_id)
+          .single();
+        responsiblePerson = respProfile;
+      }
+
+      // Combine the data
+      const enrichedRequest = {
+        ...requestData,
+        profiles: userProfile || { full_name: null, email: '' },
+        responsible_person: responsiblePerson
+      };
+
+      setRequest(enrichedRequest as unknown as FinancingRequest);
 
       // Fetch communications
       const { data: commData, error: commError } = await supabase
         .from('halal_financing_communications')
-        .select(`
-          *,
-          sender:sender_id (full_name, email)
-        `)
+        .select('*')
         .eq('halal_financing_request_id', financingRequestId)
         .order('created_at', { ascending: true });
 
       if (commError) throw commError;
-      setCommunications((commData || []).map(comm => ({
-        ...comm,
-        file_urls: Array.isArray(comm.file_urls) ? comm.file_urls : [],
-        sender: comm.sender || { email: '', full_name: '' }
-      })) as Communication[]);
+
+      // Manually fetch sender profiles for communications
+      const enrichedComms = await Promise.all((commData || []).map(async (comm) => {
+        const { data: senderProfile } = await supabase
+          .from('profiles')
+          .select('full_name, email')
+          .eq('user_id', comm.sender_id)
+          .single();
+
+        return {
+          ...comm,
+          file_urls: Array.isArray(comm.file_urls) ? comm.file_urls : [],
+          sender: senderProfile || { email: '', full_name: '' }
+        };
+      }));
+
+      setCommunications(enrichedComms as Communication[]);
 
       // Fetch staff members for assignment
       const { data: staffData, error: staffError } = await supabase
@@ -190,20 +226,39 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
         .order('created_at', { ascending: false });
 
       if (docsError) throw docsError;
-      setDocRequests(docsData || []);
+      
+      // Transform the data to match our interface
+      const transformedDocs = (docsData || []).map(doc => ({
+        ...doc,
+        user_file_urls: Array.isArray(doc.user_file_urls) ? doc.user_file_urls : [],
+      }));
+      
+      setDocRequests(transformedDocs);
 
       // Fetch activity log
       const { data: activityData, error: activityError } = await supabase
         .from('halal_financing_activity_log')
-        .select(`
-          *,
-          profiles!halal_financing_activity_log_actor_id_fkey (full_name, email)
-        `)
+        .select('*')
         .eq('halal_financing_request_id', financingRequestId)
         .order('created_at', { ascending: false });
 
       if (activityError) throw activityError;
-      setActivity((activityData || []) as unknown as ActivityItem[]);
+
+      // Manually fetch actor profiles for activity log
+      const enrichedActivity = await Promise.all((activityData || []).map(async (activity) => {
+        const { data: actorProfile } = await supabase
+          .from('profiles')
+          .select('full_name, email')
+          .eq('user_id', activity.actor_id)
+          .single();
+
+        return {
+          ...activity,
+          profiles: actorProfile || { full_name: null, email: '' }
+        };
+      }));
+
+      setActivity(enrichedActivity as unknown as ActivityItem[]);
     } catch (error) {
       console.error('Error fetching financing data:', error);
       toast({
@@ -775,35 +830,56 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
               </Dialog>
             )}
 
-            <div className="space-y-3">
-              {docRequests.map((doc) => (
-                <Card key={doc.id} className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium">{doc.document_type.replace('_', ' ')}</h4>
-                    <Badge variant={doc.status === 'resolved' ? 'success' : doc.status === 'uploaded' ? 'secondary' : 'warning'}>
-                      {doc.status}
-                    </Badge>
-                  </div>
-                  {doc.description && (
-                    <p className="text-sm text-muted-foreground mb-2">{doc.description}</p>
-                  )}
-                  {doc.deadline_at && (
-                    <p className="text-xs text-muted-foreground">
-                      Deadline: {new Date(doc.deadline_at).toLocaleDateString()}
-                    </p>
-                  )}
-                  {(isOwner || isStaff) && doc.status === 'pending' && (
-                    <Button variant="outline" size="sm" className="mt-2">
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload Response
-                    </Button>
-                  )}
-                </Card>
-              ))}
-              {docRequests.length === 0 && (
-                <p className="text-center text-muted-foreground py-8">No document requests</p>
-              )}
-            </div>
+            {/* User Document Upload Interface */}
+            {isOwner && (
+              <DocumentUploadManager
+                docRequests={docRequests.map(doc => ({
+                  ...doc,
+                  user_file_urls: doc.user_file_urls || [],
+                  submitted_at: doc.submitted_at
+                }))}
+                financingRequestId={financingRequestId}
+                onRefresh={fetchData}
+              />
+            )}
+
+            {/* Staff View of Document Requests */}
+            {isStaff && !isOwner && (
+              <div className="space-y-3">
+                {docRequests.map((doc) => (
+                  <Card key={doc.id} className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium">{doc.document_type.replace('_', ' ')}</h4>
+                      <Badge variant={doc.status === 'submitted' ? 'default' : doc.status === 'pending' ? 'secondary' : 'outline'}>
+                        {doc.status}
+                      </Badge>
+                    </div>
+                    {doc.description && (
+                      <p className="text-sm text-muted-foreground mb-2">{doc.description}</p>
+                    )}
+                    {doc.deadline_at && (
+                      <p className="text-xs text-muted-foreground">
+                        Deadline: {new Date(doc.deadline_at).toLocaleDateString()}
+                      </p>
+                    )}
+                    {doc.submitted_at && (
+                      <p className="text-xs text-green-600">
+                        Submitted: {new Date(doc.submitted_at).toLocaleDateString()}
+                      </p>
+                    )}
+                    {doc.response_notes && (
+                      <div className="mt-2 p-2 bg-muted rounded">
+                        <p className="text-xs font-medium">User Notes:</p>
+                        <p className="text-sm">{doc.response_notes}</p>
+                      </div>
+                    )}
+                  </Card>
+                ))}
+                {docRequests.length === 0 && (
+                  <p className="text-center text-muted-foreground py-8">No document requests</p>
+                )}
+              </div>
+            )}
           </TabsContent>
           
           <TabsContent value="activity" className="space-y-4">

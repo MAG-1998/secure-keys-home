@@ -138,7 +138,9 @@ const MyFinancing = () => {
     }
 
     if (statusFilter !== 'all') {
-      filtered = filtered.filter(request => request.status === statusFilter);
+      filtered = filtered.filter(request => 
+        request.stage === statusFilter || request.status === statusFilter
+      );
     }
 
     setFilteredRequests(filtered);
@@ -261,13 +263,14 @@ const MyFinancing = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="submitted">Submitted</SelectItem>
                   <SelectItem value="assigned">Assigned</SelectItem>
-                  <SelectItem value="document_collection">Needs Documents</SelectItem>
+                  <SelectItem value="document_collection">Documents Required</SelectItem>
                   <SelectItem value="under_review">Under Review</SelectItem>
+                  <SelectItem value="final_approval">Final Approval</SelectItem>
                   <SelectItem value="approved">Approved</SelectItem>
                   <SelectItem value="denied">Denied</SelectItem>
+                  <SelectItem value="pending">Pending (Legacy)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
