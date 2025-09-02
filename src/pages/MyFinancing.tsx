@@ -13,6 +13,7 @@ import { useUser } from "@/contexts/UserContext";
 import { MagitLogo } from "@/components/MagitLogo";
 import { FinancingRequestBox } from "@/components/FinancingRequestBox";
 import { FileText, Search, Filter, Eye, Plus } from "lucide-react";
+import { calculateHalalFinancing } from "@/utils/halalFinancing";
 
 interface FinancingRequest {
   id: string;
@@ -268,22 +269,29 @@ const MyFinancing = () => {
                           <div className="text-sm font-bold">{formatCurrency(request.properties.price)}</div>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">
-                            {request.cash_available != null 
-                              ? formatCurrency((request.properties.price || 0) - (request.cash_available || 0))
-                              : <span className="text-muted-foreground">Not specified</span>
-                            }
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            Cash: {request.cash_available != null 
-                              ? formatCurrency(request.cash_available || 0)
-                              : "Not specified"
-                            }
-                          </div>
-                        </div>
-                      </TableCell>
+                       <TableCell>
+                         <div>
+                           <div className="font-medium">
+                             {request.cash_available != null && request.period_months != null
+                               ? (() => {
+                                   const calculation = calculateHalalFinancing(
+                                     request.cash_available || 0,
+                                     request.properties.price || 0,
+                                     request.period_months || 12
+                                   );
+                                   return formatCurrency(calculation.totalCost);
+                                 })()
+                               : <span className="text-muted-foreground">Not specified</span>
+                             }
+                           </div>
+                           <div className="text-sm text-muted-foreground">
+                             Cash: {request.cash_available != null 
+                               ? formatCurrency(request.cash_available || 0)
+                               : "Not specified"
+                             }
+                           </div>
+                         </div>
+                       </TableCell>
                       <TableCell>
                         <div className="font-medium">
                           {request.period_months != null 
