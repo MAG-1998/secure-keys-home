@@ -14,7 +14,7 @@ export type Database = {
   }
   public: {
     Tables: {
-      finance_doc_requests: {
+      halal_finance_doc_requests: {
         Row: {
           communication_id: string | null
           created_at: string | null
@@ -22,7 +22,7 @@ export type Database = {
           description: string | null
           document_type: string
           file_url: string | null
-          financing_request_id: string
+          halal_financing_request_id: string
           id: string
           priority: string | null
           requested_by: string
@@ -37,7 +37,7 @@ export type Database = {
           description?: string | null
           document_type: string
           file_url?: string | null
-          financing_request_id: string
+          halal_financing_request_id: string
           id?: string
           priority?: string | null
           requested_by: string
@@ -52,7 +52,7 @@ export type Database = {
           description?: string | null
           document_type?: string
           file_url?: string | null
-          financing_request_id?: string
+          halal_financing_request_id?: string
           id?: string
           priority?: string | null
           requested_by?: string
@@ -62,28 +62,21 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "finance_doc_requests_communication_id_fkey"
-            columns: ["communication_id"]
+            foreignKeyName: "halal_finance_doc_requests_halal_financing_request_id_fkey"
+            columns: ["halal_financing_request_id"]
             isOneToOne: false
-            referencedRelation: "financing_communications"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "finance_doc_requests_financing_request_id_fkey"
-            columns: ["financing_request_id"]
-            isOneToOne: false
-            referencedRelation: "financing_requests"
+            referencedRelation: "halal_financing_requests"
             referencedColumns: ["id"]
           },
         ]
       }
-      financing_activity_log: {
+      halal_financing_activity_log: {
         Row: {
           action_type: string
           actor_id: string
           created_at: string | null
           details: Json | null
-          financing_request_id: string
+          halal_financing_request_id: string
           id: string
         }
         Insert: {
@@ -91,7 +84,7 @@ export type Database = {
           actor_id: string
           created_at?: string | null
           details?: Json | null
-          financing_request_id: string
+          halal_financing_request_id: string
           id?: string
         }
         Update: {
@@ -99,25 +92,25 @@ export type Database = {
           actor_id?: string
           created_at?: string | null
           details?: Json | null
-          financing_request_id?: string
+          halal_financing_request_id?: string
           id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "financing_activity_log_financing_request_id_fkey"
-            columns: ["financing_request_id"]
+            foreignKeyName: "halal_financing_activity_log_halal_financing_request_id_fkey"
+            columns: ["halal_financing_request_id"]
             isOneToOne: false
-            referencedRelation: "financing_requests"
+            referencedRelation: "halal_financing_requests"
             referencedColumns: ["id"]
           },
         ]
       }
-      financing_communications: {
+      halal_financing_communications: {
         Row: {
           content: string | null
           created_at: string | null
           file_urls: Json | null
-          financing_request_id: string
+          halal_financing_request_id: string
           id: string
           is_internal: boolean | null
           message_type: string
@@ -128,7 +121,7 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           file_urls?: Json | null
-          financing_request_id: string
+          halal_financing_request_id: string
           id?: string
           is_internal?: boolean | null
           message_type?: string
@@ -139,7 +132,7 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           file_urls?: Json | null
-          financing_request_id?: string
+          halal_financing_request_id?: string
           id?: string
           is_internal?: boolean | null
           message_type?: string
@@ -148,29 +141,25 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "financing_communications_financing_request_id_fkey"
-            columns: ["financing_request_id"]
+            foreignKeyName: "halal_financing_communications_halal_financing_request_id_fkey"
+            columns: ["halal_financing_request_id"]
             isOneToOne: false
-            referencedRelation: "financing_requests"
+            referencedRelation: "halal_financing_requests"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "financing_communications_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
           },
         ]
       }
-      financing_requests: {
+      halal_financing_requests: {
         Row: {
           admin_notes: string | null
+          attachments: Json
           cash_available: number | null
           created_at: string | null
           id: string
+          moderator_notes: string | null
           period_months: number | null
           property_id: string
+          request_notes: string | null
           requested_amount: number | null
           responsible_person_id: string | null
           reviewed_at: string | null
@@ -182,11 +171,14 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          attachments?: Json
           cash_available?: number | null
           created_at?: string | null
           id?: string
+          moderator_notes?: string | null
           period_months?: number | null
           property_id: string
+          request_notes?: string | null
           requested_amount?: number | null
           responsible_person_id?: string | null
           reviewed_at?: string | null
@@ -198,76 +190,19 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          attachments?: Json
           cash_available?: number | null
           created_at?: string | null
           id?: string
+          moderator_notes?: string | null
           period_months?: number | null
           property_id?: string
+          request_notes?: string | null
           requested_amount?: number | null
           responsible_person_id?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           stage?: string | null
-          status?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "financing_requests_property_id_fkey"
-            columns: ["property_id"]
-            isOneToOne: false
-            referencedRelation: "properties"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "financing_requests_responsible_person_id_fkey"
-            columns: ["responsible_person_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
-      halal_financing_requests: {
-        Row: {
-          admin_notes: string | null
-          attachments: Json
-          created_at: string | null
-          id: string
-          moderator_notes: string | null
-          property_id: string
-          request_notes: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          admin_notes?: string | null
-          attachments?: Json
-          created_at?: string | null
-          id?: string
-          moderator_notes?: string | null
-          property_id: string
-          request_notes?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          admin_notes?: string | null
-          attachments?: Json
-          created_at?: string | null
-          id?: string
-          moderator_notes?: string | null
-          property_id?: string
-          request_notes?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
           status?: string | null
           updated_at?: string | null
           user_id?: string

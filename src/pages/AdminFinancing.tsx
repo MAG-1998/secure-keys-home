@@ -63,11 +63,11 @@ const AdminFinancing = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('financing_requests')
+        .from('halal_financing_requests')
         .select(`
           *,
           properties (title, location, price),
-          profiles!financing_requests_user_id_fkey (full_name, email)
+          profiles!halal_financing_requests_user_id_fkey (full_name, email)
         `)
         .order('created_at', { ascending: false });
 

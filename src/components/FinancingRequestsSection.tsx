@@ -40,7 +40,7 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
   const fetchFinancingRequests = async () => {
     try {
       const { data: requests, error } = await supabase
-        .from('financing_requests')
+        .from('halal_financing_requests')
         .select(`
           *,
           properties:property_id (
@@ -62,14 +62,14 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
   const fetchDocRequests = async () => {
     try {
       const { data: docs, error } = await supabase
-        .from('finance_doc_requests')
+        .from('halal_finance_doc_requests')
         .select(`
           *,
-          financing_request:financing_request_id!inner (
+          halal_financing_request:halal_financing_request_id!inner (
             user_id
           )
         `)
-        .eq('financing_request.user_id', userId)
+        .eq('halal_financing_request.user_id', userId)
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
@@ -169,7 +169,7 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
                       </div>
                       <Button 
                         size="sm" 
-                        onClick={() => navigate(`/admin/financing/${doc.financing_request_id}`)}
+                        onClick={() => navigate(`/admin/financing/${doc.halal_financing_request_id}`)}
                       >
                         Upload
                       </Button>

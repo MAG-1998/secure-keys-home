@@ -143,11 +143,11 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
       // Fetch financing request details
       const { data: requestData, error: requestError } = await supabase
-        .from('financing_requests')
+        .from('halal_financing_requests')
         .select(`
           *,
           properties (title, location, price),
-          profiles!financing_requests_user_id_fkey (full_name, email),
+          profiles!halal_financing_requests_user_id_fkey (full_name, email),
           responsible_person:responsible_person_id (user_id, full_name, email)
         `)
         .eq('id', financingRequestId)
@@ -158,19 +158,20 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
       // Fetch communications
       const { data: commData, error: commError } = await supabase
-        .from('financing_communications')
+        .from('halal_financing_communications')
         .select(`
           *,
           sender:sender_id (full_name, email)
         `)
-        .eq('financing_request_id', financingRequestId)
+        .eq('halal_financing_request_id', financingRequestId)
         .order('created_at', { ascending: true });
 
       if (commError) throw commError;
       setCommunications((commData || []).map(comm => ({
         ...comm,
-        file_urls: Array.isArray(comm.file_urls) ? comm.file_urls : []
-      })));
+        file_urls: Array.isArray(comm.file_urls) ? comm.file_urls : [],
+        sender: comm.sender || { email: '', full_name: '' }
+      })) as Communication[]);
 
       // Fetch staff members for assignment
       const { data: staffData, error: staffError } = await supabase
@@ -183,9 +184,9 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
       // Fetch document requests
       const { data: docsData, error: docsError } = await supabase
-        .from('finance_doc_requests')
+        .from('halal_finance_doc_requests')
         .select('*')
-        .eq('financing_request_id', financingRequestId)
+        .eq('halal_financing_request_id', financingRequestId)
         .order('created_at', { ascending: false });
 
       if (docsError) throw docsError;
@@ -193,12 +194,12 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
       // Fetch activity log
       const { data: activityData, error: activityError } = await supabase
-        .from('financing_activity_log')
+        .from('halal_financing_activity_log')
         .select(`
           *,
-          profiles!financing_activity_log_actor_id_fkey (full_name, email)
+          profiles!halal_financing_activity_log_actor_id_fkey (full_name, email)
         `)
-        .eq('financing_request_id', financingRequestId)
+        .eq('halal_financing_request_id', financingRequestId)
         .order('created_at', { ascending: false });
 
       if (activityError) throw activityError;
@@ -220,9 +221,9 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
     try {
       const { error } = await supabase
-        .from('finance_doc_requests')
+        .from('halal_finance_doc_requests')
         .insert({
-          financing_request_id: financingRequestId,
+          halal_financing_request_id: financingRequestId,
           document_type: newDocType,
           description: newDocDescription || null,
           deadline_at: newDocDeadline ? new Date(newDocDeadline).toISOString() : null,
@@ -233,15 +234,15 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
       // Update request status to needs_docs
       await supabase
-        .from('financing_requests')
+        .from('halal_financing_requests')
         .update({ status: 'needs_docs' })
         .eq('id', financingRequestId);
 
       // Log activity
       await supabase
-        .from('financing_activity_log')
+        .from('halal_financing_activity_log')
         .insert({
-          financing_request_id: financingRequestId,
+          halal_financing_request_id: financingRequestId,
           actor_id: user?.id,
           action_type: 'doc_requested',
           details: { document_type: newDocType, description: newDocDescription }
@@ -270,7 +271,7 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
     try {
       const { error } = await supabase
-        .from('financing_requests')
+        .from('halal_financing_requests')
         .update({
           stage: newStage,
           updated_at: new Date().toISOString()
@@ -281,9 +282,9 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
       // Log activity
       await supabase
-        .from('financing_activity_log')
+        .from('halal_financing_activity_log')
         .insert({
-          financing_request_id: financingRequestId,
+          halal_financing_request_id: financingRequestId,
           actor_id: user?.id,
           action_type: 'stage_change',
           details: { old_stage: request?.stage, new_stage: newStage }
@@ -309,7 +310,7 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
     try {
       const { error } = await supabase
-        .from('financing_requests')
+        .from('halal_financing_requests')
         .update({
           responsible_person_id: personId,
           stage: 'assigned',
@@ -320,9 +321,9 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
       if (error) throw error;
 
       await supabase
-        .from('financing_activity_log')
+        .from('halal_financing_activity_log')
         .insert({
-          financing_request_id: financingRequestId,
+          halal_financing_request_id: financingRequestId,
           actor_id: user?.id,
           action_type: 'assignment',
           details: { assigned_to: personId }
@@ -348,9 +349,9 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
     try {
       const { error } = await supabase
-        .from('financing_communications')
+        .from('halal_financing_communications')
         .insert({
-          financing_request_id: financingRequestId,
+          halal_financing_request_id: financingRequestId,
           sender_id: user?.id,
           message_type: 'message',
           content: newMessage,

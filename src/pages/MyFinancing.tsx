@@ -58,7 +58,7 @@ const MyFinancing = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('financing_requests')
+        .from('halal_financing_requests')
         .select(`
           *,
           properties (title, location, price)
