@@ -154,33 +154,68 @@ export const EnhancedFinancingRequestBox = ({ financingRequestId, onClose }: Fin
         .from('halal_financing_requests')
         .select(`
           *,
-          properties (title, location, price),
-          profiles!user_id (full_name, email),
-          responsible_person:profiles!responsible_person_id (user_id, full_name, email)
+          properties (title, location, price)
         `)
         .eq('id', financingRequestId)
         .single();
 
       if (requestError) throw requestError;
-      setRequest(requestData as unknown as FinancingRequest);
-      setAdminNotes(requestData.admin_notes || "");
+
+      // Manually fetch user profile
+      const { data: userProfile } = await supabase
+        .from('profiles')
+        .select('full_name, email')
+        .eq('user_id', requestData.user_id)
+        .single();
+
+      // Manually fetch responsible person if assigned
+      let responsiblePerson = null;
+      if (requestData.responsible_person_id) {
+        const { data: respProfile } = await supabase
+          .from('profiles')
+          .select('user_id, full_name, email')
+          .eq('user_id', requestData.responsible_person_id)
+          .single();
+        responsiblePerson = respProfile;
+      }
+
+      const enrichedRequestData = {
+        ...requestData,
+        properties: requestData.properties || { title: 'Unknown Property', location: 'Unknown', price: 0 },
+        profiles: userProfile || { full_name: null, email: 'Unknown' },
+        responsible_person: responsiblePerson
+      };
+
+      setRequest(enrichedRequestData as unknown as FinancingRequest);
+      setAdminNotes(enrichedRequestData.admin_notes || "");
 
       // Fetch communications
       const { data: commData, error: commError } = await supabase
         .from('halal_financing_communications')
-        .select(`
-          *,
-          sender:sender_id (full_name, email)
-        `)
+        .select('*')
         .eq('halal_financing_request_id', financingRequestId)
         .order('created_at', { ascending: true });
 
       if (commError) throw commError;
-      setCommunications((commData || []).map(comm => ({
-        ...comm,
-        file_urls: Array.isArray(comm.file_urls) ? comm.file_urls : [],
-        sender: comm.sender || { email: '', full_name: '' }
-      })) as Communication[]);
+
+      // Manually fetch sender profiles for communications
+      const communicationsWithSenders = await Promise.all(
+        (commData || []).map(async (comm) => {
+          const { data: senderProfile } = await supabase
+            .from('profiles')
+            .select('full_name, email')
+            .eq('user_id', comm.sender_id)
+            .single();
+
+          return {
+            ...comm,
+            file_urls: Array.isArray(comm.file_urls) ? comm.file_urls : [],
+            sender: senderProfile || { email: 'Unknown', full_name: '' }
+          };
+        })
+      );
+
+      setCommunications(communicationsWithSenders as Communication[]);
 
       // Fetch staff members for assignment
       const { data: staffData, error: staffError } = await supabase
@@ -207,15 +242,29 @@ export const EnhancedFinancingRequestBox = ({ financingRequestId, onClose }: Fin
       // Fetch activity log
       const { data: activityData, error: activityError } = await supabase
         .from('halal_financing_activity_log')
-        .select(`
-          *,
-          profiles!halal_financing_activity_log_actor_id_fkey (full_name, email)
-        `)
+        .select('*')
         .eq('halal_financing_request_id', financingRequestId)
         .order('created_at', { ascending: false });
 
       if (activityError) throw activityError;
-      setActivity((activityData || []) as unknown as ActivityItem[]);
+
+      // Manually fetch actor profiles for activity log
+      const activityWithActors = await Promise.all(
+        (activityData || []).map(async (activity) => {
+          const { data: actorProfile } = await supabase
+            .from('profiles')
+            .select('full_name, email')
+            .eq('user_id', activity.actor_id)
+            .single();
+
+          return {
+            ...activity,
+            profiles: actorProfile || { full_name: null, email: 'Unknown' }
+          };
+        })
+      );
+
+      setActivity(activityWithActors as unknown as ActivityItem[]);
     } catch (error) {
       console.error('Error fetching financing data:', error);
       toast({
@@ -542,8 +591,11 @@ export const EnhancedFinancingRequestBox = ({ financingRequestId, onClose }: Fin
     return (
       <Card className="w-full max-w-4xl mx-auto">
         <CardContent className="p-6">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center space-y-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              <p className="text-muted-foreground">Loading financing request details...</p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -554,7 +606,22 @@ export const EnhancedFinancingRequestBox = ({ financingRequestId, onClose }: Fin
     return (
       <Card className="w-full max-w-4xl mx-auto">
         <CardContent className="p-6">
-          <p className="text-center text-muted-foreground">Financing request not found</p>
+          <div className="text-center space-y-4">
+            <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto" />
+            <div>
+              <h3 className="font-heading font-bold text-xl text-foreground mb-2">
+                Financing Request Not Found
+              </h3>
+              <p className="text-muted-foreground">
+                The financing request with ID "{financingRequestId}" could not be found or you don't have permission to view it.
+              </p>
+            </div>
+            {onClose && (
+              <Button variant="outline" onClick={onClose}>
+                Go Back
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
     );
@@ -606,7 +673,7 @@ export const EnhancedFinancingRequestBox = ({ financingRequestId, onClose }: Fin
               </div>
               <div>
                 <Label>Cash Available</Label>
-                <p className="text-sm">{formatCurrency(request.cash_available)}</p>
+                <p className="text-sm">{formatCurrency(request.cash_available || 0)}</p>
               </div>
               <div>
                 <Label>Requested Amount</Label>
@@ -614,7 +681,7 @@ export const EnhancedFinancingRequestBox = ({ financingRequestId, onClose }: Fin
               </div>
               <div>
                 <Label>Period</Label>
-                <p className="text-sm">{request.period_months} months</p>
+                <p className="text-sm">{request.period_months || 'Not specified'} {request.period_months ? 'months' : ''}</p>
               </div>
             </div>
 
