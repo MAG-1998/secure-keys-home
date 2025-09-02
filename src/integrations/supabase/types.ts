@@ -28,7 +28,9 @@ export type Database = {
           requested_by: string
           response_notes: string | null
           status: string | null
+          submitted_at: string | null
           updated_at: string | null
+          user_file_urls: Json | null
         }
         Insert: {
           communication_id?: string | null
@@ -43,7 +45,9 @@ export type Database = {
           requested_by: string
           response_notes?: string | null
           status?: string | null
+          submitted_at?: string | null
           updated_at?: string | null
+          user_file_urls?: Json | null
         }
         Update: {
           communication_id?: string | null
@@ -58,7 +62,9 @@ export type Database = {
           requested_by?: string
           response_notes?: string | null
           status?: string | null
+          submitted_at?: string | null
           updated_at?: string | null
+          user_file_urls?: Json | null
         }
         Relationships: [
           {
@@ -152,6 +158,7 @@ export type Database = {
       halal_financing_requests: {
         Row: {
           admin_notes: string | null
+          admin_review_stage: string | null
           attachments: Json
           cash_available: number | null
           created_at: string | null
@@ -164,13 +171,16 @@ export type Database = {
           responsible_person_id: string | null
           reviewed_at: string | null
           reviewed_by: string | null
-          stage: string | null
+          sent_back_notes: string | null
+          sent_back_to_responsible: boolean | null
+          stage: Database["public"]["Enums"]["financing_workflow_stage"] | null
           status: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
           admin_notes?: string | null
+          admin_review_stage?: string | null
           attachments?: Json
           cash_available?: number | null
           created_at?: string | null
@@ -183,13 +193,16 @@ export type Database = {
           responsible_person_id?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          stage?: string | null
+          sent_back_notes?: string | null
+          sent_back_to_responsible?: boolean | null
+          stage?: Database["public"]["Enums"]["financing_workflow_stage"] | null
           status?: string | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
           admin_notes?: string | null
+          admin_review_stage?: string | null
           attachments?: Json
           cash_available?: number | null
           created_at?: string | null
@@ -202,7 +215,9 @@ export type Database = {
           responsible_person_id?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          stage?: string | null
+          sent_back_notes?: string | null
+          sent_back_to_responsible?: boolean | null
+          stage?: Database["public"]["Enums"]["financing_workflow_stage"] | null
           status?: string | null
           updated_at?: string | null
           user_id?: string
@@ -1111,6 +1126,14 @@ export type Database = {
     }
     Enums: {
       app_role: "user" | "moderator" | "admin"
+      financing_workflow_stage:
+        | "submitted"
+        | "assigned"
+        | "document_collection"
+        | "under_review"
+        | "final_approval"
+        | "approved"
+        | "denied"
       ticket_priority: "low" | "medium" | "high"
       ticket_status: "open" | "in_progress" | "escalated" | "closed"
       ticket_type: "general" | "financing" | "complaint"
@@ -1242,6 +1265,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "moderator", "admin"],
+      financing_workflow_stage: [
+        "submitted",
+        "assigned",
+        "document_collection",
+        "under_review",
+        "final_approval",
+        "approved",
+        "denied",
+      ],
       ticket_priority: ["low", "medium", "high"],
       ticket_status: ["open", "in_progress", "escalated", "closed"],
       ticket_type: ["general", "financing", "complaint"],
