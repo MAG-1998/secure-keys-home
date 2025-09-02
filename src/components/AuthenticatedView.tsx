@@ -1,8 +1,4 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/src/components/AuthenticatedView.tsx b/src/components/AuthenticatedView.tsx
-index 4f0fc31e338301640b57ac0f8db6e590277312e0..25c79ebfb920aeaf49b27b3ccc107e21fd5caeaf 100644
---- a/src/components/AuthenticatedView.tsx
-+++ b/src/components/AuthenticatedView.tsx
+
 @@ -10,51 +10,59 @@ import { CheckCircle, Home, Plus } from "lucide-react";
  import { memo, useState } from "react";
  import { useUserCounts } from "@/hooks/useOptimizedQuery";
