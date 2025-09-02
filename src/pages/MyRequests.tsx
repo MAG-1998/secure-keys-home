@@ -51,6 +51,7 @@ const MyRequestCard = ({
   onMessage,
   isFinished = false
 }: MyRequestCardProps) => {
+  const navigate = useNavigate();
   const imageUrl = r.properties?.image_url || (r.properties?.photos && r.properties.photos.length > 0 ? r.properties.photos[0] : '/placeholder.svg');
   
   return (
@@ -65,6 +66,19 @@ const MyRequestCard = ({
       
       <Card className="bg-background/80 backdrop-blur-sm border-border/50 hover:shadow-lg transition-all duration-300">
         <div className="relative">
+          {/* Red cancellation button in corner */}
+          {!isFinished && (r.status === 'pending' || r.status === 'confirmed') && onCancel && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => onCancel(r.id)}
+              className="absolute top-2 right-2 z-10 h-8 w-8 p-0 rounded-full shadow-lg hover:scale-110 transition-transform"
+              title="Отменить посещение"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          )}
+          
           <img
             src={imageUrl}
             alt={r.properties?.title || 'Property'}
@@ -98,7 +112,13 @@ const MyRequestCard = ({
 
             {/* Right: Property details and visit time */}
             <div className="flex-1">
-              <h3 className="font-heading font-bold text-lg text-foreground mb-1">{r.properties?.title || 'Property'}</h3>
+              <h3 
+                className="font-heading font-bold text-lg text-foreground mb-1 hover:text-primary cursor-pointer transition-colors"
+                onClick={() => navigate(`/property/${r.property_id}`)}
+                title="Перейти к профилю недвижимости"
+              >
+                {r.properties?.title || 'Property'}
+              </h3>
               <div className="flex items-center text-muted-foreground mb-3">
                 <MapPin className="w-4 h-4 mr-1" />
                 <span className="text-sm">{r.properties?.location || 'Location not available'}</span>
@@ -150,18 +170,6 @@ const MyRequestCard = ({
                     >
                       <MessageSquare className="w-4 h-4 mr-2" />
                       Message
-                    </Button>
-                  )}
-                  
-                  {!isFinished && r.status === 'pending' && onCancel && (
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => onCancel(r.id)}
-                      className="flex items-center"
-                    >
-                      <X className="w-4 h-4 mr-2" />
-                      Cancel
                     </Button>
                   )}
                 </div>
