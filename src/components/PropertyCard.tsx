@@ -134,7 +134,7 @@ export const PropertyCard = ({
         </div>
       </div>
       
-      <CardContent className="p-4 flex flex-col h-full">
+      <CardContent className="p-4">
         <div className="flex items-start justify-between mb-2">
           <h3 className="font-heading font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
             {actualTitle}
@@ -153,7 +153,7 @@ export const PropertyCard = ({
           <span className="text-sm">{actualLocation}</span>
         </div>
         
-        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 flex-grow">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
           <div className="flex items-center">
             <Bed className="h-4 w-4 mr-1" />
             {actualBedrooms}
@@ -168,7 +168,7 @@ export const PropertyCard = ({
           </div>
         </div>
         
-        <Button className="w-full mt-auto" variant="outline" onClick={(e) => { e.stopPropagation(); handleNavigate(); }}>
+        <Button className="w-full" variant="outline" onClick={(e) => { e.stopPropagation(); handleNavigate(); }}>
           View Details
         </Button>
       </CardContent>
