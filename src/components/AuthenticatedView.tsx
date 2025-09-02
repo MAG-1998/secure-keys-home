@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,12 +12,14 @@ import { useUserCounts } from "@/hooks/useOptimizedQuery";
 import type { User } from "@supabase/supabase-js";
 import { useTranslation } from "@/hooks/useTranslation";
 import { FinancingRequestsSection } from "@/components/FinancingRequestsSection";
+
 interface AuthenticatedViewProps {
   user: User;
   isHalalMode: boolean;
   setIsHalalMode: (value: boolean) => void;
   t: (key: string) => string;
 }
+
 export const AuthenticatedView = memo(({
   user,
   isHalalMode,
@@ -36,6 +39,7 @@ export const AuthenticatedView = memo(({
   const getUserDisplayName = () => {
     return user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
   };
+
   return <>
       {/* Welcome Back - Compact */}
       <section className="py-4 bg-background/50">
@@ -132,7 +136,7 @@ export const AuthenticatedView = memo(({
                       <div className="text-muted-foreground">Financing Requests</div>
                       <div className="text-xs text-muted-foreground/70 mt-1">Active applications</div>
                     </div>
-                    <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('/admin/financing')}>
+                    <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('/my-financing')}>
                       View Financing
                     </Button>
                   </CardContent>
