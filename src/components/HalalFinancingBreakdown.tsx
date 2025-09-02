@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { calculateHalalFinancing, formatCurrency, getPeriodOptions } from "@/utils/halalFinancing"
+import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore"
 import { Calculator, FileText } from "lucide-react"
 
 interface HalalFinancingBreakdownProps {
@@ -26,6 +27,7 @@ export const HalalFinancingBreakdown = ({
 }: HalalFinancingBreakdownProps) => {
   const [cashAmount, setCashAmount] = useState(initialCashAvailable)
   const [financingPeriod, setFinancingPeriod] = useState(initialPeriodMonths)
+  const financingStore = useHalalFinancingStore()
 
   // Update state when initial values change (from URL params)
   useEffect(() => {
@@ -57,8 +59,9 @@ export const HalalFinancingBreakdown = ({
   }, [cashAmount, financingPeriod, propertyPrice])
 
   const handleCashChange = (value: string) => {
-    const numericValue = value.replace(/[^0-9.]/g, "")
-    setCashAmount(numericValue)
+    const sanitized = value.replace(/[^0-9.]/g, '');
+    setCashAmount(sanitized);
+    financingStore.updateState({ cashAvailable: sanitized });
   }
 
   return (
@@ -83,7 +86,10 @@ export const HalalFinancingBreakdown = ({
 
           <div>
             <Label htmlFor="financing-period">Financing Period</Label>
-            <Select value={financingPeriod} onValueChange={setFinancingPeriod}>
+            <Select value={financingPeriod} onValueChange={(value) => {
+              setFinancingPeriod(value);
+              financingStore.updateState({ periodMonths: value });
+            }}>
               <SelectTrigger>
                 <SelectValue placeholder="Select period" />
               </SelectTrigger>
