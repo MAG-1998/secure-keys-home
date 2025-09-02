@@ -270,7 +270,7 @@ const MyFinancing = () => {
                       </TableCell>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{formatCurrency(request.requested_amount || 0)}</div>
+                          <div className="font-medium">{formatCurrency((request.properties.price || 0) - (request.cash_available || 0))}</div>
                           <div className="text-sm text-muted-foreground">
                             Cash: {formatCurrency(request.cash_available || 0)}
                           </div>
