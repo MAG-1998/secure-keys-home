@@ -306,7 +306,19 @@ const MyFinancing = () => {
                         <div>
                           <div className="font-medium text-sm">{request.properties.title}</div>
                           <div className="text-xs text-muted-foreground">{request.properties.location}</div>
-                          <div className="text-sm font-bold">{formatCurrency(request.properties.price)}</div>
+                          <div className="text-sm font-bold">
+                            {request.cash_available != null && request.period_months != null
+                              ? (() => {
+                                  const calculation = calculateHalalFinancing(
+                                    request.cash_available || 0,
+                                    request.properties.price || 0,
+                                    request.period_months || 12
+                                  );
+                                  return formatCurrency(calculation.totalCost);
+                                })()
+                              : formatCurrency(request.properties.price)
+                            }
+                          </div>
                         </div>
                         
                         <div className="grid grid-cols-2 gap-2 text-xs">
