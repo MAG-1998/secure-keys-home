@@ -32,7 +32,7 @@ export const AuthenticatedView = memo(({
     isScrolled
   } = useScroll();
 
-  const { data: counts = { saved: 0, listed: 0, requests: 0, myRequests: 0, incomingRequests: 0 } } = useUserCounts(user?.id);
+  const { data: counts = { saved: 0, listed: 0, financingRequests: 0, myRequests: 0, incomingRequests: 0 } } = useUserCounts(user?.id);
   const { language } = useTranslation();
   
   
@@ -132,12 +132,12 @@ export const AuthenticatedView = memo(({
                 <Card className="bg-background/50 border-border/50">
                   <CardContent className="p-6 text-center flex flex-col h-full">
                     <div className="flex-grow">
-                      <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.requests || 0}</div>
-                      <div className="text-muted-foreground">Financing Requests</div>
-                      <div className="text-xs text-muted-foreground/70 mt-1">Active applications</div>
+                      <div className="font-heading font-bold text-2xl text-primary mb-2">{counts.financingRequests || 0}</div>
+                      <div className="text-muted-foreground">{t('dashboard.financingRequests')}</div>
+                      <div className="text-xs text-muted-foreground/70 mt-1">{t('dashboard.activeApplications')}</div>
                     </div>
                     <Button variant="ghost" size="sm" className="mt-4" onClick={() => navigate('/my-financing')}>
-                      View Financing
+                      {t('dashboard.viewFinancing')}
                     </Button>
                   </CardContent>
                 </Card>

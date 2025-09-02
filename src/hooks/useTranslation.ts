@@ -564,6 +564,21 @@ const translations: Translations = {
     ru: 'Управлять заявками',
     uz: 'So‘roqlarni boshqarish'
   },
+  'dashboard.financingRequests': {
+    en: 'Financing Requests',
+    ru: 'Заявки на финансирование',
+    uz: 'Moliyalashtirish so\'rovlari'
+  },
+  'dashboard.activeApplications': {
+    en: 'Active applications',
+    ru: 'Активные заявки',
+    uz: 'Faol ilovalar'
+  },
+  'dashboard.viewFinancing': {
+    en: 'View Financing',
+    ru: 'Смотреть финансирование',
+    uz: 'Moliyani korish'
+  },
 
   // CTA
   'cta.title': {
