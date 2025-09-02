@@ -44,11 +44,9 @@ export const AuthenticatedView = memo(({
       {/* Welcome Back - Compact */}
       <section className="py-4 bg-background/50">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h1 className="font-heading font-bold text-xl text-foreground">
-              {`${t('hero.welcomeBack')}, ${getUserDisplayName()}!`}
-            </h1>
-          </div>
+          <h1 className="font-heading font-bold text-xl text-foreground">
+            {`${t('hero.welcomeBack')}, ${getUserDisplayName()}!`}
+          </h1>
         </div>
       </section>
 
@@ -56,26 +54,22 @@ export const AuthenticatedView = memo(({
       <section id="search-map" className="w-full">
         <div className="w-full space-y-6">
           {/* Search Section */}
-          <div className="container mx-auto px-4">
-            <div className="max-w-6xl mx-auto">
-              <SearchSection 
-                isHalalMode={isHalalMode} 
-                onHalalModeChange={setIsHalalMode} 
-                t={t}
-              />
-            </div>
+          <div className="w-full px-4">
+            <SearchSection 
+              isHalalMode={isHalalMode} 
+              onHalalModeChange={setIsHalalMode} 
+              t={t}
+            />
           </div>
           
           {/* Map Section - Full Width */}
-          <div className="container mx-auto px-4">
-            <div className="max-w-6xl mx-auto">
-              <div className="w-full h-[500px] md:h-[600px] border border-border rounded-lg overflow-hidden">
-                <YandexMap 
-                  isHalalMode={isHalalMode} 
-                  t={t}
-                  language={language}
-                />
-              </div>
+          <div className="w-full px-4">
+            <div className="w-full h-[500px] md:h-[600px] border border-border rounded-lg overflow-hidden">
+              <YandexMap 
+                isHalalMode={isHalalMode} 
+                t={t}
+                language={language}
+              />
             </div>
           </div>
         </div>

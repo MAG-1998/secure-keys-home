@@ -202,29 +202,25 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
 
       {/* AI-Powered Search Section */}
       <section id="search" className="relative z-10 pt-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <SearchSection 
-              isHalalMode={isHalalMode} 
-              onHalalModeChange={setIsHalalMode}
-              t={t}
-            />
-          </div>
+        <div className="w-full px-4">
+          <SearchSection 
+            isHalalMode={isHalalMode} 
+            onHalalModeChange={setIsHalalMode}
+            t={t}
+          />
         </div>
       </section>
 
       {/* Interactive Map Section */}
       <section id="map" className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <LazyMapSection 
-              t={t} 
-              isHalalMode={isHalalMode} 
-              language={language}
-              searchResults={searchResults}
-              onSearchResultsChange={setSearchResults}
-            />
-          </div>
+        <div className="w-full px-4">
+          <LazyMapSection 
+            t={t} 
+            isHalalMode={isHalalMode} 
+            language={language}
+            searchResults={searchResults}
+            onSearchResultsChange={setSearchResults}
+          />
         </div>
       </section>
 

@@ -574,7 +574,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
           {/* Search Results */}
           {results.length > 0 && (
             <Card className="bg-background/80 backdrop-blur-sm border-0 shadow-warm">
-              <CardContent className="p-6">
+              <CardContent className="p-4 md:p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-heading font-bold text-xl text-foreground">
                     {results.length} {isHalalMode ? t('search.eligibleProperties') : t('search.propertiesFound')}
