@@ -590,7 +590,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
-                    {results.slice(0, 10).map((property) => (
+                    {results.slice(0, 18).map((property) => (
                       <PropertyCard
                         key={property.id}
                         id={property.id}
@@ -610,6 +610,18 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                         onClick={() => handlePropertyClick(property)}
                       />
                     ))}
+                  </div>
+
+                  {/* View All Properties Button */}
+                  <div className="flex justify-center mt-8">
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      onClick={() => navigate('/properties')}
+                      className="px-8"
+                    >
+                      View All Properties
+                    </Button>
                   </div>
 
                 {aiSuggestion && (
