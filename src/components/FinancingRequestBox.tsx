@@ -147,8 +147,8 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
         .select(`
           *,
           properties (title, location, price),
-          profiles!halal_financing_requests_user_id_fkey (full_name, email),
-          responsible_person:responsible_person_id (user_id, full_name, email)
+          profiles!user_id (full_name, email),
+          responsible_person:profiles!responsible_person_id (user_id, full_name, email)
         `)
         .eq('id', financingRequestId)
         .single();

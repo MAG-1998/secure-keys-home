@@ -276,7 +276,9 @@ const MyFinancing = () => {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>{request.period_months} months</TableCell>
+                      <TableCell>
+                        <div className="font-medium">{request.period_months || 0} months</div>
+                      </TableCell>
                       <TableCell>{getStatusBadge(request.status, request.stage)}</TableCell>
                       <TableCell>
                         {new Date(request.updated_at).toLocaleDateString()}
