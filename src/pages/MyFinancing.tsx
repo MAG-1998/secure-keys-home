@@ -270,14 +270,27 @@ const MyFinancing = () => {
                       </TableCell>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{formatCurrency((request.properties.price || 0) - (request.cash_available || 0))}</div>
+                          <div className="font-medium">
+                            {request.cash_available != null 
+                              ? formatCurrency((request.properties.price || 0) - (request.cash_available || 0))
+                              : <span className="text-muted-foreground">Not specified</span>
+                            }
+                          </div>
                           <div className="text-sm text-muted-foreground">
-                            Cash: {formatCurrency(request.cash_available || 0)}
+                            Cash: {request.cash_available != null 
+                              ? formatCurrency(request.cash_available || 0)
+                              : "Not specified"
+                            }
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="font-medium">{request.period_months || 0} months</div>
+                        <div className="font-medium">
+                          {request.period_months != null 
+                            ? `${request.period_months} months`
+                            : <span className="text-muted-foreground">Not specified</span>
+                          }
+                        </div>
                       </TableCell>
                       <TableCell>{getStatusBadge(request.status, request.stage)}</TableCell>
                       <TableCell>
