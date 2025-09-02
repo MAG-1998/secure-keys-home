@@ -232,10 +232,10 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
       if (error) throw error;
 
-      // Update request status to needs_docs
+      // Update request stage to document_collection
       await supabase
         .from('halal_financing_requests')
-        .update({ status: 'needs_docs' })
+        .update({ stage: 'document_collection' })
         .eq('id', financingRequestId);
 
       // Log activity
@@ -266,7 +266,7 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
     }
   };
 
-  const updateStage = async (newStage: string) => {
+  const updateStage = async (newStage: 'submitted' | 'assigned' | 'document_collection' | 'under_review' | 'final_approval' | 'approved' | 'denied') => {
     if (!canManage) return;
 
     try {

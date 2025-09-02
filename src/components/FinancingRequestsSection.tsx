@@ -103,6 +103,8 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
         return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
       case 'in_review':
         return <Badge variant="outline"><FileText className="w-3 h-3 mr-1" />In Review</Badge>;
+      case 'needs_docs':
+        return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" />Documents Required</Badge>;
       default:
         return <Badge variant="outline">{currentStage}</Badge>;
     }

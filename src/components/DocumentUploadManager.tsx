@@ -1,0 +1,252 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Upload, FileText, Download, Calendar, CheckCircle, Clock } from "lucide-react";
+import { useUser } from "@/contexts/UserContext";
+
+interface DocRequest {
+  id: string;
+  document_type: string;
+  description: string | null;
+  deadline_at: string | null;
+  status: string;
+  file_url: string | null;
+  response_notes: string | null;
+  user_file_urls: any[];
+  submitted_at: string | null;
+  created_at: string;
+}
+
+interface DocumentUploadManagerProps {
+  docRequests: DocRequest[];
+  financingRequestId: string;
+  onRefresh: () => void;
+}
+
+export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefresh }: DocumentUploadManagerProps) => {
+  const [uploading, setUploading] = useState<string | null>(null);
+  const [responseNotes, setResponseNotes] = useState<{ [key: string]: string }>({});
+  const { toast } = useToast();
+  const { user } = useUser();
+
+  const handleFileUpload = async (docRequestId: string, files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    setUploading(docRequestId);
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${user?.id}/${docRequestId}/${Date.now()}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('properties')
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('properties')
+          .getPublicUrl(fileName);
+
+        uploadedUrls.push(publicUrl);
+      }
+
+      // Update the document request with file URLs and notes
+      const { error } = await supabase
+        .from('halal_finance_doc_requests')
+        .update({
+          user_file_urls: uploadedUrls,
+          response_notes: responseNotes[docRequestId] || null,
+          status: 'submitted',
+          submitted_at: new Date().toISOString()
+        })
+        .eq('id', docRequestId);
+
+      if (error) throw error;
+
+      // Log activity
+      await supabase
+        .from('halal_financing_activity_log')
+        .insert({
+          halal_financing_request_id: financingRequestId,
+          actor_id: user?.id,
+          action_type: 'doc_submitted',
+          details: { 
+            document_request_id: docRequestId, 
+            files_count: uploadedUrls.length,
+            response_notes: responseNotes[docRequestId] || null
+          }
+        });
+
+      toast({
+        title: "Success",
+        description: "Documents uploaded successfully"
+      });
+
+      setResponseNotes(prev => ({ ...prev, [docRequestId]: '' }));
+      onRefresh();
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload documents",
+        variant: "destructive"
+      });
+    } finally {
+      setUploading(null);
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="destructive"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
+      case 'submitted':
+        return <Badge variant="default" className="bg-green-600 hover:bg-green-700"><CheckCircle className="w-3 h-3 mr-1" />Submitted</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  if (docRequests.length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-6 text-center">
+          <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="font-medium mb-2">No Document Requests</h3>
+          <p className="text-sm text-muted-foreground">
+            No document requests have been made for this financing request.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {docRequests.map((docRequest) => (
+        <Card 
+          key={docRequest.id} 
+          className={`${docRequest.status === 'pending' ? 'border-red-500 border-2' : ''}`}
+        >
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">{docRequest.document_type}</CardTitle>
+              {getStatusBadge(docRequest.status)}
+            </div>
+            {docRequest.description && (
+              <p className="text-sm text-muted-foreground">{docRequest.description}</p>
+            )}
+            {docRequest.deadline_at && (
+              <div className="flex items-center gap-2 text-sm text-orange-600">
+                <Calendar className="w-4 h-4" />
+                Deadline: {formatDate(docRequest.deadline_at)}
+              </div>
+            )}
+          </CardHeader>
+          
+          <CardContent>
+            {docRequest.status === 'pending' ? (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor={`notes-${docRequest.id}`}>Response Notes (Optional)</Label>
+                  <Textarea
+                    id={`notes-${docRequest.id}`}
+                    placeholder="Add any notes or comments about the documents you're uploading..."
+                    value={responseNotes[docRequest.id] || ''}
+                    onChange={(e) => setResponseNotes(prev => ({ ...prev, [docRequest.id]: e.target.value }))}
+                    className="mt-1"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor={`upload-${docRequest.id}`}>Upload Documents</Label>
+                  <div className="mt-1">
+                    <input
+                      id={`upload-${docRequest.id}`}
+                      type="file"
+                      multiple
+                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                      onChange={(e) => handleFileUpload(docRequest.id, e.target.files)}
+                      disabled={uploading === docRequest.id}
+                      className="hidden"
+                    />
+                    <Button
+                      variant="outline"
+                      onClick={() => document.getElementById(`upload-${docRequest.id}`)?.click()}
+                      disabled={uploading === docRequest.id}
+                      className="w-full"
+                    >
+                      {uploading === docRequest.id ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-4 h-4 mr-2" />
+                          Choose Files to Upload
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Supported formats: PDF, JPG, PNG, DOC, DOCX
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="text-sm text-muted-foreground">
+                  Submitted on: {docRequest.submitted_at ? formatDate(docRequest.submitted_at) : 'N/A'}
+                </div>
+                
+                {docRequest.response_notes && (
+                  <div>
+                    <Label>Response Notes</Label>
+                    <p className="text-sm bg-muted p-2 rounded mt-1">{docRequest.response_notes}</p>
+                  </div>
+                )}
+                
+                {docRequest.user_file_urls && docRequest.user_file_urls.length > 0 && (
+                  <div>
+                    <Label>Uploaded Files ({docRequest.user_file_urls.length})</Label>
+                    <div className="space-y-1 mt-1">
+                      {docRequest.user_file_urls.map((url, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <FileText className="w-4 h-4" />
+                          <a 
+                            href={url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            Document {index + 1}
+                            <Download className="w-3 h-3" />
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+};

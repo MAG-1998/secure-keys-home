@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
 import { MagitLogo } from "@/components/MagitLogo";
-import { FinancingRequestBox } from "@/components/FinancingRequestBox";
+import { EnhancedFinancingRequestBox } from "@/components/EnhancedFinancingRequestBox";
 import { FileText, Search, Filter, Eye } from "lucide-react";
 
 interface FinancingRequest {
@@ -145,15 +145,21 @@ const AdminFinancing = () => {
     setFilteredRequests(filtered);
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, stage?: string) => {
+    const currentStage = stage || status;
     const variants: Record<string, any> = {
+      submitted: 'secondary',
+      assigned: 'outline', 
+      document_collection: 'destructive',
+      under_review: 'default',
+      final_approval: 'outline',
+      approved: 'default',
+      denied: 'destructive',
       pending: 'warning',
       in_review: 'outline',
-      approved: 'success',
-      denied: 'destructive',
-      needs_docs: 'secondary'
+      needs_docs: 'destructive'
     };
-    return <Badge variant={variants[status] || 'outline'}>{status.replace('_', ' ')}</Badge>;
+    return <Badge variant={variants[currentStage] || 'outline'}>{currentStage.replace('_', ' ')}</Badge>;
   };
 
   const formatCurrency = (amount: number) => {
@@ -184,7 +190,7 @@ const AdminFinancing = () => {
         </header>
         
         <div className="container mx-auto px-4 py-8">
-          <FinancingRequestBox
+          <EnhancedFinancingRequestBox
             financingRequestId={requestId}
             onClose={() => navigate('/admin/financing')}
           />
