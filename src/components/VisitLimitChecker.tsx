@@ -13,7 +13,7 @@ interface VisitLimitCheckerProps {
 }
 
 export const VisitLimitChecker = ({ propertyId, onRequestSubmit, children }: VisitLimitCheckerProps) => {
-  const { canCreate, reason, freeVisitsUsed, isRestricted, loading } = useVisitLimits(propertyId);
+  const { canCreate, reason, freeVisitsUsed, isRestricted, loading, recheckLimits } = useVisitLimits(propertyId);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [showRestrictedDialog, setShowRestrictedDialog] = useState(false);
   const [showWarningDialog, setShowWarningDialog] = useState(false);
@@ -27,7 +27,8 @@ export const VisitLimitChecker = ({ propertyId, onRequestSubmit, children }: Vis
       return;
     }
 
-    if (!canCreate && reason.includes("Weekly visit limit reached")) {
+    if (!canCreate) {
+      // Show error for any reason why the user can't create a visit
       setShowRestrictedDialog(true);
       return;
     }
@@ -44,6 +45,8 @@ export const VisitLimitChecker = ({ propertyId, onRequestSubmit, children }: Vis
       // Free visit
       onRequestSubmit(pendingVisitDate!, false);
       setPendingVisitDate(null);
+      // Recheck limits after request submission
+      setTimeout(() => recheckLimits(), 1000);
     } else {
       // Paid visit required
       setShowPaymentDialog(true);
@@ -54,6 +57,8 @@ export const VisitLimitChecker = ({ propertyId, onRequestSubmit, children }: Vis
     if (pendingVisitDate) {
       onRequestSubmit(pendingVisitDate, true);
       setPendingVisitDate(null);
+      // Recheck limits after request submission
+      setTimeout(() => recheckLimits(), 1000);
     }
   };
 
@@ -65,7 +70,7 @@ export const VisitLimitChecker = ({ propertyId, onRequestSubmit, children }: Vis
           const visitDate = new Date(); // This will be handled by the validation
           handleVisitRequest(visitDate);
         },
-        disabled: loading || (!canCreate && freeVisitsUsed >= 5),
+        disabled: loading || !canCreate,
       })}
 
       <VisitWarningDialog
@@ -92,10 +97,15 @@ export const VisitLimitChecker = ({ propertyId, onRequestSubmit, children }: Vis
                   <Ban className="h-5 w-5 text-destructive" />
                   Visit Requests Restricted
                 </>
+              ) : reason.includes("already have an active visit request") ? (
+                <>
+                  <Ban className="h-5 w-5 text-warning" />
+                  Duplicate Request Not Allowed
+                </>
               ) : (
                 <>
                   <Clock className="h-5 w-5 text-warning" />
-                  Weekly Limit Reached
+                  Visit Limit Reached
                 </>
               )}
             </AlertDialogTitle>
