@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 import { DocumentUploadManager } from "@/components/DocumentUploadManager";
+import { calculateHalalFinancing, formatCurrency as formatHalalCurrency } from "@/utils/halalFinancing";
 import { 
   FileText, 
   Upload, 
@@ -531,22 +532,33 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
                 <Label>Applicant</Label>
                 <p className="text-sm">{request.profiles.full_name || request.profiles.email}</p>
               </div>
-              <div>
-                <Label>Property Price</Label>
-                <p className="text-sm font-bold">{formatCurrency(request.properties.price)}</p>
-              </div>
-              <div>
-                <Label>Cash Available</Label>
-                <p className="text-sm">{formatCurrency(request.cash_available)}</p>
-              </div>
-              <div>
-                <Label>Requested Amount</Label>
-                <p className="text-sm">{formatCurrency(request.requested_amount || 0)}</p>
-              </div>
-              <div>
-                <Label>Period</Label>
-                <p className="text-sm">{request.period_months} months</p>
-              </div>
+              {(() => {
+                const financingCalc = calculateHalalFinancing(
+                  request.cash_available,
+                  request.properties.price,
+                  request.period_months
+                );
+                return (
+                  <>
+                    <div>
+                      <Label>Total Cost</Label>
+                      <p className="text-sm font-bold">{formatHalalCurrency(financingCalc.totalCost)}</p>
+                    </div>
+                    <div>
+                      <Label>Monthly Payment</Label>
+                      <p className="text-sm">{formatHalalCurrency(financingCalc.requiredMonthlyPayment)}</p>
+                    </div>
+                    <div>
+                      <Label>Period</Label>
+                      <p className="text-sm">{request.period_months} months</p>
+                    </div>
+                    <div>
+                      <Label>VAT</Label>
+                      <p className="text-sm">{formatHalalCurrency(financingCalc.vat)}</p>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Assignment and Actions */}
