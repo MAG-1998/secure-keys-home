@@ -60,7 +60,11 @@ export const VisitLimitChecker = ({ propertyId, onRequestSubmit, children }: Vis
   return (
     <>
       {React.cloneElement(children as React.ReactElement, {
-        onVisitRequest: handleVisitRequest,
+        onClick: (e: React.MouseEvent) => {
+          e.preventDefault();
+          const visitDate = new Date(); // This will be handled by the validation
+          handleVisitRequest(visitDate);
+        },
         disabled: loading || (!canCreate && freeVisitsUsed >= 5),
       })}
 

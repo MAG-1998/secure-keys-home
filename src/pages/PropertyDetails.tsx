@@ -736,11 +736,7 @@ const PropertyDetails = () => {
                         <VisitLimitChecker
                           propertyId={id!}
                           onRequestSubmit={(visitDate) => {
-                            // Convert the passed date to the format expected by requestVisit
-                            const pickRaw = selectedSlot || customDateTime;
-                            if (pickRaw) {
-                              requestVisit();
-                            }
+                            requestVisit();
                           }}
                         >
                           <Button 
