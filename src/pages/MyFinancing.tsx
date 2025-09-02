@@ -401,7 +401,9 @@ const MyFinancing = () => {
                           <div>
                             <div className="font-medium">{request.properties.title}</div>
                             <div className="text-sm text-muted-foreground">{request.properties.location}</div>
-                            <div className="text-sm font-bold">{formatCurrency(request.properties.price)}</div>
+                            <div className="text-sm font-bold">
+                              {formatCurrency((request.requested_amount || 0) + (request.cash_available || 0))}
+                            </div>
                           </div>
                         </TableCell>
                          <TableCell>
