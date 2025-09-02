@@ -94,9 +94,9 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
       case 'under_review':
         return <Badge variant="default"><Clock className="w-3 h-3 mr-1" />Under Review</Badge>;
       case 'final_approval':
-        return <Badge variant="outline"><FileText className="w-3 h-3 mr-1" />Final Approval</Badge>;
+        return <Badge className="bg-blue-600 hover:bg-blue-700"><FileText className="w-3 h-3 mr-1" />Final Approval</Badge>;
       case 'approved':
-        return <Badge variant="default" className="bg-green-600 hover:bg-green-700"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>;
+        return <Badge className="bg-green-600 hover:bg-green-700"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>;
       case 'denied':
         return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Denied</Badge>;
       case 'pending':
@@ -106,7 +106,7 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
       case 'needs_docs':
         return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" />Documents Required</Badge>;
       default:
-        return <Badge variant="outline">{currentStage}</Badge>;
+        return <Badge variant="outline">{currentStage.replace('_', ' ')}</Badge>;
     }
   };
 
@@ -187,7 +187,14 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
             {requests.map((request) => {
               const needsDocuments = request.stage === 'document_collection';
               const isApproved = request.stage === 'approved';
-              const borderClass = needsDocuments ? 'border-red-500 border-2' : isApproved ? 'border-green-500 border-2' : 'border-border/50';
+              const isUnderReview = request.stage === 'under_review';
+              const isFinalApproval = request.stage === 'final_approval';
+              
+              let borderClass = 'border-border/50';
+              if (needsDocuments) borderClass = 'border-red-500 border-2';
+              else if (isUnderReview) borderClass = 'border-yellow-500 border-2';
+              else if (isFinalApproval) borderClass = 'border-blue-500 border-2';
+              else if (isApproved) borderClass = 'border-green-500 border-2';
               
               return (
                 <Card key={request.id} className={`bg-background/80 ${borderClass}`}>
@@ -198,25 +205,37 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
                       </CardTitle>
                       {getStatusBadge(request.status, request.stage)}
                     </div>
-                  <p className="text-sm text-muted-foreground">
-                    Submitted: {formatDate(request.created_at)}
-                    {request.reviewed_at && (
-                      <span> • Reviewed: {formatDate(request.reviewed_at)}</span>
+                    <p className="text-sm text-muted-foreground">
+                      Submitted: {formatDate(request.created_at)}
+                      {request.reviewed_at && (
+                        <span> • Reviewed: {formatDate(request.reviewed_at)}</span>
+                      )}
+                    </p>
+                    
+                    {/* Stage-specific messages */}
+                    {needsDocuments && (
+                      <div className="text-sm text-red-600 font-medium">
+                        📋 Action Required: Upload requested documents
+                      </div>
                     )}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-muted-foreground">
-                      Last updated: {formatDate(request.updated_at)}
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => navigate(`/admin/financing/${request.id}`)}
-                    >
-                      View Details
-                    </Button>
+                    {isApproved && (
+                      <div className="text-sm text-green-600 font-medium">
+                        ✅ Approved! Contact our office to proceed
+                      </div>
+                    )}
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-muted-foreground">
+                        Last updated: {formatDate(request.updated_at)}
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate(`/admin/financing/${request.id}`)}
+                      >
+                        View Details
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

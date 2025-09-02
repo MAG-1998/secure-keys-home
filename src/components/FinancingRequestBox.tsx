@@ -266,16 +266,24 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
     }
   };
 
-  const updateStage = async (newStage: 'submitted' | 'assigned' | 'document_collection' | 'under_review' | 'final_approval' | 'approved' | 'denied') => {
+  const updateStage = async (newStage: 'submitted' | 'assigned' | 'document_collection' | 'under_review' | 'final_approval' | 'approved' | 'denied', sendBackNotes?: string) => {
     if (!canManage) return;
 
     try {
+      const updateData: any = {
+        stage: newStage,
+        updated_at: new Date().toISOString()
+      };
+
+      // If sending back to responsible person
+      if (newStage === 'under_review' && request?.stage === 'final_approval') {
+        updateData.sent_back_to_responsible = true;
+        updateData.sent_back_notes = sendBackNotes;
+      }
+
       const { error } = await supabase
         .from('halal_financing_requests')
-        .update({
-          stage: newStage,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', financingRequestId);
 
       if (error) throw error;
@@ -287,16 +295,21 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
           halal_financing_request_id: financingRequestId,
           actor_id: user?.id,
           action_type: 'stage_change',
-          details: { old_stage: request?.stage, new_stage: newStage }
+          details: { 
+            old_stage: request?.stage, 
+            new_stage: newStage,
+            sent_back_notes: sendBackNotes
+          }
         });
 
       toast({
         title: "Success",
-        description: `Request stage updated to ${newStage}`
+        description: `Request stage updated to ${newStage.replace('_', ' ')}`
       });
 
       fetchData();
     } catch (error) {
+      console.error('Stage update error:', error);
       toast({
         title: "Error",
         description: "Failed to update request stage",
@@ -314,7 +327,8 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
         .update({
           responsible_person_id: personId,
           stage: 'assigned',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
+          sent_back_to_responsible: false  // Reset send back flag
         })
         .eq('id', financingRequestId);
 
@@ -336,6 +350,7 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
       fetchData();
     } catch (error) {
+      console.error('Assignment error:', error);
       toast({
         title: "Error",
         description: "Failed to assign responsible person",
@@ -382,9 +397,9 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
       case 'under_review':
         return <Badge variant="default"><Clock className="w-3 h-3 mr-1" />Under Review</Badge>;
       case 'final_approval':
-        return <Badge variant="outline"><FileText className="w-3 h-3 mr-1" />Final Approval</Badge>;
+        return <Badge className="bg-blue-600 hover:bg-blue-700"><FileText className="w-3 h-3 mr-1" />Final Approval</Badge>;
       case 'approved':
-        return <Badge variant="default" className="bg-green-600 hover:bg-green-700"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>;
+        return <Badge className="bg-green-600 hover:bg-green-700"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>;
       case 'denied':
         return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Denied</Badge>;
       default:
@@ -531,48 +546,109 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
                   {/* Stage Actions */}
                   {canManage && (
                     <div className="flex flex-wrap gap-2">
-                      {request.stage === 'submitted' && (
+                      {request.stage === 'submitted' && isAdmin && request.responsible_person_id && (
                         <Button onClick={() => updateStage('assigned')} size="sm">
                           <ArrowRight className="w-4 h-4 mr-1" />
                           Mark as Assigned
                         </Button>
                       )}
-                      {request.stage === 'assigned' && (
+                      {request.stage === 'assigned' && isResponsiblePerson && (
                         <Button onClick={() => updateStage('document_collection')} size="sm">
                           <FileText className="w-4 h-4 mr-1" />
-                          Request Documents
+                          Start Document Collection
                         </Button>
                       )}
-                      {request.stage === 'document_collection' && (
+                      {request.stage === 'document_collection' && isResponsiblePerson && (
                         <Button onClick={() => updateStage('under_review')} size="sm">
                           <Clock className="w-4 h-4 mr-1" />
                           Start Review
                         </Button>
                       )}
                       {request.stage === 'under_review' && isResponsiblePerson && (
-                        <Button onClick={() => updateStage('final_approval')} size="sm">
+                        <Button onClick={() => updateStage('final_approval')} size="sm" className="bg-blue-600 hover:bg-blue-700">
                           <ArrowRight className="w-4 h-4 mr-1" />
-                          Send for Final Approval
+                          Submit for Final Approval
                         </Button>
                       )}
                       {request.stage === 'final_approval' && isAdmin && (
                         <>
                           <Button onClick={() => updateStage('approved')} size="sm" className="bg-green-600 hover:bg-green-700">
                             <CheckCircle className="w-4 h-4 mr-1" />
-                            Approve
+                            Approve Request
                           </Button>
                           <Button onClick={() => updateStage('denied')} size="sm" variant="destructive">
                             <XCircle className="w-4 h-4 mr-1" />
-                            Deny
+                            Deny Request
                           </Button>
-                          <Button onClick={() => updateStage('under_review')} size="sm" variant="outline">
-                            <ArrowRight className="w-4 h-4 mr-1" />
-                            Send Back for Review
-                          </Button>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button size="sm" variant="outline">
+                                <ArrowRight className="w-4 h-4 mr-1" />
+                                Send Back for Review
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Send Back for Review</DialogTitle>
+                              </DialogHeader>
+                              <div className="space-y-4">
+                                <Textarea
+                                  value={responseNotes}
+                                  onChange={(e) => setResponseNotes(e.target.value)}
+                                  placeholder="Please provide feedback for the responsible person..."
+                                  className="min-h-[100px]"
+                                />
+                                <Button 
+                                  onClick={() => {
+                                    updateStage('under_review', responseNotes);
+                                    setResponseNotes('');
+                                  }} 
+                                  className="w-full"
+                                  disabled={!responseNotes.trim()}
+                                >
+                                  Send Back with Notes
+                                </Button>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
                         </>
                       )}
                     </div>
                   )}
+
+                  {/* Stage progression guide */}
+                  <Card className="mt-4">
+                    <CardHeader>
+                      <CardTitle className="text-sm">Workflow Progress</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center gap-2 text-xs">
+                        <div className={`px-2 py-1 rounded ${request.stage === 'submitted' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                          Submitted
+                        </div>
+                        <ArrowRight className="w-3 h-3" />
+                        <div className={`px-2 py-1 rounded ${request.stage === 'assigned' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                          Assigned
+                        </div>
+                        <ArrowRight className="w-3 h-3" />
+                        <div className={`px-2 py-1 rounded ${request.stage === 'document_collection' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                          Documents
+                        </div>
+                        <ArrowRight className="w-3 h-3" />
+                        <div className={`px-2 py-1 rounded ${request.stage === 'under_review' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                          Review
+                        </div>
+                        <ArrowRight className="w-3 h-3" />
+                        <div className={`px-2 py-1 rounded ${request.stage === 'final_approval' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                          Final Approval
+                        </div>
+                        <ArrowRight className="w-3 h-3" />
+                        <div className={`px-2 py-1 rounded ${request.stage === 'approved' || request.stage === 'denied' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                          Decision
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </CardContent>
               </Card>
             )}
