@@ -64,13 +64,11 @@ export const AuthenticatedView = memo(({
           
           {/* Map Section - Full Width */}
           <div className="w-full px-4">
-            <div className="w-full h-[500px] md:h-[600px] border border-border rounded-lg overflow-hidden">
-              <YandexMap 
-                isHalalMode={isHalalMode} 
-                t={t}
-                language={language}
-              />
-            </div>
+            <YandexMap 
+              isHalalMode={isHalalMode} 
+              t={t}
+              language={language}
+            />
           </div>
         </div>
       </section>

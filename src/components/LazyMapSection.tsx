@@ -33,15 +33,17 @@ interface LazyMapSectionProps {
 
 const LazyMapSection = memo(({ t, isHalalMode, language, searchResults, onSearchResultsChange }: LazyMapSectionProps) => {
   return (
-    <Suspense fallback={<MapLoadingFallback />}>
-      <YandexMap 
-        t={t} 
-        isHalalMode={isHalalMode} 
-        language={language}
-        searchResults={searchResults}
-        onSearchResultsChange={onSearchResultsChange}
-      />
-    </Suspense>
+    <div className="w-full h-[500px] md:h-[600px] border border-border rounded-lg overflow-hidden">
+      <Suspense fallback={<MapLoadingFallback />}>
+        <YandexMap 
+          t={t} 
+          isHalalMode={isHalalMode} 
+          language={language}
+          searchResults={searchResults}
+          onSearchResultsChange={onSearchResultsChange}
+        />
+      </Suspense>
+    </div>
   )
 })
 
