@@ -1,9 +1,10 @@
-import { lazy, Suspense, memo } from 'react'
+import { memo } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import type { Language } from "@/hooks/useTranslation"
+import { ErrorBoundary } from './ErrorBoundary'
 
-// Use the Yandex Maps implementation with filtering
-const YandexMap = lazy(() => import('./YandexMap'))
+// Import directly instead of lazy loading temporarily to debug issues
+import YandexMap from './YandexMap'
 
 const MapLoadingFallback = memo(() => (
   <Card>
@@ -34,7 +35,12 @@ interface LazyMapSectionProps {
 const LazyMapSection = memo(({ t, isHalalMode, language, searchResults, onSearchResultsChange }: LazyMapSectionProps) => {
   return (
     <div className="w-full h-[500px] md:h-[600px] border border-border rounded-lg overflow-hidden">
-      <Suspense fallback={<MapLoadingFallback />}>
+      <ErrorBoundary 
+        fallback={<MapLoadingFallback />}
+        onError={(error, errorInfo) => {
+          console.error('[LazyMapSection] Map error:', error, errorInfo);
+        }}
+      >
         <YandexMap 
           t={t} 
           isHalalMode={isHalalMode} 
@@ -42,7 +48,7 @@ const LazyMapSection = memo(({ t, isHalalMode, language, searchResults, onSearch
           searchResults={searchResults}
           onSearchResultsChange={onSearchResultsChange}
         />
-      </Suspense>
+      </ErrorBoundary>
     </div>
   )
 })

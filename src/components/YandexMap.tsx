@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback, memo } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LocateIcon as MyLocation, MapPin } from "lucide-react";
+import { LocateIcon as MyLocation, MapPin, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
 import { useUser } from "@/contexts/UserContext";
@@ -63,10 +63,11 @@ const YandexMap: React.FC<YandexMapProps> = memo(({ isHalalMode = false, t, lang
   // Use prop results if provided, otherwise fall back to store results
   const searchResults = propSearchResults || storeResults;
 
-  // Fetch properties from database
-  const { data: dbProperties, isLoading } = useOptimizedQuery(
+  // Fetch properties from database with better error handling
+  const { data: dbProperties, isLoading, error: queryError } = useOptimizedQuery(
     ['properties', 'map'],
     async () => {
+      console.log('[YandexMap] Fetching properties...');
       const { data, error } = await supabase
         .from('properties')
         .select('*')
@@ -74,16 +75,19 @@ const YandexMap: React.FC<YandexMapProps> = memo(({ isHalalMode = false, t, lang
         .not('longitude', 'is', null);
       
       if (error) {
-        console.error('Error fetching properties:', error);
-        return [] as any[];
+        console.error('[YandexMap] Error fetching properties:', error);
+        throw error; // Let the query handle the error
       }
       
+      console.log('[YandexMap] Properties fetched successfully:', data?.length || 0);
       return data || [];
     },
     {
       staleTime: 0,
       refetchOnWindowFocus: true,
       refetchOnMount: 'always',
+      retry: 3,
+      retryDelay: 1000,
     }
   );
 
@@ -134,10 +138,13 @@ useEffect(() => {
 }, [isHalalMode, allProperties, filteredProperties]);
 
 
-  // Load Yandex Maps API
+  // Load Yandex Maps API with better error handling
   useEffect(() => {
+    console.log('[YandexMap] Loading Yandex Maps API...');
+    
     // Check if ymaps is already available
     if (window.ymaps && window.ymaps.Map) {
+      console.log('[YandexMap] Yandex Maps API already loaded');
       setMapLoaded(true);
       return;
     }
@@ -145,9 +152,11 @@ useEffect(() => {
     // Check if script is already loading or loaded
     const existingScript = document.querySelector('script[src*="api-maps.yandex.ru"]');
     if (existingScript) {
+      console.log('[YandexMap] Yandex Maps script already exists, waiting for load...');
       // Script already exists, wait for it to load
       const handleLoad = () => {
         if (window.ymaps && window.ymaps.Map) {
+          console.log('[YandexMap] Yandex Maps API loaded from existing script');
           window.ymaps.ready(() => {
             setMapLoaded(true);
           });
@@ -162,19 +171,22 @@ useEffect(() => {
       return;
     }
 
+    console.log('[YandexMap] Creating new Yandex Maps script...');
     const ymLang = language === 'ru' ? 'ru_RU' : (language === 'uz' ? 'uz_UZ' : 'en_US');
     const script = document.createElement('script');
     script.src = `https://api-maps.yandex.ru/2.1/?apikey=8baec550-0c9b-458c-b9bd-e9893af7beb7&lang=${ymLang}`;
     script.async = true;
     script.onload = () => {
+      console.log('[YandexMap] Yandex Maps script loaded');
       if (window.ymaps && window.ymaps.Map) {
         window.ymaps.ready(() => {
+          console.log('[YandexMap] Yandex Maps API ready');
           setMapLoaded(true);
         });
       }
     };
-    script.onerror = () => {
-      console.error('Failed to load Yandex Maps API');
+    script.onerror = (error) => {
+      console.error('[YandexMap] Failed to load Yandex Maps API:', error);
       setMapLoaded(false);
     };
     document.head.appendChild(script);
@@ -225,13 +237,15 @@ useEffect(() => {
     } catch {}
   }, [mapLoaded, dbProperties]);
 
-  // Initialize map
+  // Initialize map with better error handling
   useEffect(() => {
     if (!mapLoaded || !mapContainer.current || map.current) return;
 
+    console.log('[YandexMap] Initializing map...');
+    
     // Double check that ymaps.Map is available before creating
     if (!window.ymaps || !window.ymaps.Map) {
-      console.error('Yandex Maps API not fully loaded');
+      console.error('[YandexMap] Yandex Maps API not fully loaded');
       return;
     }
 
@@ -241,8 +255,9 @@ useEffect(() => {
         zoom: 11,
         controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
       });
+      console.log('[YandexMap] Map initialized successfully');
     } catch (error) {
-      console.error('Failed to create Yandex Map:', error);
+      console.error('[YandexMap] Failed to create Yandex Map:', error);
       return;
     }
 
@@ -501,6 +516,22 @@ const composePinImage = (color: string, priceText: string) => {
     }
   };
 
+  // Show error state if query failed
+  if (queryError) {
+    console.error('[YandexMap] Query error:', queryError);
+    return (
+      <div className="w-full h-full relative flex items-center justify-center bg-muted/20">
+        <div className="text-center space-y-4">
+          <AlertTriangle className="h-8 w-8 text-destructive mx-auto" />
+          <div className="space-y-2">
+            <h3 className="font-medium">Failed to load map data</h3>
+            <p className="text-sm text-muted-foreground">Please check your connection and try again</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full h-full">
       <div 
@@ -522,9 +553,12 @@ const composePinImage = (color: string, priceText: string) => {
         </Button>
       )}
       
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/50">
-          <div className="text-muted-foreground">Loading map...</div>
+      {(isLoading || !mapLoaded) && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background/50 z-20">
+          <div className="flex items-center space-x-2">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span>{isLoading ? t('map.loading') : 'Loading map...'}</span>
+          </div>
         </div>
       )}
     </div>
