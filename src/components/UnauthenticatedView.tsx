@@ -202,15 +202,11 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
 
       {/* AI-Powered Search Section */}
       <section id="search" className="relative z-10 pt-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <SearchSection 
-              isHalalMode={isHalalMode} 
-              onHalalModeChange={setIsHalalMode}
-              t={t}
-            />
-          </div>
-        </div>
+        <SearchSection 
+          isHalalMode={isHalalMode} 
+          onHalalModeChange={setIsHalalMode}
+          t={t}
+        />
       </section>
 
       {/* Interactive Map Section */}
