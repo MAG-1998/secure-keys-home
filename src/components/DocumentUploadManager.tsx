@@ -80,6 +80,13 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
 
       if (error) throw error;
 
+      // Get the financing request to find responsible person
+      const { data: financingRequest } = await supabase
+        .from('halal_financing_requests')
+        .select('responsible_person_id, user_id')
+        .eq('id', financingRequestId)
+        .single();
+
       // Log activity
       await supabase
         .from('halal_financing_activity_log')
@@ -93,6 +100,25 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
             response_notes: responseNotes[docRequestId] || null
           }
         });
+
+      // Notify responsible person if assigned
+      if (financingRequest?.responsible_person_id && financingRequest.responsible_person_id !== user?.id) {
+        await supabase
+          .from('notifications')
+          .insert({
+            user_id: financingRequest.responsible_person_id,
+            type: 'financing:documents_submitted',
+            title: 'Documents Submitted',
+            body: `User has submitted requested documents for financing request`,
+            entity_type: 'halal_financing_request',
+            entity_id: financingRequestId,
+            data: {
+              document_request_id: docRequestId,
+              files_count: uploadedUrls.length,
+              user_id: financingRequest.user_id
+            }
+          });
+      }
 
       toast({
         title: "Success",
