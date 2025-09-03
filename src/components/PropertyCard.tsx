@@ -71,20 +71,20 @@ export const PropertyCard = ({
       // Show total property price after financing when boxes are filled
       const calculation = calculateHalalFinancing(cashAvailable, priceUsd, financingPeriod);
       const totalPropertyPrice = priceUsd + calculation.fixedFee + calculation.serviceFee + calculation.vat;
-      displayPrice = `$${totalPropertyPrice.toLocaleString()}`;
+      displayPrice = Math.round(totalPropertyPrice).toLocaleString();
       displaySubtext = 'Total after financing';
-      totalCostDisplay = `$${calculation.requiredMonthlyPayment.toLocaleString()}/month`;
+      totalCostDisplay = `${Math.round(calculation.requiredMonthlyPayment).toLocaleString()}/month`;
     } else {
       // Show "starting from" with default 90% cash available and 6 month financing scenario
       const defaultCash = priceUsd * 0.9;
       const calculation = calculateHalalFinancing(defaultCash, priceUsd, 6);
-      displayPrice = `Starting from $${calculation.requiredMonthlyPayment.toLocaleString()}`;
+      displayPrice = `Starting from ${Math.round(calculation.requiredMonthlyPayment).toLocaleString()}`;
       displaySubtext = 'Monthly Payment';
     }
   } else {
     // Standard price display
     const basePrice = price || priceUsd || property?.priceUsd || 0;
-    displayPrice = typeof basePrice === 'string' ? basePrice : `$${basePrice.toLocaleString()}`;
+    displayPrice = typeof basePrice === 'string' ? basePrice.replace(/[$,]/g, '') : Math.round(basePrice).toLocaleString();
     displaySubtext = 'Total';
   }
   
