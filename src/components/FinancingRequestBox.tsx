@@ -421,7 +421,7 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
     if (!newMessage.trim()) return;
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('halal_financing_communications')
         .insert({
           halal_financing_request_id: financingRequestId,
@@ -429,12 +429,33 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
           message_type: 'message',
           content: newMessage,
           is_internal: isStaff && !isOwner
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
+      // Get sender profile for the new message
+      const { data: senderProfile } = await supabase
+        .from('profiles')
+        .select('full_name, email')
+        .eq('user_id', user?.id)
+        .single();
+
+      // Add the new message directly to communications state
+      const newCommunication: Communication = {
+        ...data,
+        file_urls: [],
+        sender: senderProfile || { email: '', full_name: '' }
+      };
+
+      setCommunications(prev => [...prev, newCommunication]);
       setNewMessage("");
-      fetchData();
+
+      toast({
+        title: "Success",
+        description: "Message sent successfully"
+      });
     } catch (error) {
       toast({
         title: "Error",
@@ -515,7 +536,7 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
       </CardHeader>
       
       <CardContent>
-        <Tabs defaultValue="overview" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="communications">Communications</TabsTrigger>
@@ -580,33 +601,61 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
                           {request.responsible_person.full_name || request.responsible_person.email}
                         </Badge>
                         {isAdmin && (
-                          <Select onValueChange={assignResponsiblePerson}>
-                            <SelectTrigger className="w-48">
-                              <SelectValue placeholder="Reassign..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {staffMembers.map(member => (
-                                <SelectItem key={member.user_id} value={member.user_id}>
-                                  {member.full_name || member.email} ({member.role})
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <div className="flex items-center gap-2">
+                            <Select value={selectedResponsiblePerson} onValueChange={setSelectedResponsiblePerson}>
+                              <SelectTrigger className="w-48">
+                                <SelectValue placeholder="Reassign..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {staffMembers.map(member => (
+                                  <SelectItem key={member.user_id} value={member.user_id}>
+                                    {member.full_name || member.email} ({member.role})
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            {selectedResponsiblePerson && (
+                              <Button 
+                                size="sm" 
+                                onClick={() => {
+                                  assignResponsiblePerson(selectedResponsiblePerson);
+                                  setSelectedResponsiblePerson("");
+                                }}
+                              >
+                                <Users className="w-4 h-4 mr-1" />
+                                Assign
+                              </Button>
+                            )}
+                          </div>
                         )}
                       </div>
                     ) : isAdmin ? (
-                      <Select onValueChange={assignResponsiblePerson}>
-                        <SelectTrigger className="w-64">
-                          <SelectValue placeholder="Assign responsible person..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {staffMembers.map(member => (
-                            <SelectItem key={member.user_id} value={member.user_id}>
-                              {member.full_name || member.email} ({member.role})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex items-center gap-2">
+                        <Select value={selectedResponsiblePerson} onValueChange={setSelectedResponsiblePerson}>
+                          <SelectTrigger className="w-64">
+                            <SelectValue placeholder="Assign responsible person..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {staffMembers.map(member => (
+                              <SelectItem key={member.user_id} value={member.user_id}>
+                                {member.full_name || member.email} ({member.role})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {selectedResponsiblePerson && (
+                          <Button 
+                            size="sm" 
+                            onClick={() => {
+                              assignResponsiblePerson(selectedResponsiblePerson);
+                              setSelectedResponsiblePerson("");
+                            }}
+                          >
+                            <Users className="w-4 h-4 mr-1" />
+                            Assign
+                          </Button>
+                        )}
+                      </div>
                     ) : (
                       <Badge variant="secondary">Not assigned</Badge>
                     )}
