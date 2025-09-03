@@ -14,6 +14,9 @@ export function NotificationBell() {
       if (type === 'visit:new') return '/visit-requests'
       return '/my-requests'
     }
+    if (type.startsWith('financing:')) {
+      return entityId ? `/my-financing/${entityId}` : '/my-financing'
+    }
     if (type.startsWith('property:')) {
       return entityId ? `/property/${entityId}` : '/my-properties'
     }
