@@ -361,14 +361,10 @@ export default function ModeratorDashboard() {
               </div>
 
       <Tabs defaultValue="applications" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="applications" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
             Property Applications
-          </TabsTrigger>
-          <TabsTrigger value="halal" className="flex items-center gap-2">
-            <Home className="w-4 h-4" />
-            Halal Financing
           </TabsTrigger>
           <TabsTrigger value="financing" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
@@ -455,95 +451,6 @@ export default function ModeratorDashboard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="halal" className="space-y-6">
-          <div className="grid gap-6">
-            {halalRequests.map((req) => (
-              <Card key={req.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl">
-                      {req.property?.title || 'Property'}
-                    </CardTitle>
-                    <Badge variant={req.status === 'pending' ? 'secondary' : req.status === 'approved' ? 'default' : 'destructive'}>
-                      {req.status}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Request by {req.requester?.full_name} ({req.requester?.email})
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {req.admin_notes && (
-                    <p className="text-sm"><strong>Admin Notes:</strong> {req.admin_notes}</p>
-                  )}
-                  <div className="space-y-3 pt-4 border-t">
-                    <Textarea
-                      placeholder="Add moderator comments for admin"
-                      value={halalModeratorNotes[req.id] ?? req.moderator_notes ?? ''}
-                      onChange={(e) => setHalalModeratorNotes(prev => ({ ...prev, [req.id]: e.target.value }))}
-                    />
-                    <div>
-                      <label className="text-sm font-medium">Attach document URL</label>
-                      <div className="flex gap-2 mt-1">
-                        <Input
-                          placeholder="https://..."
-                          value={halalNewAttachment[req.id] ?? ''}
-                          onChange={(e) => setHalalNewAttachment(prev => ({ ...prev, [req.id]: e.target.value }))}
-                        />
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            const url = (halalNewAttachment[req.id] || '').trim();
-                            if (!url) return;
-                            setHalalAttachments(prev => ({
-                              ...prev,
-                              [req.id]: [ ...(prev[req.id] ?? req.attachments ?? []), url ]
-                            }));
-                            setHalalNewAttachment(prev => ({ ...prev, [req.id]: '' }));
-                          }}
-                        >
-                          Add
-                        </Button>
-                      </div>
-                    </div>
-                    {(halalAttachments[req.id] ?? req.attachments ?? []).length > 0 && (
-                      <div className="text-sm">
-                        <strong>Attachments:</strong>
-                        <ul className="list-disc pl-5 mt-1 space-y-1">
-                          {(halalAttachments[req.id] ?? req.attachments ?? []).map((a: string, idx: number) => (
-                            <li key={idx}><a href={a} target="_blank" rel="noreferrer" className="underline">{a}</a></li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    <div className="flex justify-end">
-                      <Button
-                        onClick={async () => {
-                          const { error } = await supabase
-                            .from('halal_financing_requests')
-                            .update({
-                              moderator_notes: halalModeratorNotes[req.id] ?? req.moderator_notes ?? '',
-                              attachments: halalAttachments[req.id] ?? req.attachments ?? [],
-                            })
-                            .eq('id', req.id);
-                          if (error) {
-                            toast({ title: 'Error', description: 'Failed to save', variant: 'destructive' });
-                          } else {
-                            toast({ title: 'Saved', description: 'Updates saved' });
-                            setHalalModeratorNotes(prev => ({ ...prev, [req.id]: '' }));
-                            fetchHalalRequests();
-                          }
-                        }}
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
 
         <TabsContent value="financing" className="space-y-6">
           <Card>
