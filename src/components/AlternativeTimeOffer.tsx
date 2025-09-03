@@ -172,8 +172,8 @@ export const AlternativeTimeOffer = ({ request, onRefresh }: AlternativeTimeOffe
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0">
               <Badge variant="warning" className="px-2 py-1">
-                <Clock className="w-3 h-3 mr-1" />
-                Alternative Time Offered
+                 <Clock className="w-3 h-3 mr-1" />
+                {t('visit.alternativeTimeOffered')}
               </Badge>
             </div>
             <div className="flex-1">

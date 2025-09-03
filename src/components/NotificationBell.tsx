@@ -61,7 +61,7 @@ export function NotificationBell() {
           </Button>
         </div>
         {notifications.length === 0 && (
-          <div className="p-4 text-sm text-muted-foreground">You're all caught up.</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('notifications.allCaughtUp')}</div>
         )}
         {notifications.slice(0, 10).map((n) => (
           <DropdownMenuItem
@@ -86,7 +86,7 @@ export function NotificationBell() {
         {notifications.length > 10 && (
           <>
             <DropdownMenuSeparator />
-            <div className="px-3 py-2 text-xs text-muted-foreground">Showing latest {Math.min(10, notifications.length)} of {notifications.length}</div>
+            <div className="px-3 py-2 text-xs text-muted-foreground">{t('notifications.showingLatest')} {Math.min(10, notifications.length)} {t('notifications.of')} {notifications.length}</div>
           </>
         )}
       </DropdownMenuContent>

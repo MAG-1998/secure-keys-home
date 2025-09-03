@@ -1053,6 +1053,522 @@ const translations: Translations = {
     en: 'My Listing',
     ru: 'Мое объявление',
     uz: 'Mening e\'lonim'
+  },
+
+  // Visit and Alternative Time Offer translations
+  'visit.alternativeTimeOffered': {
+    en: 'Alternative Time Offered',
+    ru: 'Предложено альтернативное время',
+    uz: 'Muqobil vaqt taklif etildi'
+  },
+  'visit.ownerProposedDifferentTime': {
+    en: 'The property owner has proposed a different time for your visit:',
+    ru: 'Владелец недвижимости предложил другое время для вашего визита:',
+    uz: 'Mulk egasi tashrif uchun boshqa vaqt taklif qildi:'
+  },
+  'visit.acceptTime': {
+    en: 'Accept',
+    ru: 'Принять',
+    uz: 'Qabul qilish'
+  },
+  'visit.counterOffer': {
+    en: 'Counter-offer',
+    ru: 'Встречное предложение',
+    uz: 'Qarshi taklif'
+  },
+  'visit.message': {
+    en: 'Message',
+    ru: 'Сообщение',
+    uz: 'Xabar'
+  },
+  'visit.cancel': {
+    en: 'Cancel',
+    ru: 'Отменить',
+    uz: 'Bekor qilish'
+  },
+  'visit.cancelRequestTitle': {
+    en: 'Cancel visit request?',
+    ru: 'Отменить заявку на посещение?',
+    uz: 'Tashrif so\'rovini bekor qilishni istaysizmi?'
+  },
+  'visit.cancelRequestDesc': {
+    en: 'This will permanently cancel your visit request. You won\'t be able to recover it.',
+    ru: 'Это навсегда отменит вашу заявку на посещение. Вы не сможете её восстановить.',
+    uz: 'Bu sizning tashrif so\'rovingizni butunlay bekor qiladi. Uni tiklashning iloji bo\'lmaydi.'
+  },
+  'visit.keepRequest': {
+    en: 'Keep request',
+    ru: 'Оставить заявку',
+    uz: 'So\'rovni saqlash'
+  },
+  'visit.yesCancel': {
+    en: 'Yes, cancel',
+    ru: 'Да, отменить',
+    uz: 'Ha, bekor qilish'
+  },
+  'visit.proposePreferredTime': {
+    en: 'Propose your preferred time',
+    ru: 'Предложите удобное время',
+    uz: 'Qulay vaqtingizni taklif qiling'
+  },
+  'visit.date': {
+    en: 'Date',
+    ru: 'Дата',
+    uz: 'Sana'
+  },
+  'visit.time': {
+    en: 'Time',
+    ru: 'Время',
+    uz: 'Vaqt'
+  },
+  'visit.sendCounterOffer': {
+    en: 'Send Counter-offer',
+    ru: 'Отправить встречное предложение',
+    uz: 'Qarshi taklifni yuborish'
+  },
+  'visit.messagePropertyOwner': {
+    en: 'Message Property Owner',
+    ru: 'Сообщение владельцу',
+    uz: 'Mulk egasiga xabar'
+  },
+  'visit.typeMessageAboutTime': {
+    en: 'Type your message about the visit time...',
+    ru: 'Напишите сообщение о времени посещения...',
+    uz: 'Tashrif vaqti haqida xabaringizni yozing...'
+  },
+  'visit.sendMessage': {
+    en: 'Send Message',
+    ru: 'Отправить сообщение',
+    uz: 'Xabar yuborish'
+  },
+  'visit.alternativeTimeAccepted': {
+    en: 'Alternative time accepted',
+    ru: 'Альтернативное время принято',
+    uz: 'Muqobil vaqt qabul qilindi'
+  },
+  'visit.visitConfirmedNewTime': {
+    en: 'Your visit has been confirmed for the new time.',
+    ru: 'Ваш визит подтвержден на новое время.',
+    uz: 'Sizning tashrifingiz yangi vaqt uchun tasdiqlandi.'
+  },
+  'visit.counterOfferSent': {
+    en: 'Counter-offer sent',
+    ru: 'Встречное предложение отправлено',
+    uz: 'Qarshi taklif yuborildi'
+  },
+  'visit.alternativeTimeProposalSent': {
+    en: 'Your alternative time proposal has been sent to the property owner.',
+    ru: 'Ваше предложение альтернативного времени отправлено владельцу недвижимости.',
+    uz: 'Sizning muqobil vaqt taklifingiz mulk egasiga yuborildi.'
+  },
+  'visit.messageSent': {
+    en: 'Message sent',
+    ru: 'Сообщение отправлено',
+    uz: 'Xabar yuborildi'
+  },
+  'visit.visitRequestCancelled': {
+    en: 'Visit request cancelled',
+    ru: 'Заявка на посещение отменена',
+    uz: 'Tashrif so\'rovi bekor qilindi'
+  },
+  'visit.visitRequestCancelledDesc': {
+    en: 'Your visit request has been cancelled.',
+    ru: 'Ваша заявка на посещение была отменена.',
+    uz: 'Sizning tashrif so\'rovingiz bekor qilindi.'
+  },
+  'visit.selectBothDateTime': {
+    en: 'Please select both date and time',
+    ru: 'Пожалуйста, выберите дату и время',
+    uz: 'Iltimos, sana va vaqtni tanlang'
+  },
+  'visit.enterMessage': {
+    en: 'Please enter a message',
+    ru: 'Пожалуйста, введите сообщение',
+    uz: 'Iltimos, xabar kiriting'
+  },
+  'visit.failedAcceptTime': {
+    en: 'Failed to accept alternative time',
+    ru: 'Не удалось принять альтернативное время',
+    uz: 'Muqobil vaqtni qabul qilish muvaffaqiyatsiz'
+  },
+  'visit.failedSendCounterOffer': {
+    en: 'Failed to send counter-offer',
+    ru: 'Не удалось отправить встречное предложение',
+    uz: 'Qarshi taklifni yuborishda xatolik'
+  },
+  'visit.failedSendMessage': {
+    en: 'Failed to send message',
+    ru: 'Не удалось отправить сообщение',
+    uz: 'Xabar yuborishda xatolik'
+  },
+  'visit.failedCancelRequest': {
+    en: 'Failed to cancel request',
+    ru: 'Не удалось отменить заявку',
+    uz: 'So\'rovni bekor qilishda xatolik'
+  },
+
+  // Notification translations
+  'notifications.notifications': {
+    en: 'Notifications',
+    ru: 'Уведомления',
+    uz: 'Bildirishnomalar'
+  },
+  'notifications.markAllRead': {
+    en: 'Mark all as read',
+    ru: 'Отметить все как прочитанные',
+    uz: 'Hammasini o\'qilgan deb belgilash'
+  },
+  'notifications.allCaughtUp': {
+    en: 'You\'re all caught up.',
+    ru: 'Вы ознакомились со всеми уведомлениями.',
+    uz: 'Barcha bildirishnomalarni ko\'rdingiz.'
+  },
+  'notifications.showingLatest': {
+    en: 'Showing latest',
+    ru: 'Показаны последние',
+    uz: 'Eng so\'nggisi ko\'rsatilmoqda'
+  },
+  'notifications.of': {
+    en: 'of',
+    ru: 'из',
+    uz: 'dan'
+  },
+
+  // Payment methods translations
+  'payment.selectMethod': {
+    en: 'Select Payment Method',
+    ru: 'Выберите способ оплаты',
+    uz: 'To\'lov usulini tanlang'
+  },
+  'payment.payWithPayme': {
+    en: 'Pay with Payme wallet',
+    ru: 'Оплатить через Payme кошелек',
+    uz: 'Payme hamyoni orqali to\'lash'
+  },
+  'payment.payWithClick': {
+    en: 'Pay with Click payment system',
+    ru: 'Оплатить через платежную систему Click',
+    uz: 'Click to\'lov tizimi orqali to\'lash'
+  },
+  'payment.payWithUzum': {
+    en: 'Pay with Uzum Bank card',
+    ru: 'Оплатить картой Uzum Bank',
+    uz: 'Uzum Bank kartasi orqali to\'lash'
+  },
+  'payment.processing': {
+    en: 'Processing...',
+    ru: 'Обработка...',
+    uz: 'Qayta ishlanmoqda...'
+  },
+  'payment.payNow': {
+    en: 'Pay Now',
+    ru: 'Оплатить сейчас',
+    uz: 'Hozir to\'lash'
+  },
+  'payment.paymentError': {
+    en: 'Payment Error',
+    ru: 'Ошибка платежа',
+    uz: 'To\'lov xatosi'
+  },
+  'payment.failedInitiate': {
+    en: 'Failed to initiate payment. Please try again.',
+    ru: 'Не удалось инициировать платеж. Попробуйте еще раз.',
+    uz: 'To\'lovni boshlashda xatolik. Qayta urinib ko\'ring.'
+  },
+  'payment.selectMethodFirst': {
+    en: 'Please select a payment method',
+    ru: 'Пожалуйста, выберите способ оплаты',
+    uz: 'Iltimos, to\'lov usulini tanlang'
+  },
+
+  // Visit payment dialog translations
+  'visitPayment.paymentRequired': {
+    en: 'Payment Required',
+    ru: 'Требуется оплата',
+    uz: 'To\'lov talab qilinadi'
+  },
+  'visitPayment.usedFreeVisit': {
+    en: 'You\'ve already used your free visit request this week',
+    ru: 'Вы уже использовали бесплатную заявку на посещение на этой неделе',
+    uz: 'Siz bu hafta tekin tashrif so\'rovingizdan foydalandingiz'
+  },
+  'visitPayment.additionalCost': {
+    en: 'Additional visit cost: 50,000 UZS',
+    ru: 'Стоимость дополнительного визита: 50,000 сум',
+    uz: 'Qo\'shimcha tashrif narxi: 50,000 so\'m'
+  },
+  'visitPayment.clickPayment': {
+    en: 'Click Payment',
+    ru: 'Click Платеж',
+    uz: 'Click to\'lov'
+  },
+  'visitPayment.payWithBankCard': {
+    en: 'Pay with bank card',
+    ru: 'Оплатить банковской картой',
+    uz: 'Bank kartasi orqali to\'lash'
+  },
+  'visitPayment.payme': {
+    en: 'Payme',
+    ru: 'Payme',
+    uz: 'Payme'
+  },
+  'visitPayment.payWithPaymeWallet': {
+    en: 'Pay with Payme wallet',
+    ru: 'Оплатить через Payme кошелек',
+    uz: 'Payme hamyoni orqali to\'lash'
+  },
+  'visitPayment.uzumBank': {
+    en: 'Uzum Bank',
+    ru: 'Uzum Bank',
+    uz: 'Uzum Bank'
+  },
+  'visitPayment.payWithUzumBank': {
+    en: 'Pay with Uzum Bank',
+    ru: 'Оплатить через Uzum Bank',
+    uz: 'Uzum Bank orqali to\'lash'
+  },
+  'visitPayment.paymentSuccessful': {
+    en: 'Payment successful!',
+    ru: 'Платеж успешен!',
+    uz: 'To\'lov muvaffaqiyatli!'
+  },
+  'visitPayment.visitRequestCreated': {
+    en: 'Visit request created.',
+    ru: 'Заявка на посещение создана.',
+    uz: 'Tashrif so\'rovi yaratildi.'
+  },
+  'visitPayment.paymentFailed': {
+    en: 'Payment failed',
+    ru: 'Платеж не удался',
+    uz: 'To\'lov muvaffaqiyatsiz'
+  },
+  'visitPayment.pleaseRetry': {
+    en: 'Please try again.',
+    ru: 'Попробуйте еще раз.',
+    uz: 'Qayta urinib ko\'ring.'
+  },
+
+  // Visit limit checker translations
+  'visitLimit.restricted': {
+    en: 'Visit Requests Restricted',
+    ru: 'Заявки на посещение ограничены',
+    uz: 'Tashrif so\'rovlari cheklangan'
+  },
+  'visitLimit.duplicateNotAllowed': {
+    en: 'Duplicate Request Not Allowed',
+    ru: 'Повторная заявка не разрешена',
+    uz: 'Takroriy so\'rov ruxsat etilmagan'
+  },
+  'visitLimit.limitReached': {
+    en: 'Visit Limit Reached',
+    ru: 'Лимит посещений достигнут',
+    uz: 'Tashrif chegarasiga yetildi'
+  },
+  'visitLimit.close': {
+    en: 'Close',
+    ru: 'Закрыть',
+    uz: 'Yopish'
+  },
+
+  // Visit restriction dialog translations
+  'visitRestriction.restrictUser': {
+    en: 'Restrict User',
+    ru: 'Ограничить пользователя',
+    uz: 'Foydalanuvchini cheklash'
+  },
+  'visitRestriction.reasonForRestriction': {
+    en: 'Reason for restriction',
+    ru: 'Причина ограничения',
+    uz: 'Cheklash sababi'
+  },
+  'visitRestriction.permanentRestriction': {
+    en: 'Permanent restriction',
+    ru: 'Постоянное ограничение',
+    uz: 'Doimiy cheklash'
+  },
+  'visitRestriction.restrictedUntil': {
+    en: 'Restricted until',
+    ru: 'Ограничено до',
+    uz: 'Cheklash muddati'
+  },
+  'visitRestriction.pickDate': {
+    en: 'Pick a date',
+    ru: 'Выберите дату',
+    uz: 'Sanani tanlang'
+  },
+
+  // Visit warning dialog translations (Russian text was hardcoded)
+  'visitWarning.importantWarning': {
+    en: 'Important Warning',
+    ru: 'Важное предупреждение',
+    uz: 'Muhim ogohlantirish'
+  },
+  'visitWarning.cancellationWarning': {
+    en: 'Cancellation Warning',
+    ru: 'Предупреждение об отмене',
+    uz: 'Bekor qilish haqida ogohlantirish'
+  },
+  'visitWarning.attentionToRules': {
+    en: 'Please pay attention to the property visit rules:',
+    ru: 'Обратите внимание на правила посещения недвижимости:',
+    uz: 'Ko\'chmas mulkni ziyorat qilish qoidalariga e\'tibor bering:'
+  },
+  'visitWarning.firstCancellation': {
+    en: 'First cancellation or no-show: Warning',
+    ru: 'Первая отмена или неявка: Предупреждение',
+    uz: 'Birinchi bekor qilish yoki kelmay qolish: Ogohlantirish'
+  },
+  'visitWarning.secondCancellation': {
+    en: 'Second cancellation or no-show: 1 week ban',
+    ru: 'Вторая отмена или неявка: Запрет на 1 неделю',
+    uz: 'Ikkinchi bekor qilish yoki kelmay qolish: 1 haftalik taqiq'
+  },
+  'visitWarning.thirdCancellation': {
+    en: 'Third cancellation or no-show: 1 month ban',
+    ru: 'Третья отмена или неявка: Запрет на 1 месяц',
+    uz: 'Uchinchi bekor qilish yoki kelmay qolish: 1 oylik taqiq'
+  },
+  'visitWarning.repeatedViolations': {
+    en: 'Repeated violations may lead to permanent account suspension',
+    ru: 'Повторные нарушения могут привести к пожизненной блокировке аккаунта',
+    uz: 'Takroriy buzilishlar hisobning doimiy bloklashiga olib kelishi mumkin'
+  },
+  'visitWarning.bansApplyToBoth': {
+    en: 'Bans apply to both visit requests and halal financing applications.',
+    ru: 'Запреты действуют как на заявки на посещение, так и на заявки на халяльное финансирование.',
+    uz: 'Taqiqlar ham tashrif so\'rovlariga, ham halol moliyalashtirish arizalariga tegishli.'
+  },
+  'visitWarning.sureToCancel': {
+    en: 'Are you sure you want to cancel the confirmed visit?',
+    ru: 'Вы уверены, что хотите отменить подтвержденное посещение?',
+    uz: 'Tasdiqlangan tashrifni bekor qilishni istaysizmi?'
+  },
+  'visitWarning.cancelConfirmedVisit': {
+    en: 'Cancelling a confirmed visit may result in penalties:',
+    ru: 'Отмена подтвержденного посещения может привести к наложению штрафных санкций:',
+    uz: 'Tasdiqlangan tashrifni bekor qilish jarimaga olib kelishi mumkin:'
+  },
+  'visitWarning.temporaryBlock': {
+    en: 'Temporary block on creating new requests',
+    ru: 'Временная блокировка создания новых заявок',
+    uz: 'Yangi so\'rovlar yaratishda vaqtinchalik bloklash'
+  },
+  'visitWarning.restrictedFinancing': {
+    en: 'Restricted access to halal financing',
+    ru: 'Ограничение доступа к халяльному финансированию',
+    uz: 'Halol moliyalashtirishga kirish cheklovi'
+  },
+  'visitWarning.repeatedViolationsBlock': {
+    en: 'Account suspension for repeated violations',
+    ru: 'При повторных нарушениях - блокировка аккаунта',
+    uz: 'Takroriy buzilishlarda hisob bloklashi'
+  },
+  'visitWarning.notCancel': {
+    en: 'Don\'t cancel',
+    ru: 'Не отменять',
+    uz: 'Bekor qilmaslik'
+  },
+  'visitWarning.understandContinue': {
+    en: 'I understand, continue',
+    ru: 'Понимаю, продолжить',
+    uz: 'Tushundim, davom etish'
+  },
+  'visitWarning.confirmCancellation': {
+    en: 'Confirm cancellation',
+    ru: 'Подтвердить отмену',
+    uz: 'Bekor qilishni tasdiqlash'
+  },
+
+  // Financing request box translations
+  'financing.status': {
+    en: 'Status',
+    ru: 'Статус',
+    uz: 'Holat'
+  },
+  'financing.pending': {
+    en: 'Pending Review',
+    ru: 'Ожидает рассмотрения',
+    uz: 'Ko\'rib chiqilmoqda'
+  },
+  'financing.approved': {
+    en: 'Approved',
+    ru: 'Одобрено',
+    uz: 'Tasdiqlangan'
+  },
+  'financing.rejected': {
+    en: 'Rejected',
+    ru: 'Отклонено',
+    uz: 'Rad etilgan'
+  },
+  'financing.requestedAmount': {
+    en: 'Requested Amount',
+    ru: 'Запрашиваемая сумма',
+    uz: 'So\'ralgan miqdor'
+  },
+  'financing.monthlyPayment': {
+    en: 'Monthly Payment',
+    ru: 'Ежемесячный платеж',
+    uz: 'Oylik to\'lov'
+  },
+  'financing.term': {
+    en: 'Term',
+    ru: 'Срок',
+    uz: 'Muddat'
+  },
+  'financing.months': {
+    en: 'months',
+    ru: 'месяцев',
+    uz: 'oy'
+  },
+  'financing.interestRate': {
+    en: 'Interest Rate',
+    ru: 'Процентная ставка',
+    uz: 'Foiz stavkasi'
+  },
+  'financing.perYear': {
+    en: 'per year',
+    ru: 'в год',
+    uz: 'yiliga'
+  },
+  'financing.property': {
+    en: 'Property',
+    ru: 'Недвижимость',
+    uz: 'Ko\'chmas mulk'
+  },
+  'financing.documents': {
+    en: 'Documents',
+    ru: 'Документы',
+    uz: 'Hujjatlar'
+  },
+  'financing.activity': {
+    en: 'Activity',
+    ru: 'Активность',
+    uz: 'Faoliyat'
+  },
+  'financing.uploadDocuments': {
+    en: 'Upload Documents',
+    ru: 'Загрузить документы',
+    uz: 'Hujjatlar yuklash'
+  },
+  'financing.noDocuments': {
+    en: 'No documents uploaded yet',
+    ru: 'Документы еще не загружены',
+    uz: 'Hali hujjatlar yuklanmagan'
+  },
+  'financing.clickToUpload': {
+    en: 'Click "Upload Documents" to submit required files',
+    ru: 'Нажмите "Загрузить документы" для отправки необходимых файлов',
+    uz: 'Zarur fayllarni yuborish uchun "Hujjatlar yuklash" tugmasini bosing'
+  },
+  'financing.noActivityYet': {
+    en: 'No activity recorded yet',
+    ru: 'Активность пока не зафиксирована',
+    uz: 'Hali faoliyat qayd etilmagan'
+  },
+  'financing.activityDescription': {
+    en: 'Activity will appear here when documents are uploaded, status changes, or other actions are taken',
+    ru: 'Активность появится здесь при загрузке документов, изменении статуса или других действиях',
+    uz: 'Hujjatlar yuklanganda, holat o\'zgarganda yoki boshqa harakatlar amalga oshirilganda faoliyat bu yerda paydo bo\'ladi'
   }
 };
 
