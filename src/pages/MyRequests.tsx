@@ -12,6 +12,7 @@ import { Calendar, Check, Clock, MapPin, MessageSquare, X, Star } from "lucide-r
 import { MagitLogo } from "@/components/MagitLogo";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import { AlternativeTimeOffer } from "@/components/AlternativeTimeOffer";
 
 interface VisitorRequestRow {
@@ -191,6 +192,7 @@ const MyRequests = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useUser();
+  const { t } = useTranslation();
 
   useEffect(() => {
     document.title = "My Visit Requests • Magit";
@@ -352,14 +354,14 @@ const MyRequests = () => {
               <div onClick={() => navigate('/')} className="cursor-pointer">
                 <MagitLogo size="md" />
               </div>
-              <h1 className="font-heading font-bold text-xl text-foreground">My Visit Requests</h1>
+              <h1 className="font-heading font-bold text-xl text-foreground">{t('myRequests.title')}</h1>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" onClick={() => navigate('/saved-properties')}>
-                Saved Properties
+                {t('savedProperties.title')}
               </Button>
               <Button variant="outline" onClick={() => navigate('/properties')}>
-                Browse Properties
+                {t('savedProperties.browseProperties')}
               </Button>
             </div>
           </div>
@@ -369,29 +371,29 @@ const MyRequests = () => {
       <main className="flex-1 container mx-auto px-4 py-8">
         {requests.length === 0 ? (
           <div className="text-center py-16">
-            <h2 className="font-heading font-bold text-2xl text-foreground mb-4">No Requests Yet</h2>
-            <p className="text-muted-foreground mb-8">You haven't made any visit requests yet.</p>
-            <Button onClick={() => navigate('/properties')}>Browse Properties</Button>
+            <h2 className="font-heading font-bold text-2xl text-foreground mb-4">{t('myRequests.noRequests')}</h2>
+            <p className="text-muted-foreground mb-8">{t('myRequests.noRequestsDesc')}</p>
+            <Button onClick={() => navigate('/properties')}>{t('savedProperties.browseProperties')}</Button>
           </div>
         ) : (
           <Tabs defaultValue="active" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-8">
               <TabsTrigger value="active" className="text-center">
-                Active ({[...pendingRequests, ...confirmedRequests].length})
+                {t('myRequests.tabs.active')} ({[...pendingRequests, ...confirmedRequests].length})
               </TabsTrigger>
               <TabsTrigger value="denied" className="text-center">
-                Denied ({deniedRequests.length})
+                {t('myRequests.tabs.denied')} ({deniedRequests.length})
               </TabsTrigger>
               <TabsTrigger value="finished" className="text-center">
-                Finished ({finishedRequests.length})
+                {t('myRequests.tabs.finished')} ({finishedRequests.length})
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="active" className="space-y-6">
               {[...pendingRequests, ...confirmedRequests].length === 0 ? (
                 <div className="text-center py-16">
-                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">No Active Requests</h3>
-                  <p className="text-muted-foreground">Your pending and confirmed visit requests will appear here.</p>
+                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">{t('myRequests.noActiveRequests')}</h3>
+                  <p className="text-muted-foreground">{t('myRequests.noActiveDesc')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -410,8 +412,8 @@ const MyRequests = () => {
             <TabsContent value="denied" className="space-y-6">
               {deniedRequests.length === 0 ? (
                 <div className="text-center py-16">
-                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">No Denied Requests</h3>
-                  <p className="text-muted-foreground">Denied visit requests will appear here.</p>
+                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">{t('myRequests.noDeniedRequests')}</h3>
+                  <p className="text-muted-foreground">{t('myRequests.noDeniedDesc')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -429,8 +431,8 @@ const MyRequests = () => {
             <TabsContent value="finished" className="space-y-6">
               {finishedRequests.length === 0 ? (
                 <div className="text-center py-16">
-                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">No Finished Visits</h3>
-                  <p className="text-muted-foreground">Your completed visits will appear here.</p>
+                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">{t('myRequests.noFinishedVisits')}</h3>
+                  <p className="text-muted-foreground">{t('myRequests.noFinishedDesc')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -452,7 +454,7 @@ const MyRequests = () => {
         <Dialog open={msgForId !== null} onOpenChange={(open) => !open && setMsgForId(null)}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Message Property Owner</DialogTitle>
+              <DialogTitle>{t('myRequests.messageOwner')}</DialogTitle>
             </DialogHeader>
             <Textarea
               value={message}

@@ -136,7 +136,7 @@ const Profile = () => {
             <div className="flex items-center space-x-4">
               <Button variant="ghost" onClick={() => navigate('/dashboard')}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+                {t('profile.backToDashboard')}
               </Button>
             </div>
           </div>
@@ -158,7 +158,7 @@ const Profile = () => {
                   </Avatar>
                   <div>
                     <h1 className="text-2xl font-heading font-bold">
-                      {profile?.full_name || 'Your Profile'}
+                      {profile?.full_name || t('profile.title')}
                     </h1>
                     <p className="text-muted-foreground">{user.email}</p>
                     <Badge variant={profile?.user_type === 'seller' ? 'default' : 'secondary'} className="mt-1">
@@ -170,13 +170,13 @@ const Profile = () => {
                 {!isEditing ? (
                   <Button variant="outline" onClick={() => setIsEditing(true)}>
                     <Edit2 className="w-4 h-4 mr-2" />
-                    Edit Profile
+                    {t('profile.editProfile')}
                   </Button>
                 ) : (
                   <div className="flex space-x-2">
                     <Button onClick={handleSave} disabled={loading}>
                       <Save className="w-4 h-4 mr-2" />
-                      Save
+                      {t('profile.saveChanges')}
                     </Button>
                     <Button variant="outline" onClick={handleCancel}>
                       <X className="w-4 h-4 mr-2" />
@@ -193,13 +193,13 @@ const Profile = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="w-5 h-5" />
-                Personal Information
+                {t('profile.personalInfo')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="full_name">Full Name</Label>
+                  <Label htmlFor="full_name">{t('profile.fullName')}</Label>
                   {isEditing ? (
                     <Input
                       id="full_name"
@@ -213,7 +213,7 @@ const Profile = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('profile.email')}</Label>
                   <div className="flex items-center space-x-2 p-2">
                     <Mail className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm">{user.email}</span>
@@ -222,7 +222,7 @@ const Profile = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone">{t('profile.phoneNumber')}</Label>
                   {isEditing ? (
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none">
@@ -247,7 +247,7 @@ const Profile = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="user_type">Account Type</Label>
+                  <Label htmlFor="user_type">{t('profile.accountType')}</Label>
                   {isEditing ? (
                     <select
                       id="user_type"
@@ -271,7 +271,7 @@ const Profile = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="w-5 h-5" />
-                Identity Verification
+                {t('profile.identityVerification')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">

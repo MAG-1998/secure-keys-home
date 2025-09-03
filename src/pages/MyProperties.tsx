@@ -187,11 +187,11 @@ const MyProperties = () => {
               <div onClick={() => navigate('/')} className="cursor-pointer">
                 <MagitLogo size="md" />
               </div>
-              <h1 className="font-heading font-bold text-xl text-foreground">My Properties</h1>
+              <h1 className="font-heading font-bold text-xl text-foreground">{t('myProperties.title')}</h1>
             </div>
             <Button onClick={() => navigate('/list-property')} className="flex items-center gap-2">
               <Plus className="w-4 h-4" />
-              Add Property
+              {t('myProperties.addProperty')}
             </Button>
           </div>
         </div>
@@ -200,11 +200,11 @@ const MyProperties = () => {
       <div className="container mx-auto px-4 py-8">
         {properties.length === 0 ? (
           <div className="text-center py-16">
-            <h2 className="font-heading font-bold text-2xl text-foreground mb-4">No Properties Listed</h2>
-            <p className="text-muted-foreground mb-8">Start by listing your first property</p>
+            <h2 className="font-heading font-bold text-2xl text-foreground mb-4">{t('myProperties.noProperties')}</h2>
+            <p className="text-muted-foreground mb-8">{t('common.startListingFirst')}</p>
             <Button onClick={() => navigate('/list-property')} size="lg">
               <Plus className="w-5 h-5 mr-2" />
-              List Your First Property
+              {t('myProperties.listFirst')}
             </Button>
           </div>
         ) : (
@@ -219,12 +219,12 @@ const MyProperties = () => {
                   />
                   <div className="absolute top-3 left-3">
                     {(property.status === 'approved' || property.status === 'active') ? (
-                      <Badge variant="success" className="mb-2">Approved</Badge>
+                      <Badge variant="success" className="mb-2">{t('myProperties.status.approved')}</Badge>
                     ) : (
-                      <Badge variant="destructive" className="mb-2">Not Approved</Badge>
+                      <Badge variant="destructive" className="mb-2">{t('myProperties.status.notApproved')}</Badge>
                     )}
                     {property.is_verified && (
-                      <Badge variant="success" className="mb-2">Verified</Badge>
+                      <Badge variant="success" className="mb-2">{t('myProperties.status.verified')}</Badge>
                     )}
                     {property.is_halal_financed && (
                       <Badge variant="outline" className="bg-magit-trust/10 text-magit-trust border-magit-trust">
@@ -262,8 +262,8 @@ const MyProperties = () => {
 
                   <Tabs defaultValue="analytics" className="w-full">
                     <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                      <TabsTrigger value="visits">Visits</TabsTrigger>
+                      <TabsTrigger value="analytics">{t('myProperties.analytics')}</TabsTrigger>
+                      <TabsTrigger value="visits">{t('myProperties.visits')}</TabsTrigger>
                     </TabsList>
                     
                     <TabsContent value="analytics" className="space-y-3">
@@ -273,21 +273,21 @@ const MyProperties = () => {
                             <Eye className="w-4 h-4 mr-1" />
                           </div>
                           <div className="font-bold text-lg">{property.views_count}</div>
-                          <div className="text-xs text-muted-foreground">Views</div>
+                          <div className="text-xs text-muted-foreground">{t('myProperties.views')}</div>
                         </div>
                         <div className="text-center p-3 bg-muted/50 rounded-lg">
                           <div className="flex items-center justify-center mb-1">
                             <Calendar className="w-4 h-4 mr-1" />
                           </div>
                           <div className="font-bold text-lg">{property.visit_requests_count}</div>
-                          <div className="text-xs text-muted-foreground">Visit Requests</div>
+                          <div className="text-xs text-muted-foreground">{t('myProperties.visitRequests')}</div>
                         </div>
                       </div>
                     </TabsContent>
                     
                     <TabsContent value="visits" className="space-y-3">
                       {property.upcoming_visits.length === 0 ? (
-                        <p className="text-center text-muted-foreground text-sm py-4">No upcoming visits</p>
+                        <p className="text-center text-muted-foreground text-sm py-4">{t('myProperties.upcomingVisits')}</p>
                       ) : (
                         <div className="space-y-2">
                           {property.upcoming_visits.slice(0, 2).map((visit) => (
@@ -322,7 +322,7 @@ const MyProperties = () => {
                       className="flex-1"
                       onClick={() => navigate(`/property/${property.id}/manage`)}
                     >
-                      Manage Property
+                      {t('myProperties.manage')}
                     </Button>
                   </div>
                 </CardContent>

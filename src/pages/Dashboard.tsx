@@ -128,10 +128,10 @@ const Dashboard = memo(() => {
       <main className="container mx-auto px-4 py-16 flex-1">
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h1 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
-            Welcome to Your Property Dashboard
+            {t('dashboard.welcome')}
           </h1>
           <p className="text-lg text-muted-foreground mb-8">
-            Choose your path to get started with Magit
+            {t('dashboard.choosePath')}
           </p>
           <Badge variant="success" className="mb-8">
             Verified User
@@ -150,31 +150,31 @@ const Dashboard = memo(() => {
                       <Home className="w-8 h-8 text-primary" />
                     </div>
                     <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-4">
-                      List Your Property
+                      {t('dashboard.listProperty.title')}
                     </h2>
                     <p className="text-lg text-muted-foreground mb-6">
-                      Showcase your property to thousands of potential buyers with our verified listing platform
+                      {t('dashboard.listProperty.description')}
                     </p>
                   </div>
                   
                   <div className="space-y-3 mb-8">
                     <div className="flex items-center justify-center text-sm text-muted-foreground">
                       <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                      Professional photography included
+                      {t('dashboard.listProperty.features.professional')}
                     </div>
                     <div className="flex items-center justify-center text-sm text-muted-foreground">
                       <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                      Verified buyer connections
+                      {t('dashboard.listProperty.features.photos')}
                     </div>
                     <div className="flex items-center justify-center text-sm text-muted-foreground">
                       <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                      Zero upfront costs
+                      {t('dashboard.listProperty.features.analytics')}
                     </div>
                   </div>
                 </div>
 
                 <Button className="w-full group-hover:shadow-warm transition-all duration-300" size="lg">
-                  Get Started
+                  {t('dashboard.listProperty.getStarted')}
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </CardContent>
@@ -191,31 +191,31 @@ const Dashboard = memo(() => {
                     <Search className="w-8 h-8 text-background dark:text-black" />
                   </div>
                   <h2 className="font-heading font-bold text-2xl md:text-3xl text-background dark:text-black mb-4">
-                    Find Your Dream Home
+                    {t('dashboard.findProperty.title')}
                   </h2>
                   <p className="text-lg text-background/70 dark:text-gray-600 mb-6">
-                    Discover verified properties with transparent pricing and halal financing options
+                    {t('dashboard.findProperty.description')}
                   </p>
                 </div>
                 
                 <div className="space-y-3 mb-8">
                   <div className="flex items-center justify-center text-sm text-background/70 dark:text-gray-600">
                     <span className="w-2 h-2 bg-background dark:bg-black rounded-full mr-2"></span>
-                    Verified property listings
+                    {t('dashboard.findProperty.features.verified')}
                   </div>
                   <div className="flex items-center justify-center text-sm text-background/70 dark:text-gray-600">
                     <span className="w-2 h-2 bg-background dark:bg-black rounded-full mr-2"></span>
-                    Halal financing available
+                    {t('dashboard.findProperty.features.financing')}
                   </div>
                   <div className="flex items-center justify-center text-sm text-background/70 dark:text-gray-600">
                     <span className="w-2 h-2 bg-background dark:bg-black rounded-full mr-2"></span>
-                    AI-powered matching
+                    {t('dashboard.findProperty.features.map')}
                   </div>
                 </div>
                 </div>
 
                 <Button variant="outline" size="lg" className="w-full group-hover:shadow-lg transition-all duration-300 border-foreground hover:bg-foreground hover:text-background text-foreground">
-                  Start Browsing
+                  {t('dashboard.findProperty.startBrowsing')}
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </CardContent>
@@ -226,10 +226,10 @@ const Dashboard = memo(() => {
         {/* Additional Info */}
         <div className="text-center mt-16">
           <p className="text-muted-foreground">
-            Need help deciding? Our property experts are here to guide you.
+            {t('dashboard.contactSupport')}
           </p>
           <Button variant="ghost" className="mt-2">
-            Contact Support
+            {t('common.contactSupport')}
           </Button>
         </div>
       </main>

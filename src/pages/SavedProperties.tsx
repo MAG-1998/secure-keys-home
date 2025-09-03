@@ -192,14 +192,14 @@ const SavedProperties = () => {
               <div onClick={() => navigate('/')} className="cursor-pointer">
                 <MagitLogo size="md" />
               </div>
-              <h1 className="font-heading font-bold text-xl text-foreground">Saved Properties</h1>
+              <h1 className="font-heading font-bold text-xl text-foreground">{t('savedProperties.title')}</h1>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" onClick={() => navigate('/my-requests')}>
-                My Requests
+                {t('savedProperties.myRequests')}
               </Button>
               <Button variant="outline" onClick={() => navigate('/properties')}>
-                Browse More
+                {t('savedProperties.browseMore')}
               </Button>
             </div>
           </div>
@@ -209,10 +209,10 @@ const SavedProperties = () => {
       <div className="flex-1 container mx-auto px-4 py-8">
         {savedProperties.length === 0 ? (
           <div className="text-center py-16">
-            <h2 className="font-heading font-bold text-2xl text-foreground mb-4">No Saved Properties</h2>
-            <p className="text-muted-foreground mb-8">Start exploring and save properties you're interested in</p>
+            <h2 className="font-heading font-bold text-2xl text-foreground mb-4">{t('savedProperties.noSaved')}</h2>
+            <p className="text-muted-foreground mb-8">{t('savedProperties.startExploring')}</p>
             <Button onClick={() => navigate('/')} size="lg">
-              Browse Properties
+              {t('savedProperties.browseProperties')}
             </Button>
           </div>
         ) : (
@@ -228,8 +228,8 @@ const SavedProperties = () => {
                       className="w-full h-48 object-cover rounded-t-lg"
                     />
                     <div className="absolute top-3 left-3">
-                      {property.is_verified && (
-                        <Badge variant="success" className="mb-2">Verified</Badge>
+                    {property.is_verified && (
+                        <Badge variant="success" className="mb-2">{t('myProperties.status.verified')}</Badge>
                       )}
                       {property.is_halal_financed && (
                         <Badge variant="outline" className="bg-magit-trust/10 text-magit-trust border-magit-trust">
@@ -286,17 +286,17 @@ const SavedProperties = () => {
                           onClick={() => setSelectedProperty(savedProperty)}
                         >
                           <Calendar className="w-4 h-4 mr-2" />
-                          Request Visit
+                          {t('savedProperties.requestVisit')}
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="max-w-md">
                         <DialogHeader>
-                          <DialogTitle>Request Property Visit</DialogTitle>
+                          <DialogTitle>{t('savedProperties.visitDialog.title')}</DialogTitle>
                         </DialogHeader>
                         
                         <div className="space-y-4">
                           <div>
-                            <label className="text-sm font-medium">Select Date</label>
+                            <label className="text-sm font-medium">{t('savedProperties.visitDialog.selectDate')}</label>
                             <input
                               type="date"
                               value={selectedDate}
@@ -307,7 +307,7 @@ const SavedProperties = () => {
                           </div>
 
                           <div>
-                            <label className="text-sm font-medium">Available Time Slots</label>
+                            <label className="text-sm font-medium">{t('savedProperties.visitDialog.availableSlots')}</label>
                             <Select onValueChange={setCustomTime}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select time slot" />
@@ -318,7 +318,7 @@ const SavedProperties = () => {
                                     {time}
                                   </SelectItem>
                                 ))}
-                                <SelectItem value="custom">Request Custom Time</SelectItem>
+                                <SelectItem value="custom">{t('savedProperties.visitDialog.customTime')}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -344,7 +344,7 @@ const SavedProperties = () => {
                           )}
 
                           <div>
-                            <label className="text-sm font-medium">Additional Notes (Optional)</label>
+                            <label className="text-sm font-medium">{t('savedProperties.visitDialog.notes')}</label>
                             <Textarea
                               value={notes}
                               onChange={(e) => setNotes(e.target.value)}
@@ -366,7 +366,7 @@ const SavedProperties = () => {
                             ) : (
                               <>
                                 <Calendar className="w-4 h-4 mr-2" />
-                                Send Request
+                                {t('savedProperties.visitDialog.sendRequest')}
                               </>
                             )}
                           </Button>

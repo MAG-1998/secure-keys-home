@@ -41,7 +41,7 @@ export default function MessagesPage() {
   const [reportReason, setReportReason] = useState("");
   const [supportOpen, setSupportOpen] = useState(false);
   const [supportText, setSupportText] = useState("");
-  const { language, setLanguage } = useTranslation();
+  const { language, setLanguage, t } = useTranslation();
   const [isHalalMode, setIsHalalMode] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -268,11 +268,11 @@ export default function MessagesPage() {
       <div className="container mx-auto py-6 grid grid-cols-1 md:grid-cols-3 gap-4">
       <Card className="md:col-span-1">
         <CardHeader>
-          <CardTitle>Conversations</CardTitle>
+          <CardTitle>{t('messages.conversations')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 max-h-[70vh] overflow-auto">
           {conversations.length === 0 && (
-            <p className="text-sm text-muted-foreground">No conversations yet.</p>
+            <p className="text-sm text-muted-foreground">{t('messages.noConversations')}</p>
           )}
           {conversations.map((c) => (
             <button
@@ -289,7 +289,7 @@ export default function MessagesPage() {
                       </div>
                     )}
                   </div>
-                  {selectedUserId === c.userId && <Badge variant="secondary">Active</Badge>}
+                  {selectedUserId === c.userId && <Badge variant="secondary">{t('messages.active')}</Badge>}
                 </div>
             </button>
           ))}
@@ -306,19 +306,19 @@ export default function MessagesPage() {
           {selectedUserId && (
             <Dialog open={reportOpen} onOpenChange={setReportOpen}>
               <DialogTrigger asChild>
-                <Button variant="destructive" size="sm">Report</Button>
+                <Button variant="destructive" size="sm">{t('messages.report')}</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Report user</DialogTitle>
+                  <DialogTitle>{t('messages.reportUser')}</DialogTitle>
                 </DialogHeader>
                 <Textarea
-                  placeholder="Describe the issue (spam, scam, etc.)"
+                  placeholder={t('messages.reportDescription')}
                   value={reportReason}
                   onChange={(e) => setReportReason(e.target.value)}
                 />
                 <DialogFooter>
-                  <Button onClick={submitReport}>Submit Report</Button>
+                  <Button onClick={submitReport}>{t('messages.submitReport')}</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -349,13 +349,13 @@ export default function MessagesPage() {
           </div>
           <div className="mt-3 flex gap-2">
             <Input
-              placeholder="Type your message"
+              placeholder={t('messages.typeMessage')}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
               aria-label="Message"
             />
-            <Button onClick={sendMessage} aria-label="Send message">Send</Button>
+            <Button onClick={sendMessage} aria-label="Send message">{t('messages.send')}</Button>
           </div>
         </CardContent>
       </Card>
