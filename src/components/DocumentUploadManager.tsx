@@ -131,6 +131,21 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
         description: "Documents uploaded successfully"
       });
 
+      // Check if this was the last pending document
+      const remainingPendingDocs = docRequests.filter(
+        doc => doc.id !== docRequestId && doc.status === 'pending'
+      );
+      
+      if (remainingPendingDocs.length === 0) {
+        // Show additional toast about automatic stage progression
+        setTimeout(() => {
+          toast({
+            title: "All documents submitted!",
+            description: "Your financing request has been automatically moved to review stage.",
+          });
+        }, 1000);
+      }
+
       // Clear the form after successful submission
       setResponseNotes(prev => ({ ...prev, [docRequestId]: '' }));
       setSelectedFiles(prev => ({ ...prev, [docRequestId]: null }));

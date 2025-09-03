@@ -1046,6 +1046,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      auto_update_financing_stage: {
+        Args: { financing_request_id_param: string }
+        Returns: boolean
+      }
       calculate_penalty_level: {
         Args: { user_id_param: string }
         Returns: number
