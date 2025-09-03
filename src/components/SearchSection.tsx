@@ -634,7 +634,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                       onClick={() => navigate('/properties')}
                       className="px-8"
                     >
-                      View All Properties
+                      {t('common.viewAllProperties')}
                     </Button>
                   </div>
 

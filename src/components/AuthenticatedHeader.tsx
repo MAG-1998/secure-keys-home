@@ -14,6 +14,7 @@ import type { User as SupabaseUser } from "@supabase/supabase-js"
 import type { Language } from "@/hooks/useTranslation"
 import { forceLocalSignOut } from "@/lib/auth"
 import { NotificationBell } from "@/components/NotificationBell"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface AuthenticatedHeaderProps {
   user: SupabaseUser
@@ -25,6 +26,7 @@ interface AuthenticatedHeaderProps {
 export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }: AuthenticatedHeaderProps) => {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { t } = useTranslation()
   const isMobile = useIsMobile()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -82,7 +84,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
               className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm"
             >
               <FileText className="h-4 w-4 mr-2" />
-              My Properties
+              {t('header.myProperties')}
             </Button>
             <Button 
               variant="ghost" 
@@ -90,7 +92,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
               className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm"
             >
               <Heart className="h-4 w-4 mr-2" />
-              Saved
+              {t('header.saved')}
             </Button>
             <Button 
               variant="ghost" 
@@ -98,7 +100,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
               className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm"
             >
               <CalendarCheck className="h-4 w-4 mr-2" />
-              Visit Requests
+              {t('header.visitRequests')}
             </Button>
             <Button 
               variant="ghost" 
@@ -106,7 +108,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
               className="px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border/20 text-sm"
             >
               <Plus className="h-4 w-4 mr-2" />
-              List Property
+              {t('header.listProperty')}
             </Button>
           </div>
 
@@ -186,7 +188,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[280px] sm:w-[350px]">
                   <SheetHeader className="mb-6">
-                    <SheetTitle>Menu</SheetTitle>
+                    <SheetTitle>{t('common.menu')}</SheetTitle>
                   </SheetHeader>
                   
                   <div className="space-y-4">
@@ -214,7 +216,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                         className="w-full justify-start text-left"
                       >
                         <FileText className="h-4 w-4 mr-3" />
-                        My Listed Properties
+                        {t('header.myListedProperties')}
                       </Button>
                       
                       <Button 
@@ -226,7 +228,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                         className="w-full justify-start text-left"
                       >
                         <Heart className="h-4 w-4 mr-3" />
-                        Saved Properties
+                        {t('header.savedProperties')}
                       </Button>
                       
                       <Button 
@@ -238,7 +240,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                         className="w-full justify-start text-left"
                       >
                         <CalendarCheck className="h-4 w-4 mr-3" />
-                        Visit Requests
+                        {t('header.visitRequests')}
                       </Button>
                       
                       <Button 
@@ -250,7 +252,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                         className="w-full justify-start text-left"
                       >
                         <Plus className="h-4 w-4 mr-3" />
-                        List New Property
+                        {t('header.listNewProperty')}
                       </Button>
                       
                       <Button 
@@ -262,7 +264,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                         className="w-full justify-start text-left"
                       >
                         <Settings className="h-4 w-4 mr-3" />
-                        Dashboard
+                        {t('header.dashboard')}
                       </Button>
                       
                       <Button 
@@ -274,7 +276,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                         className="w-full justify-start text-left"
                       >
                         <User className="h-4 w-4 mr-3" />
-                        Profile
+                        {t('header.profile')}
                       </Button>
                     </div>
 
@@ -286,7 +288,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                         className="w-full justify-start text-left text-destructive hover:text-destructive"
                       >
                         <LogOut className="h-4 w-4 mr-3" />
-                        Sign Out
+                        {t('common.signOut')}
                       </Button>
                     </div>
                   </div>

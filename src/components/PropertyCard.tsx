@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { MapPin, Bed, Bath, Square, Heart } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { calculateHalalFinancing } from "@/utils/halalFinancing"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface PropertyCardProps {
   id: string
@@ -55,6 +56,7 @@ export const PropertyCard = ({
   monthlyPayment
 }: PropertyCardProps) => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   // Handle backward compatibility with property prop
   const actualId = id || property?.id
@@ -182,7 +184,7 @@ export const PropertyCard = ({
         </div>
         
         <Button className="w-full mt-auto" variant="outline" onClick={(e) => { e.stopPropagation(); handleNavigate(); }}>
-          View Details
+          {t('common.viewDetails')}
         </Button>
       </CardContent>
     </Card>

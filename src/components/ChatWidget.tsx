@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Link, useLocation } from "react-router-dom";
 
 // Simple message type matching DB (plus local UI status)
@@ -39,6 +40,7 @@ function getOtherUserId(m: DBMessage, myId: string) {
 export default function ChatWidget() {
   const { user } = useUser();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const location = useLocation();
   
   const { notifications } = useNotifications(10);
@@ -309,7 +311,7 @@ export default function ChatWidget() {
       {/* Floating button */}
       {!open && (
         <Button aria-label="Open chat" className="shadow-lg" onClick={() => setOpen(true)}>
-          <MessageSquare className="mr-2 h-4 w-4" /> Chat
+          <MessageSquare className="mr-2 h-4 w-4" /> {t('common.chat')}
         </Button>
       )}
 
@@ -329,7 +331,7 @@ export default function ChatWidget() {
                   ? (profilesById[selectedOtherId]?.full_name ||
                      profilesById[selectedOtherId]?.email ||
                      `User ${selectedOtherId.slice(0, 8)}`)
-                  : "Messages"}
+                  : t('common.messages')}
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -355,8 +357,8 @@ export default function ChatWidget() {
             <div className="h-[calc(100%-2.5rem)] flex flex-col">
               <div className="px-3 py-2 border-b text-sm text-muted-foreground flex items-center justify-between">
                 <span>{loading ? "Loading…" : `${conversations.length} conversation${conversations.length === 1 ? "" : "s"}`}</span>
-                <Button variant="outline" size="sm" onClick={loadMyMessages} aria-label="Refresh conversations">
-                  Refresh
+                 <Button variant="outline" size="sm" onClick={loadMyMessages} aria-label="Refresh conversations">
+                  {t('common.refresh')}
                 </Button>
               </div>
 
@@ -382,7 +384,7 @@ export default function ChatWidget() {
 
                   {conversations.length === 0 && (
                     <div className="text-sm text-muted-foreground px-2 py-6 text-center">
-                      No messages yet.
+                      {t('common.noMessagesYet')}
                     </div>
                   )}
                 </div>
@@ -390,7 +392,7 @@ export default function ChatWidget() {
 
               <div className="p-2 border-t sticky bottom-0 bg-card">
                 <Button variant="secondary" className="w-full" onClick={() => setSupportOpen(true)}>
-                  <Headset className="mr-2 h-4 w-4" /> Contact Support
+                  <Headset className="mr-2 h-4 w-4" /> {t('common.contactSupport')}
                 </Button>
               </div>
             </div>

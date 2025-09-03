@@ -234,7 +234,7 @@ export function FinancingRequestsSection({ userId, t }: FinancingRequestsSection
                         size="sm"
                         onClick={() => navigate(`/admin/financing/${request.id}`)}
                       >
-                        View Details
+                        {t('common.viewDetails')}
                       </Button>
                     </div>
                   </CardContent>
