@@ -249,7 +249,6 @@ const AdminFinancing = () => {
         .from('halal_financing_requests')
         .update({
           stage: 'denied',
-          status: 'denied',
           admin_notes: denyReason,
           reviewed_by: user?.id,
           reviewed_at: new Date().toISOString()
