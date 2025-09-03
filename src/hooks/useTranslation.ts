@@ -859,21 +859,6 @@ const translations: Translations = {
   },
 
   // Map badges
-  'map.bed': {
-    en: 'bed',
-    ru: 'спальни',
-    uz: 'xona'
-  },
-  'map.bath': {
-    en: 'bath',
-    ru: 'санузел',
-    uz: 'hammom'
-  },
-  'map.myListing': {
-    en: 'My Listing',
-    ru: 'Моё объявление',
-    uz: 'Mening eʼlonim'
-  },
 
   // Auth Page
   'auth.titleLogin': { en: 'Welcome Back', ru: 'С возвращением', uz: 'Qaytganingiz bilan' },
@@ -996,6 +981,78 @@ const translations: Translations = {
     en: 'Find',
     ru: 'Найти',
     uz: 'Topish'
+  },
+
+  // Map-related translations
+  'map.loading': {
+    en: 'Loading map...',
+    ru: 'Загрузка карты...',
+    uz: 'Xarita yuklanmoqda...'
+  },
+  'map.loadingMessage': {
+    en: 'Please wait while we load the interactive map',
+    ru: 'Пожалуйста, подождите, пока мы загружаем интерактивную карту',
+    uz: 'Iltimos, interaktiv xarita yuklanayotganda kuting'
+  },
+  'map.error': {
+    en: 'Map Error',
+    ru: 'Ошибка карты',
+    uz: 'Xarita xatosi'
+  },
+  'map.errorMessage': {
+    en: 'Failed to load the map. Please check your connection.',
+    ru: 'Не удалось загрузить карту. Проверьте подключение к интернету.',
+    uz: 'Xaritani yuklashda xatolik. Internet aloqangizni tekshiring.'
+  },
+  'map.offline': {
+    en: 'No Connection',
+    ru: 'Нет соединения',
+    uz: 'Ulanish yo\'q'
+  },
+  'map.offlineMessage': {
+    en: 'You\'re offline. Check your internet connection to load the map.',
+    ru: 'Вы не в сети. Проверьте подключение к интернету для загрузки карты.',
+    uz: 'Siz offlaynsiz. Xaritani yuklash uchun internet aloqangizni tekshiring.'
+  },
+  'map.unknown': {
+    en: 'Unknown Error',
+    ru: 'Неизвестная ошибка',
+    uz: 'Noma\'lum xato'
+  },
+  'map.unknownMessage': {
+    en: 'An unexpected error occurred while loading the map.',
+    ru: 'Произошла неожиданная ошибка при загрузке карты.',
+    uz: 'Xaritani yuklashda kutilmagan xatolik yuz berdi.'
+  },
+  'map.retry': {
+    en: 'Try Again',
+    ru: 'Попробовать снова',
+    uz: 'Qayta urinish'
+  },
+  'map.reload': {
+    en: 'Reload Map',
+    ru: 'Перезагрузить карту',
+    uz: 'Xaritani qayta yuklash'
+  },
+  'map.locateMe': {
+    en: 'Locate Me',
+    ru: 'Найти меня',
+    uz: 'Meni topish'
+  },
+  'map.bed': {
+    en: 'bed',
+    ru: 'спальня',
+    uz: 'yotoq xona'
+  },
+  'map.bath': {
+    en: 'bath',
+    ru: 'ванная',
+    uz: 'hammom'
+  },
+  'map.myListing': {
+    en: 'My Listing',
+    ru: 'Мое объявление',
+    uz: 'Mening e\'lonim'
   }
 };
 

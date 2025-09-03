@@ -9,6 +9,8 @@ import type { Language } from "@/hooks/useTranslation";
 import { extractDistrictFromText, localizeDistrict as localizeDistrictLib } from "@/lib/districts";
 import { useSearchStore } from "@/hooks/useSearchStore";
 import { toast } from "@/components/ui/use-toast";
+import { useMapLoader } from "@/hooks/useMapLoader";
+import { MapStatusIndicator } from "@/components/MapStatusIndicator";
 
 interface YandexMapProps {
   isHalalMode?: boolean;
@@ -47,9 +49,11 @@ const YandexMap: React.FC<YandexMapProps> = memo(({ isHalalMode = false, t, lang
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
   const clusterer = useRef<any>(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [userLocationMarker, setUserLocationMarker] = useState<any>(null);
+  
+  // Use the enhanced map loader hook
+  const { mapLoaded, status, error: mapError, retryLoad } = useMapLoader(language);
 
   const cssInjectedRef = useRef(false);
   
@@ -138,66 +142,21 @@ useEffect(() => {
 }, [isHalalMode, allProperties, filteredProperties]);
 
 
-  // Load Yandex Maps API with better error handling
-  useEffect(() => {
-    console.log('[YandexMap] Loading Yandex Maps API...');
+  // Enhanced container validation
+  const validateContainer = useCallback(() => {
+    if (!mapContainer.current) {
+      console.warn('[YandexMap] Map container not available');
+      return false;
+    }
     
-    // Check if ymaps is already available
-    if (window.ymaps && window.ymaps.Map) {
-      console.log('[YandexMap] Yandex Maps API already loaded');
-      setMapLoaded(true);
-      return;
+    const rect = mapContainer.current.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      console.warn('[YandexMap] Container has no dimensions:', rect);
+      return false;
     }
-
-    // Check if script is already loading or loaded
-    const existingScript = document.querySelector('script[src*="api-maps.yandex.ru"]');
-    if (existingScript) {
-      console.log('[YandexMap] Yandex Maps script already exists, waiting for load...');
-      // Script already exists, wait for it to load
-      const handleLoad = () => {
-        if (window.ymaps && window.ymaps.Map) {
-          console.log('[YandexMap] Yandex Maps API loaded from existing script');
-          window.ymaps.ready(() => {
-            setMapLoaded(true);
-          });
-        }
-      };
-
-      if (window.ymaps && window.ymaps.Map) {
-        handleLoad();
-      } else {
-        existingScript.addEventListener('load', handleLoad, { once: true });
-      }
-      return;
-    }
-
-    console.log('[YandexMap] Creating new Yandex Maps script...');
-    const ymLang = language === 'ru' ? 'ru_RU' : (language === 'uz' ? 'uz_UZ' : 'en_US');
-    const script = document.createElement('script');
-    script.src = `https://api-maps.yandex.ru/2.1/?apikey=8baec550-0c9b-458c-b9bd-e9893af7beb7&lang=${ymLang}`;
-    script.async = true;
-    script.onload = () => {
-      console.log('[YandexMap] Yandex Maps script loaded');
-      if (window.ymaps && window.ymaps.Map) {
-        window.ymaps.ready(() => {
-          console.log('[YandexMap] Yandex Maps API ready');
-          setMapLoaded(true);
-        });
-      }
-    };
-    script.onerror = (error) => {
-      console.error('[YandexMap] Failed to load Yandex Maps API:', error);
-      setMapLoaded(false);
-    };
-    document.head.appendChild(script);
-
-    // Cleanup function - but don't remove script immediately
-    return () => {
-      // Only remove event listeners, not the script itself
-      script.removeEventListener('load', script.onload as any);
-      script.removeEventListener('error', script.onerror as any);
-    };
-  }, [language]);
+    
+    return true;
+  }, []);
 
   // Auto-resolve districts from coordinates using Yandex geocoder
   useEffect(() => {
@@ -237,9 +196,20 @@ useEffect(() => {
     } catch {}
   }, [mapLoaded, dbProperties]);
 
-  // Initialize map with better error handling
+  // Enhanced map initialization with validation and retry
   useEffect(() => {
-    if (!mapLoaded || !mapContainer.current || map.current) return;
+    if (!mapLoaded || map.current) return;
+
+    // Validate container before proceeding
+    if (!validateContainer()) {
+      console.warn('[YandexMap] Container validation failed, retrying...');
+      setTimeout(() => {
+        if (validateContainer()) {
+          console.log('[YandexMap] Container now available, proceeding with initialization');
+        }
+      }, 100);
+      return;
+    }
 
     console.log('[YandexMap] Initializing map...');
     
@@ -256,29 +226,25 @@ useEffect(() => {
         controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
       });
       console.log('[YandexMap] Map initialized successfully');
-    } catch (error) {
-      console.error('[YandexMap] Failed to create Yandex Map:', error);
-      return;
-    }
 
-    // Initialize clusterer for better performance
-    clusterer.current = new window.ymaps.Clusterer({
-      preset: 'islands#invertedVioletClusterIcons',
-      groupByCoordinates: false,
-      clusterDisableClickZoom: false,
-      clusterHideIconOnBalloonOpen: false,
-      geoObjectHideIconOnBalloonOpen: false
-    });
+      // Initialize clusterer for better performance
+      clusterer.current = new window.ymaps.Clusterer({
+        preset: 'islands#invertedVioletClusterIcons',
+        groupByCoordinates: false,
+        clusterDisableClickZoom: false,
+        clusterHideIconOnBalloonOpen: false,
+        geoObjectHideIconOnBalloonOpen: false
+      });
 
-    map.current.geoObjects.add(clusterer.current);
+      map.current.geoObjects.add(clusterer.current);
 
-    // Inject transparent overrides for Yandex placemark containers
-    if (mapContainer.current) {
-      mapContainer.current.classList.add('ymaps-transparent-scope');
-      if (!cssInjectedRef.current) {
-        const styleEl = document.createElement('style');
-        styleEl.setAttribute('data-ymaps-transparent', 'true');
-        styleEl.textContent = `
+      // Inject transparent overrides for Yandex placemark containers
+      if (mapContainer.current) {
+        mapContainer.current.classList.add('ymaps-transparent-scope');
+        if (!cssInjectedRef.current) {
+          const styleEl = document.createElement('style');
+          styleEl.setAttribute('data-ymaps-transparent', 'true');
+          styleEl.textContent = `
 .ymaps-transparent-scope .ymaps-2-1-79-placemark-overlay,
 .ymaps-transparent-scope .ymaps-2-1-79-placemark,
 .ymaps-transparent-scope .ymaps-2-1-79-placemark-container,
@@ -292,15 +258,19 @@ useEffect(() => {
   box-shadow: none !important;
   border: 0 !important;
 }
-        `;
-        document.head.appendChild(styleEl);
-        cssInjectedRef.current = true;
+          `;
+          document.head.appendChild(styleEl);
+          cssInjectedRef.current = true;
+        }
       }
-    }
 
-    // Update markers when filtered properties change
-    updateMarkers();
-  }, [mapLoaded]);
+      // Update markers when filtered properties change
+      updateMarkers();
+    } catch (error) {
+      console.error('[YandexMap] Failed to create Yandex Map:', error);
+      return;
+    }
+  }, [mapLoaded, validateContainer]);
 
   // Update markers when filters change (memoized to prevent excessive re-renders)
   const memoizedUpdateMarkers = useCallback(() => {
@@ -516,19 +486,16 @@ const composePinImage = (color: string, priceText: string) => {
     }
   };
 
-  // Show error state if query failed
-  if (queryError) {
-    console.error('[YandexMap] Query error:', queryError);
+  // Show enhanced status indicators for various states
+  if (status !== 'ready' || queryError) {
     return (
-      <div className="w-full h-full relative flex items-center justify-center bg-muted/20">
-        <div className="text-center space-y-4">
-          <AlertTriangle className="h-8 w-8 text-destructive mx-auto" />
-          <div className="space-y-2">
-            <h3 className="font-medium">Failed to load map data</h3>
-            <p className="text-sm text-muted-foreground">Please check your connection and try again</p>
-          </div>
-        </div>
-      </div>
+      <MapStatusIndicator
+        status={queryError ? 'error' : status}
+        error={queryError?.message || mapError || undefined}
+        onRetry={retryLoad}
+        onReload={() => window.location.reload()}
+        t={t}
+      />
     );
   }
 
@@ -561,6 +528,7 @@ const composePinImage = (color: string, priceText: string) => {
           </div>
         </div>
       )}
+      
     </div>
   );
 });
