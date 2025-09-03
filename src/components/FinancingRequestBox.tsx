@@ -847,7 +847,7 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
             {/* User Document Upload Interface */}
             {isOwner && (
-              <DocumentUploadManager
+                  <DocumentUploadManager
                 docRequests={docRequests.map(doc => ({
                   ...doc,
                   user_file_urls: doc.user_file_urls || [],
