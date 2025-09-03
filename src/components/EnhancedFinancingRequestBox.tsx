@@ -952,30 +952,103 @@ export const EnhancedFinancingRequestBox = ({ financingRequestId, onClose }: Fin
           
           <TabsContent value="activity" className="space-y-4">
             <ScrollArea className="h-80">
-              <div className="space-y-4">
-                {activity.map((item) => (
-                  <div key={item.id} className="flex gap-3">
-                    <div className="w-2 h-2 rounded-full bg-primary mt-2"></div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm">
-                          {item.profiles.full_name || item.profiles.email}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(item.created_at).toLocaleString()}
-                        </span>
+              <div className="space-y-3">
+                {activity.map((item) => {
+                  const getActionInfo = (action: string) => {
+                    switch (action) {
+                      case 'stage_change':
+                        return {
+                          icon: ArrowRight,
+                          label: 'Stage Changed',
+                          description: `From ${item.details?.old_stage?.replace('_', ' ') || 'unknown'} to ${item.details?.new_stage?.replace('_', ' ') || 'unknown'}`,
+                          color: 'text-blue-500'
+                        };
+                      case 'assignment':
+                        return {
+                          icon: Users,
+                          label: 'Assignment',
+                          description: 'Responsible person assigned',
+                          color: 'text-green-500'
+                        };
+                      case 'doc_requested':
+                        return {
+                          icon: FileText,
+                          label: 'Document Requested',
+                          description: `${item.details?.document_type || 'Document'} requested`,
+                          color: 'text-orange-500'
+                        };
+                      case 'sent_back':
+                        return {
+                          icon: ArrowLeft,
+                          label: 'Sent Back',
+                          description: 'Request sent back for review',
+                          color: 'text-yellow-500'
+                        };
+                      case 'approved':
+                        return {
+                          icon: CheckCircle,
+                          label: 'Approved',
+                          description: 'Request approved',
+                          color: 'text-green-600'
+                        };
+                      case 'denied':
+                        return {
+                          icon: XCircle,
+                          label: 'Denied',
+                          description: 'Request denied',
+                          color: 'text-red-500'
+                        };
+                      default:
+                        return {
+                          icon: Clock,
+                          label: action.replace('_', ' ').toUpperCase(),
+                          description: 'Activity logged',
+                          color: 'text-muted-foreground'
+                        };
+                    }
+                  };
+
+                  const actionInfo = getActionInfo(item.action_type);
+                  const ActionIcon = actionInfo.icon;
+
+                  return (
+                    <div key={item.id} className="flex gap-3 p-3 rounded-lg bg-muted/20 transition-all hover:bg-muted/40">
+                      <div className={`flex-shrink-0 ${actionInfo.color}`}>
+                        <ActionIcon className="w-5 h-5" />
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        {item.action_type.replace('_', ' ')} 
-                        {item.details && Object.keys(item.details).length > 0 && (
-                          <span className="block text-xs mt-1">
-                            {JSON.stringify(item.details, null, 2)}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-medium text-sm text-foreground">
+                            {actionInfo.label}
                           </span>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(item.created_at).toLocaleDateString()} at {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-1">
+                          {actionInfo.description}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-foreground">
+                            {item.profiles.full_name || item.profiles.email}
+                          </span>
+                        </div>
+                        {item.details && (item.details.admin_notes || item.details.notes || item.details.description) && (
+                          <div className="mt-2 p-2 bg-background rounded border text-xs">
+                            <span className="font-medium">Notes: </span>
+                            {item.details.admin_notes || item.details.notes || item.details.description}
+                          </div>
                         )}
-                      </p>
+                      </div>
                     </div>
+                  );
+                })}
+                {activity.length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">No activity recorded yet</p>
                   </div>
-                ))}
+                )}
               </div>
             </ScrollArea>
           </TabsContent>

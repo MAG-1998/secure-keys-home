@@ -102,14 +102,29 @@ const AdminFinancing = () => {
         .select(`
           *,
           properties (title, location, price)
-        `)
-        .order('updated_at', { ascending: false });
+        `);
 
       if (error) throw error;
 
+      // Sort requests logically: active stages first (oldest first), then completed/denied (newest first)
+      const sortedData = (data || []).sort((a, b) => {
+        const aIsComplete = ['approved', 'denied'].includes(a.stage);
+        const bIsComplete = ['approved', 'denied'].includes(b.stage);
+        
+        // If both are complete or both are active, sort by date
+        if (aIsComplete === bIsComplete) {
+          const dateA = new Date(aIsComplete ? a.updated_at : a.created_at).getTime();
+          const dateB = new Date(bIsComplete ? b.updated_at : b.created_at).getTime();
+          return aIsComplete ? dateB - dateA : dateA - dateB; // Complete: newest first, Active: oldest first
+        }
+        
+        // Active stages come before completed ones
+        return aIsComplete ? 1 : -1;
+      });
+
       // Manually fetch user profiles for each request
       const requestsWithProfiles = await Promise.all(
-        (data || []).map(async (request) => {
+        sortedData.map(async (request) => {
           const { data: profile } = await supabase
             .from('profiles')
             .select('full_name, email')
