@@ -127,6 +127,8 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
   const [newMessage, setNewMessage] = useState("");
   const [responseNotes, setResponseNotes] = useState("");
   const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("overview");
+  const [selectedResponsiblePerson, setSelectedResponsiblePerson] = useState("");
   const { toast } = useToast();
   const { user, role } = useUser();
 

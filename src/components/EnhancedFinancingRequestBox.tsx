@@ -130,6 +130,8 @@ export const EnhancedFinancingRequestBox = ({ financingRequestId, onClose }: Fin
   const [newMessage, setNewMessage] = useState("");
   const [adminNotes, setAdminNotes] = useState("");
   const [sendBackNotes, setSendBackNotes] = useState("");
+  const [activeTab, setActiveTab] = useState("overview");
+  const [selectedResponsiblePerson, setSelectedResponsiblePerson] = useState("");
   const { toast } = useToast();
   const { user, role } = useUser();
 
