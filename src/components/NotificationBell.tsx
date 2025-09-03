@@ -29,6 +29,7 @@ export function NotificationBell() {
     if (type === 'visit:approved') return <CalendarCheck className="h-4 w-4" />
     if (type === 'visit:denied') return <XCircle className="h-4 w-4" />
     if (type === 'visit:proposal') return <CalendarClock className="h-4 w-4" />
+    if (type.startsWith('financing:')) return <DollarSign className="h-4 w-4" />
     if (type === 'property:verified') return <ShieldCheck className="h-4 w-4" />
     if (type === 'property:approved') return <BadgeCheck className="h-4 w-4" />
     if (type === 'property:sold') return <Home className="h-4 w-4" />
