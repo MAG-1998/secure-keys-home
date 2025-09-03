@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -33,11 +34,15 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
   const [uploading, setUploading] = useState<string | null>(null);
   const [responseNotes, setResponseNotes] = useState<{ [key: string]: string }>({});
   const [selectedFiles, setSelectedFiles] = useState<{ [key: string]: FileList | null }>({});
+  const [confirmingSubmission, setConfirmingSubmission] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useUser();
 
   const handleFileSelection = (docRequestId: string, files: FileList | null) => {
-    if (!files || files.length === 0) return;
+    if (!files || files.length === 0) {
+      setSelectedFiles(prev => ({ ...prev, [docRequestId]: null }));
+      return;
+    }
     setSelectedFiles(prev => ({ ...prev, [docRequestId]: files }));
   };
 
@@ -45,6 +50,7 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
     const files = selectedFiles[docRequestId];
     if (!files || files.length === 0) return;
 
+    setConfirmingSubmission(null);
     setUploading(docRequestId);
     try {
       const uploadedUrls: string[] = [];
@@ -125,8 +131,14 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
         description: "Documents uploaded successfully"
       });
 
+      // Clear the form after successful submission
       setResponseNotes(prev => ({ ...prev, [docRequestId]: '' }));
       setSelectedFiles(prev => ({ ...prev, [docRequestId]: null }));
+      
+      // Reset the file input
+      const input = document.getElementById(`upload-${docRequestId}`) as HTMLInputElement;
+      if (input) input.value = '';
+      
       onRefresh();
     } catch (error) {
       console.error('Upload error:', error);
@@ -227,11 +239,11 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
                     <Button
                       variant="outline"
                       onClick={() => document.getElementById(`upload-${docRequest.id}`)?.click()}
-                      disabled={uploading === docRequest.id || selectedFiles[docRequest.id] !== undefined}
+                      disabled={uploading === docRequest.id}
                       className="w-full"
                     >
                       <Upload className="w-4 h-4 mr-2" />
-                      {selectedFiles[docRequest.id] ? 'Files Selected' : 'Choose Files to Upload'}
+                      {selectedFiles[docRequest.id] ? 'Change Files' : 'Choose Files to Upload'}
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -243,7 +255,7 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
                 {selectedFiles[docRequest.id] && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label>Selected Files ({selectedFiles[docRequest.id]?.length})</Label>
+                      <Label>Selected Files ({selectedFiles[docRequest.id]?.length}) - Ready to Submit</Label>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -251,13 +263,13 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
                         className="h-6 px-2"
                       >
                         <X className="w-3 h-3" />
-                        Remove
+                        Clear
                       </Button>
                     </div>
-                    <div className="bg-muted p-3 rounded-md space-y-1">
+                    <div className="bg-green-50 border border-green-200 p-3 rounded-md space-y-1">
                       {Array.from(selectedFiles[docRequest.id] || []).map((file, index) => (
                         <div key={index} className="flex items-center gap-2 text-sm">
-                          <FileText className="w-4 h-4" />
+                          <FileText className="w-4 h-4 text-green-600" />
                           <span className="flex-1">{file.name}</span>
                           <span className="text-muted-foreground">
                             {(file.size / 1024 / 1024).toFixed(1)} MB
@@ -265,28 +277,63 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
                         </div>
                       ))}
                     </div>
+                    <div className="text-sm text-green-700 bg-green-50 p-2 rounded border border-green-200">
+                      ✓ Files selected and ready to submit. Click "Submit Documents" below to upload.
+                    </div>
                   </div>
                 )}
 
-                {/* Submit Button */}
+                {/* Submit Button with Confirmation */}
                 {selectedFiles[docRequest.id] && (
-                  <Button
-                    onClick={() => handleDocumentSubmission(docRequest.id)}
-                    disabled={uploading === docRequest.id}
-                    className="w-full"
-                  >
-                    {uploading === docRequest.id ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
-                        Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        Submit Documents
-                      </>
-                    )}
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        disabled={uploading === docRequest.id}
+                        className="w-full"
+                        variant="default"
+                      >
+                        {uploading === docRequest.id ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Submit Documents
+                          </>
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Confirm Document Submission</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You are about to submit {selectedFiles[docRequest.id]?.length} document(s) for "{docRequest.document_type}".
+                          {responseNotes[docRequest.id] && (
+                            <div className="mt-2 p-2 bg-muted rounded">
+                              <strong>Your notes:</strong> {responseNotes[docRequest.id]}
+                            </div>
+                          )}
+                          <div className="mt-2">
+                            <strong>Files to submit:</strong>
+                            <ul className="list-disc list-inside mt-1 text-sm">
+                              {Array.from(selectedFiles[docRequest.id] || []).map((file, index) => (
+                                <li key={index}>{file.name}</li>
+                              ))}
+                            </ul>
+                          </div>
+                          This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDocumentSubmission(docRequest.id)}>
+                          Yes, Submit Documents
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 )}
               </div>
             ) : (
