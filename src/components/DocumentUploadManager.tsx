@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, FileText, Download, Calendar, CheckCircle, Clock } from "lucide-react";
+import { Upload, FileText, Download, Calendar, CheckCircle, Clock, X } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 
 interface DocRequest {
@@ -32,10 +32,17 @@ interface DocumentUploadManagerProps {
 export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefresh }: DocumentUploadManagerProps) => {
   const [uploading, setUploading] = useState<string | null>(null);
   const [responseNotes, setResponseNotes] = useState<{ [key: string]: string }>({});
+  const [selectedFiles, setSelectedFiles] = useState<{ [key: string]: FileList | null }>({});
   const { toast } = useToast();
   const { user } = useUser();
 
-  const handleFileUpload = async (docRequestId: string, files: FileList | null) => {
+  const handleFileSelection = (docRequestId: string, files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setSelectedFiles(prev => ({ ...prev, [docRequestId]: files }));
+  };
+
+  const handleDocumentSubmission = async (docRequestId: string) => {
+    const files = selectedFiles[docRequestId];
     if (!files || files.length === 0) return;
 
     setUploading(docRequestId);
@@ -93,6 +100,7 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
       });
 
       setResponseNotes(prev => ({ ...prev, [docRequestId]: '' }));
+      setSelectedFiles(prev => ({ ...prev, [docRequestId]: null }));
       onRefresh();
     } catch (error) {
       console.error('Upload error:', error);
@@ -104,6 +112,12 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
     } finally {
       setUploading(null);
     }
+  };
+
+  const removeSelectedFiles = (docRequestId: string) => {
+    setSelectedFiles(prev => ({ ...prev, [docRequestId]: null }));
+    const input = document.getElementById(`upload-${docRequestId}`) as HTMLInputElement;
+    if (input) input.value = '';
   };
 
   const getStatusBadge = (status: string) => {
@@ -180,33 +194,74 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
                       type="file"
                       multiple
                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                      onChange={(e) => handleFileUpload(docRequest.id, e.target.files)}
+                      onChange={(e) => handleFileSelection(docRequest.id, e.target.files)}
                       disabled={uploading === docRequest.id}
                       className="hidden"
                     />
                     <Button
                       variant="outline"
                       onClick={() => document.getElementById(`upload-${docRequest.id}`)?.click()}
-                      disabled={uploading === docRequest.id}
+                      disabled={uploading === docRequest.id || selectedFiles[docRequest.id] !== undefined}
                       className="w-full"
                     >
-                      {uploading === docRequest.id ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
-                          Uploading...
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="w-4 h-4 mr-2" />
-                          Choose Files to Upload
-                        </>
-                      )}
+                      <Upload className="w-4 h-4 mr-2" />
+                      {selectedFiles[docRequest.id] ? 'Files Selected' : 'Choose Files to Upload'}
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
                     Supported formats: PDF, JPG, PNG, DOC, DOCX
                   </p>
                 </div>
+
+                {/* File Preview */}
+                {selectedFiles[docRequest.id] && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label>Selected Files ({selectedFiles[docRequest.id]?.length})</Label>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeSelectedFiles(docRequest.id)}
+                        className="h-6 px-2"
+                      >
+                        <X className="w-3 h-3" />
+                        Remove
+                      </Button>
+                    </div>
+                    <div className="bg-muted p-3 rounded-md space-y-1">
+                      {Array.from(selectedFiles[docRequest.id] || []).map((file, index) => (
+                        <div key={index} className="flex items-center gap-2 text-sm">
+                          <FileText className="w-4 h-4" />
+                          <span className="flex-1">{file.name}</span>
+                          <span className="text-muted-foreground">
+                            {(file.size / 1024 / 1024).toFixed(1)} MB
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Submit Button */}
+                {selectedFiles[docRequest.id] && (
+                  <Button
+                    onClick={() => handleDocumentSubmission(docRequest.id)}
+                    disabled={uploading === docRequest.id}
+                    className="w-full"
+                  >
+                    {uploading === docRequest.id ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Submit Documents
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="space-y-2">
