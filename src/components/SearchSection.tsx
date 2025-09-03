@@ -250,6 +250,14 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
           </div>
           
           <div className="flex items-center space-x-4 shrink-0 relative">
+            {isHalalMode && (
+              <Badge 
+                variant="trust" 
+                className="text-xs whitespace-nowrap animate-fade-in hover:scale-105 transition-transform duration-200 shadow-md absolute -left-20 top-1/2 -translate-y-1/2"
+              >
+                {t('search.halalBadge')}
+              </Badge>
+            )}
             <div className="flex items-center space-x-3 bg-background/80 backdrop-blur-sm border border-border/50 rounded-full px-4 py-2 transition-all duration-300 hover:shadow-lg hover:border-primary/20 hover:scale-[1.02]">
               <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap cursor-pointer">
                 {t('search.halalMode')}
@@ -261,14 +269,6 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 className="data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust dark:data-[state=checked]:border-white data-[state=unchecked]:border-border dark:data-[state=unchecked]:border-white/20 transition-all duration-200"
               />
             </div>
-            {isHalalMode && (
-              <Badge 
-                variant="trust" 
-                className="text-xs whitespace-nowrap animate-fade-in hover:scale-105 transition-transform duration-200 shadow-md"
-              >
-                {t('search.halalBadge')}
-              </Badge>
-            )}
           </div>
         </div>
 
