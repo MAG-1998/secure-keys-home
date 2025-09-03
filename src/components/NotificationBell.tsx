@@ -3,10 +3,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Bell, MessageSquare, CalendarClock, CalendarCheck, XCircle, BadgeCheck, ShieldCheck, DollarSign, Home } from 'lucide-react'
 import { useNotifications } from '@/hooks/useNotifications'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from '@/hooks/useTranslation'
 
 export function NotificationBell() {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const goTo = (type: string, entityId: string | null) => {
     if (type.startsWith('message:')) return '/visit-requests'
@@ -55,13 +57,13 @@ export function NotificationBell() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="z-[60] w-80 p-0 bg-popover">
         <div className="flex items-center justify-between px-3 py-2 border-b">
-          <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+          <DropdownMenuLabel>{t('notifications.title')}</DropdownMenuLabel>
           <Button variant="ghost" size="sm" className="h-7" onClick={() => markAllAsRead()}>
-            Mark all as read
+            {t('notifications.markAllAsRead')}
           </Button>
         </div>
         {notifications.length === 0 && (
-          <div className="p-4 text-sm text-muted-foreground">All caught up!</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('notifications.allCaughtUp')}</div>
         )}
         {notifications.slice(0, 10).map((n) => (
           <DropdownMenuItem
@@ -86,7 +88,7 @@ export function NotificationBell() {
         {notifications.length > 10 && (
           <>
             <DropdownMenuSeparator />
-            <div className="px-3 py-2 text-xs text-muted-foreground">Showing latest {Math.min(10, notifications.length)} of {notifications.length}</div>
+            <div className="px-3 py-2 text-xs text-muted-foreground">{t('notifications.showingLatest')} {Math.min(10, notifications.length)} {t('notifications.of')} {notifications.length}</div>
           </>
         )}
       </DropdownMenuContent>
