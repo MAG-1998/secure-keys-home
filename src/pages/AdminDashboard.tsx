@@ -521,7 +521,7 @@ export default function AdminDashboard() {
               </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
             Users & Roles ({users.length})
@@ -529,10 +529,6 @@ export default function AdminDashboard() {
           <TabsTrigger value="properties" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
             Properties ({properties.length})
-          </TabsTrigger>
-          <TabsTrigger value="halal" className="flex items-center gap-2">
-            <Banknote className="w-4 h-4" />
-            Halal Financing ({halalRequests.length})
           </TabsTrigger>
           <TabsTrigger value="requests" className="flex items-center gap-2">
             <Settings className="w-4 h-4" />
@@ -675,144 +671,6 @@ export default function AdminDashboard() {
           )}
         </TabsContent>
 
-        <TabsContent value="halal" className="space-y-6">
-          {halalRequests.length === 0 ? (
-            <Card>
-              <CardContent className="p-6 text-center">
-                <p className="text-muted-foreground">No halal financing requests found.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-6">
-              {halalRequests.map((req) => (
-                <Card key={req.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold">{req.property?.title || 'Property'}</h3>
-                          <Badge variant={req.status === 'pending' ? 'secondary' : req.status === 'approved' ? 'default' : 'destructive'}>
-                            {req.status}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">Request by: {req.requester?.full_name} ({req.requester?.email})</p>
-                        <p className="text-sm">Created: {new Date(req.created_at).toLocaleDateString()}</p>
-                        <p className="text-xs text-muted-foreground">Request ID: {req.id}</p>
-                        {req.property?.id && (
-                          <p className="text-xs text-muted-foreground">Property ID: {req.property.id}</p>
-                        )}
-                        <div className="mt-2">
-                          {getHalalBadge(req.property)}
-                        </div>
-                        {((Array.isArray(req.property?.photos) && req.property.photos.length > 0) || req.property?.image_url) && (
-                          <div className="mt-3 flex gap-2">
-                            {[...(Array.isArray(req.property?.photos) ? (req.property?.photos as string[]).slice(0,3) : []), ...(req.property?.image_url ? [req.property.image_url] : [])]
-                              .slice(0,3)
-                              .map((url: string, idx: number) => (
-                                <img
-                                  key={idx}
-                                  src={url}
-                                  alt="Property photo thumbnail"
-                                  loading="lazy"
-                                  className="h-16 w-20 rounded-md object-cover border border-border"
-                                  onError={(e) => {
-                                    e.currentTarget.src = '/placeholder.svg'
-                                  }}
-                                />
-                              ))}
-                          </div>
-                        )}
-                        {req.request_notes && (
-                          <p className="text-sm mt-2"><strong>Notes:</strong> {req.request_notes}</p>
-                        )}
-                        {req.admin_notes && (
-                          <p className="text-sm mt-1"><strong>Admin Notes:</strong> {req.admin_notes}</p>
-                        )}
-
-                        {/* Admin review controls */}
-                        <div className="mt-4 space-y-3 border-t pt-4">
-                          <div className="grid md:grid-cols-2 gap-3">
-                            <div>
-                              <label className="text-sm font-medium">Review Status</label>
-                              <Select
-                                value={halalEdits[req.id]?.status ?? req.status}
-                                onValueChange={(val) => setHalalEdits(prev => ({...prev, [req.id]: {...prev[req.id], status: val}}))}
-                              >
-                                <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="pending">Pending</SelectItem>
-                                  <SelectItem value="approved">Approved</SelectItem>
-                                  <SelectItem value="rejected">Rejected</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div>
-                              <label className="text-sm font-medium">Admin Notes</label>
-                              <Textarea
-                                value={halalEdits[req.id]?.admin_notes ?? req.admin_notes ?? ''}
-                                onChange={(e) => setHalalEdits(prev => ({...prev, [req.id]: {...prev[req.id], admin_notes: e.target.value}}))}
-                                placeholder="Add notes for this request"
-                              />
-                            </div>
-                          </div>
-                          <div className="flex justify-end">
-                            <Button
-                              onClick={async () => {
-                                const edit = halalEdits[req.id] || {};
-                                const reviewer = (await supabase.auth.getUser()).data.user?.id;
-                                const finalStatus = (edit.status ?? req.status) as 'pending' | 'approved' | 'rejected';
-
-                                const { error: reqError } = await supabase
-                                  .from('halal_financing_requests')
-                                  .update({
-                                    status: finalStatus,
-                                    admin_notes: edit.admin_notes ?? req.admin_notes ?? '',
-                                    reviewed_by: reviewer,
-                                    reviewed_at: new Date().toISOString(),
-                                  })
-                                  .eq('id', req.id);
-
-                                if (reqError) {
-                                  toast({ title: 'Error', description: 'Failed to save review', variant: 'destructive' });
-                                  return;
-                                }
-
-                                if (req.property?.id) {
-                                  let propUpdate: { is_halal_financed: boolean; halal_financing_status: string };
-                                  if (finalStatus === 'approved') {
-                                    propUpdate = { is_halal_financed: true, halal_financing_status: 'approved' };
-                                  } else if (finalStatus === 'rejected') {
-                                    propUpdate = { is_halal_financed: false, halal_financing_status: 'denied' };
-                                  } else {
-                                    propUpdate = { is_halal_financed: false, halal_financing_status: 'none' };
-                                  }
-                                  const { error: propError } = await supabase
-                                    .from('properties')
-                                    .update(propUpdate)
-                                    .eq('id', req.property.id);
-
-                                  if (propError) {
-                                    toast({ title: 'Partial save', description: 'Review saved, but failed to update property flags', variant: 'destructive' });
-                                  }
-                                }
-
-                                toast({ title: 'Saved', description: 'Review saved successfully' });
-                                setHalalEdits(prev => ({ ...prev, [req.id]: {} }));
-                                await Promise.all([fetchHalalRequests(), fetchProperties()]);
-                              }}
-                            >
-                              Save Review
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </TabsContent>
 
         <TabsContent value="requests" className="space-y-6">
           {applications.length === 0 ? (
