@@ -7,12 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
 import { MagitLogo } from "@/components/MagitLogo";
 import { EnhancedFinancingRequestBox } from "@/components/EnhancedFinancingRequestBox";
-import { FileText, Search, Filter, Eye, UserCheck, Clock, CheckCircle, XCircle, AlertCircle, FileSearch, ArrowRight } from "lucide-react";
+import { FileText, Search, Filter, Eye, UserCheck, Clock, CheckCircle, XCircle, AlertCircle, FileSearch, ArrowRight, MoreVertical, Trash2, Ban } from "lucide-react";
 
 interface FinancingRequest {
   id: string;
@@ -62,6 +66,11 @@ const AdminFinancing = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [stageFilter, setStageFilter] = useState("all");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [denyDialogOpen, setDenyDialogOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<FinancingRequest | null>(null);
+  const [denyReason, setDenyReason] = useState("");
+  const [actionLoading, setActionLoading] = useState(false);
   const navigate = useNavigate();
   const { requestId } = useParams();
   const { toast } = useToast();
@@ -197,6 +206,77 @@ const AdminFinancing = () => {
       currency: 'USD',
       minimumFractionDigits: 0
     }).format(amount);
+  };
+
+  const handleDeleteRequest = async () => {
+    if (!selectedRequest) return;
+    
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from('halal_financing_requests')
+        .delete()
+        .eq('id', selectedRequest.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Financing request deleted successfully",
+      });
+
+      fetchRequests();
+      setDeleteDialogOpen(false);
+      setSelectedRequest(null);
+    } catch (error) {
+      console.error('Error deleting request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete financing request",
+        variant: "destructive"
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDenyRequest = async () => {
+    if (!selectedRequest || !denyReason.trim()) return;
+    
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from('halal_financing_requests')
+        .update({
+          stage: 'denied',
+          status: 'denied',
+          admin_notes: denyReason,
+          reviewed_by: user?.id,
+          reviewed_at: new Date().toISOString()
+        })
+        .eq('id', selectedRequest.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Financing request denied successfully",
+      });
+
+      fetchRequests();
+      setDenyDialogOpen(false);
+      setSelectedRequest(null);
+      setDenyReason("");
+    } catch (error) {
+      console.error('Error denying request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to deny financing request",
+        variant: "destructive"
+      });
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   if (requestId) {
@@ -405,16 +485,49 @@ const AdminFinancing = () => {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Button
-                            variant={needsAction ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => navigate(`/admin/financing/${request.id}`)}
-                            className={needsAction ? "bg-primary text-primary-foreground" : ""}
-                          >
-                            <Eye className="w-4 h-4 mr-2" />
-                            {needsAction ? 'Take Action' : 'View Details'}
-                            {needsAction && <ArrowRight className="w-4 h-4 ml-2" />}
-                          </Button>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant={needsAction ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => navigate(`/admin/financing/${request.id}`)}
+                              className={needsAction ? "bg-primary text-primary-foreground" : ""}
+                            >
+                              <Eye className="w-4 h-4 mr-2" />
+                              {needsAction ? 'Take Action' : 'View Details'}
+                              {needsAction && <ArrowRight className="w-4 h-4 ml-2" />}
+                            </Button>
+                            
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                  <MoreVertical className="w-4 h-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setSelectedRequest(request);
+                                    setDenyDialogOpen(true);
+                                  }}
+                                  disabled={request.stage === 'denied' || request.stage === 'approved'}
+                                >
+                                  <Ban className="w-4 h-4 mr-2" />
+                                  Quick Deny
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setSelectedRequest(request);
+                                    setDeleteDialogOpen(true);
+                                  }}
+                                  disabled={request.stage === 'approved'}
+                                  className="text-destructive focus:text-destructive"
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  Delete Request
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -424,6 +537,60 @@ const AdminFinancing = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Financing Request</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this financing request? This action cannot be undone and will permanently remove all associated data.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteRequest}
+                disabled={actionLoading}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {actionLoading ? "Deleting..." : "Delete"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Deny Reason Dialog */}
+        <Dialog open={denyDialogOpen} onOpenChange={setDenyDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Deny Financing Request</DialogTitle>
+              <DialogDescription>
+                Please provide a reason for denying this financing request. This will be visible to the applicant.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Textarea
+                placeholder="Enter denial reason..."
+                value={denyReason}
+                onChange={(e) => setDenyReason(e.target.value)}
+                rows={4}
+              />
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDenyDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDenyRequest}
+                disabled={!denyReason.trim() || actionLoading}
+                variant="destructive"
+              >
+                {actionLoading ? "Denying..." : "Deny Request"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
