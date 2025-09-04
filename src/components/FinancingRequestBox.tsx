@@ -576,8 +576,8 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
                       <p className="text-sm">{request.period_months} months</p>
                     </div>
                     <div>
-                      <Label>VAT</Label>
-                      <p className="text-sm">{formatHalalCurrency(financingCalc.vat)}</p>
+                      <Label>Tax</Label>
+                      <p className="text-sm">{formatHalalCurrency(financingCalc.tax)}</p>
                     </div>
                   </>
                 );

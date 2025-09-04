@@ -5,7 +5,7 @@ export interface HalalFinancingCalculation {
   propertyPrice?: number;
   fixedFee: number;
   serviceFee: number;
-  vat: number;
+  tax: number;
   overpay: number;
 }
 
@@ -22,7 +22,7 @@ export const calculateHalalFinancing = (
       propertyPrice: 0,
       fixedFee: 0,
       serviceFee: 0,
-      vat: 0,
+      tax: 0,
       overpay: 0
     };
   }
@@ -42,11 +42,11 @@ export const calculateHalalFinancing = (
   // Service Fee calculation
   const SF = ((0.1 * x) / P - 0.01) * x;
   
-  // VAT calculation
-  const VAT = (FF + SF) * 0.12;
+  // Tax calculation
+  const TAX = (FF + SF) * 0.20;
   
   // Overpay calculation
-  const overpay = (SF + FF) * (1 + 0.12);
+  const overpay = (SF + FF) * (1 + 0.20);
   
   // Total cost = loaned sum + overpay
   const totalCost = x + overpay;
@@ -59,7 +59,7 @@ export const calculateHalalFinancing = (
     propertyPrice: P,
     fixedFee: FF,
     serviceFee: SF,
-    vat: VAT,
+    tax: TAX,
     overpay
   };
 };
@@ -87,19 +87,23 @@ export const getPeriodOptions = (t?: (key: string) => string) => {
   if (t) {
     return [
       { value: '6', label: t('halal.period.6months') },
-      { value: '9', label: t('halal.period.9months') },
       { value: '12', label: t('halal.period.1year') },
       { value: '18', label: t('halal.period.1.5years') },
-      { value: '24', label: t('halal.period.2years') }
+      { value: '24', label: t('halal.period.2years') },
+      { value: '36', label: t('halal.period.3years') },
+      { value: '48', label: t('halal.period.4years') },
+      { value: '60', label: t('halal.period.5years') }
     ];
   }
   
   // Fallback to English for backwards compatibility
   return [
     { value: '6', label: '6 months' },
-    { value: '9', label: '9 months' },
     { value: '12', label: '1 year' },
     { value: '18', label: '1.5 years' },
-    { value: '24', label: '2 years' }
+    { value: '24', label: '2 years' },
+    { value: '36', label: '3 years' },
+    { value: '48', label: '4 years' },
+    { value: '60', label: '5 years' }
   ];
 };

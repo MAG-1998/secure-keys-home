@@ -72,7 +72,7 @@ export const PropertyCard = ({
     if (cashAvailable && financingPeriod) {
       // Show total property price after financing when boxes are filled
       const calculation = calculateHalalFinancing(cashAvailable, priceUsd, financingPeriod);
-      const totalPropertyPrice = priceUsd + calculation.fixedFee + calculation.serviceFee + calculation.vat;
+      const totalPropertyPrice = priceUsd + calculation.fixedFee + calculation.serviceFee + calculation.tax;
       displayPrice = `$${Math.round(totalPropertyPrice).toLocaleString()}`;
       displaySubtext = 'Total after financing';
       totalCostDisplay = `$${Math.round(calculation.requiredMonthlyPayment).toLocaleString()}/month`;

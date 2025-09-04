@@ -364,10 +364,13 @@ const translations: Translations = {
 
   // Halal financing period options
   'halal.period.6months': { en: '6 months', ru: '6 месяцев', uz: '6 oy' },
-  'halal.period.9months': { en: '9 months', ru: '9 месяцев', uz: '9 oy' },
   'halal.period.1year': { en: '1 year', ru: '1 год', uz: '1 yil' },
   'halal.period.1.5years': { en: '1.5 years', ru: '1.5 года', uz: '1.5 yil' },
   'halal.period.2years': { en: '2 years', ru: '2 года', uz: '2 yil' },
+  'halal.period.3years': { en: '3 years', ru: '3 года', uz: '3 yil' },
+  'halal.period.4years': { en: '4 years', ru: '4 года', uz: '4 yil' },
+  'halal.period.5years': { en: '5 years', ru: '5 лет', uz: '5 yil' },
+  'halal.tax': { en: 'Tax (20%)', ru: 'Налог (20%)', uz: 'Soliq (20%)' },
   'halal.propertyPrice': {
     en: 'Property Price',
     ru: 'Стоимость недвижимости',

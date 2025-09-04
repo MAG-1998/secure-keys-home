@@ -474,7 +474,7 @@ const PropertyDetails = () => {
       const cashAvailable = parseFloat(financingStore.cashAvailable);
       const periodMonths = parseInt(financingStore.periodMonths);
       const calculation = calculateHalalFinancing(cashAvailable, property.price, periodMonths);
-      const totalPropertyPrice = property.price + calculation.fixedFee + calculation.serviceFee + calculation.vat;
+      const totalPropertyPrice = property.price + calculation.fixedFee + calculation.serviceFee + calculation.tax;
       return `$${Math.round(totalPropertyPrice).toLocaleString()}`;
     }
     return `$${Math.round(property?.price || 0).toLocaleString()}`;
