@@ -57,6 +57,24 @@ All colors MUST be HSL.
     --shadow-soft: 0 4px 20px -4px hsl(25 12% 28% / 0.1);
     --shadow-warm: 0 8px 32px -8px hsl(35 25% 60% / 0.15);
 
+    /* Apple-style Neon Glow System */
+    --glow-cyan: 180 100% 50%;
+    --glow-orange: 25 100% 60%;
+    --glow-intensity-low: 0.3;
+    --glow-intensity-mid: 0.6;
+    --glow-intensity-high: 0.9;
+    
+    /* Multi-layer Glow Shadows */
+    --glow-inner: 0 0 20px hsl(var(--glow-cyan) / var(--glow-intensity-mid));
+    --glow-outer: 0 0 40px hsl(var(--glow-cyan) / var(--glow-intensity-low));
+    --glow-aura: 0 0 80px hsl(var(--glow-cyan) / 0.2);
+    --glow-backdrop: 0 0 120px hsl(var(--glow-cyan) / 0.1);
+    
+    --glow-orange-inner: 0 0 20px hsl(var(--glow-orange) / var(--glow-intensity-mid));
+    --glow-orange-outer: 0 0 40px hsl(var(--glow-orange) / var(--glow-intensity-low));
+    --glow-orange-aura: 0 0 80px hsl(var(--glow-orange) / 0.2);
+    --glow-orange-backdrop: 0 0 120px hsl(var(--glow-orange) / 0.1);
+
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -140,5 +158,189 @@ All colors MUST be HSL.
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 80px;
+  }
+}
+
+/* Apple Event 2025 Style Keyframes */
+@keyframes apple-breathe {
+  0%, 100% { 
+    filter: brightness(1) blur(0px);
+    transform: scale(1);
+  }
+  50% { 
+    filter: brightness(1.2) blur(0.5px);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes apple-shimmer {
+  0% { 
+    background-position: -200% 0;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% { 
+    background-position: 200% 0;
+    opacity: 0;
+  }
+}
+
+@keyframes apple-glow-pulse {
+  0%, 100% { 
+    box-shadow: var(--glow-inner), var(--glow-outer), var(--glow-aura), var(--glow-backdrop);
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    box-shadow: 
+      0 0 25px hsl(var(--glow-cyan) / var(--glow-intensity-high)),
+      0 0 50px hsl(var(--glow-cyan) / var(--glow-intensity-mid)),
+      0 0 100px hsl(var(--glow-cyan) / 0.3),
+      0 0 150px hsl(var(--glow-cyan) / 0.15);
+    filter: hue-rotate(5deg);
+  }
+  50% {
+    box-shadow: var(--glow-inner), var(--glow-outer), var(--glow-aura), var(--glow-backdrop);
+    filter: hue-rotate(0deg);
+  }
+  75% {
+    box-shadow: 
+      0 0 25px hsl(var(--glow-cyan) / var(--glow-intensity-high)),
+      0 0 50px hsl(var(--glow-cyan) / var(--glow-intensity-mid)),
+      0 0 100px hsl(var(--glow-cyan) / 0.3),
+      0 0 150px hsl(var(--glow-cyan) / 0.15);
+    filter: hue-rotate(-5deg);
+  }
+}
+
+@keyframes apple-glow-pulse-orange {
+  0%, 100% { 
+    box-shadow: var(--glow-orange-inner), var(--glow-orange-outer), var(--glow-orange-aura), var(--glow-orange-backdrop);
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    box-shadow: 
+      0 0 25px hsl(var(--glow-orange) / var(--glow-intensity-high)),
+      0 0 50px hsl(var(--glow-orange) / var(--glow-intensity-mid)),
+      0 0 100px hsl(var(--glow-orange) / 0.3),
+      0 0 150px hsl(var(--glow-orange) / 0.15);
+    filter: hue-rotate(10deg);
+  }
+  50% {
+    box-shadow: var(--glow-orange-inner), var(--glow-orange-outer), var(--glow-orange-aura), var(--glow-orange-backdrop);
+    filter: hue-rotate(0deg);
+  }
+  75% {
+    box-shadow: 
+      0 0 25px hsl(var(--glow-orange) / var(--glow-intensity-high)),
+      0 0 50px hsl(var(--glow-orange) / var(--glow-intensity-mid)),
+      0 0 100px hsl(var(--glow-orange) / 0.3),
+      0 0 150px hsl(var(--glow-orange) / 0.15);
+    filter: hue-rotate(-10deg);
+  }
+}
+
+@keyframes apple-ripple {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Apple-style Glow Classes */
+.apple-glow-container {
+  position: relative;
+  isolation: isolate;
+}
+
+.apple-glow-container::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    hsl(var(--glow-cyan) / 0.1) 50%,
+    transparent 70%
+  );
+  background-size: 200% 200%;
+  animation: apple-shimmer 3s ease-in-out infinite;
+  z-index: -1;
+}
+
+.apple-glow-inactive {
+  background: hsl(var(--glow-cyan) / 0.05);
+  border: 1px solid hsl(var(--glow-cyan) / 0.2);
+  backdrop-filter: blur(20px);
+  animation: apple-glow-pulse 4s ease-in-out infinite, apple-breathe 3s ease-in-out infinite;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.apple-glow-active {
+  background: hsl(var(--glow-orange) / 0.08);
+  border: 1px solid hsl(var(--glow-orange) / 0.3);
+  backdrop-filter: blur(20px);
+  animation: apple-glow-pulse-orange 4s ease-in-out infinite, apple-breathe 3s ease-in-out infinite;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.apple-glow-container:hover .apple-glow-inactive {
+  animation-duration: 2s, 1.5s;
+  transform: scale(1.05);
+  box-shadow: 
+    0 0 30px hsl(var(--glow-cyan) / var(--glow-intensity-high)),
+    0 0 60px hsl(var(--glow-cyan) / var(--glow-intensity-mid)),
+    0 0 120px hsl(var(--glow-cyan) / 0.4);
+}
+
+.apple-glow-container:hover .apple-glow-active {
+  animation-duration: 2s, 1.5s;
+  transform: scale(1.05);
+  box-shadow: 
+    0 0 30px hsl(var(--glow-orange) / var(--glow-intensity-high)),
+    0 0 60px hsl(var(--glow-orange) / var(--glow-intensity-mid)),
+    0 0 120px hsl(var(--glow-orange) / 0.4);
+}
+
+.apple-text-glow-cyan {
+  color: hsl(var(--glow-cyan));
+  text-shadow: 0 0 10px hsl(var(--glow-cyan) / 0.5);
+  transition: all 0.3s ease;
+}
+
+.apple-text-glow-orange {
+  color: hsl(var(--glow-orange));
+  text-shadow: 0 0 10px hsl(var(--glow-orange) / 0.5);
+  transition: all 0.3s ease;
+}
+
+.apple-switch-cyan {
+  background: hsl(var(--glow-cyan) / 0.2) !important;
+  border-color: hsl(var(--glow-cyan) / 0.4) !important;
+  box-shadow: 
+    0 0 15px hsl(var(--glow-cyan) / 0.3),
+    inset 0 0 10px hsl(var(--glow-cyan) / 0.1) !important;
+}
+
+.apple-switch-orange {
+  background: hsl(var(--glow-orange) / 0.2) !important;
+  border-color: hsl(var(--glow-orange) / 0.4) !important;
+  box-shadow: 
+    0 0 15px hsl(var(--glow-orange) / 0.3),
+    inset 0 0 10px hsl(var(--glow-orange) / 0.1) !important;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .apple-glow-inactive,
+  .apple-glow-active,
+  .apple-glow-container::before {
+    animation: none;
   }
 }

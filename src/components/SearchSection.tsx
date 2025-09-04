@@ -270,19 +270,30 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 {t('search.halalBadge')}
               </Badge>
             )}
-            <div className={`flex items-center space-x-3 backdrop-blur-sm rounded-full px-4 py-2 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${
+            <div className={`apple-glow-container flex items-center space-x-3 rounded-full px-4 py-2 ${
               isHalalMode 
-                ? 'bg-orange-500/20 border border-orange-500/50 hover:border-orange-500/30' 
-                : 'bg-teal-400/20 border border-teal-400/50 hover:border-teal-400/30'
+                ? 'apple-glow-active' 
+                : 'apple-glow-inactive'
             }`}>
-              <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap cursor-pointer">
+              <Label 
+                htmlFor="halal-mode" 
+                className={`text-sm font-medium whitespace-nowrap cursor-pointer transition-all duration-300 ${
+                  isHalalMode 
+                    ? 'apple-text-glow-orange' 
+                    : 'apple-text-glow-cyan'
+                }`}
+              >
                 {t('search.halalMode')}
               </Label>
               <Switch
                 id="halal-mode"
                 checked={isHalalMode}
                 onCheckedChange={onHalalModeChange}
-                className="data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust dark:data-[state=checked]:border-white data-[state=unchecked]:border-border dark:data-[state=unchecked]:border-white/20 transition-all duration-200"
+                className={`transition-all duration-300 ${
+                  isHalalMode 
+                    ? 'apple-switch-orange' 
+                    : 'apple-switch-cyan'
+                }`}
               />
             </div>
           </div>
