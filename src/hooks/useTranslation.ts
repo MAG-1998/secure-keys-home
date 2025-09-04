@@ -1182,6 +1182,48 @@ const translations: Translations = {
     uz: 'Mulk saqlandi'
   },
 
+  // Additional notification types
+  'notification.visit.no_show': {
+    en: 'Visit no-show',
+    ru: 'Неявка на просмотр',
+    uz: 'Ko\'rib chiqishga kelmadi'
+  },
+  'notification.financing.stage_change': {
+    en: 'Status update',
+    ru: 'Обновление статуса',
+    uz: 'Status yangilanishi'
+  },
+  'notification.financing.documents_complete': {
+    en: 'Documents complete',
+    ru: 'Документы готовы',
+    uz: 'Hujjatlar tayyor'
+  },
+  'notification.financing.final_approval': {
+    en: 'Final approval',
+    ru: 'Окончательное одобрение',
+    uz: 'Yakuniy tasdiqlash'
+  },
+  'notification.financing.sent_back': {
+    en: 'Request sent back',
+    ru: 'Заявка возвращена',
+    uz: 'So\'rov qaytarildi'
+  },
+  'notification.support.ticket_new': {
+    en: 'New support ticket',
+    ru: 'Новый запрос в поддержку',
+    uz: 'Yangi yordam so\'rovi'
+  },
+  'notification.support.ticket_escalated': {
+    en: 'Ticket escalated',
+    ru: 'Запрос эскалирован',
+    uz: 'So\'rov eskalatsiya qilindi'
+  },
+  'notification.report.new': {
+    en: 'New report',
+    ru: 'Новый отчет',
+    uz: 'Yangi hisobot'
+  },
+
   // Notification bodies
   'notification.body.message.new': {
     en: 'You have received a new message',
@@ -1217,6 +1259,48 @@ const translations: Translations = {
     en: 'Your property has been successfully verified',
     ru: 'Ваша недвижимость успешно верифицирована',
     uz: 'Mulkingiz muvaffaqiyatli tasdiqlandi'
+  },
+
+  // Additional notification body translations
+  'notification.body.visit.no_show': {
+    en: 'You did not show up for your scheduled visit',
+    ru: 'Вы не явились на запланированный просмотр',
+    uz: 'Rejalashtirilgan ko\'rib chiqishga kelmadingiz'
+  },
+  'notification.body.financing.stage_change': {
+    en: 'Your financing request status has been updated',
+    ru: 'Статус вашей заявки на финансирование обновлен',
+    uz: 'Moliyalashtirish so\'rovingiz holati yangilandi'
+  },
+  'notification.body.financing.documents_complete': {
+    en: 'All required documents have been submitted',
+    ru: 'Все необходимые документы предоставлены',
+    uz: 'Barcha kerakli hujjatlar taqdim etildi'
+  },
+  'notification.body.financing.final_approval': {
+    en: 'Your financing request has received final approval',
+    ru: 'Ваша заявка на финансирование получила окончательное одобрение',
+    uz: 'Moliyalashtirish so\'rovingiz yakuniy tasdiqlandi'
+  },
+  'notification.body.financing.sent_back': {
+    en: 'Your financing request has been sent back for revisions',
+    ru: 'Ваша заявка на финансирование возвращена на доработку',
+    uz: 'Moliyalashtirish so\'rovingiz qayta ko\'rib chiqish uchun qaytarildi'
+  },
+  'notification.body.support.ticket_new': {
+    en: 'A new support ticket has been created',
+    ru: 'Создан новый запрос в поддержку',
+    uz: 'Yangi yordam so\'rovi yaratildi'
+  },
+  'notification.body.support.ticket_escalated': {
+    en: 'Your support ticket has been escalated',
+    ru: 'Ваш запрос в поддержку эскалирован',
+    uz: 'Yordam so\'rovingiz eskalatsiya qilindi'
+  },
+  'notification.body.report.new': {
+    en: 'A new report has been generated',
+    ru: 'Создан новый отчет',
+    uz: 'Yangi hisobot yaratildi'
   },
 
   // Visit and Alternative Time Offer translations
