@@ -10,6 +10,7 @@ import { Footer } from "@/components/Footer"
 import { MagitLogo } from "@/components/MagitLogo"
 import { useToast } from "@/hooks/use-toast"
 import { useTranslation } from "@/hooks/useTranslation"
+import { usePageTitle } from "@/hooks/usePageTitle"
 
 interface Property {
   id: string
@@ -37,6 +38,8 @@ const MyProperties = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { t } = useTranslation()
+  
+  usePageTitle('pageTitle.myProperties')
 
   useEffect(() => {
     fetchProperties()

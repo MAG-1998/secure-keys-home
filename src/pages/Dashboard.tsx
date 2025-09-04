@@ -14,12 +14,15 @@ import { useHoverPreloader } from "@/hooks/useRoutePreloader";
 import { Home, Plus, MapPin, Calculator, Star, TrendingUp, Clock, Eye, Heart, Shield, CheckCircle, Settings, LogOut, ArrowRight, Search, Menu } from "lucide-react";
 import { memo } from "react";
 import { forceLocalSignOut } from "@/lib/auth";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const Dashboard = memo(() => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { user, role, loading } = useUser();
   const { preloadRoute } = useHoverPreloader();
+  
+  usePageTitle('pageTitle.dashboard');
 
   const handleSignOut = async () => {
     try {

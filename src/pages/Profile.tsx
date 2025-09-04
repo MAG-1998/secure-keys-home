@@ -28,6 +28,7 @@ import { Footer } from "@/components/Footer"
 import { useToast } from "@/hooks/use-toast"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useVisitLimits } from "@/hooks/useVisitLimits"
+import { usePageTitle } from "@/hooks/usePageTitle"
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null)
@@ -43,6 +44,8 @@ const Profile = () => {
   const { toast } = useToast()
   const { t } = useTranslation()
   const { freeVisitsUsed, canCreate, isRestricted, loading: limitsLoading } = useVisitLimits()
+  
+  usePageTitle('pageTitle.profile')
 
   useEffect(() => {
     const getProfile = async () => {
