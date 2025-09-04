@@ -3900,10 +3900,317 @@ const translations: Translations = {
     ru: 'Документы',
     uz: 'Hujjatlar'
   },
-  'admin.financing.stageUnderReview': {
+
+  // My Financing page
+  'myFinancing.title': {
+    en: 'My Financing Requests',
+    ru: 'Мои Заявки на Финансирование',
+    uz: 'Mening Moliyalashtirish So\'rovlarim'
+  },
+  'myFinancing.detailsTitle': {
+    en: 'Financing Request Details',
+    ru: 'Детали Заявки на Финансирование',
+    uz: 'Moliyalashtirish So\'rovi Tafsilotlari'
+  },
+  'myFinancing.backToRequests': {
+    en: 'Back to My Requests',
+    ru: 'Назад к Моим Заявкам',
+    uz: 'Mening So\'rovlarimga Qaytish'
+  },
+  'myFinancing.backToDashboard': {
+    en: 'Back to Dashboard',
+    ru: 'Назад к Панели',
+    uz: 'Panelga Qaytish'
+  },
+  'myFinancing.loading': {
+    en: 'Loading your financing requests...',
+    ru: 'Загрузка ваших заявок на финансирование...',
+    uz: 'Moliyalashtirish so\'rovlaringiz yuklanmoqda...'
+  },
+  'myFinancing.applicationsTitle': {
+    en: 'Your Financing Applications',
+    ru: 'Ваши Заявки на Финансирование',
+    uz: 'Sizning Moliyalashtirish Arizalaringiz'
+  },
+  'myFinancing.searchPlaceholder': {
+    en: 'Search by property or location...',
+    ru: 'Поиск по недвижимости или местоположению...',
+    uz: 'Mulk yoki joylashuv bo\'yicha qidirish...'
+  },
+  'myFinancing.filterByStatus': {
+    en: 'Filter by status',
+    ru: 'Фильтр по статусу',
+    uz: 'Holat bo\'yicha filtr'
+  },
+  'myFinancing.allStatuses': {
+    en: 'All Statuses',
+    ru: 'Все Статусы',
+    uz: 'Barcha Holatlar'
+  },
+  'myFinancing.empty': {
+    en: 'No Financing Requests',
+    ru: 'Нет Заявок на Финансирование',
+    uz: 'Moliyalashtirish So\'rovlari Yo\'q'
+  },
+  'myFinancing.emptyFiltered': {
+    en: 'No Matching Requests',
+    ru: 'Нет Подходящих Заявок',
+    uz: 'Mos So\'rovlar Yo\'q'
+  },
+  'myFinancing.emptyDescription': {
+    en: 'You haven\'t submitted any financing requests yet.',
+    ru: 'Вы еще не подали заявки на финансирование.',
+    uz: 'Siz hali moliyalashtirish so\'rovi yubormadingiz.'
+  },
+  'myFinancing.emptyFilteredDescription': {
+    en: 'Try adjusting your search or filter criteria.',
+    ru: 'Попробуйте скорректировать критерии поиска или фильтра.',
+    uz: 'Qidiruv yoki filtr mezonlarini sozlashga harakat qiling.'
+  },
+  'myFinancing.browseProperties': {
+    en: 'Browse Properties',
+    ru: 'Просмотреть Недвижимость',
+    uz: 'Mulklarni Ko\'rish'
+  },
+  'myFinancing.totalCost': {
+    en: 'Total Cost:',
+    ru: 'Общая Стоимость:',
+    uz: 'Umumiy Narx:'
+  },
+  'myFinancing.period': {
+    en: 'Period:',
+    ru: 'Период:',
+    uz: 'Muddat:'
+  },
+  'myFinancing.notSpecified': {
+    en: 'Not specified',
+    ru: 'Не указано',
+    uz: 'Ko\'rsatilmagan'
+  },
+  'myFinancing.view': {
+    en: 'View',
+    ru: 'Просмотр',
+    uz: 'Ko\'rish'
+  },
+  'myFinancing.edit': {
+    en: 'Edit',
+    ru: 'Редактировать',
+    uz: 'Tahrirlash'
+  },
+  'myFinancing.property': {
+    en: 'Property',
+    ru: 'Недвижимость',
+    uz: 'Mulk'
+  },
+  'myFinancing.amountRequested': {
+    en: 'Amount Requested',
+    ru: 'Запрошенная Сумма',
+    uz: 'So\'ralgan Miqdor'
+  },
+  'myFinancing.periodHeader': {
+    en: 'Period',
+    ru: 'Период',
+    uz: 'Muddat'
+  },
+  'myFinancing.status': {
+    en: 'Status',
+    ru: 'Статус',
+    uz: 'Holat'
+  },
+  'myFinancing.lastUpdated': {
+    en: 'Last Updated',
+    ru: 'Последнее Обновление',
+    uz: 'Oxirgi Yangilanish'
+  },
+  'myFinancing.actions': {
+    en: 'Actions',
+    ru: 'Действия',
+    uz: 'Amallar'
+  },
+  'myFinancing.viewDetails': {
+    en: 'View Details',
+    ru: 'Просмотр Деталей',
+    uz: 'Tafsilotlarni Ko\'rish'
+  },
+  'myFinancing.editRequest': {
+    en: 'Edit Request',
+    ru: 'Редактировать Заявку',
+    uz: 'So\'rovni Tahrirlash'
+  },
+  'myFinancing.deleteRequest': {
+    en: 'Delete Request',
+    ru: 'Удалить Заявку',
+    uz: 'So\'rovni O\'chirish'
+  },
+  'myFinancing.confirmDelete': {
+    en: 'Are you sure you want to delete this financing request? This action cannot be undone.',
+    ru: 'Вы уверены, что хотите удалить эту заявку на финансирование? Это действие нельзя отменить.',
+    uz: 'Ushbu moliyalashtirish so\'rovini o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.'
+  },
+  'myFinancing.deleteSuccess': {
+    en: 'Request deleted',
+    ru: 'Заявка удалена',
+    uz: 'So\'rov o\'chirildi'
+  },
+  'myFinancing.deleteSuccessDesc': {
+    en: 'Your financing request has been deleted successfully.',
+    ru: 'Ваша заявка на финансирование успешно удалена.',
+    uz: 'Moliyalashtirish so\'rovingiz muvaffaqiyatli o\'chirildi.'
+  },
+  'myFinancing.loadError': {
+    en: 'Failed to load your financing requests',
+    ru: 'Не удалось загрузить ваши заявки на финансирование',
+    uz: 'Moliyalashtirish so\'rovlaringizni yuklash muvaffaqiyatsiz'
+  },
+
+  // Financing status translations
+  'financingStatus.submitted': {
+    en: 'Submitted',
+    ru: 'Подано',
+    uz: 'Taqdim etilgan'
+  },
+  'financingStatus.assigned': {
     en: 'Under Review',
     ru: 'На Рассмотрении',
     uz: 'Ko\'rib chiqilmoqda'
+  },
+  'financingStatus.document_collection': {
+    en: 'Documents Required',
+    ru: 'Требуются Документы',
+    uz: 'Hujjatlar Talab qilinadi'
+  },
+  'financingStatus.under_review': {
+    en: 'Under Review',
+    ru: 'На Рассмотрении',
+    uz: 'Ko\'rib chiqilmoqda'
+  },
+  'financingStatus.final_approval': {
+    en: 'Final Approval',
+    ru: 'Финальное Одобрение',
+    uz: 'Yakuniy Tasdiqlash'
+  },
+  'financingStatus.approved': {
+    en: 'Approved',
+    ru: 'Одобрено',
+    uz: 'Tasdiqlangan'
+  },
+  'financingStatus.denied': {
+    en: 'Denied',
+    ru: 'Отклонено',
+    uz: 'Rad etilgan'
+  },
+  'financingStatus.pending': {
+    en: 'Pending',
+    ru: 'Ожидает',
+    uz: 'Kutilmoqda'
+  },
+  'financingStatus.pendingLegacy': {
+    en: 'Pending (Legacy)',
+    ru: 'Ожидает (Старая)',
+    uz: 'Kutilmoqda (Eski)'
+  }
+};
+const LANGUAGE_STORAGE_KEY = 'magit_language';
+const isSupportedLang = (val: any): val is Language => ['en', 'ru', 'uz'].includes(val);
+
+const getBrowserLang = (): Language => {
+  try {
+    const nav = (navigator.language || 'ru').split('-')[0];
+    return isSupportedLang(nav) ? nav : 'ru';
+  } catch {
+    return 'ru';
+  }
+};
+
+const getStoredLang = (): Language => {
+  try {
+    const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    return isSupportedLang(stored) ? stored : getBrowserLang();
+  } catch {
+    return getBrowserLang();
+  }
+};
+
+export const useTranslation = () => {
+  const { user } = useUser();
+  const [language, setLanguageState] = useState<Language>(getStoredLang);
+
+  // Sync across tabs/components using events
+  useEffect(() => {
+    const onLangEvent = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent).detail as Language | undefined;
+        if (detail && isSupportedLang(detail) && detail !== language) {
+          setLanguageState(detail);
+        }
+      } catch {}
+    };
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === LANGUAGE_STORAGE_KEY && e.newValue && isSupportedLang(e.newValue) && e.newValue !== language) {
+        setLanguageState(e.newValue as Language);
+      }
+    };
+    window.addEventListener('magit:language', onLangEvent as EventListener);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener('magit:language', onLangEvent as EventListener);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, [language]);
+
+  // Load user's saved language from Supabase when available
+  useEffect(() => {
+    const loadProfileLang = async () => {
+      if (!user) return;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('language')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!error && data?.language) {
+        const lang = data.language as Language;
+        if (isSupportedLang(lang) && lang !== language) {
+          setLanguageState(lang);
+          try { localStorage.setItem(LANGUAGE_STORAGE_KEY, lang); } catch {}
+        }
+      }
+    };
+    void loadProfileLang();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
+
+  const persistLanguage = async (lang: Language) => {
+    try { localStorage.setItem(LANGUAGE_STORAGE_KEY, lang); } catch {}
+    if (user) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ language: lang })
+        .eq('user_id', user.id);
+      if (error) {
+        // Non-blocking error
+        console.error('Failed to save language to profile', error);
+      }
+    }
+  };
+
+  const setLanguage = useCallback((lang: Language) => {
+    setLanguageState(lang);
+    // Broadcast change to all hook instances across the app
+    try { window.dispatchEvent(new CustomEvent('magit:language', { detail: lang })); } catch {}
+    void persistLanguage(lang);
+  }, [user?.id]);
+
+  const t = useCallback((key: string): string => {
+    return translations[key]?.[language] || key;
+  }, [language]);
+
+  return {
+    language,
+    setLanguage,
+    t
+  };
+};
   },
   'admin.financing.stageFinalApproval': {
     en: 'Final Approval',

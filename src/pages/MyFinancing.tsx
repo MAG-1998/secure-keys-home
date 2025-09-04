@@ -16,6 +16,7 @@ import { FileText, Search, Filter, Eye, Plus, MoreVertical, Edit, Trash2 } from 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { calculateHalalFinancing } from "@/utils/halalFinancing";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface FinancingRequest {
   id: string;
@@ -45,6 +46,7 @@ const MyFinancing = () => {
   const { requestId } = useParams();
   const { toast } = useToast();
   const { user } = useUser();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!user) {
@@ -75,8 +77,8 @@ const MyFinancing = () => {
     } catch (error) {
       console.error('Error fetching financing requests:', error);
       toast({
-        title: "Error",
-        description: "Failed to load your financing requests",
+        title: t("common.error"),
+        description: t("myFinancing.loadError"),
         variant: "destructive"
       });
     } finally {
@@ -95,8 +97,8 @@ const MyFinancing = () => {
       if (error) throw error;
       
       toast({
-        title: "Request deleted",
-        description: "Your financing request has been deleted successfully."
+        title: t("myFinancing.deleteSuccess"),
+        description: t("myFinancing.deleteSuccessDesc")
       });
       
       // Refresh the list
@@ -104,7 +106,7 @@ const MyFinancing = () => {
       setDeleteRequestId(null);
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive"
       });
@@ -150,21 +152,21 @@ const MyFinancing = () => {
     const currentStage = stage || status;
     switch (currentStage) {
       case 'submitted':
-        return <Badge variant="secondary">Submitted</Badge>;
+        return <Badge variant="secondary">{t('financingStatus.submitted')}</Badge>;
       case 'assigned':
-        return <Badge variant="outline">Under Review</Badge>;
+        return <Badge variant="outline">{t('financingStatus.assigned')}</Badge>;
       case 'document_collection':
-        return <Badge variant="destructive">Documents Required</Badge>;
+        return <Badge variant="destructive">{t('financingStatus.document_collection')}</Badge>;
       case 'under_review':
-        return <Badge variant="default">Under Review</Badge>;
+        return <Badge variant="default">{t('financingStatus.under_review')}</Badge>;
       case 'final_approval':
-        return <Badge variant="outline">Final Approval</Badge>;
+        return <Badge variant="outline">{t('financingStatus.final_approval')}</Badge>;
       case 'approved':
-        return <Badge variant="default" className="bg-green-600 hover:bg-green-700">Approved</Badge>;
+        return <Badge variant="default" className="bg-green-600 hover:bg-green-700">{t('financingStatus.approved')}</Badge>;
       case 'denied':
-        return <Badge variant="destructive">Denied</Badge>;
+        return <Badge variant="destructive">{t('financingStatus.denied')}</Badge>;
       case 'pending':
-        return <Badge variant="secondary">Pending</Badge>;
+        return <Badge variant="secondary">{t('financingStatus.pending')}</Badge>;
       default:
         return <Badge variant="outline">{currentStage}</Badge>;
     }
@@ -188,10 +190,10 @@ const MyFinancing = () => {
                 <div onClick={() => navigate('/')} className="cursor-pointer">
                   <MagitLogo size="md" />
                 </div>
-                <h1 className="font-heading font-bold text-xl text-foreground">Financing Request Details</h1>
+                <h1 className="font-heading font-bold text-xl text-foreground">{t('myFinancing.detailsTitle')}</h1>
               </div>
               <Button variant="outline" onClick={() => navigate('/my-financing')}>
-                Back to My Requests
+                {t('myFinancing.backToRequests')}
               </Button>
             </div>
           </div>
@@ -212,7 +214,7 @@ const MyFinancing = () => {
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
           <MagitLogo size="lg" />
-          <p className="text-muted-foreground mt-4">Loading your financing requests...</p>
+          <p className="text-muted-foreground mt-4">{t('myFinancing.loading')}</p>
         </div>
       </div>
     );
@@ -227,10 +229,10 @@ const MyFinancing = () => {
               <div onClick={() => navigate('/')} className="cursor-pointer">
                 <MagitLogo size="md" />
               </div>
-              <h1 className="font-heading font-bold text-xl text-foreground">My Financing Requests</h1>
+              <h1 className="font-heading font-bold text-xl text-foreground">{t('myFinancing.title')}</h1>
             </div>
             <Button variant="outline" onClick={() => navigate('/')}>
-              Back to Dashboard
+              {t('myFinancing.backToDashboard')}
             </Button>
           </div>
         </div>
@@ -241,7 +243,7 @@ const MyFinancing = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="w-5 h-5" />
-              Your Financing Applications
+              {t('myFinancing.applicationsTitle')}
             </CardTitle>
             
             <div className="flex gap-4">
@@ -249,7 +251,7 @@ const MyFinancing = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
-                    placeholder="Search by property or location..."
+                    placeholder={t('myFinancing.searchPlaceholder')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -259,18 +261,18 @@ const MyFinancing = () => {
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-48">
                   <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Filter by status" />
+                  <SelectValue placeholder={t('myFinancing.filterByStatus')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="submitted">Submitted</SelectItem>
-                  <SelectItem value="assigned">Assigned</SelectItem>
-                  <SelectItem value="document_collection">Documents Required</SelectItem>
-                  <SelectItem value="under_review">Under Review</SelectItem>
-                  <SelectItem value="final_approval">Final Approval</SelectItem>
-                  <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="denied">Denied</SelectItem>
-                  <SelectItem value="pending">Pending (Legacy)</SelectItem>
+                  <SelectItem value="all">{t('myFinancing.allStatuses')}</SelectItem>
+                  <SelectItem value="submitted">{t('financingStatus.submitted')}</SelectItem>
+                  <SelectItem value="assigned">{t('financingStatus.assigned')}</SelectItem>
+                  <SelectItem value="document_collection">{t('financingStatus.document_collection')}</SelectItem>
+                  <SelectItem value="under_review">{t('financingStatus.under_review')}</SelectItem>
+                  <SelectItem value="final_approval">{t('financingStatus.final_approval')}</SelectItem>
+                  <SelectItem value="approved">{t('financingStatus.approved')}</SelectItem>
+                  <SelectItem value="denied">{t('financingStatus.denied')}</SelectItem>
+                  <SelectItem value="pending">{t('financingStatus.pendingLegacy')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -281,18 +283,18 @@ const MyFinancing = () => {
               <div className="text-center py-16">
                 <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                 <h3 className="font-heading font-bold text-xl text-foreground mb-2">
-                  {requests.length === 0 ? 'No Financing Requests' : 'No Matching Requests'}
+                  {requests.length === 0 ? t('myFinancing.empty') : t('myFinancing.emptyFiltered')}
                 </h3>
                 <p className="text-muted-foreground mb-6">
                   {requests.length === 0 
-                    ? 'You haven\'t submitted any financing requests yet.'
-                    : 'Try adjusting your search or filter criteria.'
+                    ? t('myFinancing.emptyDescription')
+                    : t('myFinancing.emptyFilteredDescription')
                   }
                 </p>
                 {requests.length === 0 && (
                   <Button onClick={() => navigate('/properties')}>
                     <Plus className="w-4 h-4 mr-2" />
-                    Browse Properties
+                    {t('myFinancing.browseProperties')}
                   </Button>
                 )}
               </div>
@@ -323,7 +325,7 @@ const MyFinancing = () => {
                         
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div>
-                            <div className="text-muted-foreground">Total Cost:</div>
+                            <div className="text-muted-foreground">{t('myFinancing.totalCost')}</div>
                             <div className="font-medium">
                               {request.cash_available != null && request.period_months != null
                                 ? (() => {
@@ -334,16 +336,16 @@ const MyFinancing = () => {
                                     );
                                     return formatCurrency(calculation.totalCost);
                                   })()
-                                : "Not specified"
+                                : t('myFinancing.notSpecified')
                               }
                             </div>
                           </div>
                           <div>
-                            <div className="text-muted-foreground">Period:</div>
+                            <div className="text-muted-foreground">{t('myFinancing.period')}</div>
                             <div className="font-medium">
                               {request.period_months != null 
                                 ? `${request.period_months}m`
-                                : "Not specified"
+                                : t('myFinancing.notSpecified')
                               }
                             </div>
                           </div>
@@ -366,7 +368,7 @@ const MyFinancing = () => {
                             className="flex-1"
                           >
                             <Eye className="w-4 h-4 mr-1" />
-                            View
+                            {t('myFinancing.view')}
                           </Button>
                           
                           {canEditOrDelete(request) && (
@@ -378,7 +380,7 @@ const MyFinancing = () => {
                                 className="flex-1"
                               >
                                 <Edit className="w-4 h-4 mr-1" />
-                                Edit
+                                {t('myFinancing.edit')}
                               </Button>
                               <Button
                                 variant="outline"
@@ -387,7 +389,7 @@ const MyFinancing = () => {
                                 className="flex-1"
                               >
                                 <Trash2 className="w-4 h-4 mr-1" />
-                                Delete
+                                {t('common.delete')}
                               </Button>
                             </>
                           )}
@@ -401,12 +403,12 @@ const MyFinancing = () => {
                 <Table className="hidden sm:table">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Property</TableHead>
-                      <TableHead>Amount Requested</TableHead>
-                      <TableHead>Period</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Last Updated</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead>{t('myFinancing.property')}</TableHead>
+                      <TableHead>{t('myFinancing.amountRequested')}</TableHead>
+                      <TableHead>{t('myFinancing.periodHeader')}</TableHead>
+                      <TableHead>{t('myFinancing.status')}</TableHead>
+                      <TableHead>{t('myFinancing.lastUpdated')}</TableHead>
+                      <TableHead>{t('myFinancing.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -443,14 +445,14 @@ const MyFinancing = () => {
                                       );
                                       return formatCurrency(calculation.totalCost + (request.cash_available || 0));
                                     })()
-                                 : <span className="text-muted-foreground">Not specified</span>
-                               }
-                             </div>
-                             <div className="text-sm text-muted-foreground">
-                               Cash: {request.cash_available != null 
-                                 ? formatCurrency(request.cash_available || 0)
-                                 : "Not specified"
-                               }
+                                  : <span className="text-muted-foreground">{t('myFinancing.notSpecified')}</span>
+                                }
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                Cash: {request.cash_available != null 
+                                  ? formatCurrency(request.cash_available || 0)
+                                  : t('myFinancing.notSpecified')
+                                }
                              </div>
                            </div>
                          </TableCell>
@@ -458,7 +460,7 @@ const MyFinancing = () => {
                           <div className="font-medium">
                             {request.period_months != null 
                               ? `${request.period_months} months`
-                              : <span className="text-muted-foreground">Not specified</span>
+                              : <span className="text-muted-foreground">{t('myFinancing.notSpecified')}</span>
                             }
                           </div>
                         </TableCell>
@@ -474,7 +476,7 @@ const MyFinancing = () => {
                               onClick={() => navigate(`/my-financing/${request.id}`)}
                             >
                               <Eye className="w-4 h-4 mr-2" />
-                              View Details
+                              {t('myFinancing.viewDetails')}
                             </Button>
                             
                             {canEditOrDelete(request) && (
@@ -487,11 +489,11 @@ const MyFinancing = () => {
                                 <DropdownMenuContent align="end">
                                   <DropdownMenuItem onClick={() => handleEditRequest(request)}>
                                     <Edit className="w-4 h-4 mr-2" />
-                                    Edit Request
+                                    {t('myFinancing.editRequest')}
                                   </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => setDeleteRequestId(request.id)}>
                                     <Trash2 className="w-4 h-4 mr-2" />
-                                    Delete Request
+                                    {t('myFinancing.deleteRequest')}
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
@@ -509,15 +511,15 @@ const MyFinancing = () => {
             <AlertDialog open={!!deleteRequestId} onOpenChange={() => setDeleteRequestId(null)}>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Financing Request</AlertDialogTitle>
+                  <AlertDialogTitle>{t('myFinancing.deleteRequest')}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to delete this financing request? This action cannot be undone.
+                    {t('myFinancing.confirmDelete')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                   <AlertDialogAction onClick={() => deleteRequestId && handleDeleteRequest(deleteRequestId)}>
-                    Delete
+                    {t('common.delete')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
