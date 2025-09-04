@@ -602,7 +602,19 @@ const PropertyDetails = () => {
                      {property.bathrooms != null && (<span className="inline-flex items-center"><Bath className="h-4 w-4 mr-1" /> {property.bathrooms} {property.bathrooms === 1 ? t('property.bath') : t('property.baths')}</span>)}
                      {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} m²</span>)}
                   </div>
-                  <div className="text-3xl font-bold text-primary">{displayPrice}</div>
+                   <div className="text-3xl font-bold text-primary">
+                     {financingStore.isHalalMode && financingStore.cashAvailable && financingStore.periodMonths ? 
+                       (() => {
+                         const calculation = calculateHalalFinancing(
+                           parseFloat(financingStore.cashAvailable),
+                           property?.price || 0,
+                           parseInt(financingStore.periodMonths)
+                         );
+                         return formatCurrency(calculation.propertyPrice + calculation.serviceFee + calculation.fixedFee + calculation.tax);
+                       })() : 
+                       displayPrice
+                     }
+                   </div>
                   {property.description && (
                     <p className="text-foreground/80 leading-relaxed whitespace-pre-line">{property.description}</p>
                   )}
