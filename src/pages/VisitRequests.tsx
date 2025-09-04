@@ -13,6 +13,7 @@ import { Calendar, Check, Clock, MapPin, MessageSquare, X, Star, UserCheck, User
 import { MagitLogo } from "@/components/MagitLogo";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import { VisitRestrictionDialog } from "@/components/VisitRestrictionDialog";
 
 interface OwnerRequestRow {
@@ -53,6 +54,7 @@ interface VisitRequestCardProps {
   onRestrictUser?: (userId: string, reason: string, isPermanent: boolean, restrictedUntil?: Date) => void;
   isFinished?: boolean;
   currentUserRole?: string;
+  t: (key: string) => string;
 }
 
 const VisitRequestCard = ({ 
@@ -65,14 +67,15 @@ const VisitRequestCard = ({
   onReview,
   onRestrictUser,
   isFinished = false,
-  currentUserRole
+  currentUserRole,
+  t
 }: VisitRequestCardProps) => {
   return (
     <Card className="bg-background/80 backdrop-blur-sm border-border/50 hover:shadow-lg transition-all duration-300">
       <div className="relative">
         <img
           src={r.properties?.image_url || '/placeholder.svg'}
-          alt={r.properties?.title || 'Property'}
+          alt={r.properties?.title || t('visitRequests.property')}
           className="w-full h-48 object-cover rounded-t-lg"
           loading="lazy"
         />
@@ -88,19 +91,19 @@ const VisitRequestCard = ({
               {r.status === 'confirmed' ? (
                 <span className="inline-flex items-center">
                   <Check className="w-4 h-4 mr-1" /> 
-                  {isFinished ? 'finished' : 'confirmed'}
+                  {isFinished ? t('visitRequests.finished') : t('visitRequests.confirmed')}
                 </span>
               ) : r.status === 'denied' ? (
-                <span className="inline-flex items-center"><X className="w-4 h-4 mr-1" /> denied</span>
+                <span className="inline-flex items-center"><X className="w-4 h-4 mr-1" /> {t('visitRequests.denied')}</span>
               ) : (
-                <span className="inline-flex items-center"><Clock className="w-4 h-4 mr-1" /> pending</span>
+                <span className="inline-flex items-center"><Clock className="w-4 h-4 mr-1" /> {t('visitRequests.pending')}</span>
               )}
             </Badge>
           </div>
 
           {/* Right: Property details and visit time */}
           <div className="flex-1">
-            <h3 className="font-heading font-bold text-lg text-foreground mb-1">{r.properties?.title || 'Property'}</h3>
+            <h3 className="font-heading font-bold text-lg text-foreground mb-1">{r.properties?.title || t('visitRequests.property')}</h3>
             <div className="flex items-center text-muted-foreground mb-3">
               <MapPin className="w-4 h-4 mr-1" />
               <span className="text-sm">{r.properties?.location}</span>
@@ -110,7 +113,7 @@ const VisitRequestCard = ({
             {r.visitor_profile && (
               <div className="flex items-center text-muted-foreground mb-3">
                 <span className="text-sm font-medium">
-                  Requested by: {r.visitor_profile.display_name}
+                  {t('visitRequests.requestedBy')}: {r.visitor_profile.display_name}
                 </span>
                 <Badge variant="outline" className="ml-2 text-xs">
                   {r.visitor_profile.user_type}
@@ -126,7 +129,7 @@ const VisitRequestCard = ({
               <div className="flex items-center text-primary font-bold mt-1">
                 <Clock className="w-5 h-5 mr-2" />
                 {new Date(r.visit_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                {r.is_custom_time ? <Badge variant="warning" className="ml-2">alternative time</Badge> : null}
+                {r.is_custom_time ? <Badge variant="warning" className="ml-2">{t('visitRequests.alternativeTime')}</Badge> : null}
               </div>
             </div>
 
@@ -136,17 +139,17 @@ const VisitRequestCard = ({
                 {r.review_submitted_at ? (
                   <div className="text-sm text-muted-foreground">
                     <Star className="w-4 h-4 inline mr-1" />
-                    Review completed {new Date(r.review_submitted_at).toLocaleDateString()}
+                    {t('visitRequests.reviewCompleted')} {new Date(r.review_submitted_at).toLocaleDateString()}
                     {r.visitor_showed_up !== null && (
                       <div className="mt-1">
-                        Visitor {r.visitor_showed_up ? 'showed up' : 'did not show up'}
+                        {t('visitRequests.visitor')} {r.visitor_showed_up ? t('visitRequests.visitorShowedUp') : t('visitRequests.visitorDidNotShow')}
                       </div>
                     )}
                   </div>
                 ) : (
                   <Badge variant="outline" className="text-xs">
                     <Star className="w-3 h-3 mr-1" />
-                    Awaiting review
+                    {t('visitRequests.awaitingReview')}
                   </Badge>
                 )}
               </div>
@@ -156,7 +159,7 @@ const VisitRequestCard = ({
             {r.is_paid_visit && (
               <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                 <CreditCard className="h-4 w-4" />
-                Paid visit ({r.payment_amount?.toLocaleString()} UZS)
+                {t('visitRequests.paidVisit')} ({r.payment_amount?.toLocaleString()} UZS)
               </div>
             )}
           </div>
@@ -165,19 +168,19 @@ const VisitRequestCard = ({
         <div className="mt-4 flex flex-wrap gap-2 justify-end">
           {showActions.includes("message") && onMessage && (
             <Button variant="ghost" size="sm" onClick={() => onMessage(r.id)}>
-              <MessageSquare className="w-4 h-4 mr-1" /> Message
+              <MessageSquare className="w-4 h-4 mr-1" /> {t('visitRequests.message')}
             </Button>
           )}
 
           {showActions.includes("alternative") && onAlternative && (
             <Button variant="outline" size="sm" onClick={() => onAlternative(r.id)}>
-              <Clock className="w-4 h-4 mr-1" /> Offer alternative
+              <Clock className="w-4 h-4 mr-1" /> {t('visitRequests.offerAlternative')}
             </Button>
           )}
 
           {showActions.includes("approve") && onApprove && (!r.status || r.status === 'pending') && (
             <Button variant="secondary" size="sm" onClick={() => onApprove(r.id)}>
-              <Check className="w-4 h-4 mr-1" /> Approve
+              <Check className="w-4 h-4 mr-1" /> {t('visitRequests.approve')}
             </Button>
           )}
 
@@ -185,20 +188,20 @@ const VisitRequestCard = ({
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" size="sm">
-                  <X className="w-4 h-4 mr-1" /> Deny
+                  <X className="w-4 h-4 mr-1" /> {t('visitRequests.deny')}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogTitle>{t('visitRequests.areYouSure')}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will mark the request as denied. The visitor will no longer see it as active.
+                    {t('visitRequests.denyDescription')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>{t('visitRequests.cancel')}</AlertDialogCancel>
                   <AlertDialogAction asChild>
-                    <Button onClick={() => onDeny(r.id)}>Yes, deny</Button>
+                    <Button onClick={() => onDeny(r.id)}>{t('visitRequests.yesDeny')}</Button>
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -207,7 +210,7 @@ const VisitRequestCard = ({
 
           {showActions.includes("review") && onReview && !r.review_submitted_at && (
             <Button variant="outline" size="sm" onClick={() => onReview(r.id)}>
-              <Star className="w-4 h-4 mr-1" /> Leave Review
+              <Star className="w-4 h-4 mr-1" /> {t('visitRequests.leaveReview')}
             </Button>
           )}
 
@@ -215,7 +218,7 @@ const VisitRequestCard = ({
           {r.visitor_showed_up === false && onRestrictUser && (currentUserRole === 'admin' || currentUserRole === 'moderator') && (
             <VisitRestrictionDialog
               userId={r.visitor_id}
-              userName={r.visitor_profile?.display_name || "User"}
+              userName={r.visitor_profile?.display_name || t('visitRequests.user')}
               onRestrictUser={onRestrictUser}
             />
           )}
@@ -239,9 +242,10 @@ const VisitRequests = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useUser();
+  const { t } = useTranslation();
 
   useEffect(() => {
-    document.title = "Visit Requests Inbox • Magit";
+    document.title = t('visitRequests.visitRequestsInbox') + " • Magit";
   }, []);
 
   const refresh = async () => {
@@ -302,7 +306,7 @@ const VisitRequests = () => {
       setRequests(sorted);
     } catch (e) {
       console.error(e);
-      toast({ title: 'Error', description: 'Failed to load requests', variant: 'destructive' });
+      toast({ title: t('visitRequests.error'), description: t('visitRequests.failedToLoadRequests'), variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -314,10 +318,10 @@ const VisitRequests = () => {
     try {
       const { error } = await supabase.from('property_visits').update({ status: 'confirmed' }).eq('id', id);
       if (error) throw error;
-      toast({ title: 'Approved', description: 'Visit confirmed.' });
+      toast({ title: t('visitRequests.approved'), description: t('visitRequests.visitConfirmed') });
       await refresh();
     } catch (e) {
-      toast({ title: 'Error', description: 'Could not approve request', variant: 'destructive' });
+      toast({ title: t('visitRequests.error'), description: t('visitRequests.couldNotApprove'), variant: 'destructive' });
     }
   };
 
@@ -325,10 +329,10 @@ const VisitRequests = () => {
     try {
       const { error } = await supabase.from('property_visits').update({ status: 'denied' }).eq('id', id);
       if (error) throw error;
-      toast({ title: 'Denied', description: 'Request denied.' });
+      toast({ title: t('visitRequests.denied'), description: t('visitRequests.requestDenied') });
       await refresh();
     } catch (e) {
-      toast({ title: 'Error', description: 'Could not deny request', variant: 'destructive' });
+      toast({ title: t('visitRequests.error'), description: t('visitRequests.couldNotDeny'), variant: 'destructive' });
     }
   };
 
@@ -355,13 +359,13 @@ const VisitRequests = () => {
       if (error) throw error;
       
       toast({ 
-        title: 'Alternative time proposed', 
-        description: 'The visitor will be notified and can accept or propose another time.' 
+        title: t('visitRequests.alternativeTimeProposed'), 
+        description: t('visitRequests.visitorNotified')
       });
       setAltForId(null);
       await refresh();
     } catch (e) {
-      toast({ title: 'Error', description: 'Could not propose time', variant: 'destructive' });
+      toast({ title: t('visitRequests.error'), description: t('visitRequests.couldNotProposeTime'), variant: 'destructive' });
     }
   };
 
@@ -385,11 +389,11 @@ const VisitRequests = () => {
           property_id: req.property_id
         });
       if (error) throw error;
-      toast({ title: 'Message sent' });
+      toast({ title: t('visitRequests.messageSent') });
       setMsgForId(null);
       setMessage('');
     } catch (e) {
-      toast({ title: 'Error', description: 'Could not send message', variant: 'destructive' });
+      toast({ title: t('visitRequests.error'), description: t('visitRequests.couldNotSendMessage'), variant: 'destructive' });
     }
   };
 
@@ -429,8 +433,8 @@ const VisitRequests = () => {
           } else if (penaltyData) {
             const penalty = penaltyData as { message: string; penalty_level: number };
             toast({
-              title: "Штраф применен",
-              description: `Пользователь получил штраф уровня ${penalty.penalty_level} за неявку`,
+              title: t('visitRequests.penaltyApplied'),
+              description: t('visitRequests.penaltyLevel').replace('{level}', penalty.penalty_level.toString()),
               variant: "default",
             });
           }
@@ -438,13 +442,13 @@ const VisitRequests = () => {
       }
 
       toast({ 
-        title: 'Review saved', 
-        description: showedUp ? 'Thank you for your feedback.' : 'Review saved and penalty applied for no-show.' 
+        title: t('visitRequests.reviewSaved'), 
+        description: showedUp ? t('visitRequests.thankYouFeedback') : t('visitRequests.reviewSavedPenalty')
       });
       setReviewForId(null);
       await refresh();
     } catch (e) {
-      toast({ title: 'Error', description: 'Could not save review', variant: 'destructive' });
+      toast({ title: t('visitRequests.error'), description: t('visitRequests.couldNotSaveReview'), variant: 'destructive' });
     }
   };
 
@@ -461,10 +465,10 @@ const VisitRequests = () => {
         });
 
       if (error) throw error;
-      toast({ title: 'User restricted', description: 'User has been restricted from creating visit requests.' });
+      toast({ title: t('visitRequests.userRestricted'), description: t('visitRequests.userRestrictedDescription') });
       await refresh();
     } catch (e) {
-      toast({ title: 'Error', description: 'Could not restrict user', variant: 'destructive' });
+      toast({ title: t('visitRequests.error'), description: t('visitRequests.couldNotRestrictUser'), variant: 'destructive' });
     }
   };
 
@@ -481,14 +485,14 @@ const VisitRequests = () => {
     !r.status || r.status === 'pending'
   );
 
-  const title = useMemo(() => 'Visit Requests Inbox', []);
+  const title = useMemo(() => t('visitRequests.visitRequestsInbox'), [t]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
           <MagitLogo size="lg" />
-          <p className="text-muted-foreground mt-4">Loading visit requests...</p>
+          <p className="text-muted-foreground mt-4">{t('visitRequests.loadingVisitRequests')}</p>
         </div>
       </div>
     );
@@ -507,7 +511,7 @@ const VisitRequests = () => {
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" onClick={() => navigate('/my-properties')}>
-                My Listings
+                {t('visitRequests.myListings')}
               </Button>
             </div>
           </div>
@@ -517,29 +521,29 @@ const VisitRequests = () => {
       <main className="flex-1 container mx-auto px-4 py-8">
         {requests.length === 0 ? (
           <div className="text-center py-16">
-            <h2 className="font-heading font-bold text-2xl text-foreground mb-4">No Requests Yet</h2>
-            <p className="text-muted-foreground mb-8">You will see visit requests for your properties here.</p>
-            <Button onClick={() => navigate('/properties')}>Browse Buyers</Button>
+            <h2 className="font-heading font-bold text-2xl text-foreground mb-4">{t('visitRequests.noRequestsYet')}</h2>
+            <p className="text-muted-foreground mb-8">{t('visitRequests.noRequestsDescription')}</p>
+            <Button onClick={() => navigate('/properties')}>{t('visitRequests.browseBuyers')}</Button>
           </div>
         ) : (
           <Tabs defaultValue="coming" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-8">
               <TabsTrigger value="coming" className="text-center">
-                Coming ({[...pendingRequests, ...comingRequests].length})
+                {t('visitRequests.coming')} ({[...pendingRequests, ...comingRequests].length})
               </TabsTrigger>
               <TabsTrigger value="denied" className="text-center">
-                Denied ({deniedRequests.length})
+                {t('visitRequests.denied')} ({deniedRequests.length})
               </TabsTrigger>
               <TabsTrigger value="finished" className="text-center">
-                Finished ({finishedRequests.length})
+                {t('visitRequests.finished')} ({finishedRequests.length})
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="coming" className="space-y-6">
               {[...pendingRequests, ...comingRequests].length === 0 ? (
                 <div className="text-center py-16">
-                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">No Upcoming Visits</h3>
-                  <p className="text-muted-foreground">All confirmed visits are showing here.</p>
+                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">{t('visitRequests.noUpcomingVisits')}</h3>
+                  <p className="text-muted-foreground">{t('visitRequests.upcomingVisitsDescription')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -554,6 +558,7 @@ const VisitRequests = () => {
                       onAlternative={openAlt}
                       onRestrictUser={handleRestrictUser}
                       currentUserRole={user?.role}
+                      t={t}
                     />
                   ))}
                 </div>
@@ -563,8 +568,8 @@ const VisitRequests = () => {
             <TabsContent value="denied" className="space-y-6">
               {deniedRequests.length === 0 ? (
                 <div className="text-center py-16">
-                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">No Denied Requests</h3>
-                  <p className="text-muted-foreground">Denied visit requests will appear here.</p>
+                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">{t('visitRequests.noDeniedRequests')}</h3>
+                  <p className="text-muted-foreground">{t('visitRequests.deniedRequestsDescription')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -576,6 +581,7 @@ const VisitRequests = () => {
                       onMessage={openMsg}
                       onRestrictUser={handleRestrictUser}
                       currentUserRole={user?.role}
+                      t={t}
                     />
                   ))}
                 </div>
@@ -585,8 +591,8 @@ const VisitRequests = () => {
             <TabsContent value="finished" className="space-y-6">
               {finishedRequests.length === 0 ? (
                 <div className="text-center py-16">
-                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">No Finished Visits</h3>
-                  <p className="text-muted-foreground">Completed visits will appear here for review.</p>
+                  <h3 className="font-heading font-bold text-xl text-foreground mb-4">{t('visitRequests.noFinishedVisits')}</h3>
+                  <p className="text-muted-foreground">{t('visitRequests.finishedVisitsDescription')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -600,6 +606,7 @@ const VisitRequests = () => {
                       onRestrictUser={handleRestrictUser}
                       isFinished={true}
                       currentUserRole={user?.role}
+                      t={t}
                     />
                   ))}
                 </div>
@@ -612,17 +619,17 @@ const VisitRequests = () => {
         <Dialog open={msgForId !== null} onOpenChange={(open) => !open && setMsgForId(null)}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Message Visitor</DialogTitle>
+              <DialogTitle>{t('visitRequests.messageVisitor')}</DialogTitle>
             </DialogHeader>
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type your message to the visitor..."
+              placeholder={t('visitRequests.typeMessageToVisitor')}
               className="min-h-[120px]"
             />
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setMsgForId(null)}>Cancel</Button>
-              <Button onClick={submitMsg}>Send</Button>
+              <Button variant="outline" onClick={() => setMsgForId(null)}>{t('visitRequests.cancel')}</Button>
+              <Button onClick={submitMsg}>{t('visitRequests.send')}</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -631,21 +638,21 @@ const VisitRequests = () => {
         <Dialog open={altForId !== null} onOpenChange={(open) => !open && setAltForId(null)}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Propose an alternative time</DialogTitle>
+              <DialogTitle>{t('visitRequests.proposeAlternativeTime')}</DialogTitle>
             </DialogHeader>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="text-sm font-medium">Date</label>
+                <label className="text-sm font-medium">{t('visitRequests.date')}</label>
                 <Input type="date" value={altDate} onChange={(e) => setAltDate(e.target.value)} min={new Date().toISOString().split('T')[0]} />
               </div>
               <div>
-                <label className="text-sm font-medium">Time</label>
+                <label className="text-sm font-medium">{t('visitRequests.time')}</label>
                 <Input type="time" value={altTime} onChange={(e) => setAltTime(e.target.value)} />
               </div>
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setAltForId(null)}>Cancel</Button>
-              <Button onClick={submitAlt}>Send Proposal</Button>
+              <Button variant="outline" onClick={() => setAltForId(null)}>{t('visitRequests.cancel')}</Button>
+              <Button onClick={submitAlt}>{t('visitRequests.sendProposal')}</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -654,42 +661,42 @@ const VisitRequests = () => {
         <Dialog open={reviewForId !== null} onOpenChange={(open) => !open && setReviewForId(null)}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Review Visit</DialogTitle>
+              <DialogTitle>{t('visitRequests.reviewVisit')}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Did the visitor show up?</label>
+                <label className="text-sm font-medium mb-2 block">{t('visitRequests.didVisitorShow')}</label>
                 <div className="flex gap-2">
                   <Button
                     variant={showedUp === true ? "default" : "outline"}
                     size="sm"
                     onClick={() => setShowedUp(true)}
                   >
-                    <UserCheck className="w-4 h-4 mr-1" /> Yes, they came
+                    <UserCheck className="w-4 h-4 mr-1" /> {t('visitRequests.yesCame')}
                   </Button>
                   <Button
                     variant={showedUp === false ? "default" : "outline"}
                     size="sm"
                     onClick={() => setShowedUp(false)}
                   >
-                    <UserX className="w-4 h-4 mr-1" /> No, they didn't show
+                    <UserX className="w-4 h-4 mr-1" /> {t('visitRequests.noDidNotShow')}
                   </Button>
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium mb-2 block">Additional notes (optional)</label>
+                <label className="text-sm font-medium mb-2 block">{t('visitRequests.additionalNotes')}</label>
                 <Textarea
                   value={ownerReview}
                   onChange={(e) => setOwnerReview(e.target.value)}
-                  placeholder="Share your experience or notes about this visit..."
+                  placeholder={t('visitRequests.shareExperience')}
                   className="min-h-[100px]"
                 />
               </div>
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setReviewForId(null)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setReviewForId(null)}>{t('visitRequests.cancel')}</Button>
               <Button onClick={submitReview} disabled={showedUp === null}>
-                Save Review
+                {t('visitRequests.saveReview')}
               </Button>
             </div>
           </DialogContent>

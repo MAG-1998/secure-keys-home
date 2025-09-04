@@ -1119,6 +1119,293 @@ const translations: Translations = {
     ru: 'Не удалось загрузить запросы',
     uz: 'So\'rovlarni yuklab bo\'lmadi'
   },
+
+  // Additional VisitRequests keys
+  'visitRequests.property': {
+    en: 'Property',
+    ru: 'Объект',
+    uz: 'Mulk'
+  },
+  'visitRequests.visitor': {
+    en: 'Visitor',
+    ru: 'Посетитель',
+    uz: 'Mehmon'
+  },
+  'visitRequests.user': {
+    en: 'User',
+    ru: 'Пользователь',
+    uz: 'Foydalanuvchi'
+  },
+  'visitRequests.deny': {
+    en: 'Deny',
+    ru: 'Отклонить',
+    uz: 'Rad etish'
+  },
+  'visitRequests.leaveReview': {
+    en: 'Leave Review',
+    ru: 'Оставить отзыв',
+    uz: 'Sharh qoldirish'
+  },
+  'visitRequests.areYouSure': {
+    en: 'Are you sure?',
+    ru: 'Вы уверены?',
+    uz: 'Ishonchingiz komilmi?'
+  },
+  'visitRequests.denyDescription': {
+    en: 'This will mark the request as denied. The visitor will no longer see it as active.',
+    ru: 'Это отметит запрос как отклонённый. Посетитель больше не увидит его как активный.',
+    uz: 'Bu so\'rovni rad etilgan deb belgilaydi. Mehmon uni faol deb ko\'rmaydi.'
+  },
+  'visitRequests.cancel': {
+    en: 'Cancel',
+    ru: 'Отмена',
+    uz: 'Bekor qilish'
+  },
+  'visitRequests.yesDeny': {
+    en: 'Yes, deny',
+    ru: 'Да, отклонить',
+    uz: 'Ha, rad etish'
+  },
+  'visitRequests.visitRequestsInbox': {
+    en: 'Visit Requests Inbox',
+    ru: 'Входящие запросы на просмотр',
+    uz: 'Tashrif so\'rovlari qutisi'
+  },
+  'visitRequests.myListings': {
+    en: 'My Listings',
+    ru: 'Мои объявления',
+    uz: 'Mening e\'lonlarim'
+  },
+  'visitRequests.noRequestsYet': {
+    en: 'No Requests Yet',
+    ru: 'Пока нет запросов',
+    uz: 'Hali so\'rovlar yo\'q'
+  },
+  'visitRequests.noRequestsDescription': {
+    en: 'You will see visit requests for your properties here.',
+    ru: 'Здесь вы увидите запросы на просмотр ваших объектов.',
+    uz: 'Bu yerda mulklaringiz uchun tashrif so\'rovlarini ko\'rasiz.'
+  },
+  'visitRequests.browseBuyers': {
+    en: 'Browse Buyers',
+    ru: 'Просмотреть покупателей',
+    uz: 'Xaridorlarni ko\'rish'
+  },
+  'visitRequests.coming': {
+    en: 'Coming',
+    ru: 'Предстоящие',
+    uz: 'Kelgusi'
+  },
+  'visitRequests.noUpcomingVisits': {
+    en: 'No Upcoming Visits',
+    ru: 'Нет предстоящих посещений',
+    uz: 'Kelgusi tashriflar yo\'q'
+  },
+  'visitRequests.upcomingVisitsDescription': {
+    en: 'All confirmed visits are showing here.',
+    ru: 'Все подтверждённые посещения показаны здесь.',
+    uz: 'Barcha tasdiqlangan tashriflar shu yerda ko\'rsatiladi.'
+  },
+  'visitRequests.noDeniedRequests': {
+    en: 'No Denied Requests',
+    ru: 'Нет отклонённых запросов',
+    uz: 'Rad etilgan so\'rovlar yo\'q'
+  },
+  'visitRequests.deniedRequestsDescription': {
+    en: 'Denied visit requests will appear here.',
+    ru: 'Отклонённые запросы на посещение появятся здесь.',
+    uz: 'Rad etilgan tashrif so\'rovlari shu yerda ko\'rinadi.'
+  },
+  'visitRequests.noFinishedVisits': {
+    en: 'No Finished Visits',
+    ru: 'Нет завершённых посещений',
+    uz: 'Tugallangan tashriflar yo\'q'
+  },
+  'visitRequests.finishedVisitsDescription': {
+    en: 'Completed visits will appear here for review.',
+    ru: 'Завершённые посещения появятся здесь для отзыва.',
+    uz: 'Tugallangan tashriflar sharh uchun shu yerda ko\'rinadi.'
+  },
+  'visitRequests.messageVisitor': {
+    en: 'Message Visitor',
+    ru: 'Написать посетителю',
+    uz: 'Mehmonga xabar'
+  },
+  'visitRequests.typeMessageToVisitor': {
+    en: 'Type your message to the visitor...',
+    ru: 'Введите сообщение посетителю...',
+    uz: 'Mehmonga xabaringizni yozing...'
+  },
+  'visitRequests.send': {
+    en: 'Send',
+    ru: 'Отправить',
+    uz: 'Yuborish'
+  },
+  'visitRequests.proposeAlternativeTime': {
+    en: 'Propose an alternative time',
+    ru: 'Предложить альтернативное время',
+    uz: 'Muqobil vaqt taklif qilish'
+  },
+  'visitRequests.date': {
+    en: 'Date',
+    ru: 'Дата',
+    uz: 'Sana'
+  },
+  'visitRequests.time': {
+    en: 'Time',
+    ru: 'Время',
+    uz: 'Vaqt'
+  },
+  'visitRequests.sendProposal': {
+    en: 'Send Proposal',
+    ru: 'Отправить предложение',
+    uz: 'Taklif yuborish'
+  },
+  'visitRequests.reviewVisit': {
+    en: 'Review Visit',
+    ru: 'Оценить посещение',
+    uz: 'Tashrifni baholash'
+  },
+  'visitRequests.didVisitorShow': {
+    en: 'Did the visitor show up?',
+    ru: 'Посетитель пришёл?',
+    uz: 'Mehmon keldimi?'
+  },
+  'visitRequests.yesCame': {
+    en: 'Yes, they came',
+    ru: 'Да, пришли',
+    uz: 'Ha, kelishdi'
+  },
+  'visitRequests.noDidNotShow': {
+    en: 'No, they didn\'t show',
+    ru: 'Нет, не пришли',
+    uz: 'Yo\'q, kelishmadi'
+  },
+  'visitRequests.additionalNotes': {
+    en: 'Additional notes (optional)',
+    ru: 'Дополнительные заметки (необязательно)',
+    uz: 'Qo\'shimcha eslatmalar (ixtiyoriy)'
+  },
+  'visitRequests.shareExperience': {
+    en: 'Share your experience or notes about this visit...',
+    ru: 'Поделитесь своим опытом или заметками об этом посещении...',
+    uz: 'Ushbu tashrif haqida tajribangiz yoki eslatmalaringizni baham ko\'ring...'
+  },
+  'visitRequests.saveReview': {
+    en: 'Save Review',
+    ru: 'Сохранить отзыв',
+    uz: 'Sharhni saqlash'
+  },
+  'visitRequests.loadingVisitRequests': {
+    en: 'Loading visit requests...',
+    ru: 'Загрузка запросов на посещение...',
+    uz: 'Tashrif so\'rovlari yuklanmoqda...'
+  },
+  'visitRequests.approved': {
+    en: 'Approved',
+    ru: 'Одобрено',
+    uz: 'Tasdiqlangan'
+  },
+  'visitRequests.visitConfirmed': {
+    en: 'Visit confirmed.',
+    ru: 'Посещение подтверждено.',
+    uz: 'Tashrif tasdiqlandi.'
+  },
+  'visitRequests.requestDenied': {
+    en: 'Request denied.',
+    ru: 'Запрос отклонён.',
+    uz: 'So\'rov rad etildi.'
+  },
+  'visitRequests.error': {
+    en: 'Error',
+    ru: 'Ошибка',
+    uz: 'Xato'
+  },
+  'visitRequests.couldNotApprove': {
+    en: 'Could not approve request',
+    ru: 'Не удалось одобрить запрос',
+    uz: 'So\'rovni tasdiqlab bo\'lmadi'
+  },
+  'visitRequests.couldNotDeny': {
+    en: 'Could not deny request',
+    ru: 'Не удалось отклонить запрос',
+    uz: 'So\'rovni rad etib bo\'lmadi'
+  },
+  'visitRequests.alternativeTimeProposed': {
+    en: 'Alternative time proposed',
+    ru: 'Альтернативное время предложено',
+    uz: 'Muqobil vaqt taklif qilindi'
+  },
+  'visitRequests.visitorNotified': {
+    en: 'The visitor will be notified and can accept or propose another time.',
+    ru: 'Посетитель будет уведомлён и может принять или предложить другое время.',
+    uz: 'Mehmon xabardor qilinadi va qabul qilishi yoki boshqa vaqt taklif qilishi mumkin.'
+  },
+  'visitRequests.couldNotProposeTime': {
+    en: 'Could not propose time',
+    ru: 'Не удалось предложить время',
+    uz: 'Vaqt taklif qilib bo\'lmadi'
+  },
+  'visitRequests.messageSent': {
+    en: 'Message sent',
+    ru: 'Сообщение отправлено',
+    uz: 'Xabar yuborildi'
+  },
+  'visitRequests.couldNotSendMessage': {
+    en: 'Could not send message',
+    ru: 'Не удалось отправить сообщение',
+    uz: 'Xabar yuborib bo\'lmadi'
+  },
+  'visitRequests.reviewSaved': {
+    en: 'Review saved',
+    ru: 'Отзыв сохранён',
+    uz: 'Sharh saqlandi'
+  },
+  'visitRequests.thankYouFeedback': {
+    en: 'Thank you for your feedback.',
+    ru: 'Спасибо за ваш отзыв.',
+    uz: 'Fikr-mulohazangiz uchun rahmat.'
+  },
+  'visitRequests.reviewSavedPenalty': {
+    en: 'Review saved and penalty applied for no-show.',
+    ru: 'Отзыв сохранён и штраф применён за неявку.',
+    uz: 'Sharh saqlandi va kelmagan uchun jarima qo\'llanildi.'
+  },
+  'visitRequests.couldNotSaveReview': {
+    en: 'Could not save review',
+    ru: 'Не удалось сохранить отзыв',
+    uz: 'Sharhni saqlab bo\'lmadi'
+  },
+  'visitRequests.userRestricted': {
+    en: 'User restricted',
+    ru: 'Пользователь ограничен',
+    uz: 'Foydalanuvchi cheklandi'
+  },
+  'visitRequests.userRestrictedDescription': {
+    en: 'User has been restricted from creating visit requests.',
+    ru: 'Пользователь был ограничен в создании запросов на посещение.',
+    uz: 'Foydalanuvchi tashrif so\'rovlari yaratishdan cheklandi.'
+  },
+  'visitRequests.couldNotRestrictUser': {
+    en: 'Could not restrict user',
+    ru: 'Не удалось ограничить пользователя',
+    uz: 'Foydalanuvchini cheklab bo\'lmadi'
+  },
+  'visitRequests.failedToLoadRequests': {
+    en: 'Failed to load requests',
+    ru: 'Не удалось загрузить запросы',
+    uz: 'So\'rovlarni yuklab bo\'lmadi'
+  },
+  'visitRequests.penaltyApplied': {
+    en: 'Penalty applied',
+    ru: 'Штраф применён',
+    uz: 'Jarima qo\'llanildi'
+  },
+  'visitRequests.penaltyLevel': {
+    en: 'User received level {level} penalty for no-show',
+    ru: 'Пользователь получил штраф уровня {level} за неявку',
+    uz: 'Foydalanuvchi kelmagan uchun {level}-darajali jarima oldi'
+  },
   'listProperty.requiredDocuments': {
     en: 'Required Documents',
     ru: 'Необходимые документы',
@@ -1414,16 +1701,6 @@ const translations: Translations = {
     en: 'Approve',
     ru: 'Одобрить',
     uz: 'Tasdiqlash'
-  },
-  'visitRequests.deny': {
-    en: 'Deny',
-    ru: 'Отклонить',
-    uz: 'Rad etish'
-  },
-  'visitRequests.leaveReview': {
-    en: 'Leave Review',
-    ru: 'Оставить отзыв',
-    uz: 'Sharh qoldirish'
   },
   'visitRequests.noRequests': {
     en: 'No visit requests yet.',
