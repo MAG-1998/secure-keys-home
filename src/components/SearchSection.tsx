@@ -270,19 +270,25 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 {t('search.halalBadge')}
               </Badge>
             )}
-            <div className={`flex items-center space-x-3 backdrop-blur-sm rounded-full px-4 py-2 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${
+            <div className={`neon-toggle-container flex items-center space-x-3 backdrop-blur-sm rounded-full px-4 py-2 transition-all duration-300 ${
               isHalalMode 
-                ? 'bg-orange-500/20 border border-orange-500/50 hover:border-orange-500/30' 
-                : 'bg-teal-400/20 border border-teal-400/50 hover:border-teal-400/30'
+                ? 'neon-toggle-active' 
+                : 'neon-toggle-inactive'
             }`}>
-              <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap cursor-pointer">
+              <Label htmlFor="halal-mode" className={`text-sm font-medium whitespace-nowrap cursor-pointer transition-all duration-300 ${
+                isHalalMode ? 'neon-text-orange' : 'neon-text-cyan'
+              }`}>
                 {t('search.halalMode')}
               </Label>
               <Switch
                 id="halal-mode"
                 checked={isHalalMode}
                 onCheckedChange={onHalalModeChange}
-                className="data-[state=checked]:bg-magit-trust data-[state=checked]:border-magit-trust dark:data-[state=checked]:border-white data-[state=unchecked]:border-border dark:data-[state=unchecked]:border-white/20 transition-all duration-200"
+                className={`transition-all duration-300 ${
+                  isHalalMode 
+                    ? 'data-[state=checked]:bg-[hsl(var(--neon-orange))] data-[state=checked]:border-[hsl(var(--neon-orange))] shadow-[0_0_10px_hsl(var(--neon-orange)/0.5)]' 
+                    : 'data-[state=unchecked]:bg-input data-[state=unchecked]:border-[hsl(var(--neon-cyan)/0.3)] shadow-[0_0_5px_hsl(var(--neon-cyan)/0.3)]'
+                }`}
               />
             </div>
           </div>
