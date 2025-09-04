@@ -1931,6 +1931,81 @@ const translations: Translations = {
     ru: 'Ошибка обновления профиля',
     uz: 'Profilni yangilashda xatolik'
   },
+  'profile.verificationPrompt': {
+    en: 'Complete identity verification to unlock all features and build trust with other users.',
+    ru: 'Завершите верификацию личности, чтобы разблокировать все функции и заслужить доверие других пользователей.',
+    uz: 'Barcha imkoniyatlarni ochish va boshqa foydalanuvchilar ishonchini qozonish uchun shaxsni tasdiqlovni tugallang.'
+  },
+  'profile.thisWeekVisits': {
+    en: "This Week's Visits",
+    ru: 'Визиты на этой неделе',
+    uz: 'Bu hafta tashrif'
+  },
+  'profile.visitsUsed': {
+    en: 'used',
+    ru: 'использовано',
+    uz: 'ishlatilgan'
+  },
+  'profile.freeVisitsLeft': {
+    en: 'Free Visits Left',
+    ru: 'Осталось бесплатных визитов',
+    uz: 'Bepul tashriflar qoldi'
+  },
+  'profile.oneFreeVisit': {
+    en: '1 free visit',
+    ru: '1 бесплатный визит',
+    uz: '1 bepul tashrif'
+  },
+  'profile.noFreeVisits': {
+    en: '0 free visits',
+    ru: '0 бесплатных визитов',
+    uz: '0 bepul tashrif'
+  },
+  'profile.visitRestricted': {
+    en: 'Your visit requests are currently restricted. Contact support for assistance.',
+    ru: 'Ваши запросы на посещение в настоящее время ограничены. Обратитесь в службу поддержки за помощью.',
+    uz: 'Sizning tashrif soʻrovlaringiz hozirda cheklangan. Yordam uchun qoʻllab-quvvatlash xizmatiga murojaat qiling.'
+  },
+  'profile.currentPlan': {
+    en: 'Current Plan: Free',
+    ru: 'Текущий план: Бесплатный',
+    uz: 'Joriy reja: Bepul'
+  },
+  'profile.planFeature1': {
+    en: '1 free visit request per week',
+    ru: '1 бесплатный запрос на визит в неделю',
+    uz: 'Haftada 1 bepul tashrif soʻrovi'
+  },
+  'profile.planFeature2': {
+    en: 'Up to 5 paid visits per week',
+    ru: 'До 5 платных визитов в неделю',
+    uz: 'Haftada 5 tagacha pullik tashrif'
+  },
+  'profile.planFeature3': {
+    en: 'Basic property search',
+    ru: 'Базовый поиск недвижимости',
+    uz: 'Asosiy uy qidiruvi'
+  },
+  'profile.premiumFeatures': {
+    en: 'Premium: Unlimited visits • Priority support • Advanced filters',
+    ru: 'Премиум: Неограниченные визиты • Приоритетная поддержка • Расширенные фильтры',
+    uz: 'Premium: Cheksiz tashriflar • Ustuvor qoʻllab-quvvatlash • Kengaytirilgan filtrlar'
+  },
+  'profile.emailNotificationsDesc': {
+    en: 'Receive updates about your listings and messages',
+    ru: 'Получайте обновления о ваших объявлениях и сообщениях',
+    uz: 'Eʼlonlaringiz va xabarlaringiz haqida yangilanishlarni oling'
+  },
+  'profile.privacySettingsDesc': {
+    en: 'Control who can see your profile information',
+    ru: 'Контролируйте, кто может видеть информацию вашего профиля',
+    uz: 'Profil maʼlumotlaringizni kim koʻra olishini nazorat qiling'
+  },
+  'profile.manage': {
+    en: 'Manage',
+    ru: 'Управлять',
+    uz: 'Boshqarish'
+  },
 
   // Dashboard Page
   'dashboard.welcome': {

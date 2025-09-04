@@ -318,7 +318,7 @@ const Profile = () => {
                       Verification Status: Pending
                     </h4>
                     <p className="text-sm text-yellow-700 dark:text-yellow-200 mt-1">
-                      Complete identity verification to unlock all features and build trust with other users.
+                      {t('profile.verificationPrompt')}
                     </p>
                   </div>
                 </div>
@@ -331,7 +331,7 @@ const Profile = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CalendarIcon className="w-5 h-5" />
-                Visit Limits & Plan
+                {t('profile.visitLimitsPlan')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -344,16 +344,16 @@ const Profile = () => {
                 <>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">This Week's Visits</span>
+                      <span className="text-sm font-medium">{t('profile.thisWeekVisits')}</span>
                       <Badge variant={freeVisitsUsed >= 5 ? "destructive" : "secondary"}>
-                        {freeVisitsUsed}/5 used
+                        {freeVisitsUsed}/5 {t('profile.visitsUsed')}
                       </Badge>
                     </div>
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Free Visits Left</span>
+                      <span className="text-sm font-medium">{t('profile.freeVisitsLeft')}</span>
                       <Badge variant={freeVisitsUsed === 0 ? "success" : "outline"}>
-                        {freeVisitsUsed === 0 ? "1 free visit" : "0 free visits"}
+                        {freeVisitsUsed === 0 ? t('profile.oneFreeVisit') : t('profile.noFreeVisits')}
                       </Badge>
                     </div>
 
@@ -361,7 +361,7 @@ const Profile = () => {
                       <Alert>
                         <AlertCircle className="h-4 w-4" />
                         <AlertDescription>
-                          Your visit requests are currently restricted. Contact support for assistance.
+                          {t('profile.visitRestricted')}
                         </AlertDescription>
                       </Alert>
                     )}
@@ -370,19 +370,19 @@ const Profile = () => {
                   <Separator />
 
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-sm">Current Plan: Free</h4>
+                    <h4 className="font-semibold text-sm">{t('profile.currentPlan')}</h4>
                     <div className="text-sm text-muted-foreground space-y-1">
-                      <p>• 1 free visit request per week</p>
-                      <p>• Up to 5 paid visits per week</p>
-                      <p>• Basic property search</p>
+                      <p>• {t('profile.planFeature1')}</p>
+                      <p>• {t('profile.planFeature2')}</p>
+                      <p>• {t('profile.planFeature3')}</p>
                     </div>
                     
                     <Button variant="outline" size="sm" className="w-full">
-                      Upgrade to Premium
+                      {t('profile.upgradePlan')}
                     </Button>
                     
                     <div className="text-xs text-muted-foreground">
-                      Premium: Unlimited visits • Priority support • Advanced filters
+                      {t('profile.premiumFeatures')}
                     </div>
                   </div>
                 </>
@@ -393,16 +393,16 @@ const Profile = () => {
           {/* Account Settings */}
           <Card>
             <CardHeader>
-              <CardTitle>Account Settings</CardTitle>
+              <CardTitle>{t('profile.accountSettings')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
                 <div>
-                  <h4 className="font-semibold">Email Notifications</h4>
-                  <p className="text-sm text-muted-foreground">Receive updates about your listings and messages</p>
+                  <h4 className="font-semibold">{t('profile.emailNotifications')}</h4>
+                  <p className="text-sm text-muted-foreground">{t('profile.emailNotificationsDesc')}</p>
                 </div>
                 <Button variant="outline" size="sm">
-                  Manage
+                  {t('profile.manage')}
                 </Button>
               </div>
               
@@ -410,11 +410,11 @@ const Profile = () => {
               
               <div className="flex justify-between items-center">
                 <div>
-                  <h4 className="font-semibold">Privacy Settings</h4>
-                  <p className="text-sm text-muted-foreground">Control who can see your profile information</p>
+                  <h4 className="font-semibold">{t('profile.privacySettings')}</h4>
+                  <p className="text-sm text-muted-foreground">{t('profile.privacySettingsDesc')}</p>
                 </div>
                 <Button variant="outline" size="sm">
-                  Manage
+                  {t('profile.manage')}
                 </Button>
               </div>
               
