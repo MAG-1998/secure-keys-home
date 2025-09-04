@@ -10,6 +10,47 @@ export function NotificationBell() {
   const navigate = useNavigate()
   const { t } = useTranslation()
 
+  const getNotificationTitle = (type: string) => {
+    // Map notification types to translation keys
+    const typeMap: Record<string, string> = {
+      'message:new': 'notification.message.new',
+      'message:reply': 'notification.message.reply',
+      'visit:new': 'notification.visit.new',
+      'visit:approved': 'notification.visit.approved',
+      'visit:denied': 'notification.visit.denied',
+      'visit:proposal': 'notification.visit.proposal',
+      'financing:assigned': 'notification.financing.assigned',
+      'financing:approved': 'notification.financing.approved',
+      'financing:rejected': 'notification.financing.rejected',
+      'financing:documents_required': 'notification.financing.documents_required',
+      'financing:under_review': 'notification.financing.under_review',
+      'property:verified': 'notification.property.verified',
+      'property:approved': 'notification.property.approved',
+      'property:sold': 'notification.property.sold',
+      'property:financing_listed': 'notification.property.financing_listed',
+      'saved:new': 'notification.saved.new'
+    }
+    
+    const key = typeMap[type]
+    return key ? t(key) : type
+  }
+
+  const getNotificationBody = (type: string) => {
+    // Map notification types to body translation keys
+    const bodyMap: Record<string, string> = {
+      'message:new': 'notification.body.message.new',
+      'visit:new': 'notification.body.visit.new',
+      'visit:approved': 'notification.body.visit.approved',
+      'visit:denied': 'notification.body.visit.denied',
+      'financing:assigned': 'notification.body.financing.assigned',
+      'financing:documents_required': 'notification.body.financing.documents_required',
+      'property:verified': 'notification.body.property.verified'
+    }
+    
+    const key = bodyMap[type]
+    return key ? t(key) : ''
+  }
+
   const goTo = (type: string, entityId: string | null) => {
     if (type.startsWith('message:')) return '/visit-requests'
     if (type.startsWith('visit:')) {
@@ -79,8 +120,12 @@ export function NotificationBell() {
             )}
             <div className={`mt-0.5 ${!n.read_at ? 'ml-2' : ''}`}>{iconFor(n.type)}</div>
             <div className="space-y-1">
-              <div className="text-sm font-medium text-foreground">{t(n.title) || n.title}</div>
-              {n.body && <div className="text-xs text-muted-foreground">{t(n.body) || n.body}</div>}
+              <div className="text-sm font-medium text-foreground">{getNotificationTitle(n.type)}</div>
+              {(getNotificationBody(n.type) || n.body) && (
+                <div className="text-xs text-muted-foreground">
+                  {getNotificationBody(n.type) || n.body}
+                </div>
+              )}
               <div className="text-[10px] text-muted-foreground">{new Date(n.created_at).toLocaleString()}</div>
             </div>
           </DropdownMenuItem>

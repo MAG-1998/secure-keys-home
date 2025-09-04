@@ -1100,6 +1100,125 @@ const translations: Translations = {
     uz: 'dan'
   },
 
+  // Notification types
+  'notification.message.new': {
+    en: 'New message',
+    ru: 'Новое сообщение',
+    uz: 'Yangi xabar'
+  },
+  'notification.message.reply': {
+    en: 'Message reply',
+    ru: 'Ответ на сообщение',
+    uz: 'Xabarga javob'
+  },
+  'notification.visit.new': {
+    en: 'New visit request',
+    ru: 'Новая заявка на просмотр',
+    uz: 'Yangi ko\'rish so\'rovi'
+  },
+  'notification.visit.approved': {
+    en: 'Visit approved',
+    ru: 'Просмотр одобрен',
+    uz: 'Ko\'rish tasdiqlandi'
+  },
+  'notification.visit.denied': {
+    en: 'Visit denied',
+    ru: 'Просмотр отклонен',
+    uz: 'Ko\'rish rad etildi'
+  },
+  'notification.visit.proposal': {
+    en: 'Alternative time proposed',
+    ru: 'Предложено альтернативное время',
+    uz: 'Muqobil vaqt taklif qilindi'
+  },
+  'notification.financing.assigned': {
+    en: 'Financing request assigned',
+    ru: 'Заявка на финансирование назначена',
+    uz: 'Moliyalashtirish so\'rovi tayinlandi'
+  },
+  'notification.financing.approved': {
+    en: 'Financing approved',
+    ru: 'Финансирование одобрено',
+    uz: 'Moliyalashtirish tasdiqlandi'
+  },
+  'notification.financing.rejected': {
+    en: 'Financing rejected',
+    ru: 'Финансирование отклонено',
+    uz: 'Moliyalashtirish rad etildi'
+  },
+  'notification.financing.documents_required': {
+    en: 'Documents required',
+    ru: 'Требуются документы',
+    uz: 'Hujjatlar talab qilinadi'
+  },
+  'notification.financing.under_review': {
+    en: 'Under review',
+    ru: 'На рассмотрении',
+    uz: 'Ko\'rib chiqilmoqda'
+  },
+  'notification.property.verified': {
+    en: 'Property verified',
+    ru: 'Недвижимость верифицирована',
+    uz: 'Mulk tasdiqlandi'
+  },
+  'notification.property.approved': {
+    en: 'Property approved',
+    ru: 'Недвижимость одобрена',
+    uz: 'Mulk tasdiqlandi'
+  },
+  'notification.property.sold': {
+    en: 'Property sold',
+    ru: 'Недвижимость продана',
+    uz: 'Mulk sotildi'
+  },
+  'notification.property.financing_listed': {
+    en: 'Property listed for financing',
+    ru: 'Недвижимость добавлена для финансирования',
+    uz: 'Mulk moliyalashtirish uchun qo\'shildi'
+  },
+  'notification.saved.new': {
+    en: 'Property saved',
+    ru: 'Недвижимость сохранена',
+    uz: 'Mulk saqlandi'
+  },
+
+  // Notification bodies
+  'notification.body.message.new': {
+    en: 'You have received a new message',
+    ru: 'Вы получили новое сообщение',
+    uz: 'Yangi xabar oldingiz'
+  },
+  'notification.body.visit.new': {
+    en: 'Someone wants to visit your property',
+    ru: 'Кто-то хочет посмотреть вашу недвижимость',
+    uz: 'Kimdir mulkingizni ko\'rishni xohlaydi'
+  },
+  'notification.body.visit.approved': {
+    en: 'Your visit request has been approved',
+    ru: 'Ваша заявка на просмотр одобрена',
+    uz: 'Ko\'rish so\'rovingiz tasdiqlandi'
+  },
+  'notification.body.visit.denied': {
+    en: 'Your visit request has been denied',
+    ru: 'Ваша заявка на просмотр отклонена',
+    uz: 'Ko\'rish so\'rovingiz rad etildi'
+  },
+  'notification.body.financing.assigned': {
+    en: 'Your financing request has been assigned to a specialist',
+    ru: 'Ваша заявка на финансирование назначена специалисту',
+    uz: 'Moliyalashtirish so\'rovingiz mutaxassisga tayinlandi'
+  },
+  'notification.body.financing.documents_required': {
+    en: 'Additional documents are required for your financing request',
+    ru: 'Для вашей заявки на финансирование требуются дополнительные документы',
+    uz: 'Moliyalashtirish so\'rovingiz uchun qo\'shimcha hujjatlar kerak'
+  },
+  'notification.body.property.verified': {
+    en: 'Your property has been successfully verified',
+    ru: 'Ваша недвижимость успешно верифицирована',
+    uz: 'Mulkingiz muvaffaqiyatli tasdiqlandi'
+  },
+
   // Visit and Alternative Time Offer translations
   'visit.alternativeTimeOffered': {
     en: 'Alternative Time Offered',
