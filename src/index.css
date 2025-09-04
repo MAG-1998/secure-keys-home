@@ -56,14 +56,6 @@ All colors MUST be HSL.
     /* Shadows */
     --shadow-soft: 0 4px 20px -4px hsl(25 12% 28% / 0.1);
     --shadow-warm: 0 8px 32px -8px hsl(35 25% 60% / 0.15);
-    
-    /* Neon Effects */
-    --neon-cyan: 180 100% 50%;
-    --neon-orange: 25 100% 60%;
-    --shadow-neon-cyan: 0 0 10px hsl(var(--neon-cyan) / 0.5), 0 0 20px hsl(var(--neon-cyan) / 0.3), 0 0 30px hsl(var(--neon-cyan) / 0.1);
-    --shadow-neon-orange: 0 0 10px hsl(var(--neon-orange) / 0.5), 0 0 20px hsl(var(--neon-orange) / 0.3), 0 0 30px hsl(var(--neon-orange) / 0.1);
-    --shadow-neon-pulse-cyan: 0 0 5px hsl(var(--neon-cyan) / 0.8), 0 0 15px hsl(var(--neon-cyan) / 0.4), 0 0 25px hsl(var(--neon-cyan) / 0.2);
-    --shadow-neon-pulse-orange: 0 0 5px hsl(var(--neon-orange) / 0.8), 0 0 15px hsl(var(--neon-orange) / 0.4), 0 0 25px hsl(var(--neon-orange) / 0.2);
 
     --sidebar-background: 0 0% 98%;
 
@@ -148,66 +140,5 @@ All colors MUST be HSL.
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 80px;
-  }
-}
-
-@layer components {
-  /* Neon Toggle Components */
-  .neon-toggle-container {
-    @apply relative;
-  }
-  
-  .neon-toggle-inactive {
-    background: hsl(var(--neon-cyan) / 0.1);
-    border: 1px solid hsl(var(--neon-cyan) / 0.3);
-    box-shadow: var(--shadow-neon-cyan);
-    animation: neon-pulse-cyan 2s ease-in-out infinite alternate;
-  }
-  
-  .neon-toggle-active {
-    background: hsl(var(--neon-orange) / 0.15);
-    border: 1px solid hsl(var(--neon-orange) / 0.4);
-    box-shadow: var(--shadow-neon-orange);
-    animation: neon-pulse-orange 2s ease-in-out infinite alternate;
-  }
-  
-  .neon-toggle-inactive:hover {
-    box-shadow: var(--shadow-neon-pulse-cyan);
-    transform: scale(1.05);
-    border-color: hsl(var(--neon-cyan) / 0.5);
-  }
-  
-  .neon-toggle-active:hover {
-    box-shadow: var(--shadow-neon-pulse-orange);
-    transform: scale(1.05);
-    border-color: hsl(var(--neon-orange) / 0.6);
-  }
-  
-  .neon-text-cyan {
-    color: hsl(var(--neon-cyan));
-    text-shadow: 0 0 5px hsl(var(--neon-cyan) / 0.5);
-  }
-  
-  .neon-text-orange {
-    color: hsl(var(--neon-orange));
-    text-shadow: 0 0 5px hsl(var(--neon-orange) / 0.5);
-  }
-}
-
-@keyframes neon-pulse-cyan {
-  0% {
-    box-shadow: var(--shadow-neon-cyan);
-  }
-  100% {
-    box-shadow: var(--shadow-neon-pulse-cyan);
-  }
-}
-
-@keyframes neon-pulse-orange {
-  0% {
-    box-shadow: var(--shadow-neon-orange);
-  }
-  100% {
-    box-shadow: var(--shadow-neon-pulse-orange);
   }
 }
