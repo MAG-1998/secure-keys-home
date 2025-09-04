@@ -1073,6 +1073,33 @@ const translations: Translations = {
     uz: 'Mening e\'lonim'
   },
 
+  // Notifications translations
+  'notifications.title': {
+    en: 'Notifications',
+    ru: 'Уведомления',
+    uz: 'Bildirishnomalar'
+  },
+  'notifications.markAllAsRead': {
+    en: 'Mark all as read',
+    ru: 'Отметить все как прочитанные',
+    uz: 'Barchasini o\'qilgan deb belgilash'
+  },
+  'notifications.allCaughtUp': {
+    en: 'You\'re all caught up!',
+    ru: 'Все уведомления прочитаны!',
+    uz: 'Siz hamma narsadan xabardorsiz!'
+  },
+  'notifications.showingLatest': {
+    en: 'Showing latest',
+    ru: 'Показаны последние',
+    uz: 'Eng so\'nggisi ko\'rsatilmoqda'
+  },
+  'notifications.of': {
+    en: 'of',
+    ru: 'из',
+    uz: 'dan'
+  },
+
   // Visit and Alternative Time Offer translations
   'visit.alternativeTimeOffered': {
     en: 'Alternative Time Offered',
@@ -1225,32 +1252,6 @@ const translations: Translations = {
     uz: 'So\'rovni bekor qilishda xatolik'
   },
 
-  // Notification translations
-  'notifications.notifications': {
-    en: 'Notifications',
-    ru: 'Уведомления',
-    uz: 'Bildirishnomalar'
-  },
-  'notifications.markAllRead': {
-    en: 'Mark all as read',
-    ru: 'Отметить все как прочитанные',
-    uz: 'Hammasini o\'qilgan deb belgilash'
-  },
-  'notifications.allCaughtUp': {
-    en: 'You\'re all caught up.',
-    ru: 'Вы ознакомились со всеми уведомлениями.',
-    uz: 'Barcha bildirishnomalarni ko\'rdingiz.'
-  },
-  'notifications.showingLatest': {
-    en: 'Showing latest',
-    ru: 'Показаны последние',
-    uz: 'Eng so\'nggisi ko\'rsatilmoqda'
-  },
-  'notifications.of': {
-    en: 'of',
-    ru: 'из',
-    uz: 'dan'
-  },
 
   // Payment methods translations
   'payment.selectMethod': {
