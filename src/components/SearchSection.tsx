@@ -272,8 +272,8 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
             )}
             <div className={`apple-glow-container flex items-center space-x-3 rounded-full px-4 py-2 ${
               isHalalMode 
-                ? 'apple-glow-active' 
-                : 'apple-glow-inactive'
+                ? 'apple-glow-active orange-shimmer' 
+                : 'apple-glow-inactive cyan-shimmer'
             }`}>
               <Label 
                 htmlFor="halal-mode" 
@@ -291,8 +291,8 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 onCheckedChange={onHalalModeChange}
                 className={`transition-all duration-300 ${
                   isHalalMode 
-                    ? 'apple-switch-cyan' 
-                    : 'apple-switch-orange'
+                    ? 'apple-switch-orange' 
+                    : 'apple-switch-cyan'
                 }`}
               />
             </div>

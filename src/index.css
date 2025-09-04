@@ -261,43 +261,101 @@ All colors MUST be HSL.
 .apple-glow-container::before {
   content: '';
   position: absolute;
-  inset: -4px;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
   border-radius: inherit;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    hsl(var(--glow-cyan) / 0.1) 50%,
-    transparent 70%
-  );
-  background-size: 200% 200%;
+  pointer-events: none;
   animation: apple-shimmer 3s ease-in-out infinite;
   z-index: -1;
 }
 
+.apple-glow-container.cyan-shimmer::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--glow-orange) / 0.4),
+    hsl(var(--glow-cyan) / 0.3),
+    hsl(var(--glow-orange) / 0.4),
+    transparent
+  );
+}
+
+.apple-glow-container.orange-shimmer::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--glow-cyan) / 0.4),
+    hsl(var(--glow-orange) / 0.3),
+    hsl(var(--glow-cyan) / 0.4),
+    transparent
+  );
+}
+
+/* Enhanced shimmer for light mode */
+:root .apple-glow-container.cyan-shimmer::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--glow-orange) / 0.6),
+    hsl(var(--glow-cyan) / 0.5),
+    hsl(var(--glow-orange) / 0.6),
+    transparent
+  );
+}
+
+:root .apple-glow-container.orange-shimmer::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--glow-cyan) / 0.6),
+    hsl(var(--glow-orange) / 0.5),
+    hsl(var(--glow-cyan) / 0.6),
+    transparent
+  );
+}
+
 .apple-glow-inactive {
-  background: hsl(var(--glow-orange) / 0.091);
-  border: 1px solid hsl(var(--glow-orange) / 0.339);
+  background: hsl(var(--glow-cyan) / 0.091);
+  border: 1px solid hsl(var(--glow-cyan) / 0.339);
   backdrop-filter: blur(22.6px);
-  animation: apple-breathe 3s ease-in-out infinite;
+  animation: apple-glow-pulse 4s ease-in-out infinite, apple-breathe 3s ease-in-out infinite;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 0 22.6px hsl(var(--glow-cyan) / 0.565),
+    0 0 45.2px hsl(var(--glow-cyan) / 0.339),
+    0 0 90.4px hsl(var(--glow-cyan) / 0.226);
 }
 
 .apple-glow-active {
-  background: hsl(var(--glow-cyan) / 0.056);
-  border: 1px solid hsl(var(--glow-cyan) / 0.226);
+  background: hsl(var(--glow-orange) / 0.056);
+  border: 1px solid hsl(var(--glow-orange) / 0.226);
   backdrop-filter: blur(22.6px);
-  animation: apple-breathe 3s ease-in-out infinite;
+  animation: apple-glow-pulse-orange 4s ease-in-out infinite, apple-breathe 3s ease-in-out infinite;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 0 22.6px hsl(var(--glow-orange) / 0.678),
+    0 0 45.2px hsl(var(--glow-orange) / 0.452),
+    0 0 90.4px hsl(var(--glow-orange) / 0.282);
 }
 
 .apple-glow-container:hover .apple-glow-inactive {
-  animation-duration: 1.5s;
+  animation-duration: 2s, 1.5s;
   transform: scale(1.05);
+  box-shadow: 
+    0 0 33.9px hsl(var(--glow-cyan) / var(--glow-intensity-high)),
+    0 0 67.8px hsl(var(--glow-cyan) / var(--glow-intensity-mid)),
+    0 0 135.6px hsl(var(--glow-cyan) / 0.452);
 }
 
 .apple-glow-container:hover .apple-glow-active {
-  animation-duration: 1.5s;
+  animation-duration: 2s, 1.5s;
   transform: scale(1.05);
+  box-shadow: 
+    0 0 33.9px hsl(var(--glow-orange) / var(--glow-intensity-high)),
+    0 0 67.8px hsl(var(--glow-orange) / var(--glow-intensity-mid)),
+    0 0 135.6px hsl(var(--glow-orange) / 0.452);
 }
 
 .apple-text-glow-cyan {
@@ -354,11 +412,17 @@ All colors MUST be HSL.
 .apple-switch-cyan {
   background: hsl(var(--glow-cyan) / 0.226) !important;
   border-color: hsl(var(--glow-cyan) / 0.452) !important;
+  box-shadow: 
+    0 0 16.95px hsl(var(--glow-cyan) / 0.339),
+    inset 0 0 11.3px hsl(var(--glow-cyan) / 0.113) !important;
 }
 
 .apple-switch-orange {
   background: hsl(var(--glow-orange) / 0.226) !important;
   border-color: hsl(var(--glow-orange) / 0.452) !important;
+  box-shadow: 
+    0 0 16.95px hsl(var(--glow-orange) / 0.339),
+    inset 0 0 11.3px hsl(var(--glow-orange) / 0.113) !important;
 }
 
 /* Reduced motion support */
