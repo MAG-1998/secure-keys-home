@@ -29,6 +29,255 @@ const translations: Translations = {
     uz: 'Mening uylarim'
   },
 
+  // Navigation
+  'nav.search': {
+    en: 'Search',
+    ru: 'Поиск',
+    uz: 'Qidiruv'
+  },
+  'nav.map': {
+    en: 'Map',
+    ru: 'Карта',
+    uz: 'Xarita'
+  },
+  'nav.features': {
+    en: 'Features',
+    ru: 'Возможности',
+    uz: 'Xususiyatlar'
+  },
+  'nav.financing': {
+    en: 'Financing',
+    ru: 'Финансирование',
+    uz: 'Moliyalashtirish'
+  },
+  'nav.home': {
+    en: 'Home',
+    ru: 'Главная',
+    uz: 'Bosh sahifa'
+  },
+  'nav.signIn': {
+    en: 'Sign In',
+    ru: 'Войти',
+    uz: 'Kirish'
+  },
+  'nav.getStarted': {
+    en: 'Get Started',
+    ru: 'Начать',
+    uz: 'Boshlash'
+  },
+
+  // Hero Section
+  'hero.badgeHalal': {
+    en: 'HALAL FINANCING',
+    ru: 'ХАЛЯЛЬНОЕ ФИНАНСИРОВАНИЕ',
+    uz: 'HALOL MOLIYALASHTIRISH'
+  },
+  'hero.badgeStandard': {
+    en: 'VERIFIED PROPERTIES',
+    ru: 'ПРОВЕРЕННАЯ НЕДВИЖИМОСТЬ',
+    uz: 'TEKSHIRILGAN MULKLAR'
+  },
+  'hero.buyLead': {
+    en: 'Buy',
+    ru: 'Купить',
+    uz: 'Sotib olish'
+  },
+  'hero.buyHighlight': {
+    en: 'verified homes',
+    ru: 'проверенные дома',
+    uz: 'tekshirilgan uylar'
+  },
+  'hero.subtitleHalal': {
+    en: 'Find your perfect home with Islamic financing that aligns with your values',
+    ru: 'Найдите свой идеальный дом с исламским финансированием, соответствующим вашим ценностям',
+    uz: 'Qadriyatlaringizga mos keladigan islomiy moliya bilan mukammal uyingizni toping'
+  },
+  'hero.subtitleStandard': {
+    en: 'Discover verified properties with transparent pricing and honest financing options',
+    ru: 'Откройте для себя проверенные объекты с прозрачным ценообразованием и честными вариантами финансирования',
+    uz: 'Shaffof narxlar va halol moliyalashtirish variantlari bilan tekshirilgan mulklarni kashf eting'
+  },
+  'hero.titleStandard': {
+    en: 'Find Your Perfect Home',
+    ru: 'Найди свой идеальный дом',
+    uz: 'Mukammal uyingizni toping'
+  },
+  'hero.verifiedHomes': {
+    en: 'Verified Homes',
+    ru: 'Проверенные дома',
+    uz: 'Tekshirilgan uylar'
+  },
+  'hero.financingHalal': {
+    en: 'Halal Financing',
+    ru: 'Халяльное финансирование',
+    uz: 'Halol moliyalashtirish'
+  },
+  'hero.financing': {
+    en: 'Honest Financing',
+    ru: 'Честное финансирование',
+    uz: 'Halol moliyalashtirish'
+  },
+  'hero.verified': {
+    en: 'Verified',
+    ru: 'Проверено',
+    uz: 'Tekshirilgan'
+  },
+  'hero.welcomeBack': {
+    en: 'Welcome back',
+    ru: 'Добро пожаловать',
+    uz: 'Xush kelibsiz'
+  },
+
+  // Features Section
+  'features.title': {
+    en: 'Why Choose Magit?',
+    ru: 'Почему выбирают Magit?',
+    uz: 'Nega Magitni tanlash kerak?'
+  },
+  'features.subtitle': {
+    en: 'Experience the difference with our comprehensive platform',
+    ru: 'Почувствуйте разницу с нашей комплексной платформой',
+    uz: 'Bizning keng qamrovli platforma bilan farqni his qiling'
+  },
+  'features.verified': {
+    en: 'Verified Properties',
+    ru: 'Проверенные объекты',
+    uz: 'Tekshirilgan mulklar'
+  },
+  'features.verifiedDesc': {
+    en: 'Every property is thoroughly verified for authenticity and quality',
+    ru: 'Каждый объект тщательно проверяется на подлинность и качество',
+    uz: 'Har bir mulk haqiqiyligi va sifati uchun sinchiklab tekshiriladi'
+  },
+  'features.halalFinancing': {
+    en: 'Halal Financing',
+    ru: 'Халяльное финансирование',
+    uz: 'Halol moliyalashtirish'
+  },
+  'features.halalDesc': {
+    en: 'Sharia-compliant financing options for ethical property purchases',
+    ru: 'Финансовые варианты, соответствующие шариату, для этичных покупок недвижимости',
+    uz: 'Axloqiy mulk xaridlari uchun shariat talablariga mos moliyalashtirish variantlari'
+  },
+  'features.map': {
+    en: 'Interactive Map',
+    ru: 'Интерактивная карта',
+    uz: 'Interaktiv xarita'
+  },
+  'features.mapDesc': {
+    en: 'Explore properties with our advanced map interface and location insights',
+    ru: 'Изучайте объекты с помощью нашего продвинутого интерфейса карты и данных о местоположении',
+    uz: 'Bizning ilg\'or xarita interfeysi va joylashuv ma\'lumotlari bilan mulklarni o\'rganing'
+  },
+  'features.community': {
+    en: 'Trusted Community',
+    ru: 'Доверенное сообщество',
+    uz: 'Ishonchli hamjamiyat'
+  },
+  'features.communityDesc': {
+    en: 'Join a community of verified buyers and sellers for secure transactions',
+    ru: 'Присоединяйтесь к сообществу проверенных покупателей и продавцов для безопасных сделок',
+    uz: 'Xavfsiz bitimlar uchun tekshirilgan xaridorlar va sotuvchilar hamjamiyatiga qo\'shiling'
+  },
+  'features.smartMatching': {
+    en: 'Smart Matching',
+    ru: 'Умный подбор',
+    uz: 'Aqlli moslashtirish'
+  },
+  'features.smartDesc': {
+    en: 'AI-powered property recommendations based on your preferences',
+    ru: 'Рекомендации объектов на основе ИИ согласно вашим предпочтениям',
+    uz: 'Sizning afzalliklaringiz asosida AI tomonidan tavsiya etilgan mulklar'
+  },
+  'features.secure': {
+    en: 'Secure Platform',
+    ru: 'Безопасная платформа',
+    uz: 'Xavfsiz platforma'
+  },
+  'features.secureDesc': {
+    en: 'Bank-level security with encrypted data and secure payment processing',
+    ru: 'Безопасность банковского уровня с шифрованием данных и безопасной обработкой платежей',
+    uz: 'Shifrlangan ma\'lumotlar va xavfsiz to\'lov ishlovchi bilan bank darajasidagi xavfsizlik'
+  },
+
+  // Stats Section
+  'stats.verifiedHomes': {
+    en: '10,000+ Verified Homes',
+    ru: '10,000+ проверенных домов',
+    uz: '10,000+ tekshirilgan uy'
+  },
+  'stats.trustRating': {
+    en: '4.9/5 Trust Rating',
+    ru: '4.9/5 рейтинг доверия',
+    uz: '4.9/5 ishonch reytingi'
+  },
+  'stats.interestRate': {
+    en: 'From 8% Interest Rate',
+    ru: 'От 8% процентной ставки',
+    uz: '8% dan foiz stavkasi'
+  },
+  'stats.support': {
+    en: '24/7 Support',
+    ru: '24/7 поддержка',
+    uz: '24/7 qo\'llab-quvvatlash'
+  },
+
+  // CTA Section
+  'cta.title': {
+    en: 'Ready to Find Your Dream Home?',
+    ru: 'Готовы найти дом своей мечты?',
+    uz: 'Orzuingizdagi uyni topishga tayyormisiz?'
+  },
+  'cta.subtitle': {
+    en: 'Join thousands of satisfied homeowners who found their perfect property through Magit',
+    ru: 'Присоединяйтесь к тысячам довольных домовладельцев, которые нашли свою идеальную недвижимость через Magit',
+    uz: 'Magit orqali mukammal mulkini topgan minglab mamnun uy egalariga qo\'shiling'
+  },
+  'cta.button': {
+    en: 'Get Started Today',
+    ru: 'Начать сегодня',
+    uz: 'Bugun boshlash'
+  },
+  'cta.learnMore': {
+    en: 'Learn More',
+    ru: 'Узнать больше',
+    uz: 'Ko\'proq bilish'
+  },
+
+  // Common elements
+  'common.verified': {
+    en: 'Verified',
+    ru: 'Проверено',
+    uz: 'Tekshirilgan'
+  },
+  'common.live': {
+    en: 'Live',
+    ru: 'В прямом эфире',
+    uz: 'Jonli'
+  },
+  'common.protected': {
+    en: 'Protected',
+    ru: 'Защищено',
+    uz: 'Himoyalangan'
+  },
+
+  // Dashboard specific
+  'dashboard.yourJourney': {
+    en: 'Your Property Journey',
+    ru: 'Ваш путь к недвижимости',
+    uz: 'Sizning mulk yo\'lingiz'
+  },
+  'dashboard.saved': {
+    en: 'Saved Properties',
+    ru: 'Сохранённые объекты',
+    uz: 'Saqlangan mulklar'
+  },
+  'dashboard.listed': {
+    en: 'Listed Properties',
+    ru: 'Размещённые объекты',
+    uz: 'Joylashtirilgan mulklar'
+  },
+
   // Dashboard Welcome & Main Actions  
   'dashboard.welcome': {
     en: 'Welcome to Magit',
@@ -237,31 +486,7 @@ const translations: Translations = {
     uz: 'Birinchi uyingizni joylash bilan boshlang'
   },
 
-  // Navigation fallbacks for compatibility
-  'nav.home': {
-    en: 'Home',
-    ru: 'Главная',
-    uz: 'Bosh sahifa'
-  },
-  'nav.signIn': {
-    en: 'Sign In',
-    ru: 'Войти',
-    uz: 'Kirish'
-  },
-  'nav.getStarted': {
-    en: 'Get Started',
-    ru: 'Начать',
-    uz: 'Boshlash'
-  },
-
-  // Hero fallbacks for compatibility
-  'hero.titleStandard': {
-    en: 'Find Your Perfect Home',
-    ru: 'Найди свой идеальный дом',
-    uz: 'Mukammal uyingizni toping'
-  },
-
-  // Minimal essential keys
+  // Essential keys
   'search.placeholder': {
     en: 'Search properties...',
     ru: 'Поиск недвижимости...',
