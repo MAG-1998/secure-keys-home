@@ -24,6 +24,7 @@ import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore";
 import { PropertyEditDialog } from "@/components/PropertyEditDialog";
 import { VisitLimitChecker } from "@/components/VisitLimitChecker";
 import { formatCurrency, calculateHalalFinancing } from "@/utils/halalFinancing";
+import { PriceOdometer } from "@/components/PriceOdometer";
 
 interface PropertyDetail {
   id: string;
@@ -471,13 +472,12 @@ const PropertyDetails = () => {
       if (cashAvailable > 0 && periodMonths > 0 && cashAvailable < property.price) {
         // Calculate the total property price including all fees
         const calculation = calculateHalalFinancing(cashAvailable, property.price, periodMonths);
-        const totalPropertyPrice = property.price + calculation.fixedFee + calculation.serviceFee + calculation.tax;
-        return `$${Math.round(totalPropertyPrice).toLocaleString()}`;
+        return property.price + calculation.fixedFee + calculation.serviceFee + calculation.tax;
       }
     }
     
     // Default to base property price
-    return `$${Math.round(property?.price || 0).toLocaleString()}`;
+    return property?.price || 0;
   }, [financingStore.isHalalMode, financingStore.cashAvailable, financingStore.periodMonths, property]);
 
   if (loading) {
@@ -602,19 +602,10 @@ const PropertyDetails = () => {
                      {property.bathrooms != null && (<span className="inline-flex items-center"><Bath className="h-4 w-4 mr-1" /> {property.bathrooms} {property.bathrooms === 1 ? t('property.bath') : t('property.baths')}</span>)}
                      {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} m²</span>)}
                   </div>
-                   <div className="text-3xl font-bold text-primary">
-                     {financingStore.isHalalMode && financingStore.cashAvailable && financingStore.periodMonths ? 
-                       (() => {
-                         const calculation = calculateHalalFinancing(
-                           parseFloat(financingStore.cashAvailable),
-                           property?.price || 0,
-                           parseInt(financingStore.periodMonths)
-                         );
-                         return formatCurrency(calculation.propertyPrice + calculation.serviceFee + calculation.fixedFee + calculation.tax);
-                       })() : 
-                       displayPrice
-                     }
-                   </div>
+                   <PriceOdometer 
+                     value={displayPrice}
+                     className="text-3xl font-bold text-primary"
+                   />
                   {property.description && (
                     <p className="text-foreground/80 leading-relaxed whitespace-pre-line">{property.description}</p>
                   )}
