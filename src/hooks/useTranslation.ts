@@ -43,6 +43,50 @@ const translations: Translations = {
     ru: 'Войти',
     uz: 'Kirish'
   },
+
+  // Property actions
+  'property.messageOwner': {
+    en: 'Message Owner',
+    ru: 'Написать владельцу',
+    uz: 'Egasiga xabar'
+  },
+  'property.reportProperty': {
+    en: 'Report Property',
+    ru: 'Пожаловаться',
+    uz: 'Mulkni bildiruv'
+  },
+  'property.totalPropertyPrice': {
+    en: 'Total Property Price:',
+    ru: 'Общая стоимость недвижимости:',
+    uz: 'Umumiy mulk narxi:'
+  },
+  'property.bed': {
+    en: 'bed',
+    ru: 'сп',
+    uz: 'kr'
+  },
+  'property.beds': {
+    en: 'beds',
+    ru: 'спд',
+    uz: 'krd'
+  },
+  'property.bath': {
+    en: 'bath',
+    ru: 'вн',
+    uz: 'va'
+  },
+  'property.baths': {
+    en: 'baths',
+    ru: 'вн',
+    uz: 'va'
+  },
+
+  // Halal financing
+  'halal.calculator': {
+    en: 'Halal Financing Calculator',
+    ru: 'Калькулятор халяльной рассрочки',
+    uz: 'Halol moliyalashtirish kalkulyatori'
+  },
   'nav.getStarted': {
     en: 'Get Started',
     ru: 'Начать',

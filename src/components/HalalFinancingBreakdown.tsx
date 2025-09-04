@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { calculateHalalFinancing, formatCurrency, getPeriodOptions } from "@/utils/halalFinancing"
 import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore"
+import { useTranslation } from "@/hooks/useTranslation"
 import { Calculator, FileText } from "lucide-react"
 
 interface HalalFinancingBreakdownProps {
@@ -28,6 +29,7 @@ export const HalalFinancingBreakdown = ({
   const [cashAmount, setCashAmount] = useState(initialCashAvailable)
   const [financingPeriod, setFinancingPeriod] = useState(initialPeriodMonths)
   const financingStore = useHalalFinancingStore()
+  const { t } = useTranslation()
 
   // Update state when initial values change (from URL params) - only on mount
   useEffect(() => {
@@ -69,7 +71,7 @@ export const HalalFinancingBreakdown = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calculator className="h-5 w-5 text-primary" />
-          Halal Financing Calculator
+          {t('halal.calculator')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -113,7 +115,7 @@ export const HalalFinancingBreakdown = ({
               
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Total Property Price:</span>
+                  <span className="text-muted-foreground">{t('property.totalPropertyPrice')}</span>
                   <span className="font-medium">{formatCurrency(calculation.propertyPrice! + calculation.serviceFee + calculation.fixedFee + calculation.tax)}</span>
                 </div>
                 <div className="flex justify-between">

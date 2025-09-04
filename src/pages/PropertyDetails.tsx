@@ -526,7 +526,7 @@ const PropertyDetails = () => {
               </>
             ) : (
               <Button variant="ghost" onClick={() => navigate('/auth')}>
-                Sign in
+                {t('nav.signIn')}
               </Button>
             )}
           </div>
@@ -591,9 +591,9 @@ const PropertyDetails = () => {
                     {property.is_halal_financed && (<Badge variant="trust">Halal Financing</Badge>)}
                   </div>
                   <div className="flex items-center gap-6 text-muted-foreground">
-                    {property.bedrooms != null && (<span className="inline-flex items-center"><Bed className="h-4 w-4 mr-1" /> {property.bedrooms} bed</span>)}
-                    {property.bathrooms != null && (<span className="inline-flex items-center"><Bath className="h-4 w-4 mr-1" /> {property.bathrooms} bath</span>)}
-                    {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} m²</span>)}
+                     {property.bedrooms != null && (<span className="inline-flex items-center"><Bed className="h-4 w-4 mr-1" /> {property.bedrooms} {property.bedrooms === 1 ? t('property.bed') : t('property.beds')}</span>)}
+                     {property.bathrooms != null && (<span className="inline-flex items-center"><Bath className="h-4 w-4 mr-1" /> {property.bathrooms} {property.bathrooms === 1 ? t('property.bath') : t('property.baths')}</span>)}
+                     {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} m²</span>)}
                   </div>
                   <div className="text-3xl font-bold text-primary">{displayPrice}</div>
                   {property.description && (
@@ -758,7 +758,7 @@ const PropertyDetails = () => {
 
                   <Card>
                     <CardContent className="p-6 space-y-3">
-                      <h3 className="font-semibold inline-flex items-center"><MessageCircle className="h-4 w-4 mr-2" /> Message owner</h3>
+                      <h3 className="font-semibold inline-flex items-center"><MessageCircle className="h-4 w-4 mr-2" /> {t('property.messageOwner')}</h3>
                       <div className="text-sm text-muted-foreground">{property.profiles?.full_name || property.profiles?.email}</div>
                       <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Write a message..." rows={4} />
                       <Button className="w-full" onClick={sendMessage}>Send Message</Button>
@@ -784,8 +784,8 @@ const PropertyDetails = () => {
                         className="w-full" 
                         onClick={() => setIsReportDialogOpen(true)}
                       >
-                        <Flag className="h-4 w-4 mr-2" />
-                        Report Property
+                         <Flag className="h-4 w-4 mr-2" />
+                         {t('property.reportProperty')}
                       </Button>
                     </CardContent>
                   </Card>
