@@ -273,7 +273,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
             <div className={`flex items-center space-x-3 backdrop-blur-sm rounded-full px-4 py-2 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${
               isHalalMode 
                 ? 'bg-orange-500/20 border border-orange-500/50 hover:border-orange-500/30' 
-                : 'bg-cyan-500/20 border border-cyan-500/50 hover:border-cyan-500/30'
+                : 'bg-teal-400/20 border border-teal-400/50 hover:border-teal-400/30'
             }`}>
               <Label htmlFor="halal-mode" className="text-sm font-medium whitespace-nowrap cursor-pointer">
                 {t('search.halalMode')}
