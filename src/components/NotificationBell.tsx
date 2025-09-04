@@ -79,8 +79,8 @@ export function NotificationBell() {
             )}
             <div className={`mt-0.5 ${!n.read_at ? 'ml-2' : ''}`}>{iconFor(n.type)}</div>
             <div className="space-y-1">
-              <div className="text-sm font-medium text-foreground">{n.title}</div>
-              {n.body && <div className="text-xs text-muted-foreground">{n.body}</div>}
+              <div className="text-sm font-medium text-foreground">{t(n.title) || n.title}</div>
+              {n.body && <div className="text-xs text-muted-foreground">{t(n.body) || n.body}</div>}
               <div className="text-[10px] text-muted-foreground">{new Date(n.created_at).toLocaleString()}</div>
             </div>
           </DropdownMenuItem>
