@@ -26,20 +26,27 @@ export const HalalFinancingBreakdown = ({
   initialCashAvailable = "",
   initialPeriodMonths = ""
 }: HalalFinancingBreakdownProps) => {
-  const [cashAmount, setCashAmount] = useState(initialCashAvailable)
-  const [financingPeriod, setFinancingPeriod] = useState(initialPeriodMonths)
   const financingStore = useHalalFinancingStore()
   const { t } = useTranslation()
+  
+  const [cashAmount, setCashAmount] = useState(() => {
+    // Initialize from store first, then fallback to props
+    return financingStore.cashAvailable || initialCashAvailable || "";
+  });
+  const [financingPeriod, setFinancingPeriod] = useState(() => {
+    // Initialize from store first, then fallback to props
+    return financingStore.periodMonths || initialPeriodMonths || "";
+  });
 
-  // Update state when initial values change (from URL params) - only on mount
+  // Sync with store values when they change (from other components)
   useEffect(() => {
-    if (initialCashAvailable && !cashAmount) {
-      setCashAmount(initialCashAvailable);
+    if (financingStore.cashAvailable !== cashAmount) {
+      setCashAmount(financingStore.cashAvailable);
     }
-    if (initialPeriodMonths && !financingPeriod) {
-      setFinancingPeriod(initialPeriodMonths);
+    if (financingStore.periodMonths !== financingPeriod) {
+      setFinancingPeriod(financingStore.periodMonths);
     }
-  }, []); // Empty dependency array to run only on mount
+  }, [financingStore.cashAvailable, financingStore.periodMonths]);
 
   const periodOptions = getPeriodOptions()
 
@@ -63,7 +70,14 @@ export const HalalFinancingBreakdown = ({
   const handleCashChange = (value: string) => {
     const sanitized = value.replace(/[^0-9.]/g, '');
     setCashAmount(sanitized);
+    // Update the store so other components can see the change
     financingStore.updateState({ cashAvailable: sanitized });
+  }
+
+  const handlePeriodChange = (value: string) => {
+    setFinancingPeriod(value);
+    // Update the store so other components can see the change
+    financingStore.updateState({ periodMonths: value });
   }
 
   return (
@@ -88,10 +102,7 @@ export const HalalFinancingBreakdown = ({
 
           <div>
             <Label htmlFor="financing-period">{t('halal.financingPeriod')}</Label>
-            <Select value={financingPeriod} onValueChange={(value) => {
-              setFinancingPeriod(value);
-              financingStore.updateState({ periodMonths: value });
-            }}>
+            <Select value={financingPeriod} onValueChange={handlePeriodChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('halal.selectPeriod')} />
               </SelectTrigger>
