@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Magit Brand Colors - Warm, Trustworthy, Modern */
-    --background: 35 15% 98%;
+    --background: 35 15% 88%;
     --foreground: 20 8% 15%;
 
     --card: 35 20% 99%;
@@ -277,9 +277,9 @@ All colors MUST be HSL.
   background: linear-gradient(
     90deg,
     transparent,
-    hsl(var(--glow-orange) / 0.4),
-    hsl(var(--glow-cyan) / 0.3),
-    hsl(var(--glow-orange) / 0.4),
+    hsl(var(--glow-orange) / 0.3),
+    hsl(var(--glow-cyan) / 0.2),
+    hsl(var(--glow-orange) / 0.3),
     transparent
   );
 }
@@ -288,9 +288,9 @@ All colors MUST be HSL.
   background: linear-gradient(
     90deg,
     transparent,
-    hsl(var(--glow-cyan) / 0.4),
-    hsl(var(--glow-orange) / 0.3),
-    hsl(var(--glow-cyan) / 0.4),
+    hsl(var(--glow-cyan) / 0.3),
+    hsl(var(--glow-orange) / 0.2),
+    hsl(var(--glow-cyan) / 0.3),
     transparent
   );
 }
@@ -300,9 +300,9 @@ All colors MUST be HSL.
   background: linear-gradient(
     90deg,
     transparent,
-    hsl(var(--glow-orange) / 0.6),
-    hsl(var(--glow-cyan) / 0.5),
-    hsl(var(--glow-orange) / 0.6),
+    hsl(var(--glow-orange) / 0.5),
+    hsl(var(--glow-cyan) / 0.4),
+    hsl(var(--glow-orange) / 0.5),
     transparent
   );
 }
@@ -311,9 +311,9 @@ All colors MUST be HSL.
   background: linear-gradient(
     90deg,
     transparent,
-    hsl(var(--glow-cyan) / 0.6),
-    hsl(var(--glow-orange) / 0.5),
-    hsl(var(--glow-cyan) / 0.6),
+    hsl(var(--glow-cyan) / 0.5),
+    hsl(var(--glow-orange) / 0.4),
+    hsl(var(--glow-cyan) / 0.5),
     transparent
   );
 }
