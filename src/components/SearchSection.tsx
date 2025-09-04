@@ -265,7 +265,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
             {isHalalMode && (
               <Badge 
                 variant="trust" 
-                className="text-xs whitespace-nowrap animate-fade-in hover:scale-105 transition-transform duration-200 shadow-md absolute top-full left-1/2 -translate-x-1/2 mt-2 sm:hidden block"
+                className="text-xs whitespace-nowrap animate-fade-in hover:scale-105 transition-transform duration-200 shadow-md absolute top-full left-1/2 -translate-x-1/2 mt-8 sm:hidden block"
               >
                 {t('search.halalBadge')}
               </Badge>
