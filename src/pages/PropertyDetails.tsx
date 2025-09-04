@@ -604,14 +604,20 @@ const PropertyDetails = () => {
                   </div>
                    <div className="text-3xl font-bold text-primary">
                      {financingStore.isHalalMode && financingStore.cashAvailable && financingStore.periodMonths ? 
-                       (() => {
-                         const calculation = calculateHalalFinancing(
-                           parseFloat(financingStore.cashAvailable),
-                           property?.price || 0,
-                           parseInt(financingStore.periodMonths)
-                         );
-                         return formatCurrency(calculation.propertyPrice + calculation.serviceFee + calculation.fixedFee + calculation.tax);
-                       })() : 
+                       useMemo(() => {
+                         const cashValue = parseFloat(financingStore.cashAvailable) || 0;
+                         const periodValue = parseInt(financingStore.periodMonths) || 0;
+                         
+                         if (cashValue > 0 && periodValue > 0 && cashValue < (property?.price || 0) && cashValue >= (0.5 * (property?.price || 0))) {
+                           const calculation = calculateHalalFinancing(
+                             cashValue,
+                             property?.price || 0,
+                             periodValue
+                           );
+                           return formatCurrency(calculation.propertyPrice + calculation.serviceFee + calculation.fixedFee + calculation.tax);
+                         }
+                         return displayPrice;
+                       }, [financingStore.cashAvailable, financingStore.periodMonths, property?.price, displayPrice]) : 
                        displayPrice
                      }
                    </div>
