@@ -3517,6 +3517,482 @@ const translations: Translations = {
     en: 'Start by listing your first property to connect with potential buyers.',
     ru: 'Начните с размещения вашего первого объявления для связи с потенциальными покупателями.',
     uz: 'Potentsial xaridorlar bilan bogʻlanish uchun birinchi uyingizni eʼlon qilishdan boshlang.'
+  },
+
+  // Admin Dashboard
+  'admin.dashboard.title': {
+    en: 'Admin Dashboard',
+    ru: 'Панель Админа',
+    uz: 'Admin Paneli'
+  },
+  'admin.dashboard.loading': {
+    en: 'Loading...',
+    ru: 'Загрузка...',
+    uz: 'Yuklanmoqda...'
+  },
+  'admin.dashboard.signOut': {
+    en: 'Sign Out',
+    ru: 'Выйти',
+    uz: 'Chiqish'
+  },
+  'admin.dashboard.tabs.users': {
+    en: 'Users & Roles',
+    ru: 'Пользователи и Роли',
+    uz: 'Foydalanuvchilar va Rollar'
+  },
+  'admin.dashboard.tabs.properties': {
+    en: 'Properties',
+    ru: 'Недвижимость',
+    uz: 'Mulklar'
+  },
+  'admin.dashboard.tabs.applications': {
+    en: 'Property Requests',
+    ru: 'Заявки на Недвижимость',
+    uz: 'Mulk So\'rovlari'
+  },
+  'admin.dashboard.tabs.financing': {
+    en: 'Financing',
+    ru: 'Финансирование',
+    uz: 'Moliyalashtirish'
+  },
+  'admin.dashboard.tabs.security': {
+    en: 'Security Audit',
+    ru: 'Аудит Безопасности',
+    uz: 'Xavfsizlik Auditi'
+  },
+  'admin.dashboard.users.title': {
+    en: 'User Management',
+    ru: 'Управление Пользователями',
+    uz: 'Foydalanuvchilarni Boshqarish'
+  },
+  'admin.dashboard.users.name': {
+    en: 'Name',
+    ru: 'Имя',
+    uz: 'Ism'
+  },
+  'admin.dashboard.users.email': {
+    en: 'Email',
+    ru: 'Email',
+    uz: 'Email'
+  },
+  'admin.dashboard.users.role': {
+    en: 'Role',
+    ru: 'Роль',
+    uz: 'Rol'
+  },
+  'admin.dashboard.users.joinedDate': {
+    en: 'Joined Date',
+    ru: 'Дата Регистрации',
+    uz: 'Qo\'shilgan Sana'
+  },
+  'admin.dashboard.users.actions': {
+    en: 'Actions',
+    ru: 'Действия',
+    uz: 'Amallar'
+  },
+  'admin.dashboard.users.changeRole': {
+    en: 'Change Role',
+    ru: 'Изменить Роль',
+    uz: 'Rolni O\'zgartirish'
+  },
+  'admin.dashboard.users.deleteUser': {
+    en: 'Delete User',
+    ru: 'Удалить Пользователя',
+    uz: 'Foydalanuvchini O\'chirish'
+  },
+  'admin.dashboard.users.roleUser': {
+    en: 'User',
+    ru: 'Пользователь',
+    uz: 'Foydalanuvchi'
+  },
+  'admin.dashboard.users.roleModerator': {
+    en: 'Moderator',
+    ru: 'Модератор',
+    uz: 'Moderator'
+  },
+  'admin.dashboard.users.roleAdmin': {
+    en: 'Admin',
+    ru: 'Админ',
+    uz: 'Admin'
+  },
+  'admin.dashboard.users.confirmDelete': {
+    en: 'Are you sure you want to delete this user account? This action cannot be undone.',
+    ru: 'Вы уверены, что хотите удалить этот аккаунт пользователя? Это действие нельзя отменить.',
+    uz: 'Ushbu foydalanuvchi hisobini o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.'
+  },
+  'admin.dashboard.properties.title': {
+    en: 'Property Management',
+    ru: 'Управление Недвижимостью',
+    uz: 'Mulklarni Boshqarish'
+  },
+  'admin.dashboard.properties.propertyTitle': {
+    en: 'Title',
+    ru: 'Название',
+    uz: 'Sarlavha'
+  },
+  'admin.dashboard.properties.location': {
+    en: 'Location',
+    ru: 'Местоположение',
+    uz: 'Joylashuv'
+  },
+  'admin.dashboard.properties.price': {
+    en: 'Price',
+    ru: 'Цена',
+    uz: 'Narx'
+  },
+  'admin.dashboard.properties.owner': {
+    en: 'Owner',
+    ru: 'Владелец',
+    uz: 'Egasi'
+  },
+  'admin.dashboard.properties.status': {
+    en: 'Status',
+    ru: 'Статус',
+    uz: 'Holat'
+  },
+  'admin.dashboard.properties.halalStatus': {
+    en: 'Halal Status',
+    ru: 'Халал Статус',
+    uz: 'Halol Holati'
+  },
+  'admin.dashboard.properties.statusActive': {
+    en: 'Active',
+    ru: 'Активная',
+    uz: 'Faol'
+  },
+  'admin.dashboard.properties.statusSuspended': {
+    en: 'Suspended',
+    ru: 'Приостановлена',
+    uz: 'To\'xtatilgan'
+  },
+  'admin.dashboard.properties.statusPending': {
+    en: 'Pending',
+    ru: 'Ожидает',
+    uz: 'Kutilmoqda'
+  },
+  'admin.dashboard.properties.halalApproved': {
+    en: 'Halal Approved',
+    ru: 'Халал Одобрено',
+    uz: 'Halol Tasdiqlangan'
+  },
+  'admin.dashboard.properties.halalNotApproved': {
+    en: 'Halal Not Approved',
+    ru: 'Халал Не Одобрено',
+    uz: 'Halol Tasdiqlanmagan'
+  },
+  'admin.dashboard.applications.title': {
+    en: 'Property Applications',
+    ru: 'Заявки на Недвижимость',
+    uz: 'Mulk Arizalari'
+  },
+  'admin.dashboard.applications.subtitle': {
+    en: 'Review and manage property listings awaiting approval',
+    ru: 'Рассмотрение и управление объявлениями, ожидающими одобрения',
+    uz: 'Tasdiqlashni kutayotgan mulk e\'lonlarini ko\'rib chiqish va boshqarish'
+  },
+  'admin.dashboard.applications.applicant': {
+    en: 'Applicant',
+    ru: 'Заявитель',
+    uz: 'Ariza beruvchi'
+  },
+  'admin.dashboard.applications.submittedDate': {
+    en: 'Submitted Date',
+    ru: 'Дата Подачи',
+    uz: 'Taqdim etilgan Sana'
+  },
+  'admin.dashboard.applications.approve': {
+    en: 'Approve',
+    ru: 'Одобрить',
+    uz: 'Tasdiqlash'
+  },
+  'admin.dashboard.applications.reject': {
+    en: 'Reject',
+    ru: 'Отклонить',
+    uz: 'Rad etish'
+  },
+  'admin.dashboard.applications.delete': {
+    en: 'Delete',
+    ru: 'Удалить',
+    uz: 'O\'chirish'
+  },
+  'admin.dashboard.applications.viewDetails': {
+    en: 'View Details',
+    ru: 'Просмотр Деталей',
+    uz: 'Tafsilotlarni Ko\'rish'
+  },
+  'admin.dashboard.applications.pendingApplications': {
+    en: 'Pending Applications',
+    ru: 'Ожидающие Заявки',
+    uz: 'Kutilayotgan Arizalar'
+  },
+  'admin.dashboard.applications.approvedApplications': {
+    en: 'Approved Applications',
+    ru: 'Одобренные Заявки',
+    uz: 'Tasdiqlangan Arizalar'
+  },
+  'admin.dashboard.applications.rejectedApplications': {
+    en: 'Rejected Applications',
+    ru: 'Отклоненные Заявки',
+    uz: 'Rad etilgan Arizalar'
+  },
+  'admin.dashboard.financing.title': {
+    en: 'Financing Management',
+    ru: 'Управление Финансированием',
+    uz: 'Moliyalashtirishni Boshqarish'
+  },
+  'admin.dashboard.financing.subtitle': {
+    en: 'Comprehensive financing workflow management',
+    ru: 'Комплексное управление рабочим процессом финансирования',
+    uz: 'Moliyalashtirish ish jarayonini keng qamrovli boshqarish'
+  },
+  'admin.dashboard.financing.description': {
+    en: 'This section provides an overview of the financing workflow. Requests move through multiple stages from initial submission to final approval.',
+    ru: 'Этот раздел предоставляет обзор рабочего процесса финансирования. Заявки проходят через несколько этапов от первоначальной подачи до окончательного одобрения.',
+    uz: 'Ushbu bo\'lim moliyalashtirish ish jarayonining umumiy ko\'rinishini taqdim etadi. So\'rovlar dastlabki taqdim etishdan yakuniy tasdiqlashgacha bir necha bosqichlardan o\'tadi.'
+  },
+  'admin.dashboard.financing.viewDashboard': {
+    en: 'View Financing Dashboard',
+    ru: 'Просмотреть Панель Финансирования',
+    uz: 'Moliyalashtirish Panelini Ko\'rish'
+  },
+  'admin.dashboard.security.title': {
+    en: 'Security Audit',
+    ru: 'Аудит Безопасности',
+    uz: 'Xavfsizlik Auditi'
+  },
+  'admin.dashboard.security.subtitle': {
+    en: 'Review database security and access controls',
+    ru: 'Проверка безопасности базы данных и контроля доступа',
+    uz: 'Ma\'lumotlar bazasi xavfsizligi va kirish nazoratini ko\'rib chiqish'
+  },
+
+  // Admin Financing
+  'admin.financing.title': {
+    en: 'Financing Requests',
+    ru: 'Заявки на Финансирование',
+    uz: 'Moliyalashtirish So\'rovlari'
+  },
+  'admin.financing.subtitle': {
+    en: 'Financing Requests Management',
+    ru: 'Управление Заявками на Финансирование',
+    uz: 'Moliyalashtirish So\'rovlarini Boshqarish'
+  },
+  'admin.financing.backToDashboard': {
+    en: 'Admin Dashboard',
+    ru: 'Панель Админа',
+    uz: 'Admin Paneli'
+  },
+  'admin.financing.backToList': {
+    en: 'Back to List',
+    ru: 'Назад к Списку',
+    uz: 'Ro\'yxatga Qaytish'
+  },
+  'admin.financing.loading': {
+    en: 'Loading financing requests...',
+    ru: 'Загрузка заявок на финансирование...',
+    uz: 'Moliyalashtirish so\'rovlari yuklanmoqda...'
+  },
+  'admin.financing.details': {
+    en: 'Financing Request Details',
+    ru: 'Детали Заявки на Финансирование',
+    uz: 'Moliyalashtirish So\'rovi Tafsilotlari'
+  },
+  'admin.financing.empty': {
+    en: 'No Financing Requests',
+    ru: 'Нет Заявок на Финансирование',
+    uz: 'Moliyalashtirish So\'rovlari Yo\'q'
+  },
+  'admin.financing.emptyFiltered': {
+    en: 'No Matching Requests',
+    ru: 'Нет Подходящих Заявок',
+    uz: 'Mos So\'rovlar Yo\'q'
+  },
+  'admin.financing.emptyDescription': {
+    en: 'Financing requests will appear here when users apply.',
+    ru: 'Заявки на финансирование будут отображаться здесь, когда пользователи подадут заявки.',
+    uz: 'Foydalanuvchilar ariza berganlarida moliyalashtirish so\'rovlari bu yerda ko\'rinadi.'
+  },
+  'admin.financing.emptyFilteredDescription': {
+    en: 'Try adjusting your search or filter criteria.',
+    ru: 'Попробуйте скорректировать критерии поиска или фильтра.',
+    uz: 'Qidiruv yoki filtr mezonlarini sozlashga harakat qiling.'
+  },
+  'admin.financing.search': {
+    en: 'Search by property, location, or applicant...',
+    ru: 'Поиск по недвижимости, местоположению или заявителю...',
+    uz: 'Mulk, joylashuv yoki ariza beruvchi bo\'yicha qidirish...'
+  },
+  'admin.financing.filterByStage': {
+    en: 'Filter by stage',
+    ru: 'Фильтр по этапу',
+    uz: 'Bosqich bo\'yicha filtr'
+  },
+  'admin.financing.allStages': {
+    en: 'All Stages',
+    ru: 'Все Этапы',
+    uz: 'Barcha Bosqichlar'
+  },
+  'admin.financing.property': {
+    en: 'Property',
+    ru: 'Недвижимость',
+    uz: 'Mulk'
+  },
+  'admin.financing.applicant': {
+    en: 'Applicant',
+    ru: 'Заявитель',
+    uz: 'Ariza beruvchi'
+  },
+  'admin.financing.amount': {
+    en: 'Amount',
+    ru: 'Сумма',
+    uz: 'Miqdor'
+  },
+  'admin.financing.workflowProgress': {
+    en: 'Workflow Progress',
+    ru: 'Прогресс Рабочего Процесса',
+    uz: 'Ish Jarayoni Taraqqiyoti'
+  },
+  'admin.financing.updated': {
+    en: 'Updated',
+    ru: 'Обновлено',
+    uz: 'Yangilangan'
+  },
+  'admin.financing.stageSubmitted': {
+    en: 'Submitted',
+    ru: 'Подано',
+    uz: 'Taqdim etilgan'
+  },
+  'admin.financing.stageAssigned': {
+    en: 'Assigned',
+    ru: 'Назначено',
+    uz: 'Tayinlangan'
+  },
+  'admin.financing.stageDocuments': {
+    en: 'Documents',
+    ru: 'Документы',
+    uz: 'Hujjatlar'
+  },
+  'admin.financing.stageUnderReview': {
+    en: 'Under Review',
+    ru: 'На Рассмотрении',
+    uz: 'Ko\'rib chiqilmoqda'
+  },
+  'admin.financing.stageFinalApproval': {
+    en: 'Final Approval',
+    ru: 'Окончательное Одобрение',
+    uz: 'Yakuniy Tasdiqlash'
+  },
+  'admin.financing.stageApproved': {
+    en: 'Approved',
+    ru: 'Одобрено',
+    uz: 'Tasdiqlangan'
+  },
+  'admin.financing.stageDenied': {
+    en: 'Denied',
+    ru: 'Отклонено',
+    uz: 'Rad etilgan'
+  },
+  'admin.financing.viewDetails': {
+    en: 'View Details',
+    ru: 'Просмотр Деталей',
+    uz: 'Tafsilotlarni Ko\'rish'
+  },
+  'admin.financing.quickDeny': {
+    en: 'Quick Deny',
+    ru: 'Быстро Отклонить',
+    uz: 'Tez Rad etish'
+  },
+  'admin.financing.deleteTitle': {
+    en: 'Delete Financing Request',
+    ru: 'Удалить Заявку на Финансирование',
+    uz: 'Moliyalashtirish So\'rovini O\'chirish'
+  },
+  'admin.financing.deleteDescription': {
+    en: 'Are you sure you want to permanently delete this financing request? This action cannot be undone.',
+    ru: 'Вы уверены, что хотите навсегда удалить эту заявку на финансирование? Это действие нельзя отменить.',
+    uz: 'Ushbu moliyalashtirish so\'rovini butunlay o\'chirishni xohlaysizmi? Bu amalni bekor qilib bo\'lmaydi.'
+  },
+  'admin.financing.deleteConfirm': {
+    en: 'Delete Request',
+    ru: 'Удалить Заявку',
+    uz: 'So\'rovni O\'chirish'
+  },
+  'admin.financing.denyTitle': {
+    en: 'Deny Financing Request',
+    ru: 'Отклонить Заявку на Финансирование',
+    uz: 'Moliyalashtirish So\'rovini Rad etish'
+  },
+  'admin.financing.denyDescription': {
+    en: 'Please provide a reason for denying this financing request:',
+    ru: 'Пожалуйста, укажите причину отклонения этой заявки на финансирование:',
+    uz: 'Ushbu moliyalashtirish so\'rovini rad etish sababini ko\'rsating:'
+  },
+  'admin.financing.denyReason': {
+    en: 'Enter denial reason...',
+    ru: 'Введите причину отклонения...',
+    uz: 'Rad etish sababini kiriting...'
+  },
+  'admin.financing.denyConfirm': {
+    en: 'Deny Request',
+    ru: 'Отклонить Заявку',
+    uz: 'So\'rovni Rad etish'
+  },
+
+  // District Review Panel
+  'admin.districts.title': {
+    en: 'District review (manual)',
+    ru: 'Обзор районов (ручной)',
+    uz: 'Tumanlarni ko\'rib chiqish (qo\'lda)'
+  },
+  'admin.districts.limit': {
+    en: 'Limit',
+    ru: 'Лимит',
+    uz: 'Cheklov'
+  },
+  'admin.districts.scanSuggestions': {
+    en: 'Scan suggestions',
+    ru: 'Сканировать предложения',
+    uz: 'Takliflarni skanerlash'
+  },
+  'admin.districts.scanning': {
+    en: 'Scanning…',
+    ru: 'Сканирование…',
+    uz: 'Skanerlanmoqda…'
+  },
+  'admin.districts.noSuggestions': {
+    en: 'No suggestions yet. Run a scan to preview districts without auto-changing.',
+    ru: 'Пока нет предложений. Запустите сканирование для предварительного просмотра районов без автоматического изменения.',
+    uz: 'Hozircha takliflar yo\'q. Avtomatik o\'zgartirishsiz tumanlarni oldindan ko\'rish uchun skanerlashni ishga tushiring.'
+  },
+  'admin.districts.property': {
+    en: 'Property',
+    ru: 'Недвижимость',
+    uz: 'Mulk'
+  },
+  'admin.districts.current': {
+    en: 'Current',
+    ru: 'Текущий',
+    uz: 'Joriy'
+  },
+  'admin.districts.suggested': {
+    en: 'Suggested',
+    ru: 'Предлагаемый',
+    uz: 'Taklif qilingan'
+  },
+  'admin.districts.via': {
+    en: 'via',
+    ru: 'через',
+    uz: 'orqali'
+  },
+  'admin.districts.apply': {
+    en: 'Apply',
+    ru: 'Применить',
+    uz: 'Qo\'llash'
+  },
+  'admin.districts.applying': {
+    en: 'Applying…',
+    ru: 'Применение…',
+    uz: 'Qo\'llanmoqda…'
   }
 };
 

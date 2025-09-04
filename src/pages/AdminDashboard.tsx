@@ -15,6 +15,7 @@ import { Shield, Users, Home, Settings, UserCheck, UserX, LogOut, Banknote } fro
 import SecurityAuditPanel from "@/components/SecurityAuditPanel";
 import { forceLocalSignOut } from "@/lib/auth";
 import DistrictReviewPanel from "@/components/admin/DistrictReviewPanel";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface UserWithRole {
   id: string;
@@ -491,7 +492,7 @@ export default function AdminDashboard() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return <div className="flex items-center justify-center min-h-screen">{t('admin.dashboard.loading')}</div>;
   }
 
   return (
