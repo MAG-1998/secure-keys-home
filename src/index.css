@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Magit Brand Colors - Warm, Trustworthy, Modern */
-    --background: 35 15% 88%;
+    --background: 35 15% 98%;
     --foreground: 20 8% 15%;
 
     --card: 35 20% 99%;
@@ -324,6 +324,15 @@ All colors MUST be HSL.
   backdrop-filter: blur(22.6px);
   animation: apple-glow-pulse 4s ease-in-out infinite, apple-breathe 3s ease-in-out infinite;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Light mode toggle background override */
+:root .apple-glow-inactive {
+  background: hsl(35 15% 88%);
+}
+
+:root .apple-glow-active {
+  background: hsl(35 15% 88%);
 }
 
 /* Dark mode glow effects */
