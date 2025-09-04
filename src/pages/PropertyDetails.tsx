@@ -54,7 +54,7 @@ const PropertyDetails = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useUser();
-  const { language, setLanguage } = useTranslation();
+  const { language, setLanguage, t } = useTranslation();
   const [searchParams] = useSearchParams();
   const financingStore = useHalalFinancingStore();
 
@@ -468,17 +468,10 @@ const PropertyDetails = () => {
     userRole === 'moderator'
   );
 
-  // Calculate display price based on halal mode and URL parameters
+  // Display the actual property price - never change the property price based on financing
   const displayPrice = useMemo(() => {
-    if (financingStore.isHalalMode && financingStore.cashAvailable && financingStore.periodMonths && property) {
-      const cashAvailable = parseFloat(financingStore.cashAvailable);
-      const periodMonths = parseInt(financingStore.periodMonths);
-      const calculation = calculateHalalFinancing(cashAvailable, property.price, periodMonths);
-      const totalPropertyPrice = property.price + calculation.fixedFee + calculation.serviceFee + calculation.tax;
-      return `$${Math.round(totalPropertyPrice).toLocaleString()}`;
-    }
     return `$${Math.round(property?.price || 0).toLocaleString()}`;
-  }, [financingStore.isHalalMode, financingStore.cashAvailable, financingStore.periodMonths, property]);
+  }, [property?.price]);
 
   if (loading) {
     return (
