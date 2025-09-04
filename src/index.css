@@ -278,60 +278,51 @@ All colors MUST be HSL.
   background: hsl(var(--glow-orange) / 0.091);
   border: 1px solid hsl(var(--glow-orange) / 0.339);
   backdrop-filter: blur(22.6px);
-  animation: apple-glow-pulse-orange 4s ease-in-out infinite, apple-breathe 3s ease-in-out infinite;
+  animation: apple-breathe 3s ease-in-out infinite;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 0 22.6px hsl(var(--glow-orange) / 0.565),
-    0 0 45.2px hsl(var(--glow-orange) / 0.339),
-    0 0 90.4px hsl(var(--glow-orange) / 0.226);
 }
 
 .apple-glow-active {
   background: hsl(var(--glow-cyan) / 0.056);
   border: 1px solid hsl(var(--glow-cyan) / 0.226);
   backdrop-filter: blur(22.6px);
-  animation: apple-glow-pulse 4s ease-in-out infinite, apple-breathe 3s ease-in-out infinite;
+  animation: apple-breathe 3s ease-in-out infinite;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 0 22.6px hsl(var(--glow-cyan) / 0.678),
-    0 0 45.2px hsl(var(--glow-cyan) / 0.452),
-    0 0 90.4px hsl(var(--glow-cyan) / 0.282);
 }
 
 .apple-glow-container:hover .apple-glow-inactive {
-  animation-duration: 2s, 1.5s;
+  animation-duration: 1.5s;
   transform: scale(1.05);
-  box-shadow: 
-    0 0 33.9px hsl(var(--glow-orange) / var(--glow-intensity-high)),
-    0 0 67.8px hsl(var(--glow-orange) / var(--glow-intensity-mid)),
-    0 0 135.6px hsl(var(--glow-orange) / 0.452);
 }
 
 .apple-glow-container:hover .apple-glow-active {
-  animation-duration: 2s, 1.5s;
+  animation-duration: 1.5s;
   transform: scale(1.05);
-  box-shadow: 
-    0 0 33.9px hsl(var(--glow-cyan) / var(--glow-intensity-high)),
-    0 0 67.8px hsl(var(--glow-cyan) / var(--glow-intensity-mid)),
-    0 0 135.6px hsl(var(--glow-cyan) / 0.452);
 }
 
 .apple-text-glow-cyan {
+  transition: all 0.3s ease;
+}
+
+.apple-text-glow-orange {
+  transition: all 0.3s ease;
+}
+
+/* Dark mode styling for text */
+.dark .apple-text-glow-cyan {
   color: hsl(var(--glow-cyan));
   text-shadow: 
     0 0 11.3px hsl(var(--glow-cyan) / 0.678),
     0 0 22.6px hsl(var(--glow-cyan) / 0.339),
     0 0 33.9px hsl(var(--glow-cyan) / 0.226);
-  transition: all 0.3s ease;
 }
 
-.apple-text-glow-orange {
+.dark .apple-text-glow-orange {
   color: hsl(var(--glow-orange));
   text-shadow: 
     0 0 11.3px hsl(var(--glow-orange) / 0.678),
     0 0 22.6px hsl(var(--glow-orange) / 0.339),
     0 0 33.9px hsl(var(--glow-orange) / 0.226);
-  transition: all 0.3s ease;
 }
 
 /* Theme-aware text contrast for better visibility */
@@ -363,17 +354,11 @@ All colors MUST be HSL.
 .apple-switch-cyan {
   background: hsl(var(--glow-cyan) / 0.226) !important;
   border-color: hsl(var(--glow-cyan) / 0.452) !important;
-  box-shadow: 
-    0 0 16.95px hsl(var(--glow-cyan) / 0.339),
-    inset 0 0 11.3px hsl(var(--glow-cyan) / 0.113) !important;
 }
 
 .apple-switch-orange {
   background: hsl(var(--glow-orange) / 0.226) !important;
   border-color: hsl(var(--glow-orange) / 0.452) !important;
-  box-shadow: 
-    0 0 16.95px hsl(var(--glow-orange) / 0.339),
-    inset 0 0 11.3px hsl(var(--glow-orange) / 0.113) !important;
 }
 
 /* Reduced motion support */

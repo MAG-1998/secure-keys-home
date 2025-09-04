@@ -279,8 +279,8 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 htmlFor="halal-mode" 
                 className={`text-sm font-medium whitespace-nowrap cursor-pointer transition-all duration-300 text-theme-contrast ${
                   isHalalMode 
-                    ? 'apple-text-glow-cyan' 
-                    : 'apple-text-glow-orange'
+                    ? 'apple-text-glow-orange' 
+                    : 'apple-text-glow-cyan'
                 }`}
               >
                 {t('search.halalMode')}
