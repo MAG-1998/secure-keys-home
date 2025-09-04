@@ -277,10 +277,10 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
             }`}>
               <Label 
                 htmlFor="halal-mode" 
-                className={`text-sm font-medium whitespace-nowrap cursor-pointer transition-all duration-300 ${
+                className={`text-sm font-medium whitespace-nowrap cursor-pointer transition-all duration-300 text-theme-contrast ${
                   isHalalMode 
-                    ? 'apple-text-glow-orange' 
-                    : 'apple-text-glow-cyan'
+                    ? 'apple-text-glow-cyan' 
+                    : 'apple-text-glow-orange'
                 }`}
               >
                 {t('search.halalMode')}
@@ -291,8 +291,8 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 onCheckedChange={onHalalModeChange}
                 className={`transition-all duration-300 ${
                   isHalalMode 
-                    ? 'apple-switch-orange' 
-                    : 'apple-switch-cyan'
+                    ? 'apple-switch-cyan' 
+                    : 'apple-switch-orange'
                 }`}
               />
             </div>
