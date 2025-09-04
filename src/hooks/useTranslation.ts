@@ -399,6 +399,431 @@ const translations: Translations = {
     uz: 'Hammasi'
   },
 
+  // ListProperty page
+  'listProperty.title': {
+    en: 'List Property',
+    ru: 'Добавить объект',
+    uz: 'Mulk qo\'shish'
+  },
+  'listProperty.propertyInformation': {
+    en: 'Property Information',
+    ru: 'Информация об объекте',
+    uz: 'Mulk ma\'lumotlari'
+  },
+  'listProperty.propertyName': {
+    en: 'Property Name',
+    ru: 'Название объекта',
+    uz: 'Mulk nomi'
+  },
+  'listProperty.propertyType': {
+    en: 'Property Type',
+    ru: 'Тип объекта',
+    uz: 'Mulk turi'
+  },
+  'listProperty.propertyAddress': {
+    en: 'Property Address',
+    ru: 'Адрес объекта',
+    uz: 'Mulk manzili'
+  },
+  'listProperty.district': {
+    en: 'District',
+    ru: 'Район',
+    uz: 'Tuman'
+  },
+  'listProperty.price': {
+    en: 'Price (USD)',
+    ru: 'Цена (USD)',
+    uz: 'Narx (USD)'
+  },
+  'listProperty.area': {
+    en: 'Area (m²)',
+    ru: 'Площадь (м²)',
+    uz: 'Maydon (m²)'
+  },
+  'listProperty.bedrooms': {
+    en: 'Bedrooms',
+    ru: 'Спальни',
+    uz: 'Yotoq xonalar'
+  },
+  'listProperty.bathrooms': {
+    en: 'Bathrooms',
+    ru: 'Ванные комнаты',
+    uz: 'Hammom xonalar'
+  },
+  'listProperty.description': {
+    en: 'Description',
+    ru: 'Описание',
+    uz: 'Tavsif'
+  },
+  'listProperty.selectLocation': {
+    en: 'Select Location',
+    ru: 'Выберите местоположение',
+    uz: 'Joylashuvni tanlang'
+  },
+  'listProperty.photosDocuments': {
+    en: 'Photos & Documents',
+    ru: 'Фотографии и документы',
+    uz: 'Rasmlar va hujjatlar'
+  },
+  'listProperty.uploadPhotos': {
+    en: 'Upload Photos',
+    ru: 'Загрузить фотографии',
+    uz: 'Rasmlarni yuklash'
+  },
+  'listProperty.minPhotos': {
+    en: 'Minimum 5 photos required',
+    ru: 'Минимум 5 фотографий',
+    uz: 'Kamida 5 ta rasm kerak'
+  },
+  'listProperty.visitHours': {
+    en: 'Visit Hours',
+    ru: 'Часы посещения',
+    uz: 'Tashrif vaqtlari'
+  },
+  'listProperty.additionalServices': {
+    en: 'Additional Services',
+    ru: 'Дополнительные услуги',
+    uz: 'Qo\'shimcha xizmatlar'
+  },
+  'listProperty.virtualTour': {
+    en: 'Virtual Tour',
+    ru: 'Виртуальный тур',
+    uz: 'Virtual tur'
+  },
+  'listProperty.halalFinancing': {
+    en: 'Halal Financing',
+    ru: 'Халяльное финансирование',
+    uz: 'Halol moliyalashtirish'
+  },
+  'listProperty.payment': {
+    en: 'Payment',
+    ru: 'Оплата',
+    uz: 'To\'lov'
+  },
+  'listProperty.review': {
+    en: 'Review & Submit',
+    ru: 'Проверка и подача',
+    uz: 'Ko\'rib chiqish va yuborish'
+  },
+  'listProperty.submit': {
+    en: 'Submit Application',
+    ru: 'Подать заявку',
+    uz: 'Ariza yuborish'
+  },
+  'listProperty.next': {
+    en: 'Next',
+    ru: 'Далее',
+    uz: 'Keyingi'
+  },
+  'listProperty.previous': {
+    en: 'Previous',
+    ru: 'Назад',
+    uz: 'Oldingi'
+  },
+  'listProperty.saveDraft': {
+    en: 'Save Draft',
+    ru: 'Сохранить черновик',
+    uz: 'Qoralamani saqlash'
+  },
+  'listProperty.clearDraft': {
+    en: 'Clear Draft',
+    ru: 'Очистить черновик',
+    uz: 'Qoralamani tozalash'
+  },
+
+  // AllResults page
+  'allResults.searchResults': {
+    en: 'Search Results',
+    ru: 'Результаты поиска',
+    uz: 'Qidiruv natijalari'
+  },
+  'allResults.back': {
+    en: 'Back',
+    ru: 'Назад',
+    uz: 'Orqaga'
+  },
+  'allResults.loading': {
+    en: 'Loading...',
+    ru: 'Загрузка...',
+    uz: 'Yuklanmoqda...'
+  },
+  'allResults.propertiesFound': {
+    en: 'properties found',
+    ru: 'объектов найдено',
+    uz: 'mulk topildi'
+  },
+  'allResults.filters': {
+    en: 'Filters',
+    ru: 'Фильтры',
+    uz: 'Filtrlar'
+  },
+  'allResults.sortBy': {
+    en: 'Sort by',
+    ru: 'Сортировать по',
+    uz: 'Saralash'
+  },
+  'allResults.relevance': {
+    en: 'Relevance',
+    ru: 'Релевантность',
+    uz: 'Dolzarblik'
+  },
+  'allResults.priceLowToHigh': {
+    en: 'Price: Low to High',
+    ru: 'Цена: по возрастанию',
+    uz: 'Narx: kamdan ko\'pga'
+  },
+  'allResults.priceHighToLow': {
+    en: 'Price: High to Low',
+    ru: 'Цена: по убыванию',
+    uz: 'Narx: ko\'pdan kamga'
+  },
+  'allResults.largestFirst': {
+    en: 'Largest First',
+    ru: 'Сначала большие',
+    uz: 'Avval kattalar'
+  },
+  'allResults.smallestFirst': {
+    en: 'Smallest First',
+    ru: 'Сначала маленькие',
+    uz: 'Avval kichiklar'
+  },
+  'allResults.chooseDistrict': {
+    en: 'Choose district',
+    ru: 'Выберите район',
+    uz: 'Tumanni tanlang'
+  },
+  'allResults.allDistricts': {
+    en: 'All Districts',
+    ru: 'Все районы',
+    uz: 'Barcha tumanlar'
+  },
+  'allResults.minPrice': {
+    en: 'Min Price',
+    ru: 'Мин. цена',
+    uz: 'Min. narx'
+  },
+  'allResults.maxPrice': {
+    en: 'Max Price',
+    ru: 'Макс. цена',
+    uz: 'Maks. narx'
+  },
+  'allResults.anyPrice': {
+    en: 'Any Price',
+    ru: 'Любая цена',
+    uz: 'Har qanday narx'
+  },
+  'allResults.anyType': {
+    en: 'Any Type',
+    ru: 'Любой тип',
+    uz: 'Har qanday tur'
+  },
+  'allResults.any': {
+    en: 'Any',
+    ru: 'Любой',
+    uz: 'Har qanday'
+  },
+  'allResults.noProperties': {
+    en: 'No properties found matching your criteria.',
+    ru: 'Объекты по вашим критериям не найдены.',
+    uz: 'Sizning mezonlaringizga mos mulk topilmadi.'
+  },
+  'allResults.loadingResults': {
+    en: 'Loading results...',
+    ru: 'Загрузка результатов...',
+    uz: 'Natijalar yuklanmoqda...'
+  },
+
+  // Messages page
+  'messages.conversations': {
+    en: 'Conversations',
+    ru: 'Беседы',
+    uz: 'Suhbatlar'
+  },
+  'messages.noConversations': {
+    en: 'No conversations yet',
+    ru: 'Пока нет бесед',
+    uz: 'Hali suhbatlar yo\'q'
+  },
+  'messages.active': {
+    en: 'Active',
+    ru: 'Активный',
+    uz: 'Faol'
+  },
+  'messages.report': {
+    en: 'Report',
+    ru: 'Жалоба',
+    uz: 'Shikoyat'
+  },
+  'messages.reportUser': {
+    en: 'Report User',
+    ru: 'Пожаловаться на пользователя',
+    uz: 'Foydalanuvchiga shikoyat'
+  },
+  'messages.reportDescription': {
+    en: 'Describe the reason for reporting this user...',
+    ru: 'Опишите причину жалобы на этого пользователя...',
+    uz: 'Ushbu foydalanuvchiga shikoyat qilish sababini tasvirlab bering...'
+  },
+  'messages.submitReport': {
+    en: 'Submit Report',
+    ru: 'Отправить жалобу',
+    uz: 'Shikoyat yuborish'
+  },
+  'messages.typeMessage': {
+    en: 'Type your message...',
+    ru: 'Введите сообщение...',
+    uz: 'Xabaringizni yozing...'
+  },
+  'messages.send': {
+    en: 'Send',
+    ru: 'Отправить',
+    uz: 'Yuborish'
+  },
+
+  // VisitRequests page
+  'visitRequests.title': {
+    en: 'Visit Requests',
+    ru: 'Запросы на просмотр',
+    uz: 'Ko\'rish so\'rovlari'
+  },
+  'visitRequests.inbox': {
+    en: 'Visit Requests Inbox',
+    ru: 'Входящие запросы на просмотр',
+    uz: 'Ko\'rish so\'rovlari qutisi'
+  },
+  'visitRequests.pending': {
+    en: 'Pending',
+    ru: 'Ожидающие',
+    uz: 'Kutilayotgan'
+  },
+  'visitRequests.upcoming': {
+    en: 'Upcoming',
+    ru: 'Предстоящие',
+    uz: 'Kelgusi'
+  },
+  'visitRequests.finished': {
+    en: 'Finished',
+    ru: 'Завершенные',
+    uz: 'Tugallangan'
+  },
+  'visitRequests.confirmed': {
+    en: 'Confirmed',
+    ru: 'Подтверждено',
+    uz: 'Tasdiqlangan'
+  },
+  'visitRequests.denied': {
+    en: 'Denied',
+    ru: 'Отклонено',
+    uz: 'Rad etilgan'
+  },
+  'visitRequests.requestedBy': {
+    en: 'Requested by',
+    ru: 'Запросил',
+    uz: 'So\'ragan'
+  },
+  'visitRequests.alternativeTime': {
+    en: 'Alternative time',
+    ru: 'Альтернативное время',
+    uz: 'Muqobil vaqt'
+  },
+  'visitRequests.reviewCompleted': {
+    en: 'Review completed',
+    ru: 'Отзыв завершен',
+    uz: 'Sharh tugallandi'
+  },
+  'visitRequests.visitorShowedUp': {
+    en: 'Visitor showed up',
+    ru: 'Посетитель пришел',
+    uz: 'Mehmon keldi'
+  },
+  'visitRequests.visitorDidNotShow': {
+    en: 'Visitor did not show up',
+    ru: 'Посетитель не пришел',
+    uz: 'Mehmon kelmadi'
+  },
+  'visitRequests.awaitingReview': {
+    en: 'Awaiting review',
+    ru: 'Ожидается отзыв',
+    uz: 'Sharh kutilmoqda'
+  },
+  'visitRequests.paidVisit': {
+    en: 'Paid visit',
+    ru: 'Платный просмотр',
+    uz: 'Pullik ko\'rish'
+  },
+  'visitRequests.message': {
+    en: 'Message',
+    ru: 'Сообщение',
+    uz: 'Xabar'
+  },
+  'visitRequests.offerAlternative': {
+    en: 'Offer alternative',
+    ru: 'Предложить альтернативу',
+    uz: 'Muqobil taklif qilish'
+  },
+  'visitRequests.approve': {
+    en: 'Approve',
+    ru: 'Одобрить',
+    uz: 'Tasdiqlash'
+  },
+  'visitRequests.deny': {
+    en: 'Deny',
+    ru: 'Отклонить',
+    uz: 'Rad etish'
+  },
+  'visitRequests.leaveReview': {
+    en: 'Leave Review',
+    ru: 'Оставить отзыв',
+    uz: 'Sharh qoldirish'
+  },
+  'visitRequests.noRequests': {
+    en: 'No visit requests yet.',
+    ru: 'Пока нет запросов на просмотр.',
+    uz: 'Hali ko\'rish so\'rovlari yo\'q.'
+  },
+  'visitRequests.noUpcoming': {
+    en: 'No upcoming visits.',
+    ru: 'Нет предстоящих просмотров.',
+    uz: 'Kelgusi ko\'rishlar yo\'q.'
+  },
+  'visitRequests.noFinished': {
+    en: 'No finished visits yet.',
+    ru: 'Пока нет завершенных просмотров.',
+    uz: 'Hali tugallangan ko\'rishlar yo\'q.'
+  },
+
+  // SavedProperties page
+  'savedProperties.title': {
+    en: 'Saved Properties',
+    ru: 'Сохраненные объекты',
+    uz: 'Saqlangan mulklar'
+  },
+  'savedProperties.noProperties': {
+    en: 'No saved properties yet',
+    ru: 'Пока нет сохраненных объектов',
+    uz: 'Hali saqlangan mulklar yo\'q'
+  },
+  'savedProperties.startBrowsing': {
+    en: 'Start browsing properties to save your favorites',
+    ru: 'Начните просматривать объекты, чтобы сохранить избранные',
+    uz: 'Sevimlilaringizni saqlash uchun mulklarni ko\'rishni boshlang'
+  },
+  'savedProperties.browseProperties': {
+    en: 'Browse Properties',
+    ru: 'Просмотреть объекты',
+    uz: 'Mulklarni ko\'rish'
+  },
+  'savedProperties.requestVisit': {
+    en: 'Request Visit',
+    ru: 'Запросить просмотр',
+    uz: 'Ko\'rishni so\'rash'
+  },
+  'savedProperties.removeFromSaved': {
+    en: 'Remove from saved',
+    ru: 'Удалить из сохраненных',
+    uz: 'Saqlanganlardan olib tashlash'
+  },
+
   // Popular searches
   'search.popularSearches': {
     en: 'Popular searches:',

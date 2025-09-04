@@ -88,14 +88,14 @@ const AllResults = () => {
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back
+                {t('allResults.back')}
               </Button>
               <div>
                 <h1 className="text-xl font-semibold">
-                  Search Results {query && `for "${query}"`}
+                  {t('allResults.searchResults')} {query && `for "${query}"`}
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  {loading ? 'Loading...' : `${sortedResults.length} properties found`}
+                  {loading ? t('allResults.loading') : `${sortedResults.length} ${t('allResults.propertiesFound')}`}
                 </p>
               </div>
             </div>
@@ -145,18 +145,18 @@ const AllResults = () => {
               <CardContent className="p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Filter className="h-4 w-4" />
-                  <h3 className="font-medium">Filters</h3>
+                  <h3 className="font-medium">{t('allResults.filters')}</h3>
                 </div>
                 
                 <div className="space-y-4">
                   <div>
-                    <Label className="text-sm font-medium mb-2 block">District</Label>
+                    <Label className="text-sm font-medium mb-2 block">{t('listProperty.district')}</Label>
                     <Select value={filters.district || ''} onValueChange={(value) => updateFilter('district', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Choose district" />
+                        <SelectValue placeholder={t('allResults.chooseDistrict')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All Districts</SelectItem>
+                        <SelectItem value="">{t('allResults.allDistricts')}</SelectItem>
                         {districtOptions.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
@@ -167,13 +167,13 @@ const AllResults = () => {
                   </div>
                   
                   <div>
-                    <Label className="text-sm font-medium mb-2 block">Min Price</Label>
+                    <Label className="text-sm font-medium mb-2 block">{t('allResults.minPrice')}</Label>
                     <Select value={filters.priceMin || ''} onValueChange={(value) => updateFilter('priceMin', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Min budget" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Any Price</SelectItem>
+                        <SelectItem value="">{t('allResults.anyPrice')}</SelectItem>
                         <SelectItem value="30000">$30k</SelectItem>
                         <SelectItem value="40000">$40k</SelectItem>
                         <SelectItem value="50000">$50k</SelectItem>
@@ -237,11 +237,11 @@ const AllResults = () => {
           <div className="lg:col-span-3">
             {loading ? (
               <div className="text-center py-12">
-                <p>Loading results...</p>
+                <p>{t('allResults.loadingResults')}</p>
               </div>
             ) : sortedResults.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">No properties found matching your criteria.</p>
+                <p className="text-muted-foreground">{t('allResults.noProperties')}</p>
               </div>
             ) : (
               <div className={`grid gap-4 md:gap-6 ${

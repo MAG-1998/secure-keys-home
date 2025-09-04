@@ -402,15 +402,15 @@ const ListProperty = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Home className="w-5 h-5" />
-                Property Information
+                {t('listProperty.propertyInformation')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                   <div>
-                <Label htmlFor="displayName">Property Name</Label>
+                <Label htmlFor="displayName">{t('listProperty.propertyName')}</Label>
                 <Input 
                   id="displayName" 
-                  placeholder="Enter property name" 
+                  placeholder={t('listProperty.propertyName')} 
                   value={formData.displayName || ""} 
                   onChange={e => handleInputChange("displayName", e.target.value)} 
                 />
