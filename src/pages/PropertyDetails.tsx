@@ -603,22 +603,17 @@ const PropertyDetails = () => {
                      {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} m²</span>)}
                   </div>
                    <div className="text-3xl font-bold text-primary">
-                     {useMemo(() => {
-                       if (financingStore.isHalalMode && financingStore.cashAvailable && financingStore.periodMonths) {
-                         const cashValue = parseFloat(financingStore.cashAvailable) || 0;
-                         const periodValue = parseInt(financingStore.periodMonths) || 0;
-                         
-                         if (cashValue > 0 && periodValue > 0 && cashValue < (property?.price || 0) && cashValue >= (0.5 * (property?.price || 0))) {
-                           const calculation = calculateHalalFinancing(
-                             cashValue,
-                             property?.price || 0,
-                             periodValue
-                           );
-                           return formatCurrency(calculation.propertyPrice + calculation.serviceFee + calculation.fixedFee + calculation.tax);
-                         }
-                       }
-                       return displayPrice;
-                     }, [financingStore.isHalalMode, financingStore.cashAvailable, financingStore.periodMonths, property?.price, displayPrice])}
+                     {financingStore.isHalalMode && financingStore.cashAvailable && financingStore.periodMonths ? 
+                       (() => {
+                         const calculation = calculateHalalFinancing(
+                           parseFloat(financingStore.cashAvailable),
+                           property?.price || 0,
+                           parseInt(financingStore.periodMonths)
+                         );
+                         return formatCurrency(calculation.propertyPrice + calculation.serviceFee + calculation.fixedFee + calculation.tax);
+                       })() : 
+                       displayPrice
+                     }
                    </div>
                   {property.description && (
                     <p className="text-foreground/80 leading-relaxed whitespace-pre-line">{property.description}</p>
