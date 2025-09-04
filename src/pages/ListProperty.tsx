@@ -931,16 +931,16 @@ const ListProperty = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="font-heading font-bold text-2xl text-center mb-8">
-              Why List with Magit?
+              {t('listProperty.whyListWithMagit')}
             </h2>
             
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="text-center">
                 <CardContent className="p-6">
                   <Shield className="w-8 h-8 text-magit-success mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Verified Buyers Only</h3>
+                  <h3 className="font-semibold mb-2">{t('listProperty.verifiedBuyersOnly')}</h3>
                   <p className="text-sm text-muted-foreground">
-                    All buyers are pre-screened with verified financing and serious intent.
+                    {t('listProperty.verifiedBuyersDescription')}
                   </p>
                 </CardContent>
               </Card>
@@ -948,9 +948,9 @@ const ListProperty = () => {
               <Card className="text-center">
                 <CardContent className="p-6">
                   <CheckCircle className="w-8 h-8 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Zero Commission</h3>
+                  <h3 className="font-semibold mb-2">{t('listProperty.zeroCommission')}</h3>
                   <p className="text-sm text-muted-foreground">
-                    List your property for free. No hidden fees or commission charges.
+                    {t('listProperty.zeroCommissionDescription')}
                   </p>
                 </CardContent>
               </Card>
@@ -958,9 +958,9 @@ const ListProperty = () => {
               <Card className="text-center">
                 <CardContent className="p-6">
                   <MapPin className="w-8 h-8 text-magit-warning mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Premium Exposure</h3>
+                  <h3 className="font-semibold mb-2">{t('listProperty.premiumExposure')}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Featured on our AI-powered platform with smart buyer matching.
+                    {t('listProperty.premiumExposureDescription')}
                   </p>
                 </CardContent>
               </Card>
