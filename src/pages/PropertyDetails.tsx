@@ -603,8 +603,8 @@ const PropertyDetails = () => {
                      {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} m²</span>)}
                   </div>
                    <div className="text-3xl font-bold text-primary">
-                     {financingStore.isHalalMode && financingStore.cashAvailable && financingStore.periodMonths ? 
-                       useMemo(() => {
+                     {useMemo(() => {
+                       if (financingStore.isHalalMode && financingStore.cashAvailable && financingStore.periodMonths) {
                          const cashValue = parseFloat(financingStore.cashAvailable) || 0;
                          const periodValue = parseInt(financingStore.periodMonths) || 0;
                          
@@ -616,10 +616,9 @@ const PropertyDetails = () => {
                            );
                            return formatCurrency(calculation.propertyPrice + calculation.serviceFee + calculation.fixedFee + calculation.tax);
                          }
-                         return displayPrice;
-                       }, [financingStore.cashAvailable, financingStore.periodMonths, property?.price, displayPrice]) : 
-                       displayPrice
-                     }
+                       }
+                       return displayPrice;
+                     }, [financingStore.isHalalMode, financingStore.cashAvailable, financingStore.periodMonths, property?.price, displayPrice])}
                    </div>
                   {property.description && (
                     <p className="text-foreground/80 leading-relaxed whitespace-pre-line">{property.description}</p>
