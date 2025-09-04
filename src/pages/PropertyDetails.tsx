@@ -59,27 +59,28 @@ const PropertyDetails = () => {
   const [searchParams] = useSearchParams();
   const financingStore = useHalalFinancingStore();
 
-  // Initialize halal mode and financing from URL params (only if not already set in localStorage)
+  // Initialize halal mode and financing from URL params with proper localStorage precedence
   useEffect(() => {
     const halalParam = searchParams.get('halal');
     if (halalParam === '1') {
-      // Only set from URL params if localStorage doesn't have values or if URL has different values
       const urlCash = searchParams.get('cash') || '';
       const urlPeriod = searchParams.get('period') || '';
       
-      // Check if we should update from URL (only if localStorage is empty or different)
-      const shouldUpdate = !financingStore.cashAvailable || 
-                          !financingStore.periodMonths || 
-                          (urlCash && urlCash !== financingStore.cashAvailable) ||
-                          (urlPeriod && urlPeriod !== financingStore.periodMonths);
-                          
-      if (shouldUpdate) {
-        financingStore.setFromQueryParams(searchParams);
-      }
-      
       // Always enable halal mode from URL
-      if (!financingStore.isHalalMode) {
-        financingStore.updateState({ isHalalMode: true });
+      financingStore.updateState({ isHalalMode: true });
+      
+      // Only set from URL if localStorage is completely empty (both cash and period are empty strings)
+      const hasStoredValues = financingStore.cashAvailable.trim() !== '' && 
+                             financingStore.periodMonths.trim() !== '';
+      
+      if (!hasStoredValues && (urlCash || urlPeriod)) {
+        console.log('Setting from URL params:', { urlCash, urlPeriod });
+        financingStore.setFromQueryParams(searchParams);
+      } else {
+        console.log('Using stored values:', { 
+          cash: financingStore.cashAvailable, 
+          period: financingStore.periodMonths 
+        });
       }
     }
   }, []); // Empty dependency array to prevent infinite updates
@@ -482,7 +483,7 @@ const PropertyDetails = () => {
 
   // Calculate display price based on halal financing parameters
   const displayPrice = useMemo(() => {
-    // Always check for halal financing if we have cash and period values, regardless of isHalalMode flag
+    // Always check for halal financing if we have cash and period values
     if (financingStore.cashAvailable && financingStore.periodMonths && property) {
       const cashAvailable = parseFloat(financingStore.cashAvailable || '0');
       const periodMonths = parseInt(financingStore.periodMonths || '0');
@@ -490,8 +491,13 @@ const PropertyDetails = () => {
       // If we have valid financing parameters, calculate total cost
       if (cashAvailable > 0 && periodMonths > 0) {
         const calculation = calculateHalalFinancing(cashAvailable, property.price, periodMonths);
-        // Return the total cost including all financing fees
-        return calculation.totalCost + cashAvailable; // total property cost with financing
+        console.log('Price calculation:', {
+          propertyPrice: property.price,
+          calculation,
+          totalDisplayPrice: calculation.totalCost
+        });
+        // Return the total cost which already includes property price + all fees
+        return calculation.totalCost;
       }
     }
     
