@@ -256,19 +256,21 @@ All colors MUST be HSL.
 .apple-glow-container {
   position: relative;
   isolation: isolate;
+  overflow: hidden;
 }
 
 .apple-glow-container::before {
   content: '';
   position: absolute;
   top: 0;
-  left: -100%;
-  width: 100%;
+  left: -150%;
+  width: 200%;
   height: 100%;
   border-radius: inherit;
   pointer-events: none;
   animation: apple-shimmer 3s ease-in-out infinite;
-  z-index: -1;
+  background-size: 200% 100%;
+  z-index: 1;
 }
 
 .apple-glow-container.cyan-shimmer::before {
@@ -322,6 +324,10 @@ All colors MUST be HSL.
   backdrop-filter: blur(22.6px);
   animation: apple-glow-pulse 4s ease-in-out infinite, apple-breathe 3s ease-in-out infinite;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode glow effects */
+.dark .apple-glow-inactive {
   box-shadow: 
     0 0 22.6px hsl(var(--glow-cyan) / 0.565),
     0 0 45.2px hsl(var(--glow-cyan) / 0.339),
@@ -334,6 +340,10 @@ All colors MUST be HSL.
   backdrop-filter: blur(22.6px);
   animation: apple-glow-pulse-orange 4s ease-in-out infinite, apple-breathe 3s ease-in-out infinite;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode glow effects */
+.dark .apple-glow-active {
   box-shadow: 
     0 0 22.6px hsl(var(--glow-orange) / 0.678),
     0 0 45.2px hsl(var(--glow-orange) / 0.452),
