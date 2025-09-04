@@ -1,7 +1,6 @@
 import { Navigate } from "react-router-dom"
 import { MagitLogo } from "@/components/MagitLogo"
 import { useUser } from "@/contexts/UserContext"
-import { useRoutePreloader } from "@/hooks/useRoutePreloader"
 import { memo } from "react"
 
 interface OptimizedRouteProps {
@@ -14,12 +13,7 @@ const OptimizedRoute = memo(({ children, requiredRoles, requireAuth = true }: Op
   const { user, role, loading } = useUser()
   
 
-  // Preload data for authenticated users (non-blocking)
-  try {
-    useRoutePreloader()
-  } catch (error) {
-    console.error('Route preloader error:', error);
-  }
+  // Note: Route preloading handled by individual pages as needed
 
   // Show loading while auth/role resolving
   if (loading) {

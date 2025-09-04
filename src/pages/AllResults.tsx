@@ -1,13 +1,12 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { ArrowLeft, Filter, Grid, List } from "lucide-react"
 import { PropertyCard } from "@/components/PropertyCard"
 import { useSearchParams, useNavigate } from "react-router-dom"
-import { performBasicSearch } from "@/utils/basicSearch"
+import { useSearchStore, type Property } from "@/hooks/useSearchStore"
 import { getDistrictOptions } from "@/lib/districts"
 import { useTranslation } from "@/hooks/useTranslation"
 
@@ -16,82 +15,63 @@ const AllResults = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   
-  const [results, setResults] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [sortBy, setSortBy] = useState('relevance')
-  const [filters, setFilters] = useState<any>({})
-  const [financingFilters, setFinancingFilters] = useState<any>({})
+  
+  // Use unified search store
+  const { results, loading, filters, setFilters, performSearch } = useSearchStore()
   
   // Get initial data from URL params
   const query = searchParams.get('query') || ''
   const isHalalMode = searchParams.get('isHalalMode') === 'true'
-  
+
+  // Initialize filters from URL params
   useEffect(() => {
     const initFilters = searchParams.get('filters')
-    const initFinancingFilters = searchParams.get('financingFilters')
+    const urlFilters: any = { q: query, halalMode: isHalalMode }
     
     if (initFilters) {
       try {
-        setFilters(JSON.parse(initFilters))
+        const parsedFilters = JSON.parse(initFilters)
+        Object.assign(urlFilters, parsedFilters)
       } catch (e) {
         console.error('Error parsing filters:', e)
       }
     }
     
-    if (initFinancingFilters) {
-      try {
-        setFinancingFilters(JSON.parse(initFinancingFilters))
-      } catch (e) {
-        console.error('Error parsing financing filters:', e)
-      }
-    }
-  }, [searchParams])
+    setFilters(urlFilters)
+  }, [searchParams, query, isHalalMode, setFilters])
 
+  // Perform search when filters are set
   useEffect(() => {
-    const loadResults = async () => {
-      try {
-        setLoading(true)
-        const searchResults = await performBasicSearch(query, filters, financingFilters, isHalalMode)
-        
-        // Apply sorting
-        let sortedResults = [...searchResults]
-        switch (sortBy) {
-          case 'price-low':
-            sortedResults.sort((a, b) => (a.priceUsd || 0) - (b.priceUsd || 0))
-            break
-          case 'price-high':
-            sortedResults.sort((a, b) => (b.priceUsd || 0) - (a.priceUsd || 0))
-            break
-          case 'area-large':
-            sortedResults.sort((a, b) => (b.area || 0) - (a.area || 0))
-            break
-          case 'area-small':
-            sortedResults.sort((a, b) => (a.area || 0) - (b.area || 0))
-            break
-          case 'newest':
-            // Remove newest sort since we don't have created_at field
-            break
-          default:
-            // Keep relevance order
-            break
-        }
-        
-        setResults(sortedResults)
-      } catch (error) {
-        console.error('Error loading results:', error)
-      } finally {
-        setLoading(false)
-      }
+    if (filters.q || Object.keys(filters).length > 1) {
+      performSearch()
     }
+  }, [filters, performSearch])
 
-    loadResults()
-  }, [query, filters, financingFilters, isHalalMode, sortBy])
+  // Sort results based on sortBy
+  const sortedResults = useMemo(() => {
+    if (!results || results.length === 0) return []
+    
+    const sorted = [...results]
+    switch (sortBy) {
+      case 'price-low':
+        return sorted.sort((a, b) => (a.priceUsd || 0) - (b.priceUsd || 0))
+      case 'price-high':
+        return sorted.sort((a, b) => (b.priceUsd || 0) - (a.priceUsd || 0))
+      case 'area-large':
+        return sorted.sort((a, b) => (b.area || 0) - (a.area || 0))
+      case 'area-small':
+        return sorted.sort((a, b) => (a.area || 0) - (b.area || 0))
+      default:
+        return sorted
+    }
+  }, [results, sortBy])
 
   const districtOptions = getDistrictOptions('ru')
 
   const updateFilter = (key: string, value: string) => {
-    setFilters((prev: any) => ({ ...prev, [key]: value }))
+    setFilters({ [key]: value })
   }
 
   return (
@@ -115,7 +95,7 @@ const AllResults = () => {
                   Search Results {query && `for "${query}"`}
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  {loading ? 'Loading...' : `${results.length} properties found`}
+                  {loading ? 'Loading...' : `${sortedResults.length} properties found`}
                 </p>
               </div>
             </div>
@@ -150,7 +130,6 @@ const AllResults = () => {
                   <SelectItem value="price-high">Price: High to Low</SelectItem>
                   <SelectItem value="area-large">Largest First</SelectItem>
                   <SelectItem value="area-small">Smallest First</SelectItem>
-                  <SelectItem value="newest">Newest First</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -188,33 +167,33 @@ const AllResults = () => {
                   </div>
                   
                   <div>
-                    <Label className="text-sm font-medium mb-2 block">Price Range</Label>
-                    <Select value={filters.priceRange || ''} onValueChange={(value) => updateFilter('priceRange', value)}>
+                    <Label className="text-sm font-medium mb-2 block">Min Price</Label>
+                    <Select value={filters.priceMin || ''} onValueChange={(value) => updateFilter('priceMin', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select budget" />
+                        <SelectValue placeholder="Min budget" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="">Any Price</SelectItem>
-                        <SelectItem value="30-40">$30k - $40k</SelectItem>
-                        <SelectItem value="40-50">$40k - $50k</SelectItem>
-                        <SelectItem value="50-70">$50k - $70k</SelectItem>
-                        <SelectItem value="70+">$70k+</SelectItem>
+                        <SelectItem value="30000">$30k</SelectItem>
+                        <SelectItem value="40000">$40k</SelectItem>
+                        <SelectItem value="50000">$50k</SelectItem>
+                        <SelectItem value="70000">$70k</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium mb-2 block">Area</Label>
-                    <Select value={filters.area || ''} onValueChange={(value) => updateFilter('area', value)}>
+                    <Label className="text-sm font-medium mb-2 block">Max Price</Label>
+                    <Select value={filters.priceMax || ''} onValueChange={(value) => updateFilter('priceMax', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Size" />
+                        <SelectValue placeholder="Max budget" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Any Size</SelectItem>
-                        <SelectItem value="30-50">30-50 m²</SelectItem>
-                        <SelectItem value="50-70">50-70 m²</SelectItem>
-                        <SelectItem value="70-100">70-100 m²</SelectItem>
-                        <SelectItem value="100+">100+ m²</SelectItem>
+                        <SelectItem value="">Any Price</SelectItem>
+                        <SelectItem value="40000">$40k</SelectItem>
+                        <SelectItem value="50000">$50k</SelectItem>
+                        <SelectItem value="70000">$70k</SelectItem>
+                        <SelectItem value="100000">$100k</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -233,6 +212,22 @@ const AllResults = () => {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block">Bedrooms</Label>
+                    <Select value={filters.bedrooms || ''} onValueChange={(value) => updateFilter('bedrooms', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Bedrooms" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Any</SelectItem>
+                        <SelectItem value="1">1+</SelectItem>
+                        <SelectItem value="2">2+</SelectItem>
+                        <SelectItem value="3">3+</SelectItem>
+                        <SelectItem value="4">4+</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -244,7 +239,7 @@ const AllResults = () => {
               <div className="text-center py-12">
                 <p>Loading results...</p>
               </div>
-            ) : results.length === 0 ? (
+            ) : sortedResults.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground">No properties found matching your criteria.</p>
               </div>
@@ -254,17 +249,17 @@ const AllResults = () => {
                   ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5' 
                   : 'grid-cols-1'
               }`}>
-                {results.map((property) => (
+                {sortedResults.map((property: Property) => (
                   <PropertyCard
                     key={property.id}
                     id={property.id}
                     title={property.title || 'Property'}
-                    location={property.district || property.city || property.location || 'Tashkent'}
+                    location={property.location || 'Tashkent'}
                     price={`$${(property.priceUsd ?? 0).toLocaleString?.() || property.priceUsd}`}
                     bedrooms={property.bedrooms || 0}
                     bathrooms={property.bathrooms || 0}
                     area={property.area || 0}
-                    imageUrl={property.image_url || property.images?.[0] || '/placeholder.svg'}
+                    imageUrl={property.image_url || '/placeholder.svg'}
                     isVerified={property.verified || false}
                     isHalalFinanced={property.financingAvailable || false}
                   />

@@ -1,6 +1,16 @@
 import { create } from 'zustand'
 import { supabase } from '@/integrations/supabase/client'
 
+interface SearchCacheItem {
+  query: string
+  filters: SearchFilters
+  results: Property[]
+  timestamp: number
+}
+
+const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+const STORAGE_KEY = 'magit_search_cache'
+
 export interface SearchFilters {
   q?: string
   district?: string
@@ -31,6 +41,55 @@ export interface Property {
   longitude?: number
 }
 
+// Cache utility functions
+const getCacheKey = (query: string, filters: SearchFilters) => {
+  return `${query}_${JSON.stringify(filters)}`
+}
+
+const getCachedResult = (query: string, filters: SearchFilters): Property[] | null => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (!stored) return null
+    
+    const parsed = JSON.parse(stored)
+    const key = getCacheKey(query, filters)
+    const cached = parsed[key] as SearchCacheItem
+    
+    if (!cached) return null
+    
+    // Check if cache is still valid
+    if (Date.now() - cached.timestamp > CACHE_DURATION) {
+      delete parsed[key]
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed))
+      return null
+    }
+    
+    return cached.results
+  } catch (error) {
+    console.warn('Failed to get cached result:', error)
+    return null
+  }
+}
+
+const setCachedResult = (query: string, filters: SearchFilters, results: Property[]) => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    const cache = stored ? JSON.parse(stored) : {}
+    const key = getCacheKey(query, filters)
+    
+    cache[key] = {
+      query,
+      filters,
+      results,
+      timestamp: Date.now()
+    } as SearchCacheItem
+    
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cache))
+  } catch (error) {
+    console.warn('Failed to cache result:', error)
+  }
+}
+
 interface SearchStore {
   filters: SearchFilters
   results: Property[]
@@ -41,6 +100,7 @@ interface SearchStore {
   performSearch: (overrideFilters?: Partial<SearchFilters>) => Promise<void>
   clearResults: () => void
   setResults: (results: Property[]) => void
+  clearCache: () => void
 }
 
 export const useSearchStore = create<SearchStore>((set, get) => ({
@@ -61,6 +121,19 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
     const searchFilters = { ...filters, ...overrideFilters }
     
     set({ loading: true, error: null })
+
+    // Check cache first
+    const cacheKey = searchFilters.q || ''
+    const cachedResults = getCachedResult(cacheKey, searchFilters)
+    if (cachedResults) {
+      set({ 
+        results: cachedResults, 
+        loading: false,
+        lastSearchQuery: cacheKey,
+        error: null
+      })
+      return
+    }
 
     try {
       // Build Supabase query
@@ -141,6 +214,9 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
         }
       }
 
+      // Cache the results
+      setCachedResult(searchFilters.q || '', searchFilters, results)
+
       set({ 
         results, 
         loading: false,
@@ -164,5 +240,13 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
 
   setResults: (results) => {
     set({ results })
+  },
+
+  clearCache: () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+    } catch (error) {
+      console.warn('Failed to clear cache:', error)
+    }
   }
 }))
