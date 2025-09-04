@@ -1803,6 +1803,294 @@ const translations: Translations = {
     en: 'Activity will appear here when documents are uploaded, status changes, or other actions are taken',
     ru: 'Активность появится здесь при загрузке документов, изменении статуса или других действиях',
     uz: 'Hujjatlar yuklanganda, holat o\'zgarganda yoki boshqa harakatlar amalga oshirilganda faoliyat bu yerda paydo bo\'ladi'
+  },
+
+  // Profile Page
+  'profile.backToDashboard': {
+    en: 'Back to Dashboard',
+    ru: 'Вернуться на панель',
+    uz: 'Boshqaruv paneliga qaytish'
+  },
+  'profile.title': {
+    en: 'Profile',
+    ru: 'Профиль',
+    uz: 'Profil'
+  },
+  'profile.editProfile': {
+    en: 'Edit Profile',
+    ru: 'Редактировать профиль',
+    uz: 'Profilni tahrirlash'
+  },
+  'profile.saveChanges': {
+    en: 'Save Changes',
+    ru: 'Сохранить изменения',
+    uz: 'Oʻzgarishlarni saqlash'
+  },
+  'profile.cancel': {
+    en: 'Cancel',
+    ru: 'Отмена',
+    uz: 'Bekor qilish'
+  },
+  'profile.personalInfo': {
+    en: 'Personal Information',
+    ru: 'Личная информация',
+    uz: 'Shaxsiy maʼlumotlar'
+  },
+  'profile.fullName': {
+    en: 'Full Name',
+    ru: 'Полное имя',
+    uz: 'Toʻliq ism'
+  },
+  'profile.email': {
+    en: 'Email',
+    ru: 'Электронная почта',
+    uz: 'Elektron pochta'
+  },
+  'profile.phoneNumber': {
+    en: 'Phone Number',
+    ru: 'Номер телефона',
+    uz: 'Telefon raqami'
+  },
+  'profile.accountType': {
+    en: 'Account Type',
+    ru: 'Тип аккаунта',
+    uz: 'Akkaunt turi'
+  },
+  'profile.identityVerification': {
+    en: 'Identity Verification',
+    ru: 'Подтверждение личности',
+    uz: 'Shaxsni tasdiqlash'
+  },
+  'profile.uploadGovId': {
+    en: 'Upload Government ID',
+    ru: 'Загрузить удостоверение',
+    uz: 'Davlat guvohnomasini yuklash'
+  },
+  'profile.takeSelfie': {
+    en: 'Take Selfie',
+    ru: 'Сделать селфи',
+    uz: 'Selfi olish'
+  },
+  'profile.verificationStatus': {
+    en: 'Verification Status',
+    ru: 'Статус верификации',
+    uz: 'Tasdiqlash holati'
+  },
+  'profile.notVerified': {
+    en: 'Not Verified',
+    ru: 'Не подтверждено',
+    uz: 'Tasdiqlanmagan'
+  },
+  'profile.visitLimitsPlan': {
+    en: 'Visit Limits & Plan',
+    ru: 'Лимиты посещений и план',
+    uz: 'Tashrif chegaralari va reja'
+  },
+  'profile.currentUsage': {
+    en: 'Current Usage',
+    ru: 'Текущее использование',
+    uz: 'Joriy foydalanish'
+  },
+  'profile.planDetails': {
+    en: 'Plan Details',
+    ru: 'Детали плана',
+    uz: 'Reja tafsilotlari'
+  },
+  'profile.upgradePlan': {
+    en: 'Upgrade Plan',
+    ru: 'Обновить план',
+    uz: 'Rejani yangilash'
+  },
+  'profile.accountSettings': {
+    en: 'Account Settings',
+    ru: 'Настройки аккаунта',
+    uz: 'Akkaunt sozlamalari'
+  },
+  'profile.emailNotifications': {
+    en: 'Email Notifications',
+    ru: 'Email уведомления',
+    uz: 'Email bildirishnomalar'
+  },
+  'profile.privacySettings': {
+    en: 'Privacy Settings',
+    ru: 'Настройки приватности',
+    uz: 'Maxfiylik sozlamalari'
+  },
+  'profile.deleteAccount': {
+    en: 'Delete Account',
+    ru: 'Удалить аккаунт',
+    uz: 'Akkautni oʻchirish'
+  },
+  'profile.saveSuccess': {
+    en: 'Profile updated successfully',
+    ru: 'Профиль успешно обновлен',
+    uz: 'Profil muvaffaqiyatli yangilandi'
+  },
+  'profile.saveError': {
+    en: 'Error updating profile',
+    ru: 'Ошибка обновления профиля',
+    uz: 'Profilni yangilashda xatolik'
+  },
+
+  // Dashboard Page
+  'dashboard.welcome': {
+    en: 'Welcome',
+    ru: 'Добро пожаловать',
+    uz: 'Xush kelibsiz'
+  },
+  'dashboard.choosePath': {
+    en: 'Choose your path to finding the perfect home',
+    ru: 'Выберите свой путь к идеальному дому',
+    uz: 'Mukammal uy topish yoʻlini tanlang'
+  },
+  'dashboard.listProperty.title': {
+    en: 'List Your Property',
+    ru: 'Разместить объявление',
+    uz: 'Uyni eʼlon qilish'
+  },
+  'dashboard.listProperty.description': {
+    en: 'Reach verified buyers and sell your property with confidence',
+    ru: 'Найдите проверенных покупателей и продайте недвижимость с уверенностью',
+    uz: 'Tekshirilgan xaridorlar bilan ishonch bilan uy sotish'
+  },
+  'dashboard.listProperty.features.professional': {
+    en: 'Professional photos & virtual tours',
+    ru: 'Профессиональные фото и виртуальные туры',
+    uz: 'Professional foto va virtual turlar'
+  },
+  'dashboard.listProperty.features.photos': {
+    en: 'High-quality listing photos',
+    ru: 'Качественные фото объявления',
+    uz: 'Yuqori sifatli eʼlon fotolari'
+  },
+  'dashboard.listProperty.features.analytics': {
+    en: 'Detailed analytics & insights',
+    ru: 'Подробная аналитика и статистика',
+    uz: 'Batafsil tahlil va statistika'
+  },
+  'dashboard.listProperty.getStarted': {
+    en: 'Get Started',
+    ru: 'Начать',
+    uz: 'Boshlash'
+  },
+  'dashboard.findProperty.title': {
+    en: 'Find Your Home',
+    ru: 'Найти дом',
+    uz: 'Uy topish'
+  },
+  'dashboard.findProperty.description': {
+    en: 'Discover verified properties with smart matching and financing options',
+    ru: 'Откройте для себя проверенные объекты с умным подбором и финансированием',
+    uz: 'Aqlli tanlov va moliyalashtirish bilan tekshirilgan uylarni kashf eting'
+  },
+  'dashboard.findProperty.features.verified': {
+    en: 'ID-verified sellers only',
+    ru: 'Только проверенные продавцы',
+    uz: 'Faqat tekshirilgan sotuvchilar'
+  },
+  'dashboard.findProperty.features.financing': {
+    en: 'Halal financing available',
+    ru: 'Халяль финансирование доступно',
+    uz: 'Halol moliyalashtirish mavjud'
+  },
+  'dashboard.findProperty.features.map': {
+    en: 'Interactive neighborhood maps',
+    ru: 'Интерактивные карты районов',
+    uz: 'Interaktiv mahalla xaritalari'
+  },
+  'dashboard.findProperty.startBrowsing': {
+    en: 'Start Browsing',
+    ru: 'Начать просмотр',
+    uz: 'Koʻrishni boshlash'
+  },
+  'dashboard.contactSupport': {
+    en: 'Need help? Contact our support team',
+    ru: 'Нужна помощь? Свяжитесь с нашей службой поддержки',
+    uz: 'Yordam kerakmi? Qoʻllab-quvvatlash xizmatiga murojaat qiling'
+  },
+
+  // MyProperties Page
+  'myProperties.title': {
+    en: 'My Listed Properties',
+    ru: 'Мои объявления',
+    uz: 'Mening eʼlonlarim'
+  },
+  'myProperties.addProperty': {
+    en: 'Add Property',
+    ru: 'Добавить объект',
+    uz: 'Uy qoʻshish'
+  },
+  'myProperties.noProperties': {
+    en: "You haven't listed any properties yet.",
+    ru: 'Вы еще не разместили ни одного объявления.',
+    uz: 'Siz hali hech qanday uy eʼlon qilmagansiz.'
+  },
+  'myProperties.listFirst': {
+    en: 'List Your First Property',
+    ru: 'Разместить первое объявление',
+    uz: 'Birinchi uyni eʼlon qilish'
+  },
+  'myProperties.status.approved': {
+    en: 'Approved',
+    ru: 'Одобрено',
+    uz: 'Tasdiqlangan'
+  },
+  'myProperties.status.notApproved': {
+    en: 'Pending Approval',
+    ru: 'Ожидает одобрения',
+    uz: 'Tasdiq kutilmoqda'
+  },
+  'myProperties.status.verified': {
+    en: 'Verified',
+    ru: 'Проверено',
+    uz: 'Tekshirilgan'
+  },
+  'myProperties.analytics': {
+    en: 'Analytics',
+    ru: 'Аналитика',
+    uz: 'Tahlil'
+  },
+  'myProperties.visits': {
+    en: 'Visits',
+    ru: 'Визиты',
+    uz: 'Tashriflar'
+  },
+  'myProperties.views': {
+    en: 'views',
+    ru: 'просмотров',
+    uz: 'koʻrishlar'
+  },
+  'myProperties.visitRequests': {
+    en: 'visit requests',
+    ru: 'запросов на визит',
+    uz: 'tashrif soʻrovlari'
+  },
+  'myProperties.upcomingVisits': {
+    en: 'Upcoming visits',
+    ru: 'Предстоящие визиты',
+    uz: 'Kelgusi tashriflar'
+  },
+  'myProperties.manage': {
+    en: 'Manage',
+    ru: 'Управлять',
+    uz: 'Boshqarish'
+  },
+  'myProperties.visitorInfo': {
+    en: 'Visitor',
+    ru: 'Посетитель',
+    uz: 'Tashrif buyuruvchi'
+  },
+  'myProperties.visitTime': {
+    en: 'Time',
+    ru: 'Время',
+    uz: 'Vaqt'
+  },
+
+  // Common Elements (additional keys)
+  'common.startListingFirst': {
+    en: 'Start by listing your first property to connect with potential buyers.',
+    ru: 'Начните с размещения вашего первого объявления для связи с потенциальными покупателями.',
+    uz: 'Potentsial xaridorlar bilan bogʻlanish uchun birinchi uyingizni eʼlon qilishdan boshlang.'
   }
 };
 
