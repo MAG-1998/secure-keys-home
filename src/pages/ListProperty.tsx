@@ -850,21 +850,20 @@ const ListProperty = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <Badge variant="success" className="mb-4">
-              Seller Portal
+              {t('listProperty.sellerPortal')}
             </Badge>
             <h1 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4">
-              List Your Property on <span className="text-primary">Magit</span>
+              {t('listProperty.listYourProperty').split('Magit')[0]}<span className="text-primary">Magit</span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Join our verified marketplace and reach serious buyers with transparent, 
-              Halal-compliant financing options.
+              {t('listProperty.marketplaceDescription')}
             </p>
             
             {/* Progress Bar */}
             <div className="max-w-2xl mx-auto">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Step {currentStep} of {totalSteps}</span>
-                <span className="text-sm text-muted-foreground">{Math.round(currentStep / totalSteps * 100)}% Complete</span>
+                <span className="text-sm text-muted-foreground">{t('listProperty.stepProgress').replace('{current}', currentStep.toString()).replace('{total}', totalSteps.toString())}</span>
+                <span className="text-sm text-muted-foreground">{t('listProperty.percentComplete').replace('{percent}', Math.round(currentStep / totalSteps * 100).toString())}</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
                 <div className="bg-primary h-2 rounded-full transition-all duration-300" style={{
