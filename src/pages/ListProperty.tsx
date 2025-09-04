@@ -417,87 +417,87 @@ const ListProperty = () => {
               </div>
               
               <div>
-                <Label htmlFor="propertyType">Property Type</Label>
+                <Label htmlFor="propertyType">{t('listProperty.propertyType')}</Label>
                 <Select value={formData.propertyType} onValueChange={value => handleInputChange("propertyType", value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select property type" />
+                    <SelectValue placeholder={t('listProperty.selectPropertyType')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="apartment">Apartment</SelectItem>
-                    <SelectItem value="house">House</SelectItem>
-                    <SelectItem value="studio">Studio</SelectItem>
+                    <SelectItem value="apartment">{t('listProperty.apartment')}</SelectItem>
+                    <SelectItem value="house">{t('listProperty.house')}</SelectItem>
+                    <SelectItem value="studio">{t('listProperty.studio')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
               <div>
-                <Label htmlFor="address">Property Address</Label>
-                <Input id="address" placeholder="Enter full address in Tashkent" value={formData.address} onChange={e => handleInputChange("address", e.target.value)} />
+                <Label htmlFor="address">{t('listProperty.propertyAddress')}</Label>
+                <Input id="address" placeholder={t('listProperty.addressPlaceholder')} value={formData.address} onChange={e => handleInputChange("address", e.target.value)} />
               </div>
               <div>
-                <Label htmlFor="district">District</Label>
-                <Input id="district" list="districts" placeholder="Select or type district" value={formData.district} onChange={(e) => handleInputChange('district', e.target.value)} />
+                <Label htmlFor="district">{t('listProperty.district')}</Label>
+                <Input id="district" list="districts" placeholder={t('listProperty.selectDistrict')} value={formData.district} onChange={(e) => handleInputChange('district', e.target.value)} />
                 <datalist id="districts">
                   {getDistrictOptions(language).map(({ value, label }) => (
                     <option key={value} value={value}>{label}</option>
                   ))}
-                  <option value="Other">Other</option>
+                  <option value="Other">{t('listProperty.other')}</option>
                 </datalist>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="price">Price (USD)</Label>
+                  <Label htmlFor="price">{t('listProperty.price')}</Label>
                   <Input id="price" type="number" placeholder="0" value={formData.price} onChange={e => handleInputChange("price", e.target.value)} />
                 </div>
                 <div>
-                  <Label htmlFor="area">Area (m²)</Label>
+                  <Label htmlFor="area">{t('listProperty.area')}</Label>
                   <Input id="area" type="number" placeholder="0" value={formData.area} onChange={e => handleInputChange("area", e.target.value)} />
                 </div>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="bedrooms">Bedrooms</Label>
+                  <Label htmlFor="bedrooms">{t('listProperty.bedrooms')}</Label>
                   <div className="space-y-2">
                     <Select value={formData.bedrooms} onValueChange={value => handleInputChange("bedrooms", value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select bedrooms" />
+                        <SelectValue placeholder={t('listProperty.selectBedrooms')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {[0, 1, 2, 3, 4, 5, 6].map(num => <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? 'bedroom' : 'bedrooms'}</SelectItem>)}
-                        <SelectItem value="custom">Other (enter custom number)</SelectItem>
+                        {[0, 1, 2, 3, 4, 5, 6].map(num => <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? t('listProperty.bedroom') : t('listProperty.bedroomsPlural')}</SelectItem>)}
+                        <SelectItem value="custom">{t('listProperty.otherCustom')}</SelectItem>
                       </SelectContent>
                     </Select>
-                    {formData.bedrooms === "custom" && <Input type="number" placeholder="Enter number of bedrooms" min="0" value={formData.customBedrooms} autoFocus onChange={e => handleInputChange("customBedrooms", e.target.value)} />}
+                    {formData.bedrooms === "custom" && <Input type="number" placeholder={t('listProperty.enterBedrooms')} min="0" value={formData.customBedrooms} autoFocus onChange={e => handleInputChange("customBedrooms", e.target.value)} />}
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="bathrooms">Bathrooms</Label>
+                  <Label htmlFor="bathrooms">{t('listProperty.bathrooms')}</Label>
                   <div className="space-y-2">
                     <Select value={formData.bathrooms} onValueChange={value => handleInputChange("bathrooms", value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select bathrooms" />
+                        <SelectValue placeholder={t('listProperty.selectBathrooms')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {[1, 2, 3, 4, 5].map(num => <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? 'bathroom' : 'bathrooms'}</SelectItem>)}
-                        <SelectItem value="custom">Other (enter custom number)</SelectItem>
+                        {[1, 2, 3, 4, 5].map(num => <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? t('listProperty.bathroom') : t('listProperty.bathroomsPlural')}</SelectItem>)}
+                        <SelectItem value="custom">{t('listProperty.otherCustom')}</SelectItem>
                       </SelectContent>
                     </Select>
-                    {formData.bathrooms === "custom" && <Input type="number" placeholder="Enter number of bathrooms" min="1" value={formData.customBathrooms} autoFocus onChange={e => handleInputChange("customBathrooms", e.target.value)} />}
+                    {formData.bathrooms === "custom" && <Input type="number" placeholder={t('listProperty.enterBathrooms')} min="1" value={formData.customBathrooms} autoFocus onChange={e => handleInputChange("customBathrooms", e.target.value)} />}
                   </div>
                 </div>
               </div>
               
               <div>
-                <Label htmlFor="description">Property Description</Label>
-                <Textarea id="description" placeholder="Describe your property's features, condition, and highlights..." value={formData.description} onChange={e => handleInputChange("description", e.target.value)} rows={4} />
+                <Label htmlFor="description">{t('listProperty.propertyDescription')}</Label>
+                <Textarea id="description" placeholder={t('listProperty.descriptionPlaceholder')} value={formData.description} onChange={e => handleInputChange("description", e.target.value)} rows={4} />
               </div>
 
               <div>
-                <Label htmlFor="visitHours">Comfortable Visit Hours</Label>
+                <Label htmlFor="visitHours">{t('listProperty.comfortableVisitHours')}</Label>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Select time slots when you're comfortable showing your property to potential buyers
+                  {t('listProperty.visitHoursDescription')}
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   {[
@@ -531,7 +531,7 @@ const ListProperty = () => {
                 </div>
                 {formData.visitHours.length === 0 && (
                   <p className="text-sm text-orange-600 dark:text-orange-400 mt-2">
-                    Please select at least one time slot for property visits
+                    {t('listProperty.selectTimeSlot')}
                   </p>
                 )}
               </div>
@@ -558,15 +558,15 @@ const ListProperty = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Camera className="w-5 h-5" />
-                Property Photos
+                {t('listProperty.propertyPhotos')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
                 <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">Upload Property Photos</h3>
+                <h3 className="font-semibold mb-2">{t('listProperty.uploadPropertyPhotos')}</h3>
                 <p className="text-muted-foreground text-sm mb-4">
-                  Upload at least 5 high-quality photos of your property
+                  {t('listProperty.uploadDescription')}
                 </p>
                 <input
                   ref={fileInputRef}
@@ -577,10 +577,10 @@ const ListProperty = () => {
                   onChange={handlePhotosSelected}
                 />
                 <Button variant="outline" onClick={handleChoosePhotos}>
-                  Choose Photos
+                  {t('listProperty.choosePhotos')}
                 </Button>
                 <p className={`text-sm mt-2 ${formData.photos.length < 5 ? 'text-orange-600 dark:text-orange-400' : 'text-muted-foreground'}`}>
-                  Selected: {formData.photos.length}/20 (minimum 5 required)
+                  {t('listProperty.selectedPhotos').replace('{count}', formData.photos.length.toString())}
                 </p>
                 {formData.photos.length < 5 && (
                   <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
@@ -707,7 +707,7 @@ const ListProperty = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
-                Payment & Fees
+                {t('listProperty.paymentFees')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -886,7 +886,7 @@ const ListProperty = () => {
             <div className="flex items-center justify-between mt-8">
               <div className="flex gap-2">
                 <Button variant="outline" onClick={prevStep} disabled={currentStep === 1}>
-                  Previous
+                  {t('listProperty.previous')}
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -894,7 +894,7 @@ const ListProperty = () => {
                   className="flex items-center gap-1"
                 >
                   <Save className="w-4 h-4" />
-                  Save Draft
+                  {t('listProperty.saveDraft')}
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -902,7 +902,7 @@ const ListProperty = () => {
                   className="flex items-center gap-1 text-destructive hover:text-destructive"
                 >
                   <Trash2 className="w-4 h-4" />
-                  Clear
+                  {t('listProperty.clearDraft')}
                 </Button>
               </div>
               
@@ -911,7 +911,7 @@ const ListProperty = () => {
                   className="flex items-center gap-2"
                   disabled={currentStep === 3 && formData.photos.length < 5}
                 >
-                  Next Step
+                  {t('listProperty.nextStep')}
                   <ArrowRight className="w-4 h-4" />
                 </Button> : <Button
                   variant="success"
@@ -919,7 +919,7 @@ const ListProperty = () => {
                   onClick={handleSubmitApplication}
                   disabled={isSubmitting || applicationSubmitted}
                 >
-                  {isSubmitting ? "Submitting..." : applicationSubmitted ? "Application Submitted" : "Complete Application"}
+                  {isSubmitting ? t('listProperty.submitting') : applicationSubmitted ? t('listProperty.applicationSubmitted') : t('listProperty.completeApplication')}
                   <CheckCircle className="w-4 h-4" />
                 </Button>}
             </div>

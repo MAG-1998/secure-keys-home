@@ -530,6 +530,453 @@ const translations: Translations = {
     ru: 'Очистить черновик',
     uz: 'Qoralamani tozalash'
   },
+  'listProperty.selectPropertyType': {
+    en: 'Select property type',
+    ru: 'Выберите тип объекта',
+    uz: 'Mulk turini tanlang'
+  },
+  'listProperty.apartment': {
+    en: 'Apartment',
+    ru: 'Квартира',
+    uz: 'Kvartira'
+  },
+  'listProperty.house': {
+    en: 'House',
+    ru: 'Дом',
+    uz: 'Uy'
+  },
+  'listProperty.studio': {
+    en: 'Studio',
+    ru: 'Студия',
+    uz: 'Studiya'
+  },
+  'listProperty.addressPlaceholder': {
+    en: 'Enter full address in Tashkent',
+    ru: 'Введите полный адрес в Ташкенте',
+    uz: 'Toshkentda to\'liq manzilni kiriting'
+  },
+  'listProperty.selectDistrict': {
+    en: 'Select or type district',
+    ru: 'Выберите или введите район',
+    uz: 'Tumanni tanlang yoki yozing'
+  },
+  'listProperty.other': {
+    en: 'Other',
+    ru: 'Другой',
+    uz: 'Boshqa'
+  },
+  'listProperty.selectBedrooms': {
+    en: 'Select bedrooms',
+    ru: 'Выберите спальни',
+    uz: 'Yotoq xonalarni tanlang'
+  },
+  'listProperty.bedroom': {
+    en: 'bedroom',
+    ru: 'спальня',
+    uz: 'yotoq xona'
+  },
+  'listProperty.bedroomsPlural': {
+    en: 'bedrooms',
+    ru: 'спален',
+    uz: 'yotoq xonalar'
+  },
+  'listProperty.otherCustom': {
+    en: 'Other (enter custom number)',
+    ru: 'Другое (введите число)',
+    uz: 'Boshqa (raqam kiriting)'
+  },
+  'listProperty.enterBedrooms': {
+    en: 'Enter number of bedrooms',
+    ru: 'Введите количество спален',
+    uz: 'Yotoq xonalar sonini kiriting'
+  },
+  'listProperty.selectBathrooms': {
+    en: 'Select bathrooms',
+    ru: 'Выберите ванные',
+    uz: 'Hammom xonalarni tanlang'
+  },
+  'listProperty.bathroom': {
+    en: 'bathroom',
+    ru: 'ванная',
+    uz: 'hammom xona'
+  },
+  'listProperty.bathroomsPlural': {
+    en: 'bathrooms',
+    ru: 'ванных',
+    uz: 'hammom xonalar'
+  },
+  'listProperty.enterBathrooms': {
+    en: 'Enter number of bathrooms',
+    ru: 'Введите количество ванных',
+    uz: 'Hammom xonalar sonini kiriting'
+  },
+  'listProperty.propertyDescription': {
+    en: 'Property Description',
+    ru: 'Описание объекта',
+    uz: 'Mulk tavsifi'
+  },
+  'listProperty.descriptionPlaceholder': {
+    en: 'Describe your property\'s features, condition, and highlights...',
+    ru: 'Опишите особенности, состояние и преимущества вашего объекта...',
+    uz: 'Mulkingizning xususiyatlari, ahvoli va afzalliklarini tasvirlang...'
+  },
+  'listProperty.comfortableVisitHours': {
+    en: 'Comfortable Visit Hours',
+    ru: 'Удобные часы для просмотра',
+    uz: 'Qulay ko\'rish vaqtlari'
+  },
+  'listProperty.visitHoursDescription': {
+    en: 'Select time slots when you\'re comfortable showing your property to potential buyers',
+    ru: 'Выберите время, когда вам удобно показывать объект потенциальным покупателям',
+    uz: 'Potensial xaridorlarga mulkingizni ko\'rsatishga qulay vaqtingizni tanlang'
+  },
+  'listProperty.selectTimeSlot': {
+    en: 'Please select at least one time slot for property visits',
+    ru: 'Пожалуйста, выберите хотя бы один временной слот для просмотра',
+    uz: 'Iltimos, mulkni ko\'rish uchun kamida bitta vaqt oralig\'ini tanlang'
+  },
+  'listProperty.propertyPhotos': {
+    en: 'Property Photos',
+    ru: 'Фотографии объекта',
+    uz: 'Mulk rasmlari'
+  },
+  'listProperty.uploadPropertyPhotos': {
+    en: 'Upload Property Photos',
+    ru: 'Загрузить фотографии объекта',
+    uz: 'Mulk rasmlarini yuklash'
+  },
+  'listProperty.uploadDescription': {
+    en: 'Upload at least 5 high-quality photos of your property',
+    ru: 'Загрузите не менее 5 качественных фотографий вашего объекта',
+    uz: 'Mulkingizning kamida 5 ta sifatli rasmini yuklang'
+  },
+  'listProperty.choosePhotos': {
+    en: 'Choose Photos',
+    ru: 'Выбрать фотографии',
+    uz: 'Rasmlarni tanlash'
+  },
+  'listProperty.selectedPhotos': {
+    en: 'Selected: {count}/20 (minimum 5 required)',
+    ru: 'Выбрано: {count}/20 (минимум 5 требуется)',
+    uz: 'Tanlangan: {count}/20 (kamida 5 ta kerak)'
+  },
+  'listProperty.uploadMorePhotos': {
+    en: 'Upload at least {count} more photo(s) to continue',
+    ru: 'Загрузите ещё {count} фото для продолжения',
+    uz: 'Davom etish uchun yana {count} ta rasm yuklang'
+  },
+  'listProperty.propertyPhoto': {
+    en: 'Property photo {number}',
+    ru: 'Фото объекта {number}',
+    uz: 'Mulk rasmi {number}'
+  },
+  'listProperty.paymentFees': {
+    en: 'Payment & Fees',
+    ru: 'Оплата и сборы',
+    uz: 'To\'lov va yig\'imlar'
+  },
+  'listProperty.listingFees': {
+    en: 'Listing Fees',
+    ru: 'Сборы за размещение',
+    uz: 'Joylashtirish yig\'imlari'
+  },
+  'listProperty.basicListing': {
+    en: 'Basic Listing:',
+    ru: 'Базовое размещение:',
+    uz: 'Asosiy joylashtirish:'
+  },
+  'listProperty.free': {
+    en: 'FREE',
+    ru: 'БЕСПЛАТНО',
+    uz: 'BEPUL'
+  },
+  'listProperty.professionalVirtualTour': {
+    en: 'Professional Virtual Tour:',
+    ru: 'Профессиональный виртуальный тур:',
+    uz: 'Professional virtual tur:'
+  },
+  'listProperty.total': {
+    en: 'Total:',
+    ru: 'Итого:',
+    uz: 'Jami:'
+  },
+  'listProperty.reviewSubmit': {
+    en: 'Review & Submit',
+    ru: 'Проверка и отправка',
+    uz: 'Ko\'rib chiqish va yuborish'
+  },
+  'listProperty.applicationSummary': {
+    en: 'Application Summary',
+    ru: 'Сводка заявки',
+    uz: 'Ariza xulosasi'
+  },
+  'listProperty.propertyTypeLabel': {
+    en: 'Property Type:',
+    ru: 'Тип объекта:',
+    uz: 'Mulk turi:'
+  },
+  'listProperty.addressLabel': {
+    en: 'Address:',
+    ru: 'Адрес:',
+    uz: 'Manzil:'
+  },
+  'listProperty.priceLabel': {
+    en: 'Price:',
+    ru: 'Цена:',
+    uz: 'Narx:'
+  },
+  'listProperty.location': {
+    en: 'Location:',
+    ru: 'Местоположение:',
+    uz: 'Joylashuv:'
+  },
+  'listProperty.coordinatesSet': {
+    en: 'Coordinates set ✓',
+    ru: 'Координаты установлены ✓',
+    uz: 'Koordinatalar o\'rnatildi ✓'
+  },
+  'listProperty.halalFinancingLabel': {
+    en: 'Halal Financing:',
+    ru: 'Халяльное финансирование:',
+    uz: 'Halol moliyalashtirish:'
+  },
+  'listProperty.requested': {
+    en: 'Requested ✓',
+    ru: 'Запрошено ✓',
+    uz: 'So\'ralgan ✓'
+  },
+  'listProperty.notSpecified': {
+    en: 'Not specified',
+    ru: 'Не указано',
+    uz: 'Ko\'rsatilmagan'
+  },
+  'listProperty.whatHappensNext': {
+    en: 'What happens next?',
+    ru: 'Что будет дальше?',
+    uz: 'Keyin nima bo\'ladi?'
+  },
+  'listProperty.documentReview': {
+    en: '• Document review within 24 hours',
+    ru: '• Проверка документов в течение 24 часов',
+    uz: '• Hujjatlar 24 soat ichida ko\'rib chiqiladi'
+  },
+  'listProperty.fieldAgentVisit': {
+    en: '• Field agent visit scheduled',
+    ru: '• Назначен визит полевого агента',
+    uz: '• Dala agenti tashrifi belgilandi'
+  },
+  'listProperty.propertyVerification': {
+    en: '• Property verification and photos',
+    ru: '• Проверка объекта и фотографии',
+    uz: '• Mulk tekshiruvi va rasmlar'
+  },
+  'listProperty.listingGoesLive': {
+    en: '• Listing goes live with verified badge',
+    ru: '• Объявление публикуется с подтверждённым значком',
+    uz: '• E\'lon tasdiqlangan nishon bilan jonli efirga chiqadi'
+  },
+  'listProperty.applicationUnderReview': {
+    en: 'Application Under Review',
+    ru: 'Заявка на рассмотрении',
+    uz: 'Ariza ko\'rib chiqilmoqda'
+  },
+  'listProperty.reviewNotification': {
+    en: 'Your property listing application has been sent to our moderation team. You\'ll receive an email notification once it\'s reviewed (typically within 24-48 hours).',
+    ru: 'Ваша заявка на размещение объекта отправлена команде модерации. Вы получите уведомление по электронной почте после проверки (обычно в течение 24-48 часов).',
+    uz: 'Mulkingizni joylashtirish bo\'yicha arizangiz moderatsiya jamoasiga yuborildi. Ko\'rib chiqilgandan so\'ng elektron pochta orqali xabar olasiz (odatda 24-48 soat ichida).'
+  },
+  'listProperty.saved': {
+    en: 'Saved {time}',
+    ru: 'Сохранено {time}',
+    uz: 'Saqlandi {time}'
+  },
+  'listProperty.backToHome': {
+    en: 'Back to Home',
+    ru: 'На главную',
+    uz: 'Bosh sahifaga'
+  },
+  'listProperty.sellerPortal': {
+    en: 'Seller Portal',
+    ru: 'Портал продавца',
+    uz: 'Sotuvchi portali'
+  },
+  'listProperty.listYourProperty': {
+    en: 'List Your Property on Magit',
+    ru: 'Разместите свой объект на Magit',
+    uz: 'Mulkingizni Magit\'da joylashtiring'
+  },
+  'listProperty.marketplaceDescription': {
+    en: 'Join our verified marketplace and reach serious buyers with transparent, Halal-compliant financing options.',
+    ru: 'Присоединяйтесь к нашей проверенной площадке и находите серьёзных покупателей с прозрачными, халяльными вариантами финансирования.',
+    uz: 'Bizning tasdiqlangan bozorimizga qo\'shiling va shaffof, halol moliyalashtirish variantlari bilan jiddiy xaridorlarni toping.'
+  },
+  'listProperty.stepProgress': {
+    en: 'Step {current} of {total}',
+    ru: 'Шаг {current} из {total}',
+    uz: '{current}-qadam {total}dan'
+  },
+  'listProperty.percentComplete': {
+    en: '{percent}% Complete',
+    ru: '{percent}% завершено',
+    uz: '{percent}% tugallandi'
+  },
+  'listProperty.nextStep': {
+    en: 'Next Step',
+    ru: 'Следующий шаг',
+    uz: 'Keyingi qadam'
+  },
+  'listProperty.submitting': {
+    en: 'Submitting...',
+    ru: 'Отправка...',
+    uz: 'Yuborilmoqda...'
+  },
+  'listProperty.applicationSubmitted': {
+    en: 'Application Submitted',
+    ru: 'Заявка отправлена',
+    uz: 'Ariza yuborildi'
+  },
+  'listProperty.completeApplication': {
+    en: 'Complete Application',
+    ru: 'Завершить заявку',
+    uz: 'Arizani tugatish'
+  },
+  'listProperty.whyListWithMagit': {
+    en: 'Why List with Magit?',
+    ru: 'Почему стоит размещать на Magit?',
+    uz: 'Nega Magit\'da joylashtirish kerak?'
+  },
+  'listProperty.verifiedBuyersOnly': {
+    en: 'Verified Buyers Only',
+    ru: 'Только проверенные покупатели',
+    uz: 'Faqat tasdiqlangan xaridorlar'
+  },
+  'listProperty.verifiedBuyersDescription': {
+    en: 'All buyers are pre-screened with verified financing and serious intent.',
+    ru: 'Все покупатели предварительно проверены с подтверждённым финансированием и серьёзными намерениями.',
+    uz: 'Barcha xaridorlar oldindan tekshirilgan, tasdiqlangan moliyalashtirish va jiddiy niyat bilan.'
+  },
+  'listProperty.zeroCommission': {
+    en: 'Zero Commission',
+    ru: 'Без комиссии',
+    uz: 'Komissiyasiz'
+  },
+  'listProperty.zeroCommissionDescription': {
+    en: 'List your property for free. No hidden fees or commission charges.',
+    ru: 'Размещайте объект бесплатно. Никаких скрытых платежей или комиссий.',
+    uz: 'Mulkingizni bepul joylashtiring. Yashirin to\'lovlar yoki komissiya yo\'q.'
+  },
+  'listProperty.premiumExposure': {
+    en: 'Premium Exposure',
+    ru: 'Премиальная экспозиция',
+    uz: 'Premium namoyish'
+  },
+  'listProperty.premiumExposureDescription': {
+    en: 'Featured on our AI-powered platform with smart buyer matching.',
+    ru: 'Представлено на нашей платформе с ИИ и умным подбором покупателей.',
+    uz: 'AI bilan ishlaydigan platformamizda aqlli xaridor moslashtirish bilan namoyish etiladi.'
+  },
+
+  // Additional ListProperty translations for remaining sections
+  'listProperty.selectedPhotosText': {
+    en: 'Selected: {count}/20 (minimum 5 required)',
+    ru: 'Выбрано: {count}/20 (минимум 5 требуется)',
+    uz: 'Tanlangan: {count}/20 (kamida 5 ta kerak)'
+  },
+  'listProperty.uploadMoreText': {
+    en: 'Upload at least {count} more photo(s) to continue',
+    ru: 'Загрузите ещё {count} фото для продолжения',
+    uz: 'Davom etish uchun yana {count} ta rasm yuklang'
+  },
+  'listProperty.remove': {
+    en: 'Remove',
+    ru: 'Удалить',
+    uz: 'Olib tashlash'
+  },
+  'listProperty.photoGuidelines': {
+    en: 'Photo Guidelines',
+    ru: 'Рекомендации по фото',
+    uz: 'Rasm bo\'yicha tavsiyalar'
+  },
+  'listProperty.includeExteriorInterior': {
+    en: '• Include exterior and interior shots',
+    ru: '• Включите внешние и внутренние снимки',
+    uz: '• Tashqi va ichki rasmlarni kiriting'
+  },
+  'listProperty.showAllRooms': {
+    en: '• Show all rooms and key features',
+    ru: '• Покажите все комнаты и ключевые особенности',
+    uz: '• Barcha xonalar va asosiy xususiyatlarni ko\'rsating'
+  },
+  'listProperty.useGoodLighting': {
+    en: '• Use good lighting and clean spaces',
+    ru: '• Используйте хорошее освещение и чистые помещения',
+    uz: '• Yaxshi yorug\'lik va toza joylardan foydalaning'
+  },
+  'listProperty.photoLimits': {
+    en: '• Maximum 20 photos, minimum 5',
+    ru: '• Максимум 20 фото, минимум 5',
+    uz: '• Maksimum 20 ta rasm, minimum 5 ta'
+  },
+  'listProperty.requiredDocuments': {
+    en: 'Required Documents',
+    ru: 'Необходимые документы',
+    uz: 'Kerakli hujjatlar'
+  },
+  'listProperty.propertyTitle': {
+    en: 'Property Title/Deed',
+    ru: 'Свидетельство о собственности',
+    uz: 'Mulkchilik guvohnomasi'
+  },
+  'listProperty.proofOwnership': {
+    en: 'Proof of ownership',
+    ru: 'Подтверждение собственности',
+    uz: 'Mulkchilik isboti'
+  },
+  'listProperty.upload': {
+    en: 'Upload',
+    ru: 'Загрузить',
+    uz: 'Yuklash'
+  },
+  'listProperty.passportId': {
+    en: 'Passport/ID',
+    ru: 'Паспорт/Удостоверение',
+    uz: 'Pasport/Guvohnoma'
+  },
+  'listProperty.ownerIdentification': {
+    en: 'Owner identification',
+    ru: 'Удостоверение владельца',
+    uz: 'Eganing shaxsini tasdiqlovchi'
+  },
+  'listProperty.propertyAssessment': {
+    en: 'Property Assessment',
+    ru: 'Оценка недвижимости',
+    uz: 'Mulk baholash'
+  },
+  'listProperty.officialValuation': {
+    en: 'Official valuation (if available)',
+    ru: 'Официальная оценка (если есть)',
+    uz: 'Rasmiy baholash (agar mavjud bo\'lsa)'
+  },
+  'listProperty.professionalVirtualTourFull': {
+    en: 'Professional Virtual Tour (+300,000 UZS)',
+    ru: 'Профессиональный виртуальный тур (+300,000 UZS)',
+    uz: 'Professional virtual tur (+300,000 UZS)'
+  },
+  'listProperty.agentVisitDescription': {
+    en: 'Our certified agent will visit your property within 2-3 business days to verify details and create professional virtual tour photos.',
+    ru: 'Наш сертифицированный агент посетит ваш объект в течение 2-3 рабочих дней для проверки деталей и создания профессиональных фотографий виртуального тура.',
+    uz: 'Bizning sertifikatlangan agentimiz 2-3 ish kuni ichida mulkingizga tashrif buyurib, tafsilotlarni tekshiradi va professional virtual tur rasmlarini yaratadi.'
+  },
+  'listProperty.halalFinancingAvailable': {
+    en: 'Halal Financing Available',
+    ru: 'Доступно халяльное финансирование',
+    uz: 'Halol moliyalashtirish mavjud'
+  },
+  'listProperty.shariaCompliantDescription': {
+    en: 'Request to make your property available for Sharia-compliant financing. Our Islamic finance team will contact you within 1 week to discuss options.',
+    ru: 'Запросите, чтобы ваш объект стал доступен для финансирования, соответствующего шариату. Наша команда исламского финансирования свяжется с вами в течение 1 недели для обсуждения вариантов.',
+    uz: 'Mulkingizni Shariatga mos moliyalashtirish uchun mavjud qilishni so\'rang. Bizning islom moliyasi jamoamiz imkoniyatlarni muhokama qilish uchun 1 hafta ichida siz bilan bog\'lanadi.'
+  },
 
   // AllResults page
   'allResults.searchResults': {
