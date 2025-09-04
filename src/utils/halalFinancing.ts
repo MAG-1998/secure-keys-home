@@ -83,10 +83,23 @@ export const formatCurrency = (amount: number): string => {
   }).format(amount);
 };
 
-export const getPeriodOptions = () => [
-  { value: '6', label: '6 months' },
-  { value: '9', label: '9 months' },
-  { value: '12', label: '1 year' },
-  { value: '18', label: '1.5 years' },
-  { value: '24', label: '2 years' }
-];
+export const getPeriodOptions = (t?: (key: string) => string) => {
+  if (t) {
+    return [
+      { value: '6', label: t('halal.period.6months') },
+      { value: '9', label: t('halal.period.9months') },
+      { value: '12', label: t('halal.period.1year') },
+      { value: '18', label: t('halal.period.1.5years') },
+      { value: '24', label: t('halal.period.2years') }
+    ];
+  }
+  
+  // Fallback to English for backwards compatibility
+  return [
+    { value: '6', label: '6 months' },
+    { value: '9', label: '9 months' },
+    { value: '12', label: '1 year' },
+    { value: '18', label: '1.5 years' },
+    { value: '24', label: '2 years' }
+  ];
+};

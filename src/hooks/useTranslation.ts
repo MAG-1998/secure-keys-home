@@ -287,6 +287,8 @@ const translations: Translations = {
     ru: 'Цена',
     uz: 'Narx oraligʻi'
   },
+  'filter.min': { en: 'Min', ru: 'Мин', uz: 'Min' },
+  'filter.max': { en: 'Max', ru: 'Макс', uz: 'Maks' },
   'filter.selectBudget': {
     en: 'Select budget',
     ru: 'Выберите бюджет',
@@ -359,6 +361,13 @@ const translations: Translations = {
     ru: 'Период финансирования',
     uz: 'Moliyalashtirish muddati'
   },
+
+  // Halal financing period options
+  'halal.period.6months': { en: '6 months', ru: '6 месяцев', uz: '6 oy' },
+  'halal.period.9months': { en: '9 months', ru: '9 месяцев', uz: '9 oy' },
+  'halal.period.1year': { en: '1 year', ru: '1 год', uz: '1 yil' },
+  'halal.period.1.5years': { en: '1.5 years', ru: '1.5 года', uz: '1.5 yil' },
+  'halal.period.2years': { en: '2 years', ru: '2 года', uz: '2 yil' },
   'halal.propertyPrice': {
     en: 'Property Price',
     ru: 'Стоимость недвижимости',

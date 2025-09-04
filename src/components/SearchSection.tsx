@@ -49,8 +49,8 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
 
   const [aiSuggestion, setAiSuggestion] = useState("")
   
-  // Get period options for dropdown
-  const periodOptions = getPeriodOptions()
+  // Get period options for dropdown with translation support
+  const periodOptions = getPeriodOptions(t)
   
   // Calculate financing results and property price
   const financingCalculation = useMemo(() => {
@@ -73,9 +73,13 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
 
   // District options for current language  
   const districtOptions = useMemo(() => {
-    const lang = 'ru' // You can make this dynamic based on current language
-    return getDistrictOptions(lang as any)
-  }, [])
+    // Extract language from translation function - check if it returns Russian
+    const testKey = 'common.signOut'
+    const russianText = 'Выйти'
+    const currentLang = t(testKey) === russianText ? 'ru' : 
+                       t(testKey) === 'Chiqish' ? 'uz' : 'en'
+    return getDistrictOptions(currentLang as any)
+  }, [t])
 
   // Search suggestions based on input
   const searchSuggestions = useMemo(() => {
@@ -511,20 +515,20 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                       <DollarSign className="h-4 w-4" />
                       {t('filter.priceRange')}
                     </Label>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Мин"
-                        value={filters.priceMin || ''}
-                        onChange={(e) => handleFilterChange('priceMin', e.target.value)}
-                        className="flex-1"
-                      />
-                      <Input
-                        placeholder="Макс"
-                        value={filters.priceMax || ''}
-                        onChange={(e) => handleFilterChange('priceMax', e.target.value)}
-                        className="flex-1"
-                      />
-                    </div>
+                     <div className="flex gap-2">
+                       <Input
+                         placeholder={t('filter.min')}
+                         value={filters.priceMin || ''}
+                         onChange={(e) => handleFilterChange('priceMin', e.target.value)}
+                         className="flex-1"
+                       />
+                       <Input
+                         placeholder={t('filter.max')}
+                         value={filters.priceMax || ''}
+                         onChange={(e) => handleFilterChange('priceMax', e.target.value)}
+                         className="flex-1"
+                       />
+                     </div>
                   </div>
                 </div>
 
