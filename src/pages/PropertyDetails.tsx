@@ -468,10 +468,23 @@ const PropertyDetails = () => {
     userRole === 'moderator'
   );
 
-  // Display the actual property price - never change the property price based on financing
+  // Calculate display price based on halal financing parameters
   const displayPrice = useMemo(() => {
+    if (financingStore.isHalalMode && financingStore.cashAvailable && financingStore.periodMonths && property) {
+      const cashAvailable = parseFloat(financingStore.cashAvailable);
+      const periodMonths = parseInt(financingStore.periodMonths);
+      
+      if (cashAvailable > 0 && periodMonths > 0 && cashAvailable < property.price) {
+        // Calculate the total property price including all fees
+        const calculation = calculateHalalFinancing(cashAvailable, property.price, periodMonths);
+        const totalPropertyPrice = property.price + calculation.fixedFee + calculation.serviceFee + calculation.tax;
+        return `$${Math.round(totalPropertyPrice).toLocaleString()}`;
+      }
+    }
+    
+    // Default to base property price
     return `$${Math.round(property?.price || 0).toLocaleString()}`;
-  }, [property?.price]);
+  }, [financingStore.isHalalMode, financingStore.cashAvailable, financingStore.periodMonths, property]);
 
   if (loading) {
     return (
