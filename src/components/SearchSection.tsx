@@ -275,7 +275,7 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                     : 'apple-text-glow-cyan'
                 }`}
               >
-                {t('search.halalMode')}
+                Режим халяльной рассрочки
               </Label>
               <Switch
                 id="halal-mode"
