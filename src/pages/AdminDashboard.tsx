@@ -38,6 +38,7 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user } = useUser();
+  const { t } = useTranslation();
 
   const handleSignOut = async () => {
     try {
@@ -62,12 +63,12 @@ export default function AdminDashboard() {
 
       await forceLocalSignOut();
       navigate('/');
-      toast({ title: "Signed out successfully", description: "You have been logged out." });
+      toast({ title: t('common.signedOut'), description: t('common.loggedOut') });
       setTimeout(() => window.location.reload(), 0);
     } catch (error) {
       await forceLocalSignOut();
       navigate('/');
-      toast({ title: "Signed out", description: "You have been logged out." });
+      toast({ title: t('common.signedOut'), description: t('common.loggedOut') });
       setTimeout(() => window.location.reload(), 0);
     }
   };
@@ -119,8 +120,8 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
-        title: "Error",
-        description: "Failed to fetch users",
+        title: t('common.error'),
+        description: t('admin.dashboard.users.fetchFailed'),
         variant: "destructive",
       });
     }
@@ -167,8 +168,8 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Error fetching properties:', error);
       toast({
-        title: "Error",
-        description: "Failed to fetch properties",
+        title: t('common.error'),
+        description: t('admin.dashboard.properties.fetchFailed'),
         variant: "destructive",
       });
     }
@@ -215,8 +216,8 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Error fetching halal requests:', error);
       toast({
-        title: "Error",
-        description: "Failed to fetch halal financing requests",
+        title: t('common.error'),
+        description: t('admin.dashboard.applications.fetchFailed'),
         variant: "destructive",
       });
     }
@@ -232,8 +233,8 @@ export default function AdminDashboard() {
       if (error) throw error;
 
       toast({
-        title: "Success", 
-        description: "Application deleted successfully",
+        title: t('common.success'), 
+        description: t('admin.dashboard.applications.deleted'),
       });
 
       // Refresh data
@@ -253,8 +254,8 @@ export default function AdminDashboard() {
       // Prevent self-role modification
       if (userId === user?.id) {
         toast({
-          title: "Error",
-          description: "Cannot modify your own role",
+          title: t('common.error'),
+          description: t('admin.dashboard.users.cannotModifySelf'),
           variant: "destructive",
         });
         return;
@@ -461,22 +462,22 @@ export default function AdminDashboard() {
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'admin':
-        return <Badge variant="destructive">Admin</Badge>;
+        return <Badge variant="destructive">{t('admin.dashboard.users.roleAdmin')}</Badge>;
       case 'moderator':
-        return <Badge variant="default">Moderator</Badge>;
+        return <Badge variant="default">{t('admin.dashboard.users.roleModerator')}</Badge>;
       default:
-        return <Badge variant="secondary">User</Badge>;
+        return <Badge variant="secondary">{t('admin.dashboard.users.roleUser')}</Badge>;
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge variant="default">Active</Badge>;
+        return <Badge variant="default">{t('admin.dashboard.properties.statusActive')}</Badge>;
       case 'suspended':
-        return <Badge variant="destructive">Suspended</Badge>;
+        return <Badge variant="destructive">{t('admin.dashboard.properties.statusSuspended')}</Badge>;
       case 'pending':
-        return <Badge variant="secondary">Pending</Badge>;
+        return <Badge variant="secondary">{t('admin.dashboard.properties.statusPending')}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -485,9 +486,9 @@ export default function AdminDashboard() {
   const getHalalBadge = (property: any) => {
     const approved = property?.is_halal_financed || property?.halal_financing_status === 'approved';
     return approved ? (
-      <Badge variant="default">Halal Approved</Badge>
+      <Badge variant="default">{t('admin.dashboard.properties.halalApproved')}</Badge>
     ) : (
-      <Badge variant="destructive">Halal Not Approved</Badge>
+      <Badge variant="destructive">{t('admin.dashboard.properties.halalNotApproved')}</Badge>
     );
   };
 
@@ -503,7 +504,7 @@ export default function AdminDashboard() {
           <div className="min-h-screen bg-background">
             <header className="h-16 flex items-center border-b px-4">
               <SidebarTrigger className="mr-4" />
-              <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+              <h1 className="text-xl font-semibold">{t('admin.dashboard.title')}</h1>
               <div className="ml-auto">
                 <Button 
                   variant="outline" 
@@ -511,37 +512,37 @@ export default function AdminDashboard() {
                   className="flex items-center gap-2"
                 >
                   <LogOut className="w-4 h-4" />
-                  Sign Out
+                  {t('admin.dashboard.signOut')}
                 </Button>
               </div>
             </header>
             <main className="container mx-auto px-4 py-8">
               <div className="mb-8">
-                <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-                <p className="text-muted-foreground">Manage users, properties, halal financing, and security</p>
+                <h1 className="text-3xl font-bold">{t('admin.dashboard.title')}</h1>
+                <p className="text-muted-foreground">{t('admin.dashboard.financing.subtitle')}</p>
               </div>
 
       <Tabs defaultValue="users" className="space-y-6">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
-            Users & Roles ({users.length})
+            {t('admin.dashboard.tabs.users')} ({users.length})
           </TabsTrigger>
           <TabsTrigger value="properties" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
-            Properties ({properties.length})
+            {t('admin.dashboard.tabs.properties')} ({properties.length})
           </TabsTrigger>
           <TabsTrigger value="requests" className="flex items-center gap-2">
             <Settings className="w-4 h-4" />
-            Property Requests ({applications.length})
+            {t('admin.dashboard.tabs.applications')} ({applications.length})
           </TabsTrigger>
           <TabsTrigger value="financing" className="flex items-center gap-2">
             <Banknote className="w-4 h-4" />
-            Financing
+            {t('admin.dashboard.tabs.financing')}
           </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
-            Security Audit
+            {t('admin.dashboard.tabs.security')}
           </TabsTrigger>
         </TabsList>
 
@@ -577,9 +578,9 @@ export default function AdminDashboard() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="user">User</SelectItem>
-                          <SelectItem value="moderator">Moderator</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="user">{t('admin.dashboard.users.roleUser')}</SelectItem>
+                          <SelectItem value="moderator">{t('admin.dashboard.users.roleModerator')}</SelectItem>
+                          <SelectItem value="admin">{t('admin.dashboard.users.roleAdmin')}</SelectItem>
                         </SelectContent>
                       </Select>
                       <Button
@@ -588,7 +589,7 @@ export default function AdminDashboard() {
                         onClick={() => handleDeleteUser(user.user_id)}
                         disabled={user.user_id === user?.id}
                       >
-                        Delete Account
+                        {t('admin.dashboard.users.deleteUser')}
                       </Button>
                     </div>
                   </div>

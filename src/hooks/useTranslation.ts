@@ -398,6 +398,36 @@ const translations: Translations = {
     ru: 'Любой',
     uz: 'Hammasi'
   },
+  'common.success': {
+    en: 'Success',
+    ru: 'Успех',
+    uz: 'Muvaffaqiyat'
+  },
+  'common.error': {
+    en: 'Error',
+    ru: 'Ошибка',
+    uz: 'Xatolik'
+  },
+  'common.cancel': {
+    en: 'Cancel',
+    ru: 'Отмена',
+    uz: 'Bekor qilish'
+  },
+  'common.delete': {
+    en: 'Delete',
+    ru: 'Удалить',
+    uz: 'O\'chirish'
+  },
+  'common.signedOut': {
+    en: 'Signed out successfully',
+    ru: 'Вышли успешно',
+    uz: 'Muvaffaqiyatli chiqildi'
+  },
+  'common.loggedOut': {
+    en: 'You have been logged out.',
+    ru: 'Вы вышли из системы.',
+    uz: 'Tizimdan chiqtingiz.'
+  },
 
   // ListProperty page
   'listProperty.title': {
@@ -2300,7 +2330,7 @@ const translations: Translations = {
   'common.moreVisits': { en: 'more visits', ru: 'ещё визитов', uz: 'yana tashriflar' },
   'common.additionalNotes': { en: 'Additional notes (optional)', ru: 'Дополнительные заметки (необязательно)', uz: 'Qo\'shimcha eslatmalar (ixtiyoriy)' },
   'common.shareExperience': { en: 'Share your experience or notes about this visit...', ru: 'Поделитесь опытом или заметками об этом визите...', uz: 'Ushbu tashrif haqida tajribangiz yoki eslatmalaringizni ulashing...' },
-  'common.cancel': { en: 'Cancel', ru: 'Отмена', uz: 'Bekor qilish' },
+  
 
   // Admin
   'admin.pending': { en: 'pending', ru: 'ожидает', uz: 'kutilmoqda' },
@@ -2338,8 +2368,6 @@ const translations: Translations = {
 
   // Missing common translations
   'common.saving': { en: 'Saving...', ru: 'Сохранение...', uz: 'Saqlanmoqda...' },
-  'common.success': { en: 'Success', ru: 'Успех', uz: 'Muvaffaqiyat' },
-  'common.error': { en: 'Error', ru: 'Ошибка', uz: 'Xato' },
   'common.updated': { en: 'Property updated successfully', ru: 'Объект успешно обновлен', uz: 'Mulk muvaffaqiyatli yangilandi' },
   'common.updateFailed': { en: 'Failed to update property', ru: 'Не удалось обновить объект', uz: 'Mulkni yangilash muvaffaqiyatsiz' },
 

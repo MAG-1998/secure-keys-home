@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface Suggestion {
   id: string;
@@ -20,6 +21,7 @@ export default function DistrictReviewPanel({ onApplied }: { onApplied?: () => v
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [propsMeta, setPropsMeta] = useState<Record<string, { title?: string; location?: string }>>({});
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const ids = useMemo(() => suggestions.map(s => s.id), [suggestions]);
 
@@ -74,12 +76,12 @@ export default function DistrictReviewPanel({ onApplied }: { onApplied?: () => v
   return (
     <Card>
       <CardHeader>
-        <CardTitle>District review (manual)</CardTitle>
+        <CardTitle>{t('admin.districts.title')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Limit</span>
+            <span className="text-sm text-muted-foreground">{t('admin.districts.limit')}</span>
             <Input
               type="number"
               value={limit}
@@ -87,26 +89,26 @@ export default function DistrictReviewPanel({ onApplied }: { onApplied?: () => v
               className="w-24"
             />
           </div>
-          <Button onClick={scan} disabled={loading}>{loading ? 'Scanning…' : 'Scan suggestions'}</Button>
+          <Button onClick={scan} disabled={loading}>{loading ? t('admin.districts.scanning') : t('admin.districts.scanSuggestions')}</Button>
           {suggestions.length > 0 && (
             <Badge variant="secondary">{suggestions.length} suggestion(s)</Badge>
           )}
         </div>
 
         {suggestions.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No suggestions yet. Run a scan to preview districts without auto-changing.</p>
+          <p className="text-sm text-muted-foreground">{t('admin.districts.noSuggestions')}</p>
         ) : (
           <div className="space-y-3">
             {suggestions.map((s) => (
               <div key={s.id} className="flex items-start justify-between gap-4 border rounded-md p-3">
                 <div className="space-y-1">
-                  <div className="text-sm font-medium">{propsMeta[s.id]?.title || 'Property'} <span className="text-muted-foreground">({s.id.slice(0,8)}…)</span></div>
+                  <div className="text-sm font-medium">{propsMeta[s.id]?.title || t('admin.districts.property')} <span className="text-muted-foreground">({s.id.slice(0,8)}…)</span></div>
                   <div className="text-xs text-muted-foreground truncate max-w-xl">{propsMeta[s.id]?.location}</div>
-                  <div className="text-sm">Current: <Badge variant="outline">{s.current_district || '—'}</Badge></div>
-                  <div className="text-sm">Suggested: <Badge>{s.suggested_district}</Badge> <span className="text-xs text-muted-foreground">via {s.source}</span></div>
+                  <div className="text-sm">{t('admin.districts.current')}: <Badge variant="outline">{s.current_district || '—'}</Badge></div>
+                  <div className="text-sm">{t('admin.districts.suggested')}: <Badge>{s.suggested_district}</Badge> <span className="text-xs text-muted-foreground">{t('admin.districts.via')} {s.source}</span></div>
                 </div>
                 <div className="shrink-0">
-                  <Button onClick={() => apply(s)} disabled={applying === s.id}>{applying === s.id ? 'Applying…' : 'Apply'}</Button>
+                  <Button onClick={() => apply(s)} disabled={applying === s.id}>{applying === s.id ? t('admin.districts.applying') : t('admin.districts.apply')}</Button>
                 </div>
               </div>
             ))}

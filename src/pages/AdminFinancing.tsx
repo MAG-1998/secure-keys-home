@@ -17,6 +17,7 @@ import { useUser } from "@/contexts/UserContext";
 import { MagitLogo } from "@/components/MagitLogo";
 import { EnhancedFinancingRequestBox } from "@/components/EnhancedFinancingRequestBox";
 import { FileText, Search, Filter, Eye, UserCheck, Clock, CheckCircle, XCircle, AlertCircle, FileSearch, ArrowRight, MoreVertical, Trash2, Ban } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface FinancingRequest {
   id: string;
@@ -75,6 +76,7 @@ const AdminFinancing = () => {
   const { requestId } = useParams();
   const { toast } = useToast();
   const { user, role } = useUser();
+  const { t } = useTranslation();
 
   const isStaff = role === 'admin' || role === 'moderator';
 
@@ -303,10 +305,10 @@ const AdminFinancing = () => {
                 <div onClick={() => navigate('/')} className="cursor-pointer">
                   <MagitLogo size="md" />
                 </div>
-                <h1 className="font-heading font-bold text-xl text-foreground">Financing Request Details</h1>
+                <h1 className="font-heading font-bold text-xl text-foreground">{t('admin.financing.details')}</h1>
               </div>
               <Button variant="outline" onClick={() => navigate('/admin/financing')}>
-                Back to List
+                {t('admin.financing.backToList')}
               </Button>
             </div>
           </div>
@@ -327,7 +329,7 @@ const AdminFinancing = () => {
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
           <MagitLogo size="lg" />
-          <p className="text-muted-foreground mt-4">Loading financing requests...</p>
+          <p className="text-muted-foreground mt-4">{t('admin.financing.loading')}</p>
         </div>
       </div>
     );
@@ -342,10 +344,10 @@ const AdminFinancing = () => {
               <div onClick={() => navigate('/')} className="cursor-pointer">
                 <MagitLogo size="md" />
               </div>
-              <h1 className="font-heading font-bold text-xl text-foreground">Financing Requests</h1>
+              <h1 className="font-heading font-bold text-xl text-foreground">{t('admin.financing.title')}</h1>
             </div>
             <Button variant="outline" onClick={() => navigate('/admin')}>
-              Admin Dashboard
+              {t('admin.financing.backToDashboard')}
             </Button>
           </div>
         </div>
@@ -388,7 +390,7 @@ const AdminFinancing = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="w-5 h-5" />
-              Financing Requests Management
+              {t('admin.financing.subtitle')}
             </CardTitle>
             
             <div className="flex gap-4">
@@ -396,7 +398,7 @@ const AdminFinancing = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
-                    placeholder="Search by property, location, or applicant..."
+                    placeholder={t('admin.financing.search')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -406,17 +408,17 @@ const AdminFinancing = () => {
               <Select value={stageFilter} onValueChange={setStageFilter}>
                 <SelectTrigger className="w-48">
                   <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Filter by stage" />
+                  <SelectValue placeholder={t('admin.financing.filterByStage')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Stages</SelectItem>
-                  <SelectItem value="submitted">Submitted</SelectItem>
-                  <SelectItem value="assigned">Assigned</SelectItem>
-                  <SelectItem value="document_collection">Documents</SelectItem>
-                  <SelectItem value="under_review">Under Review</SelectItem>
-                  <SelectItem value="final_approval">Final Approval</SelectItem>
-                  <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="denied">Denied</SelectItem>
+                  <SelectItem value="all">{t('admin.financing.allStages')}</SelectItem>
+                  <SelectItem value="submitted">{t('admin.financing.stageSubmitted')}</SelectItem>
+                  <SelectItem value="assigned">{t('admin.financing.stageAssigned')}</SelectItem>
+                  <SelectItem value="document_collection">{t('admin.financing.stageDocuments')}</SelectItem>
+                  <SelectItem value="under_review">{t('admin.financing.stageUnderReview')}</SelectItem>
+                  <SelectItem value="final_approval">{t('admin.financing.stageFinalApproval')}</SelectItem>
+                  <SelectItem value="approved">{t('admin.financing.stageApproved')}</SelectItem>
+                  <SelectItem value="denied">{t('admin.financing.stageDenied')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -427,12 +429,12 @@ const AdminFinancing = () => {
               <div className="text-center py-16">
                 <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                 <h3 className="font-heading font-bold text-xl text-foreground mb-2">
-                  {requests.length === 0 ? 'No Financing Requests' : 'No Matching Requests'}
+                  {requests.length === 0 ? t('admin.financing.empty') : t('admin.financing.emptyFiltered')}
                 </h3>
                 <p className="text-muted-foreground">
                   {requests.length === 0 
-                    ? 'Financing requests will appear here when users apply.'
-                    : 'Try adjusting your search or filter criteria.'
+                    ? t('admin.financing.emptyDescription')
+                    : t('admin.financing.emptyFilteredDescription')
                   }
                 </p>
               </div>
@@ -440,12 +442,12 @@ const AdminFinancing = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Property</TableHead>
-                    <TableHead>Applicant</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Workflow Progress</TableHead>
-                    <TableHead>Updated</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>{t('admin.financing.property')}</TableHead>
+                    <TableHead>{t('admin.financing.applicant')}</TableHead>
+                    <TableHead>{t('admin.financing.amount')}</TableHead>
+                    <TableHead>{t('admin.financing.workflowProgress')}</TableHead>
+                    <TableHead>{t('admin.financing.updated')}</TableHead>
+                    <TableHead>{t('admin.dashboard.users.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -507,7 +509,7 @@ const AdminFinancing = () => {
                               className={needsAction ? "bg-primary text-primary-foreground" : ""}
                             >
                               <Eye className="w-4 h-4 mr-2" />
-                              {needsAction ? 'Take Action' : 'View Details'}
+                              {needsAction ? 'Take Action' : t('admin.financing.viewDetails')}
                               {needsAction && <ArrowRight className="w-4 h-4 ml-2" />}
                             </Button>
                             
@@ -526,7 +528,7 @@ const AdminFinancing = () => {
                                   disabled={request.stage === 'denied' || request.stage === 'approved'}
                                 >
                                   <Ban className="w-4 h-4 mr-2" />
-                                  Quick Deny
+                                  {t('admin.financing.quickDeny')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => {
@@ -537,7 +539,7 @@ const AdminFinancing = () => {
                                   className="text-destructive focus:text-destructive"
                                 >
                                   <Trash2 className="w-4 h-4 mr-2" />
-                                  Delete Request
+                                  {t('common.delete')}
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -556,19 +558,19 @@ const AdminFinancing = () => {
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Delete Financing Request</AlertDialogTitle>
+              <AlertDialogTitle>{t('admin.financing.deleteTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete this financing request? This action cannot be undone and will permanently remove all associated data.
+                {t('admin.financing.deleteDescription')}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDeleteRequest}
                 disabled={actionLoading}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                {actionLoading ? "Deleting..." : "Delete"}
+                {actionLoading ? "Deleting..." : t('admin.financing.deleteConfirm')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -578,14 +580,14 @@ const AdminFinancing = () => {
         <Dialog open={denyDialogOpen} onOpenChange={setDenyDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Deny Financing Request</DialogTitle>
+              <DialogTitle>{t('admin.financing.denyTitle')}</DialogTitle>
               <DialogDescription>
-                Please provide a reason for denying this financing request. This will be visible to the applicant.
+                {t('admin.financing.denyDescription')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <Textarea
-                placeholder="Enter denial reason..."
+                placeholder={t('admin.financing.denyReason')}
                 value={denyReason}
                 onChange={(e) => setDenyReason(e.target.value)}
                 rows={4}
@@ -593,14 +595,14 @@ const AdminFinancing = () => {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setDenyDialogOpen(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleDenyRequest}
                 disabled={!denyReason.trim() || actionLoading}
                 variant="destructive"
               >
-                {actionLoading ? "Denying..." : "Deny Request"}
+                {actionLoading ? "Denying..." : t('admin.financing.denyConfirm')}
               </Button>
             </DialogFooter>
           </DialogContent>
