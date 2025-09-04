@@ -917,6 +917,208 @@ const translations: Translations = {
     ru: '• Максимум 20 фото, минимум 5',
     uz: '• Maksimum 20 ta rasm, minimum 5 ta'
   },
+
+  // MyRequests page
+  'myRequests.title': {
+    en: 'My Visit Requests',
+    ru: 'Мои запросы на просмотр',
+    uz: 'Mening ko\'rish so\'rovlarim'
+  },
+  'myRequests.noRequests': {
+    en: 'No visit requests yet',
+    ru: 'Пока нет запросов на просмотр',
+    uz: 'Hali ko\'rish so\'rovlari yo\'q'
+  },
+  'myRequests.noRequestsDesc': {
+    en: 'You haven\'t requested any property visits yet. Browse properties to start viewing!',
+    ru: 'Вы ещё не запрашивали просмотр недвижимости. Просматривайте объекты, чтобы начать!',
+    uz: 'Siz hali hech qanday mulk ko\'rishini so\'ramagansiz. Ko\'rishni boshlash uchun mulklarni ko\'rib chiqing!'
+  },
+  'myRequests.tabs.active': {
+    en: 'Active',
+    ru: 'Активные',
+    uz: 'Faol'
+  },
+  'myRequests.tabs.denied': {
+    en: 'Denied',
+    ru: 'Отклонённые',
+    uz: 'Rad etilgan'
+  },
+  'myRequests.tabs.finished': {
+    en: 'Finished',
+    ru: 'Завершённые',
+    uz: 'Tugallangan'
+  },
+  'myRequests.noActiveRequests': {
+    en: 'No active requests',
+    ru: 'Нет активных запросов',
+    uz: 'Faol so\'rovlar yo\'q'
+  },
+  'myRequests.noActiveDesc': {
+    en: 'All your active visit requests will appear here.',
+    ru: 'Все ваши активные запросы на просмотр появятся здесь.',
+    uz: 'Barcha faol ko\'rish so\'rovlaringiz shu yerda ko\'rinadi.'
+  },
+  'myRequests.noDeniedRequests': {
+    en: 'No denied requests',
+    ru: 'Нет отклонённых запросов',
+    uz: 'Rad etilgan so\'rovlar yo\'q'
+  },
+  'myRequests.noDeniedDesc': {
+    en: 'Any denied visit requests will appear here.',
+    ru: 'Все отклонённые запросы на просмотр появятся здесь.',
+    uz: 'Barcha rad etilgan ko\'rish so\'rovlari shu yerda ko\'rinadi.'
+  },
+  'myRequests.noFinishedVisits': {
+    en: 'No finished visits',
+    ru: 'Нет завершённых посещений',
+    uz: 'Tugallangan tashriflar yo\'q'
+  },
+  'myRequests.noFinishedDesc': {
+    en: 'Your completed property visits will appear here.',
+    ru: 'Ваши завершённые просмотры недвижимости появятся здесь.',
+    uz: 'Tugallangan mulk ko\'rishlaringiz shu yerda ko\'rinadi.'
+  },
+  'myRequests.messageOwner': {
+    en: 'Message Owner',
+    ru: 'Сообщение владельцу',
+    uz: 'Egaga xabar'
+  },
+  'myRequests.finished': {
+    en: 'finished',
+    ru: 'завершено',
+    uz: 'tugallandi'
+  },
+  'myRequests.confirmed': {
+    en: 'confirmed',
+    ru: 'подтверждено',
+    uz: 'tasdiqlangan'
+  },
+  'myRequests.denied': {
+    en: 'denied',
+    ru: 'отклонено',
+    uz: 'rad etilgan'
+  },
+  'myRequests.awaitingResponse': {
+    en: 'awaiting response',
+    ru: 'ожидается ответ',
+    uz: 'javob kutilmoqda'
+  },
+  'myRequests.pending': {
+    en: 'pending',
+    ru: 'ожидается',
+    uz: 'kutilmoqda'
+  },
+  'myRequests.cancelVisit': {
+    en: 'Cancel visit',
+    ru: 'Отменить посещение',
+    uz: 'Tashrifni bekor qilish'
+  },
+  'myRequests.goToProperty': {
+    en: 'Go to property profile',
+    ru: 'Перейти к профилю недвижимости',
+    uz: 'Mulk profiliga o\'tish'
+  },
+  'myRequests.property': {
+    en: 'Property',
+    ru: 'Недвижимость',
+    uz: 'Mulk'
+  },
+  'myRequests.locationNotAvailable': {
+    en: 'Location not available',
+    ru: 'Местоположение недоступно',
+    uz: 'Joylashuv mavjud emas'
+  },
+  'myRequests.alternativeTime': {
+    en: 'Alternative time',
+    ru: 'Альтернативное время',
+    uz: 'Muqobil vaqt'
+  },
+  'myRequests.note': {
+    en: 'Note',
+    ru: 'Примечание',
+    uz: 'Eslatma'
+  },
+  'myRequests.paidVisit': {
+    en: 'Paid Visit',
+    ru: 'Платное посещение',
+    uz: 'Pullik tashrif'
+  },
+  'myRequests.ownerReview': {
+    en: 'Owner\'s Review',
+    ru: 'Отзыв владельца',
+    uz: 'Eganing sharhi'
+  },
+  'myRequests.message': {
+    en: 'Message',
+    ru: 'Сообщение',
+    uz: 'Xabar'
+  },
+  'myRequests.typeMessage': {
+    en: 'Type your message to the property owner...',
+    ru: 'Введите сообщение владельцу недвижимости...',
+    uz: 'Mulk egasiga xabaringizni yozing...'
+  },
+  'myRequests.cancel': {
+    en: 'Cancel',
+    ru: 'Отмена',
+    uz: 'Bekor qilish'
+  },
+  'myRequests.send': {
+    en: 'Send',
+    ru: 'Отправить',
+    uz: 'Yuborish'
+  },
+  'myRequests.loadingRequests': {
+    en: 'Loading your requests...',
+    ru: 'Загрузка ваших запросов...',
+    uz: 'So\'rovlaringiz yuklanmoqda...'
+  },
+  'myRequests.penaltyApplied': {
+    en: 'Penalty applied',
+    ru: 'Штраф применён',
+    uz: 'Jarima qo\'llanildi'
+  },
+  'myRequests.error': {
+    en: 'Error',
+    ru: 'Ошибка',
+    uz: 'Xato'
+  },
+  'myRequests.couldNotCancel': {
+    en: 'Could not cancel visit request',
+    ru: 'Не удалось отменить заявку на посещение',
+    uz: 'Tashrif so\'rovini bekor qilib bo\'lmadi'
+  },
+  'myRequests.visitCancelled': {
+    en: 'Visit cancelled',
+    ru: 'Посещение отменено',
+    uz: 'Tashrif bekor qilindi'
+  },
+  'myRequests.requestCancelled': {
+    en: 'Your visit request has been cancelled',
+    ru: 'Ваша заявка на посещение была отменена',
+    uz: 'Sizning tashrif so\'rovingiz bekor qilindi'
+  },
+  'myRequests.cancelError': {
+    en: 'An error occurred while cancelling the visit',
+    ru: 'Произошла ошибка при отмене посещения',
+    uz: 'Tashrifni bekor qilishda xato yuz berdi'
+  },
+  'myRequests.messageSent': {
+    en: 'Message sent',
+    ru: 'Сообщение отправлено',
+    uz: 'Xabar yuborildi'
+  },
+  'myRequests.couldNotSendMessage': {
+    en: 'Could not send message',
+    ru: 'Не удалось отправить сообщение',
+    uz: 'Xabar yuborib bo\'lmadi'
+  },
+  'myRequests.failedToLoad': {
+    en: 'Failed to load requests',
+    ru: 'Не удалось загрузить запросы',
+    uz: 'So\'rovlarni yuklab bo\'lmadi'
+  },
   'listProperty.requiredDocuments': {
     en: 'Required Documents',
     ru: 'Необходимые документы',

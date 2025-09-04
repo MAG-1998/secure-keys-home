@@ -44,13 +44,15 @@ interface MyRequestCardProps {
   onCancel?: (id: string) => void;
   onMessage?: (id: string) => void;
   isFinished?: boolean;
+  t: (key: string) => string;
 }
 
 const MyRequestCard = ({ 
   request: r, 
   onCancel,
   onMessage,
-  isFinished = false
+  isFinished = false,
+  t
 }: MyRequestCardProps) => {
   const navigate = useNavigate();
   const imageUrl = r.properties?.image_url || (r.properties?.photos && r.properties.photos.length > 0 ? r.properties.photos[0] : '/placeholder.svg');
@@ -74,7 +76,7 @@ const MyRequestCard = ({
               size="sm"
               onClick={() => onCancel(r.id)}
               className="absolute top-2 right-2 z-10 h-8 w-8 p-0 rounded-full shadow-lg hover:scale-110 transition-transform"
-              title="Отменить посещение"
+              title={t('myRequests.cancelVisit')}
             >
               <X className="w-4 h-4" />
             </Button>
@@ -98,14 +100,14 @@ const MyRequestCard = ({
                 {r.status === 'confirmed' ? (
                   <span className="inline-flex items-center">
                     <Check className="w-4 h-4 mr-1" /> 
-                    {isFinished ? 'finished' : 'confirmed'}
+                    {isFinished ? t('myRequests.finished') : t('myRequests.confirmed')}
                   </span>
                 ) : r.status === 'denied' ? (
-                  <span className="inline-flex items-center"><X className="w-4 h-4 mr-1" /> denied</span>
+                  <span className="inline-flex items-center"><X className="w-4 h-4 mr-1" /> {t('myRequests.denied')}</span>
                 ) : (
                   <span className="inline-flex items-center">
                     <Clock className="w-4 h-4 mr-1" /> 
-                    {r.is_custom_time ? 'awaiting response' : 'pending'}
+                    {r.is_custom_time ? t('myRequests.awaitingResponse') : t('myRequests.pending')}
                   </span>
                 )}
               </Badge>
@@ -116,13 +118,13 @@ const MyRequestCard = ({
               <h3 
                 className="font-heading font-bold text-lg text-foreground mb-1 hover:text-primary cursor-pointer transition-colors"
                 onClick={() => navigate(`/property/${r.property_id}`)}
-                title="Перейти к профилю недвижимости"
+                title={t('myRequests.goToProperty')}
               >
-                {r.properties?.title || 'Property'}
+                {r.properties?.title || t('myRequests.property')}
               </h3>
               <div className="flex items-center text-muted-foreground mb-3">
                 <MapPin className="w-4 h-4 mr-1" />
-                <span className="text-sm">{r.properties?.location || 'Location not available'}</span>
+                <span className="text-sm">{r.properties?.location || t('myRequests.locationNotAvailable')}</span>
               </div>
 
               <div className="flex items-center text-muted-foreground mb-4">
@@ -131,7 +133,7 @@ const MyRequestCard = ({
                   {new Date(r.visit_date).toLocaleDateString()} at {new Date(r.visit_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   {r.is_custom_time && (
                     <Badge variant="warning" className="ml-2 text-xs">
-                      Alternative time
+                      {t('myRequests.alternativeTime')}
                     </Badge>
                   )}
                 </span>
@@ -139,13 +141,13 @@ const MyRequestCard = ({
 
               {r.notes && (
                 <div className="mb-4 p-3 bg-muted/50 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Note: {r.notes}</p>
+                  <p className="text-sm text-muted-foreground">{t('myRequests.note')}: {r.notes}</p>
                 </div>
               )}
 
               {r.is_paid_visit && r.payment_amount && (
                 <div className="mb-4">
-                  <Badge variant="secondary">Paid Visit - ${r.payment_amount.toLocaleString()}</Badge>
+                  <Badge variant="secondary">{t('myRequests.paidVisit')} - ${r.payment_amount.toLocaleString()}</Badge>
                 </div>
               )}
 
@@ -153,7 +155,7 @@ const MyRequestCard = ({
                 <div className="mb-4 p-3 bg-primary/5 rounded-lg">
                   <div className="flex items-center mb-2">
                     <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                    <span className="text-sm font-medium">Owner's Review</span>
+                    <span className="text-sm font-medium">{t('myRequests.ownerReview')}</span>
                   </div>
                   <p className="text-sm text-muted-foreground">{r.owner_review}</p>
                 </div>
@@ -170,7 +172,7 @@ const MyRequestCard = ({
                       className="flex items-center"
                     >
                       <MessageSquare className="w-4 h-4 mr-2" />
-                      Message
+                      {t('myRequests.message')}
                     </Button>
                   )}
                 </div>
@@ -220,7 +222,7 @@ const MyRequests = () => {
       setRequests(rows);
     } catch (e) {
       console.error(e);
-      toast({ title: 'Error', description: 'Failed to load requests', variant: 'destructive' });
+      toast({ title: t('myRequests.error'), description: t('myRequests.failedToLoad'), variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -257,7 +259,7 @@ const MyRequests = () => {
         } else if (penaltyData) {
           const penalty = penaltyData as { message: string; penalty_level: number };
           toast({
-            title: "Штраф применен",
+            title: t('myRequests.penaltyApplied'),
             description: penalty.message,
             variant: penalty.penalty_level > 1 ? "destructive" : "default",
           });
@@ -273,22 +275,22 @@ const MyRequests = () => {
       if (error) {
         console.error('Error cancelling visit:', error);
         toast({
-          title: "Ошибка",
-          description: "Не удалось отменить заявку на посещение",
+          title: t('myRequests.error'),
+          description: t('myRequests.couldNotCancel'),
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Посещение отменено",
-          description: "Ваша заявка на посещение была отменена",
+          title: t('myRequests.visitCancelled'),
+          description: t('myRequests.requestCancelled'),
         });
         refresh();
       }
     } catch (error) {
       console.error('Error in cancelVisit:', error);
       toast({
-        title: "Ошибка",
-        description: "Произошла ошибка при отмене посещения",
+        title: t('myRequests.error'),
+        description: t('myRequests.cancelError'),
         variant: "destructive",
       });
     }
@@ -321,11 +323,11 @@ const MyRequests = () => {
           property_id: req.property_id
         });
       if (error) throw error;
-      toast({ title: 'Message sent' });
+      toast({ title: t('myRequests.messageSent') });
       setMsgForId(null);
       setMessage('');
     } catch (e) {
-      toast({ title: 'Error', description: 'Could not send message', variant: 'destructive' });
+      toast({ title: t('myRequests.error'), description: t('myRequests.couldNotSendMessage'), variant: 'destructive' });
     }
   };
 
@@ -339,7 +341,7 @@ const MyRequests = () => {
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading your requests...</p>
+          <p className="text-muted-foreground">{t('myRequests.loadingRequests')}</p>
         </div>
       </div>
     );
@@ -403,6 +405,7 @@ const MyRequests = () => {
                       request={r}
                       onCancel={(r.status === 'pending' || r.status === 'confirmed') ? onCancel : undefined}
                       onMessage={openMsg}
+                      t={t}
                     />
                   ))}
                 </div>
@@ -422,6 +425,7 @@ const MyRequests = () => {
                       key={r.id}
                       request={r}
                       onMessage={openMsg}
+                      t={t}
                     />
                   ))}
                 </div>
@@ -442,6 +446,7 @@ const MyRequests = () => {
                       request={r}
                       onMessage={openMsg}
                       isFinished={true}
+                      t={t}
                     />
                   ))}
                 </div>
@@ -459,12 +464,12 @@ const MyRequests = () => {
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type your message to the property owner..."
+              placeholder={t('myRequests.typeMessage')}
               className="min-h-[120px]"
             />
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setMsgForId(null)}>Cancel</Button>
-              <Button onClick={submitMsg}>Send</Button>
+              <Button variant="outline" onClick={() => setMsgForId(null)}>{t('myRequests.cancel')}</Button>
+              <Button onClick={submitMsg}>{t('myRequests.send')}</Button>
             </div>
           </DialogContent>
         </Dialog>
