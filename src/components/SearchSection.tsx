@@ -253,19 +253,11 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
             </p>
           </div>
           
-          <div className="flex items-center space-x-4 shrink-0 relative">
+          <div className="flex flex-col items-center space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-4 shrink-0">
             {isHalalMode && (
               <Badge 
                 variant="trust" 
-                className="text-xs whitespace-nowrap animate-fade-in hover:scale-105 transition-transform duration-200 shadow-md absolute -left-32 top-1/2 -translate-y-1/2 sm:block hidden md:block lg:block xl:block 2xl:block"
-              >
-                {t('search.halalBadge')}
-              </Badge>
-            )}
-            {isHalalMode && (
-              <Badge 
-                variant="trust" 
-                className="text-xs whitespace-nowrap animate-fade-in hover:scale-105 transition-transform duration-200 shadow-md absolute top-full left-1/2 -translate-x-1/2 mt-2 sm:hidden block"
+                className="text-xs whitespace-nowrap animate-fade-in hover:scale-105 transition-transform duration-200 shadow-md hidden sm:block"
               >
                 {t('search.halalBadge')}
               </Badge>
@@ -296,8 +288,21 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 }`}
               />
             </div>
+            {isHalalMode && (
+              <Badge 
+                variant="trust" 
+                className="text-xs whitespace-nowrap animate-fade-in hover:scale-105 transition-transform duration-200 shadow-md sm:hidden mt-2 self-center"
+              >
+                {t('search.halalBadge')}
+              </Badge>
+            )}
           </div>
         </div>
+        
+        {/* Mobile spacing for sharia compliant badge */}
+        {isHalalMode && (
+          <div className="sm:hidden h-4" />
+        )}
 
         {/* Main Search */}
         <div>
@@ -337,10 +342,6 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                           <BookmarkPlus className="h-3 w-3" />
                         </Button>
                       )}
-                      <Badge variant="warning" className={`text-xs ${isHalalMode ? 'bg-magit-trust text-white' : ''}`}>
-                        <Sparkles className="h-3 w-3 mr-1" />
-                        AI
-                      </Badge>
                     </div>
 
                   {/* Search Suggestions */}
