@@ -175,14 +175,14 @@ All colors MUST be HSL.
 
 @keyframes apple-shimmer {
   0% { 
-    background-position: -200% 0;
+    transform: translateX(-100%);
     opacity: 0;
   }
   50% {
     opacity: 1;
   }
   100% { 
-    background-position: 200% 0;
+    transform: translateX(100%);
     opacity: 0;
   }
 }
