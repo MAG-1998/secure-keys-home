@@ -474,16 +474,258 @@ const translations: Translations = {
     uz: 'Boshqarish'
   },
 
-  // Common
+  // Common listing
+  'common.startListingFirst': {
+    en: 'Get started by listing your first property',
+    ru: 'Начните с размещения вашего первого объекта',
+    uz: 'Birinchi uyingizni joylash bilan boshlang'
+  },
+
+  // Search Section
+  'search.titleHalal': {
+    en: 'Find Your Halal Home',
+    ru: 'Найдите свой халяльный дом',
+    uz: 'Halol uyingizni toping'
+  },
+  'search.titleStandard': {
+    en: 'Find Your Perfect Home',
+    ru: 'Найдите свой идеальный дом',
+    uz: 'Mukammal uyingizni toping'
+  },
+  'search.descHalal': {
+    en: 'Sharia-compliant financing with transparent terms',
+    ru: 'Финансирование, соответствующее шариату, с прозрачными условиями',
+    uz: 'Shariat talablariga mos, shaffof shartlardagi moliyalashtirish'
+  },
+  'search.descStandard': {
+    en: 'Verified properties with honest financing options',
+    ru: 'Проверенные объекты с честными вариантами финансирования',
+    uz: 'Halol moliyalashtirish variantlari bilan tekshirilgan mulklar'
+  },
+  'search.halalBadge': {
+    en: '🌙 HALAL FINANCING',
+    ru: '🌙 ХАЛЯЛЬНОЕ ФИНАНСИРОВАНИЕ',
+    uz: '🌙 HALOL MOLIYALASHTIRISH'
+  },
+  'search.halalMode': {
+    en: 'Halal Mode',
+    ru: 'Халяльный режим',
+    uz: 'Halol rejim'
+  },
+  'search.filters': {
+    en: 'Filters',
+    ru: 'Фильтры',
+    uz: 'Filtrlar'
+  },
+  'search.eligibleProperties': {
+    en: 'eligible properties',
+    ru: 'подходящих объектов',
+    uz: 'mos mulk'
+  },
+  'search.propertiesFound': {
+    en: 'properties found',
+    ru: 'объектов найдено',
+    uz: 'mulk topildi'
+  },
+  'search.viewAll': {
+    en: 'View All',
+    ru: 'Показать все',
+    uz: 'Hammasini ko\'rish'
+  },
+  'search.searching': {
+    en: 'Searching...',
+    ru: 'Поиск...',
+    uz: 'Qidirilmoqda...'
+  },
+  'search.search': {
+    en: 'Search',
+    ru: 'Поиск',
+    uz: 'Qidirish'
+  },
+  'search.results': {
+    en: 'results',
+    ru: 'результатов',
+    uz: 'natija'
+  },
+  'search.viewAllResults': {
+    en: 'View All Results',
+    ru: 'Показать все результаты',
+    uz: 'Barcha natijalarni ko\'rish'
+  },
+  'search.more': {
+    en: 'more',
+    ru: 'ещё',
+    uz: 'yana'
+  },
+  'search.searchBtn': {
+    en: 'Search Properties',
+    ru: 'Поиск недвижимости',
+    uz: 'Uylarni qidirish'
+  },
+
+  // Header Navigation
+  'header.myProperties': {
+    en: 'My Properties',
+    ru: 'Мои объекты',
+    uz: 'Mening uylarim'
+  },
+  'header.saved': {
+    en: 'Saved',
+    ru: 'Сохранённые',
+    uz: 'Saqlangan'
+  },
+  'header.visitRequests': {
+    en: 'Visit Requests',
+    ru: 'Заявки на просмотр',
+    uz: 'Tashrif so\'rovlari'
+  },
+  'header.listProperty': {
+    en: 'List Property',
+    ru: 'Разместить объект',
+    uz: 'Uy joylash'
+  },
+  'header.myListedProperties': {
+    en: 'My Listed Properties',
+    ru: 'Мои размещённые объекты',
+    uz: 'Mening joylashtirilgan uylarim'
+  },
+  'header.savedProperties': {
+    en: 'Saved Properties',
+    ru: 'Сохранённые объекты',
+    uz: 'Saqlangan uylar'
+  },
+  'header.listNewProperty': {
+    en: 'List New Property',
+    ru: 'Разместить новый объект',
+    uz: 'Yangi uy joylash'
+  },
+  'header.dashboard': {
+    en: 'Dashboard',
+    ru: 'Панель',
+    uz: 'Boshqaruv paneli'
+  },
+  'header.profile': {
+    en: 'Profile',
+    ru: 'Профиль',
+    uz: 'Profil'
+  },
+
+  // Dashboard Actions
+  'dashboard.viewSaved': {
+    en: 'View Saved',
+    ru: 'Показать сохранённые',
+    uz: 'Saqlanganlarni ko\'rish'
+  },
+  'dashboard.viewListed': {
+    en: 'View Listed',
+    ru: 'Показать размещённые',
+    uz: 'Joylashtirganlarni ko\'rish'
+  },
+  'dashboard.yourRequests': {
+    en: 'Your Requests',
+    ru: 'Ваши заявки',
+    uz: 'Sizning so\'rovlaringiz'
+  },
+  'dashboard.pendingConfirmed': {
+    en: 'Pending & Confirmed',
+    ru: 'В ожидании и подтверждённые',
+    uz: 'Kutilayotgan va tasdiqlangan'
+  },
+  'dashboard.viewYourRequests': {
+    en: 'View Your Requests',
+    ru: 'Показать ваши заявки',
+    uz: 'So\'rovlaringizni ko\'rish'
+  },
+  'dashboard.incomingRequests': {
+    en: 'Incoming Requests',
+    ru: 'Входящие заявки',
+    uz: 'Kiruvchi so\'rovlar'
+  },
+  'dashboard.ownerInbox': {
+    en: 'Owner Inbox',
+    ru: 'Входящие владельца',
+    uz: 'Egasining qabul qutisi'
+  },
+  'dashboard.manageRequests': {
+    en: 'Manage Requests',
+    ru: 'Управлять заявками',
+    uz: 'So\'rovlarni boshqarish'
+  },
+  'dashboard.financingRequests': {
+    en: 'Financing Requests',
+    ru: 'Заявки на финансирование',
+    uz: 'Moliyalashtirish so\'rovlari'
+  },
+  'dashboard.activeApplications': {
+    en: 'Active Applications',
+    ru: 'Активные заявления',
+    uz: 'Faol arizalar'
+  },
+  'dashboard.viewFinancing': {
+    en: 'View Financing',
+    ru: 'Показать финансирование',
+    uz: 'Moliyalashtirishni ko\'rish'
+  },
+
+  // Common Elements
+  'common.menu': {
+    en: 'Menu',
+    ru: 'Меню',
+    uz: 'Menyu'
+  },
+  'common.signOut': {
+    en: 'Sign Out',
+    ru: 'Выйти',
+    uz: 'Chiqish'
+  },
+  'common.chat': {
+    en: 'Chat',
+    ru: 'Чат',
+    uz: 'Chat'
+  },
+  'common.messages': {
+    en: 'Messages',
+    ru: 'Сообщения',
+    uz: 'Xabarlar'
+  },
+  'common.refresh': {
+    en: 'Refresh',
+    ru: 'Обновить',
+    uz: 'Yangilash'
+  },
+  'common.noMessagesYet': {
+    en: 'No messages yet',
+    ru: 'Сообщений пока нет',
+    uz: 'Hali xabarlar yo\'q'
+  },
   'common.contactSupport': {
     en: 'Contact Support',
     ru: 'Связаться с поддержкой',
     uz: 'Yordam bilan aloqa'
   },
-  'common.startListingFirst': {
-    en: 'Get started by listing your first property',
-    ru: 'Начните с размещения вашего первого объекта',
-    uz: 'Birinchi uyingizni joylash bilan boshlang'
+
+  // Photo Management
+  'photo.primary': {
+    en: 'Primary',
+    ru: 'Основное',
+    uz: 'Asosiy'
+  },
+  'photo.tooMany': {
+    en: 'Too many photos',
+    ru: 'Слишком много фотографий',
+    uz: 'Juda ko\'p fotosurat'
+  },
+  'photo.maxAllowed': {
+    en: 'Maximum 20 photos allowed',
+    ru: 'Максимум 20 фотографий',
+    uz: 'Maksimum 20 ta fotosurat'
+  },
+
+  // Auth Section
+  'auth.resetPassword': {
+    en: 'Reset Password',
+    ru: 'Сбросить пароль',
+    uz: 'Parolni tiklash'
   },
 
   // Essential keys
