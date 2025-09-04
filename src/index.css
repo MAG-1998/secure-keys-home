@@ -327,11 +327,11 @@ All colors MUST be HSL.
 }
 
 /* Light mode toggle background override */
-:root .apple-glow-inactive {
+:root:not(.dark) .apple-glow-inactive {
   background: hsl(35 15% 88%);
 }
 
-:root .apple-glow-active {
+:root:not(.dark) .apple-glow-active {
   background: hsl(35 15% 88%);
 }
 
