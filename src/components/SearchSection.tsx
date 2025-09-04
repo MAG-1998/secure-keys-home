@@ -275,21 +275,16 @@ export const SearchSection = ({ isHalalMode, onHalalModeChange, t }: SearchSecti
                 ? 'apple-glow-active' 
                 : 'apple-glow-inactive'
             }`}>
-               <Label 
-                 htmlFor="halal-mode" 
-                 className="relative whitespace-nowrap cursor-pointer transition-all duration-300"
-               >
-                 <span className="absolute inset-0 text-sm font-normal text-foreground/80">
-                   {t("search.halalMode")}
-                 </span>
-                 <span className={`text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
-                   isHalalMode 
-                     ? 'apple-text-glow-orange' 
-                     : 'apple-text-glow-cyan'
-                 }`}>
-                   {t("search.halalMode")}
-                 </span>
-               </Label>
+              <Label 
+                htmlFor="halal-mode" 
+                className={`text-sm font-medium whitespace-nowrap cursor-pointer transition-all duration-300 ${
+                  isHalalMode 
+                    ? 'apple-text-glow-orange' 
+                    : 'apple-text-glow-cyan'
+                }`}
+              >
+                {t('search.halalMode')}
+              </Label>
               <Switch
                 id="halal-mode"
                 checked={isHalalMode}
