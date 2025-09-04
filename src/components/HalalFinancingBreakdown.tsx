@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { calculateHalalFinancing, formatCurrency, getPeriodOptions } from "@/utils/halalFinancing"
-import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore"
+import { useFinancingStore } from "@/stores/financingStore"
 import { useTranslation } from "@/hooks/useTranslation"
 import { Calculator, FileText } from "lucide-react"
 
@@ -26,7 +26,7 @@ export const HalalFinancingBreakdown = ({
   initialCashAvailable = "",
   initialPeriodMonths = ""
 }: HalalFinancingBreakdownProps) => {
-  const financingStore = useHalalFinancingStore()
+  const financingStore = useFinancingStore()
   const { t } = useTranslation()
   
   const [cashAmount, setCashAmount] = useState(() => {

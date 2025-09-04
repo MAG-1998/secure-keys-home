@@ -111,9 +111,27 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
   lastSearchQuery: '',
 
   setFilters: (newFilters) => {
-    set((state) => ({
-      filters: { ...state.filters, ...newFilters }
-    }))
+    set((state) => {
+      const updatedFilters = { ...state.filters, ...newFilters };
+      
+      // Sync financing preferences to financing store if it exists
+      if (typeof window !== 'undefined' && (window as any).financingStore) {
+        const financingStore = (window as any).financingStore;
+        const currentFinancingState = financingStore.getState();
+        
+        if ('halalMode' in newFilters && newFilters.halalMode !== currentFinancingState.isHalalMode) {
+          financingStore.getState().updateState({ isHalalMode: newFilters.halalMode || false });
+        }
+        if ('cashAvailable' in newFilters && newFilters.cashAvailable !== currentFinancingState.cashAvailable) {
+          financingStore.getState().updateState({ cashAvailable: newFilters.cashAvailable || '' });
+        }
+        if ('periodMonths' in newFilters && newFilters.periodMonths !== currentFinancingState.periodMonths) {
+          financingStore.getState().updateState({ periodMonths: newFilters.periodMonths || '12' });
+        }
+      }
+      
+      return { filters: updatedFilters };
+    });
   },
 
   performSearch: async (overrideFilters = {}) => {
@@ -250,3 +268,8 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
     }
   }
 }))
+
+// Global reference for cross-store synchronization
+if (typeof window !== 'undefined') {
+  (window as any).searchStore = useSearchStore;
+}

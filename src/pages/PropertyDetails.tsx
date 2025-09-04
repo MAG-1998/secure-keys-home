@@ -20,7 +20,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { forceLocalSignOut } from "@/lib/auth";
 import { parseISO, isValid, format } from "date-fns";
 import { HalalFinancingBreakdown } from "@/components/HalalFinancingBreakdown";
-import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore";
+import { useFinancingStore } from "@/stores/financingStore";
 import { PropertyEditDialog } from "@/components/PropertyEditDialog";
 import { VisitLimitChecker } from "@/components/VisitLimitChecker";
 import { formatCurrency, calculateHalalFinancing } from "@/utils/halalFinancing";
@@ -57,7 +57,7 @@ const PropertyDetails = () => {
   const { user } = useUser();
   const { language, setLanguage, t } = useTranslation();
   const [searchParams] = useSearchParams();
-  const financingStore = useHalalFinancingStore();
+  const financingStore = useFinancingStore();
 
   // Initialize halal mode and financing from URL params with proper localStorage precedence
   useEffect(() => {
@@ -69,12 +69,16 @@ const PropertyDetails = () => {
       // Always enable halal mode from URL
       financingStore.updateState({ isHalalMode: true });
       
-      // Only set from URL if localStorage is completely empty (both cash and period are empty strings)
-      const hasStoredValues = financingStore.cashAvailable.trim() !== '' && 
-                             financingStore.periodMonths.trim() !== '';
+      // Priority: 1. localStorage values if they exist, 2. URL params, 3. defaults
+      const storedCash = financingStore.cashAvailable.trim();
+      const storedPeriod = financingStore.periodMonths.trim();
       
-      if (!hasStoredValues && (urlCash || urlPeriod)) {
-        console.log('Setting from URL params:', { urlCash, urlPeriod });
+      // Only use URL params if localStorage is empty OR if URL has different values
+      const shouldUseUrlCash = !storedCash && urlCash;
+      const shouldUseUrlPeriod = !storedPeriod && urlPeriod;
+      
+      if (shouldUseUrlCash || shouldUseUrlPeriod) {
+        console.log('Initializing from URL params:', { urlCash, urlPeriod });
         financingStore.setFromQueryParams(searchParams);
       } else {
         console.log('Using stored values:', { 
@@ -481,29 +485,42 @@ const PropertyDetails = () => {
     userRole === 'moderator'
   );
 
-  // Calculate display price based on halal financing parameters
+  // Calculate display price based on halal financing parameters with proper reactivity
   const displayPrice = useMemo(() => {
-    // Always check for halal financing if we have cash and period values
-    if (financingStore.cashAvailable && financingStore.periodMonths && property) {
+    if (!property) return 0;
+    
+    // Check if we have valid halal financing parameters
+    const hasValidFinancing = financingStore.cashAvailable && 
+                             financingStore.periodMonths && 
+                             financingStore.isHalalMode;
+    
+    if (hasValidFinancing) {
       const cashAvailable = parseFloat(financingStore.cashAvailable || '0');
       const periodMonths = parseInt(financingStore.periodMonths || '0');
       
-      // If we have valid financing parameters, calculate total cost
+      // Ensure we have valid numeric values
       if (cashAvailable > 0 && periodMonths > 0) {
         const calculation = calculateHalalFinancing(cashAvailable, property.price, periodMonths);
         console.log('Price calculation:', {
           propertyPrice: property.price,
+          cashAvailable,
+          periodMonths,
           calculation,
           totalDisplayPrice: calculation.totalCost
         });
-        // Return the total cost which already includes property price + all fees
+        // Return the total cost which includes property price + financing fees
         return calculation.totalCost;
       }
     }
     
-    // Default to base property price
-    return property?.price || 0;
-  }, [financingStore.cashAvailable, financingStore.periodMonths, property]);
+    // Default to property base price
+    return property.price;
+  }, [
+    financingStore.cashAvailable, 
+    financingStore.periodMonths, 
+    financingStore.isHalalMode,
+    property?.price
+  ]);
 
   if (loading) {
     return (
