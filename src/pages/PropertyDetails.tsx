@@ -491,14 +491,17 @@ const PropertyDetails = () => {
       
       // Ensure we have valid numeric values and minimum cash requirement
       if (cashAvailable > 0 && periodMonths > 0 && cashAvailable >= property.price * 0.5) {
-        // Always show the original property price, regardless of financing
+        const calculation = calculateHalalFinancing(cashAvailable, property.price, periodMonths);
+        // Show total cost = cash upfront + financed amount + fees
+        const totalCost = cashAvailable + calculation.totalCost;
         console.log('Price calculation:', {
           propertyPrice: property.price,
           cashAvailable,
           periodMonths,
-          displayPrice: property.price
+          calculation,
+          totalCost
         });
-        return property.price;
+        return totalCost;
       }
     }
     
