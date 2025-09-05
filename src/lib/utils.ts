@@ -15,7 +15,7 @@ export function getImageUrl(path: string | null | undefined): string {
   
   const supabaseUrl = 'https://mvndmnkgtoygsvesktgw.supabase.co';
   
-  // Convert storage path to full Supabase URL - all paths should be relative now
+  // Convert storage path to full Supabase URL
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  return `${supabaseUrl}/storage/v1/object/public/properties/${cleanPath}`;
+  return `${supabaseUrl}/storage/v1/object/public/${cleanPath}`;
 }
