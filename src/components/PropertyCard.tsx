@@ -6,6 +6,7 @@ import { MapPin, Bed, Bath, Square, Heart } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { calculateHalalFinancing } from "@/utils/halalFinancing"
 import { useTranslation } from "@/hooks/useTranslation"
+import { getImageUrl } from "@/lib/utils"
 
 interface PropertyCardProps {
   id: string
@@ -93,7 +94,7 @@ export const PropertyCard = ({
   const actualBedrooms = bedrooms || property?.bedrooms || 0
   const actualBathrooms = bathrooms || property?.bathrooms || 0
   const actualArea = area || property?.area || 0
-  const actualImageUrl = imageUrl || image_url || property?.image_url || '/placeholder.svg'
+  const actualImageUrl = getImageUrl(imageUrl || image_url || property?.image_url)
   const [imageError, setImageError] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
   const actualIsVerified = isVerified ?? verified ?? property?.verified ?? false

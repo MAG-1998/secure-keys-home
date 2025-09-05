@@ -26,6 +26,7 @@ import { PropertyEditDialog } from "@/components/PropertyEditDialog";
 import { VisitLimitChecker } from "@/components/VisitLimitChecker";
 import { formatCurrency, calculateHalalFinancing } from "@/utils/halalFinancing";
 import { PriceOdometer } from "@/components/PriceOdometer";
+import { getImageUrl } from "@/lib/utils";
 
 interface PropertyDetail {
   id: string;
@@ -185,8 +186,10 @@ const PropertyDetails = () => {
 
   const images = useMemo(() => {
     const arr: string[] = [];
-    if (property?.image_url) arr.push(property.image_url);
-    if (Array.isArray(property?.photos)) arr.push(...(property?.photos as string[]));
+    if (property?.image_url) arr.push(getImageUrl(property.image_url));
+    if (Array.isArray(property?.photos)) {
+      arr.push(...(property?.photos as string[]).map(photo => getImageUrl(photo)));
+    }
     // Ensure unique and valid
     return Array.from(new Set(arr.filter(Boolean)));
   }, [property]);
