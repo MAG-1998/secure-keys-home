@@ -104,7 +104,7 @@ export const PropertyCard = ({
   const [imageError, setImageError] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
   const actualIsVerified = isVerified ?? verified ?? property?.verified ?? false
-  const actualIsHalalFinanced = isHalalFinanced ?? financingAvailable ?? property?.financingAvailable ?? property?.is_halal_available ?? false
+  const actualIsHalalFinanced = isHalalFinanced ?? financingAvailable ?? property?.financingAvailable ?? (property?.is_halal_available && property?.halal_status === 'approved') ?? false
 
   const handleNavigate = () => {
     if (onClick) {
