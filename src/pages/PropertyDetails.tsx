@@ -59,35 +59,26 @@ const PropertyDetails = () => {
   const [searchParams] = useSearchParams();
   const financingStore = useFinancingStore();
 
-  // Initialize halal mode and financing from URL params with proper localStorage precedence
+  // Initialize halal mode and financing from URL params (one-time only)
   useEffect(() => {
     const halalParam = searchParams.get('halal');
     if (halalParam === '1') {
       const urlCash = searchParams.get('cash') || '';
       const urlPeriod = searchParams.get('period') || '';
       
-      // Always enable halal mode from URL
-      financingStore.updateState({ isHalalMode: true });
-      
-      // Priority: 1. localStorage values if they exist, 2. URL params, 3. defaults
-      const storedCash = financingStore.cashAvailable.trim();
-      const storedPeriod = financingStore.periodMonths.trim();
-      
-      // Only use URL params if localStorage is empty OR if URL has different values
-      const shouldUseUrlCash = !storedCash && urlCash;
-      const shouldUseUrlPeriod = !storedPeriod && urlPeriod;
-      
-      if (shouldUseUrlCash || shouldUseUrlPeriod) {
-        console.log('Initializing from URL params:', { urlCash, urlPeriod });
-        financingStore.setFromQueryParams(searchParams);
-      } else {
-        console.log('Using stored values:', { 
-          cash: financingStore.cashAvailable, 
-          period: financingStore.periodMonths 
+      // Only initialize if not already in halal mode or if URL has different values
+      if (!financingStore.isHalalMode || 
+          (urlCash && urlCash !== financingStore.cashAvailable) || 
+          (urlPeriod && urlPeriod !== financingStore.periodMonths)) {
+        
+        financingStore.updateState({ 
+          isHalalMode: true,
+          ...(urlCash && { cashAvailable: urlCash }),
+          ...(urlPeriod && { periodMonths: urlPeriod })
         });
       }
     }
-  }, []); // Empty dependency array to prevent infinite updates
+  }, []); // Empty dependency array for one-time initialization
 
   const [property, setProperty] = useState<PropertyDetail | null>(null);
   const [loading, setLoading] = useState(true);

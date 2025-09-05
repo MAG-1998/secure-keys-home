@@ -12,7 +12,6 @@ interface FinancingStore extends FinancingState {
   updateState: (updates: Partial<FinancingState>) => void;
   setFromQueryParams: (params: URLSearchParams) => void;
   reset: () => void;
-  syncToSearchStore: () => void;
 }
 
 const defaultState: FinancingState = {
@@ -28,20 +27,7 @@ export const useFinancingStore = create<FinancingStore>()(
       ...defaultState,
       
       updateState: (updates) => {
-        set((state) => {
-          const newState = { ...state, ...updates };
-          
-          // Sync to search store if it exists
-          if (typeof window !== 'undefined' && (window as any).searchStore) {
-            (window as any).searchStore.getState().setFilters({
-              halalMode: newState.isHalalMode,
-              cashAvailable: newState.cashAvailable,
-              periodMonths: newState.periodMonths
-            });
-          }
-          
-          return newState;
-        });
+        set((state) => ({ ...state, ...updates }));
       },
       
       setFromQueryParams: (params) => {
@@ -64,18 +50,7 @@ export const useFinancingStore = create<FinancingStore>()(
         }
       },
       
-      reset: () => set(defaultState),
-      
-      syncToSearchStore: () => {
-        const state = get();
-        if (typeof window !== 'undefined' && (window as any).searchStore) {
-          (window as any).searchStore.getState().setFilters({
-            halalMode: state.isHalalMode,
-            cashAvailable: state.cashAvailable,
-            periodMonths: state.periodMonths
-          });
-        }
-      }
+      reset: () => set(defaultState)
     }),
     {
       name: 'financing-preferences',
@@ -90,7 +65,5 @@ export const useFinancingStore = create<FinancingStore>()(
   )
 );
 
-// Global reference for cross-store synchronization
-if (typeof window !== 'undefined') {
-  (window as any).financingStore = useFinancingStore;
-}
+// Export for subscription
+export default useFinancingStore;

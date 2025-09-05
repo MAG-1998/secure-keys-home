@@ -111,27 +111,7 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
   lastSearchQuery: '',
 
   setFilters: (newFilters) => {
-    set((state) => {
-      const updatedFilters = { ...state.filters, ...newFilters };
-      
-      // Sync financing preferences to financing store if it exists
-      if (typeof window !== 'undefined' && (window as any).financingStore) {
-        const financingStore = (window as any).financingStore;
-        const currentFinancingState = financingStore.getState();
-        
-        if ('halalMode' in newFilters && newFilters.halalMode !== currentFinancingState.isHalalMode) {
-          financingStore.getState().updateState({ isHalalMode: newFilters.halalMode || false });
-        }
-        if ('cashAvailable' in newFilters && newFilters.cashAvailable !== currentFinancingState.cashAvailable) {
-          financingStore.getState().updateState({ cashAvailable: newFilters.cashAvailable || '' });
-        }
-        if ('periodMonths' in newFilters && newFilters.periodMonths !== currentFinancingState.periodMonths) {
-          financingStore.getState().updateState({ periodMonths: newFilters.periodMonths || '12' });
-        }
-      }
-      
-      return { filters: updatedFilters };
-    });
+    set((state) => ({ filters: { ...state.filters, ...newFilters } }));
   },
 
   performSearch: async (overrideFilters = {}) => {
@@ -269,7 +249,54 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
   }
 }))
 
-// Global reference for cross-store synchronization
+// Subscribe to financing store changes for one-way data flow
+let unsubscribeFromFinancing: (() => void) | null = null;
+
 if (typeof window !== 'undefined') {
-  (window as any).searchStore = useSearchStore;
+  // Set up subscription when financing store becomes available
+  const setupFinancingSubscription = () => {
+    try {
+      const { useFinancingStore } = require('@/stores/financingStore');
+      
+      if (unsubscribeFromFinancing) {
+        unsubscribeFromFinancing();
+      }
+      
+      unsubscribeFromFinancing = useFinancingStore.subscribe(
+        (state) => ({
+          halalMode: state.isHalalMode,
+          cashAvailable: state.cashAvailable,
+          periodMonths: state.periodMonths
+        }),
+        (newFinancingState) => {
+          const searchStore = useSearchStore.getState();
+          const currentFilters = searchStore.filters;
+          
+          // Only update if values are different to prevent loops
+          const shouldUpdate = 
+            currentFilters.halalMode !== newFinancingState.halalMode ||
+            currentFilters.cashAvailable !== newFinancingState.cashAvailable ||
+            currentFilters.periodMonths !== newFinancingState.periodMonths;
+            
+          if (shouldUpdate) {
+            searchStore.setFilters({
+              halalMode: newFinancingState.halalMode,
+              cashAvailable: newFinancingState.cashAvailable,
+              periodMonths: newFinancingState.periodMonths
+            });
+          }
+        },
+        { equalityFn: (a, b) => 
+          a.halalMode === b.halalMode && 
+          a.cashAvailable === b.cashAvailable && 
+          a.periodMonths === b.periodMonths 
+        }
+      );
+    } catch (error) {
+      // Financing store not yet available, will retry
+      setTimeout(setupFinancingSubscription, 100);
+    }
+  };
+  
+  setupFinancingSubscription();
 }
