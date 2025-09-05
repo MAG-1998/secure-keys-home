@@ -18,6 +18,8 @@ interface PropertyCardProps {
   bedrooms: number
   bathrooms: number
   area: number
+  landAreaSotka?: number
+  propertyType?: string
   imageUrl?: string
   image_url?: string
   isVerified?: boolean
@@ -43,6 +45,8 @@ export const PropertyCard = ({
   bedrooms,
   bathrooms,
   area,
+  landAreaSotka,
+  propertyType,
   imageUrl,
   image_url,
   isVerified,
@@ -94,6 +98,8 @@ export const PropertyCard = ({
   const actualBedrooms = bedrooms || property?.bedrooms || 0
   const actualBathrooms = bathrooms || property?.bathrooms || 0
   const actualArea = area || property?.area || 0
+  const actualLandArea = landAreaSotka || property?.land_area_sotka
+  const actualPropertyType = propertyType || property?.property_type
   const actualImageUrl = getImageUrl(imageUrl || image_url || property?.image_url)
   const [imageError, setImageError] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
@@ -180,7 +186,10 @@ export const PropertyCard = ({
           </div>
           <div className="flex items-center">
             <Square className="h-4 w-4 mr-1" />
-            {actualArea}m²
+            {actualPropertyType === 'house' && actualLandArea ? 
+              `${actualArea}m² • ${actualLandArea} соток` : 
+              `${actualArea}m²`
+            }
           </div>
         </div>
         

@@ -520,7 +520,7 @@ export default function AdminDashboard() {
               </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
             {t('admin.dashboard.tabs.users')} ({users.length})
@@ -532,6 +532,10 @@ export default function AdminDashboard() {
           <TabsTrigger value="requests" className="flex items-center gap-2">
             <Settings className="w-4 h-4" />
             {t('admin.dashboard.tabs.applications')} ({applications.length})
+          </TabsTrigger>
+          <TabsTrigger value="halal-listing" className="flex items-center gap-2">
+            <Banknote className="w-4 h-4" />
+            Halal Listing
           </TabsTrigger>
           <TabsTrigger value="financing" className="flex items-center gap-2">
             <Banknote className="w-4 h-4" />
@@ -619,6 +623,12 @@ export default function AdminDashboard() {
                         <p className="text-xs text-muted-foreground">ID: {property.id}</p>
                         <p className="text-sm text-muted-foreground">{property.location}</p>
                         <p className="text-sm">Price: ${property.price?.toLocaleString()}</p>
+                        <p className="text-sm">
+                          {property.property_type === 'house' && property.land_area_sotka ? 
+                            `Living: ${property.area} m² | Land: ${property.land_area_sotka} соток` : 
+                            `Area: ${property.area} m²`
+                          }
+                        </p>
                         <p className="text-sm">Owner: {property.profiles?.full_name} ({property.profiles?.email})</p>
                         <p className="text-sm">Listed: {new Date(property.created_at).toLocaleDateString()}</p>
                         {(Array.isArray(property.photos) && property.photos.length > 0 || property.image_url) && (
@@ -697,7 +707,12 @@ export default function AdminDashboard() {
                         <p className="text-sm">Price: ${application.price?.toLocaleString()}</p>
                         <p className="text-sm">Applicant: {application.profiles?.full_name} ({application.profiles?.email})</p>
                         <p className="text-sm">Bedrooms: {application.bedrooms} | Bathrooms: {application.bathrooms}</p>
-                        <p className="text-sm">Area: {application.area} m²</p>
+                        <p className="text-sm">
+                          {application.property_type === 'house' && application.land_area_sotka ? 
+                            `Living Area: ${application.area} m² | Land: ${application.land_area_sotka} соток` : 
+                            `Area: ${application.area} m²`
+                          }
+                        </p>
                         <p className="text-sm">Submitted: {new Date(application.created_at).toLocaleDateString()}</p>
                         {(Array.isArray(application.photos) && application.photos.length > 0 || application.image_url) && (
                           <div className="mt-3 flex gap-2">
@@ -751,6 +766,21 @@ export default function AdminDashboard() {
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="halal-listing" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Halal Financing Listing Requests</CardTitle>
+              <p className="text-muted-foreground">Property owners requesting their properties to be available for halal financing</p>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">Feature coming soon - Halal financing listing approval workflow</p>
+                <p className="text-sm text-muted-foreground mt-2">This will allow property owners to request their properties be listed as halal financing available</p>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="financing" className="space-y-6">

@@ -53,7 +53,8 @@ const ListProperty = () => {
     customBedrooms: "",
     bathrooms: "",
     customBathrooms: "",
-    area: "",
+    area: "", // Living area for all properties
+    landAreaSotka: "", // Land area in соток for houses only
     description: "",
     // Location
     latitude: null as number | null,
@@ -88,7 +89,8 @@ const ListProperty = () => {
         setFormData(prev => ({ 
           ...prev, 
           ...restData,
-          displayName: restData.displayName || ""
+          displayName: restData.displayName || "",
+          landAreaSotka: restData.landAreaSotka || ""
         }));
         setLastSaved(new Date().toLocaleTimeString());
       }
@@ -111,7 +113,8 @@ const ListProperty = () => {
         const { photos, documents, ...dataToSave } = data;
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
           ...dataToSave,
-          displayName: dataToSave.displayName || ""
+          displayName: dataToSave.displayName || "",
+          landAreaSotka: dataToSave.landAreaSotka || ""
         }));
         localStorage.setItem(STEP_KEY, step.toString());
         setLastSaved(new Date().toLocaleTimeString());
@@ -147,7 +150,10 @@ const ListProperty = () => {
     if (!formData.propertyType) errors.push('Please select a property type');
     if (!formData.address) errors.push('Please enter the property address');
     if (!Number.isFinite(price) || price <= 0) errors.push('Please enter a valid price');
-    if (!Number.isFinite(area) || area <= 0) errors.push('Please enter a valid area');
+    if (!Number.isFinite(area) || area <= 0) errors.push('Please enter a valid living area');
+    if (formData.propertyType === 'house' && (!formData.landAreaSotka || Number(formData.landAreaSotka) <= 0)) {
+      errors.push('Please enter a valid land area in соток for houses');
+    }
     if (!Number.isFinite(bedrooms) || bedrooms < 0) errors.push('Please specify bedrooms');
     if (!Number.isFinite(bathrooms) || bathrooms < 1) errors.push('Please specify bathrooms');
     if (!formData.latitude || !formData.longitude) errors.push('Please select the property location on the map');
@@ -210,6 +216,7 @@ const ListProperty = () => {
         bathrooms: "",
         customBathrooms: "",
         area: "",
+        landAreaSotka: "",
         description: "",
         latitude: null,
         longitude: null,
@@ -328,6 +335,7 @@ const ListProperty = () => {
         bedrooms: bedroomCount,
         bathrooms: bathroomCount,
         area: parseFloat(formData.area),
+        land_area_sotka: formData.propertyType === 'house' && formData.landAreaSotka ? parseFloat(formData.landAreaSotka) : null,
         description: formData.description,
         visit_hours: formData.visitHours,
         virtual_tour: formData.virtualTour,
@@ -469,10 +477,25 @@ const ListProperty = () => {
                   <Input id="price" type="number" placeholder="0" value={formData.price} onChange={e => handleInputChange("price", e.target.value)} />
                 </div>
                 <div>
-                  <Label htmlFor="area">{t('listProperty.area')}</Label>
+                  <Label htmlFor="area">
+                    {formData.propertyType === 'house' ? 'Living Area (m²)' : t('listProperty.area')}
+                  </Label>
                   <Input id="area" type="number" placeholder="0" value={formData.area} onChange={e => handleInputChange("area", e.target.value)} />
                 </div>
               </div>
+              
+              {formData.propertyType === 'house' && (
+                <div>
+                  <Label htmlFor="landAreaSotka">Land Area (соток)</Label>
+                  <Input 
+                    id="landAreaSotka" 
+                    type="number" 
+                    placeholder="0" 
+                    value={formData.landAreaSotka} 
+                    onChange={e => handleInputChange("landAreaSotka", e.target.value)} 
+                  />
+                </div>
+              )}
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
