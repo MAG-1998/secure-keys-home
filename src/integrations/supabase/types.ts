@@ -1050,6 +1050,13 @@ export type Database = {
         Args: { financing_request_id_param: string }
         Returns: boolean
       }
+      backup_photo_urls: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          backup_id: string
+          properties_backed_up: number
+        }[]
+      }
       calculate_penalty_level: {
         Args: { user_id_param: string }
         Returns: number
@@ -1126,6 +1133,18 @@ export type Database = {
           user_id_param: string
         }
         Returns: boolean
+      }
+      restore_photo_urls: {
+        Args: { backup_uuid: string }
+        Returns: number
+      }
+      standardize_photo_urls: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          property_id: string
+          updated_image_url: boolean
+          updated_photos_count: number
+        }[]
       }
     }
     Enums: {
