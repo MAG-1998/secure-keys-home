@@ -107,7 +107,7 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
   bedrooms: Number(prop.bedrooms) || 1,
   bathrooms: Number(prop.bathrooms) || 1,
   area: Number(prop.area) || 50,
-  isHalal: (prop.is_halal_financed || prop.halal_financing_status === 'approved') || false,
+  isHalal: (prop.is_halal_available && prop.halal_status === 'approved') || false,
   title: prop.title || 'Property',
   description: prop.description || '',
   status: prop.status || 'active',

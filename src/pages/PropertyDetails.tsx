@@ -43,10 +43,8 @@ interface PropertyDetail {
   photos: string[] | null;
   visit_hours: any;
   is_verified?: boolean | null;
-  is_halal_financed?: boolean | null;
   is_halal_available?: boolean | null;
   halal_status?: string | null;
-  halal_financing_status?: string | null;
   cash_min_percent?: number;
   period_options?: string[];
   property_type?: string;

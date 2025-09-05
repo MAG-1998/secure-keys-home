@@ -422,7 +422,6 @@ export default function AdminDashboard() {
 
       if (status === 'approved') {
         updateData.is_halal_available = true;
-        updateData.halal_approved_once = true;
         updateData.halal_approved_at = new Date().toISOString();
         updateData.halal_approved_by = user?.id;
       } else {
@@ -478,7 +477,6 @@ export default function AdminDashboard() {
             .update({
               is_halal_available: true,
               halal_status: 'approved',
-              halal_approved_once: true,
               halal_approved_at: new Date().toISOString(),
               halal_approved_by: user?.id
             })
@@ -600,7 +598,7 @@ export default function AdminDashboard() {
   };
 
   const getHalalBadge = (property: any) => {
-    const approved = property?.is_halal_financed || property?.halal_financing_status === 'approved';
+    const approved = property?.is_halal_available && property?.halal_status === 'approved';
     return approved ? (
       <Badge variant="default">{t('admin.dashboard.properties.halalApproved')}</Badge>
     ) : (

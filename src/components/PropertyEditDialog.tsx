@@ -88,17 +88,13 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
       if (formData.is_halal_available !== property.is_halal_available) {
         if (formData.is_halal_available) {
           // Turning ON halal financing
-          if (!property.halal_approved_once) {
-            // First time enabling - send for approval
-            updateData.halal_status = 'pending_approval';
-            updateData.is_halal_available = false; // Keep false until approved
-          } else if (property.halal_status === 'approved') {
+          if (property.halal_status === 'approved') {
             // Previously approved - can enable immediately
             updateData.is_halal_available = true;
           } else {
-            // Was denied or disabled, need new approval
+            // First time or was denied/disabled - need new approval
             updateData.halal_status = 'pending_approval';
-            updateData.is_halal_available = false;
+            updateData.is_halal_available = false; // Keep false until approved
           }
         } else {
           // Turning OFF halal financing (keep status for history)

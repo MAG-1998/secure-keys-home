@@ -341,7 +341,8 @@ const ListProperty = () => {
         virtual_tour: formData.virtualTour,
         latitude: formData.latitude,
         longitude: formData.longitude,
-        halal_financing_requested: formData.halalFinancingRequested,
+        is_halal_available: formData.halalFinancingRequested,
+        halal_status: formData.halalFinancingRequested ? 'pending_approval' : 'none',
         district: formData.district || extractDistrictFromText(formData.address),
         status: 'pending'
       };

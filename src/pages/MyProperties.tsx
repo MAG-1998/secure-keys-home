@@ -22,7 +22,8 @@ interface Property {
   area: number | null
   image_url: string | null
   is_verified: boolean | null
-  is_halal_financed: boolean | null
+  is_halal_available: boolean | null
+  halal_status: string | null
   visit_hours: any[] | null
   created_at: string
   views_count: number
@@ -72,7 +73,8 @@ const MyProperties = () => {
         created_at: app.created_at,
         image_url: app.image_url,
         is_verified: app.is_verified || false,
-        is_halal_financed: app.is_halal_financed || false,
+        is_halal_available: app.is_halal_available || false,
+        halal_status: app.halal_status || 'none',
         views_count: 0,
         visit_requests_count: 0,
         upcoming_visits: []
@@ -226,7 +228,7 @@ const MyProperties = () => {
                     {property.is_verified && (
                       <Badge variant="success" className="mb-2">{t('myProperties.status.verified')}</Badge>
                     )}
-                    {property.is_halal_financed && (
+                    {property.is_halal_available && property.halal_status === 'approved' && (
                       <Badge variant="outline" className="bg-magit-trust/10 text-magit-trust border-magit-trust">
                         Halal Financing
                       </Badge>

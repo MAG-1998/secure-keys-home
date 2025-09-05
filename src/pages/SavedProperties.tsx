@@ -27,7 +27,8 @@ interface SavedProperty {
     area: number | null
     image_url: string | null
     is_verified: boolean | null
-    is_halal_financed: boolean | null
+    is_halal_available: boolean | null
+    halal_status: string | null
     visit_hours: any[] | null
     user_id: string
     profiles: {
@@ -231,7 +232,7 @@ const SavedProperties = () => {
                     {property.is_verified && (
                         <Badge variant="success" className="mb-2">{t('myProperties.status.verified')}</Badge>
                       )}
-                      {property.is_halal_financed && (
+                      {property.is_halal_available && property.halal_status === 'approved' && (
                         <Badge variant="outline" className="bg-magit-trust/10 text-magit-trust border-magit-trust">
                           Halal Financing
                         </Badge>

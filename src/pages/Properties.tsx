@@ -22,8 +22,8 @@ interface Property {
   bedrooms: number;
   bathrooms: number;
   area: number;
-  is_halal_financed?: boolean;
-  halal_financing_status?: string;
+  is_halal_available?: boolean;
+  halal_status?: string;
   title?: string;
   description?: string;
   status?: string;
@@ -71,7 +71,7 @@ const Properties = () => {
     bedrooms: Number(p.bedrooms) || 1,
     bathrooms: Number(p.bathrooms) || 1,
     area: Number(p.area) || 50,
-    isHalal: (p.is_halal_financed || p.halal_financing_status === 'approved') || false,
+    isHalal: (p.is_halal_available && p.halal_status === 'approved') || false,
     title: p.title || 'Property',
     description: p.description || '',
     status: p.status || 'active',
