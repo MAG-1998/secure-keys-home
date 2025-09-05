@@ -41,13 +41,8 @@ export const FaviconManager = () => {
     const observer = new MutationObserver(() => updateFavicon());
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-halal-mode"] });
 
-    // Also update on visibility change (route/theme changes might occur while hidden)
-    const onVis = () => updateFavicon();
-    document.addEventListener("visibilitychange", onVis);
-
     return () => {
       observer.disconnect();
-      document.removeEventListener("visibilitychange", onVis);
     };
   }, [theme]);
 

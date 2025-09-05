@@ -835,7 +835,12 @@ export const EnhancedFinancingRequestBox = ({ financingRequestId, onClose }: Fin
                 placeholder="Type your message..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                  }
+                }}
               />
               <Button onClick={sendMessage} disabled={!newMessage.trim()}>
                 <Send className="w-4 h-4" />
