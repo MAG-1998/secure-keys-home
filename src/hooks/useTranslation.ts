@@ -214,6 +214,7 @@ const translations: Translations = {
     ru: '✓ По шариату',
     uz: '✓ Shariatga mos'
   },
+  'search.halalToggle': { en: 'Halal Financing Mode', ru: 'Режим халяльной рассрочки', uz: 'Halol moliya rejimi' },
   'search.titleStandard': {
     en: 'Search Verified Properties',
     ru: 'Поиск проверенных домов',

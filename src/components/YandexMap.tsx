@@ -125,14 +125,20 @@ const allProperties: Property[] = (dbProperties || []).map((prop: any) => ({
 
 // Apply filters (reactive to data and UI) - now just maps search results to properties
 const filteredProperties = useMemo(() => {
+  console.log('[Map Filter Debug] searchResults:', searchResults?.length || 0, 'allProperties:', allProperties.length);
+  
   if (!searchResults || searchResults.length === 0) {
     // If no search results, show recent approved properties
-    return allProperties.filter(p => ['active','approved'].includes(p.status)).slice(0, 50);
+    const filtered = allProperties.filter(p => ['active','approved'].includes(p.status)).slice(0, 50);
+    console.log('[Map Filter Debug] No search results, showing all active/approved:', filtered.length);
+    return filtered;
   }
 
   // Map search results to properties
   const searchIds = new Set(searchResults.map(r => r.id));
-  return allProperties.filter(p => searchIds.has(p.id) && ['active','approved'].includes(p.status));
+  const filtered = allProperties.filter(p => searchIds.has(p.id) && ['active','approved'].includes(p.status));
+  console.log('[Map Filter Debug] With search results, showing:', filtered.length);
+  return filtered;
 }, [allProperties, searchResults]);
 
 // Diagnostics 
