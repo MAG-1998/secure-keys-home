@@ -401,7 +401,6 @@ const PropertyDetails = () => {
         await forceLocalSignOut();
         navigate("/");
         toast({ title: "Signed out", description: "You have been logged out." });
-        setTimeout(() => window.location.reload(), 0);
         return;
       }
 
@@ -417,12 +416,10 @@ const PropertyDetails = () => {
       await forceLocalSignOut();
       navigate("/");
       toast({ title: "Signed out", description: "You have been logged out." });
-      setTimeout(() => window.location.reload(), 0);
     } catch (e: any) {
       await forceLocalSignOut();
       navigate("/");
       toast({ title: "Signed out", description: "You have been logged out." });
-      setTimeout(() => window.location.reload(), 0);
     }
   };
 

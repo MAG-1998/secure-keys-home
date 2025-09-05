@@ -45,6 +45,7 @@ interface MyRequestCardProps {
   onMessage?: (id: string) => void;
   isFinished?: boolean;
   t: (key: string) => string;
+  onRefresh?: () => void;
 }
 
 const MyRequestCard = ({ 
@@ -52,7 +53,8 @@ const MyRequestCard = ({
   onCancel,
   onMessage,
   isFinished = false,
-  t
+  t,
+  onRefresh
 }: MyRequestCardProps) => {
   const navigate = useNavigate();
   const imageUrl = r.properties?.image_url || (r.properties?.photos && r.properties.photos.length > 0 ? r.properties.photos[0] : '/placeholder.svg');
@@ -63,7 +65,7 @@ const MyRequestCard = ({
       {r.is_custom_time && r.status === 'pending' && (
         <AlternativeTimeOffer 
           request={r} 
-          onRefresh={() => window.location.reload()} 
+          onRefresh={onRefresh} 
         />
       )}
       
@@ -405,6 +407,7 @@ const MyRequests = () => {
                       request={r}
                       onCancel={(r.status === 'pending' || r.status === 'confirmed') ? onCancel : undefined}
                       onMessage={openMsg}
+                      onRefresh={refresh}
                       t={t}
                     />
                   ))}
@@ -425,6 +428,7 @@ const MyRequests = () => {
                       key={r.id}
                       request={r}
                       onMessage={openMsg}
+                      onRefresh={refresh}
                       t={t}
                     />
                   ))}
@@ -445,6 +449,7 @@ const MyRequests = () => {
                       key={r.id}
                       request={r}
                       onMessage={openMsg}
+                      onRefresh={refresh}
                       isFinished={true}
                       t={t}
                     />
