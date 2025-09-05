@@ -384,6 +384,56 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleHalalRequestAction = async (requestId: string, status: 'approved' | 'denied') => {
+    try {
+      console.log(`Handling halal request ${requestId} with status: ${status}`);
+      
+      // Update halal financing request status
+      const { error } = await supabase
+        .from('halal_financing_requests')
+        .update({ 
+          status,
+          reviewed_at: new Date().toISOString(),
+          reviewed_by: user?.id
+        })
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      // If approved, also update the property to enable halal financing
+      if (status === 'approved') {
+        const request = halalRequests.find(r => r.id === requestId);
+        if (request?.property_id) {
+          await supabase
+            .from('properties')
+            .update({
+              is_halal_available: true,
+              halal_status: 'approved',
+              halal_approved_once: true,
+              halal_approved_at: new Date().toISOString(),
+              halal_approved_by: user?.id
+            })
+            .eq('id', request.property_id);
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: `Halal request ${status} successfully`,
+      });
+
+      // Refresh data
+      fetchAllData();
+    } catch (error: any) {
+      console.error('Error updating halal request:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update halal request",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleApplicationAction = async (applicationId: string, status: 'approved' | 'rejected') => {
     try {
       console.log(`Handling application ${applicationId} with status: ${status}`);
@@ -769,18 +819,72 @@ export default function AdminDashboard() {
         </TabsContent>
 
         <TabsContent value="halal-listing" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Halal Financing Listing Requests</CardTitle>
-              <p className="text-muted-foreground">Property owners requesting their properties to be available for halal financing</p>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Feature coming soon - Halal financing listing approval workflow</p>
-                <p className="text-sm text-muted-foreground mt-2">This will allow property owners to request their properties be listed as halal financing available</p>
-              </div>
-            </CardContent>
-          </Card>
+          {halalRequests.filter(req => req.property_id && !req.cash_available).length === 0 ? (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <p className="text-muted-foreground">No halal listing requests found.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-6">
+              {halalRequests
+                .filter(req => req.property_id && !req.cash_available) // Filter for property listing requests
+                .map((request) => (
+                <Card key={request.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="font-semibold">Property Halal Listing Request</h3>
+                          {getHalalBadge({ 
+                            halal_financing_status: request.status,
+                            is_halal_financed: false,
+                            halal_status: request.status === 'approved' ? 'approved' : 'pending'
+                          })}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Request ID: {request.id}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Property: {request.property?.title || 'Unknown'}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Owner: {request.user?.full_name} ({request.user?.email})
+                        </p>
+                        <p className="text-sm">Status: {request.status}</p>
+                        <p className="text-sm">Created: {new Date(request.created_at).toLocaleDateString()}</p>
+                        {request.request_notes && (
+                          <p className="text-sm mt-2 p-2 bg-muted rounded">
+                            <strong>Notes:</strong> {request.request_notes}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex gap-2">
+                        {request.status === 'pending' && (
+                          <>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => handleHalalRequestAction(request.id, 'approved')}
+                            >
+                              <UserCheck className="w-4 h-4 mr-2" />
+                              Approve
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleHalalRequestAction(request.id, 'denied')}
+                            >
+                              <UserX className="w-4 h-4 mr-2" />
+                              Deny
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="financing" className="space-y-6">
@@ -798,16 +902,16 @@ export default function AdminDashboard() {
                 </p>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-3 bg-accent/20 rounded-lg">
-                    <span className="text-sm font-medium">Total Requests</span>
-                    <Badge variant="outline">{halalRequests.length}</Badge>
+                    <span className="text-sm font-medium">Total Buyer Requests</span>
+                    <Badge variant="outline">{halalRequests.filter(r => r.cash_available).length}</Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <span className="text-sm font-medium">Submitted (Need Assignment)</span>
-                    <Badge variant="secondary">{halalRequests.filter(r => r.stage === 'submitted').length}</Badge>
+                    <Badge variant="secondary">{halalRequests.filter(r => r.stage === 'submitted' && r.cash_available).length}</Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
                     <span className="text-sm font-medium">Final Approval Pending</span>
-                    <Badge variant="outline">{halalRequests.filter(r => r.stage === 'final_approval').length}</Badge>
+                    <Badge variant="outline">{halalRequests.filter(r => r.stage === 'final_approval' && r.cash_available).length}</Badge>
                   </div>
                 </div>
                 <Button 

@@ -150,7 +150,7 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
 
       // Apply halal filtering
       if (searchFilters.halalMode) {
-        query = query.or('is_halal_financed.eq.true,halal_financing_status.eq.approved')
+        query = query.or('is_halal_available.eq.true,halal_status.eq.approved')
       }
 
       // Apply other filters

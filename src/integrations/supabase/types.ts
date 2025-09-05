@@ -155,45 +155,6 @@ export type Database = {
           },
         ]
       }
-      halal_financing_listing_requests: {
-        Row: {
-          admin_notes: string | null
-          created_at: string
-          id: string
-          property_id: string
-          requested_at: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          admin_notes?: string | null
-          created_at?: string
-          id?: string
-          property_id: string
-          requested_at?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          admin_notes?: string | null
-          created_at?: string
-          id?: string
-          property_id?: string
-          requested_at?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       halal_financing_requests: {
         Row: {
           admin_notes: string | null
