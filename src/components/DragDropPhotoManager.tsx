@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/hooks/useTranslation";
 import { supabase } from "@/integrations/supabase/client";
 import { Upload, X, GripVertical } from "lucide-react";
+import { convertImageToJpeg } from "@/utils/imageConverter";
 import {
   DndContext,
   closestCenter,
@@ -132,34 +133,6 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
     }
   };
 
-  const convertHeicToJpeg = async (file: File): Promise<File> => {
-    return new Promise((resolve, reject) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx?.drawImage(img, 0, 0);
-        
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const jpegFile = new File([blob], file.name.replace(/\.(heic|heif)$/i, '.jpg'), {
-              type: 'image/jpeg',
-              lastModified: Date.now(),
-            });
-            resolve(jpegFile);
-          } else {
-            reject(new Error('Failed to convert image'));
-          }
-        }, 'image/jpeg', 0.9);
-      };
-      
-      img.onerror = () => reject(new Error('Failed to load image'));
-      img.src = URL.createObjectURL(file);
-    });
-  };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -181,17 +154,15 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
         
-        // Convert HEIC/HEIF files to JPEG
-        if (/\.(heic|heif)$/i.test(file.name)) {
-          try {
-            file = await convertHeicToJpeg(file);
-          } catch (conversionError) {
-            console.warn('Failed to convert HEIC file, uploading as is:', conversionError);
-          }
+        // Convert ALL images to JPEG with 85% quality
+        try {
+          file = await convertImageToJpeg(file);
+        } catch (conversionError) {
+          console.warn('Failed to convert image file, uploading as is:', conversionError);
         }
         
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}_${i}.${fileExt}`;
+        // Ensure .jpg extension for all uploaded files
+        const fileName = `${Date.now()}_${i}.jpg`;
         const filePath = `${userId}/properties/${propertyId}/${fileName}`;
 
         const { error: uploadError } = await supabase.storage

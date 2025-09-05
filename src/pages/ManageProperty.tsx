@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '@/integrations/supabase/client'
+import { convertImagesToJpeg } from '@/utils/imageConverter'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -112,10 +113,13 @@ const handleFilesSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
   if (!files || !userId || !id) return
   setUploading(true)
   try {
+    // Convert all images to JPEG first
+    const convertedFiles = await convertImagesToJpeg(Array.from(files))
+    
     const urls = await Promise.all(
-      Array.from(files).map(async (file, idx) => {
-        const ext = file.name.split('.').pop() || 'jpg'
-        const path = `${userId}/properties/${id}/${Date.now()}-${idx}.${ext}`
+      convertedFiles.map(async (file, idx) => {
+        // All files are now JPEG, so use .jpg extension
+        const path = `${userId}/properties/${id}/${Date.now()}-${idx}.jpg`
         const { error: uploadError } = await supabase.storage.from('properties').upload(path, file, { upsert: false })
         if (uploadError) throw uploadError
         const { data: publicData } = supabase.storage.from('properties').getPublicUrl(path)

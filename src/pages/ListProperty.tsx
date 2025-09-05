@@ -19,6 +19,7 @@ import LocationPicker from "@/components/LocationPicker";
 import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail, Save, Trash2 } from "lucide-react";
 import { extractDistrictFromText, getDistrictOptions } from "@/lib/districts";
 import { debounce } from "@/utils/debounce";
+import { convertImagesToJpeg } from "@/utils/imageConverter";
 const sanitizeFilename = (name: string) => {
   const dot = name.lastIndexOf(".");
   const base = dot > 0 ? name.slice(0, dot) : name;
@@ -241,29 +242,46 @@ const ListProperty = () => {
     fileInputRef.current?.click();
   };
 
-  const handlePhotosSelected = (e: ChangeEvent<HTMLInputElement>) => {
+  const handlePhotosSelected = async (e: ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
     if (newFiles.length === 0) return;
 
-    // Merge with existing, de-duplicate, and cap at 20 (keep earliest)
-    const existing = formData.photos;
-    const merged = [...existing, ...newFiles];
-    const seen = new Set<string>();
-    const deduped: File[] = [];
-    for (const f of merged) {
-      const key = `${f.name}_${f.size}_${(f as any).lastModified ?? ''}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        deduped.push(f);
+    try {
+      // Convert all new files to JPEG first
+      const convertedFiles = await convertImagesToJpeg(newFiles);
+
+      // Merge with existing, de-duplicate, and cap at 20 (keep earliest)
+      const existing = formData.photos;
+      const merged = [...existing, ...convertedFiles];
+      const seen = new Set<string>();
+      const deduped: File[] = [];
+      for (const f of merged) {
+        const key = `${f.name}_${f.size}_${(f as any).lastModified ?? ''}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          deduped.push(f);
+        }
       }
-    }
-    const finalPhotos = deduped.slice(0, 20);
+      const finalPhotos = deduped.slice(0, 20);
 
-    if (deduped.length > 20) {
-      toast({ title: "Too many photos", description: "Maximum is 20 photos. Keeping the first 20.", variant: "destructive" });
-    }
+      if (deduped.length > 20) {
+        toast({ title: "Too many photos", description: "Maximum is 20 photos. Keeping the first 20.", variant: "destructive" });
+      }
 
-    setFormData(prev => ({ ...prev, photos: finalPhotos }));
+      setFormData(prev => ({ ...prev, photos: finalPhotos }));
+
+      toast({ 
+        title: "Photos converted", 
+        description: `${convertedFiles.length} photo(s) converted to JPEG format.` 
+      });
+    } catch (error) {
+      console.error('Error converting photos:', error);
+      toast({ 
+        title: "Conversion failed", 
+        description: "Some photos could not be converted. Please try again.", 
+        variant: "destructive" 
+      });
+    }
 
     // Reset input so selecting the same files again triggers change
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -333,12 +351,12 @@ const ListProperty = () => {
         const uploadedUrls: string[] = [];
         for (let i = 0; i < formData.photos.length; i++) {
           const file = formData.photos[i];
-          const safeName = sanitizeFilename(file.name);
-          const filePath = `${user.user.id}/${property.id}/${Date.now()}_${i}_${safeName}`;
+          // All files are now JPEG, so use .jpg extension
+          const filePath = `${user.user.id}/${property.id}/${Date.now()}_${i}.jpg`;
           const { data: uploadData, error: uploadError } = await supabase
             .storage
             .from('properties')
-            .upload(filePath, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+            .upload(filePath, file, { contentType: 'image/jpeg', upsert: false });
           if (uploadError) {
             console.error('Upload failed for', filePath, uploadError);
             throw uploadError;
