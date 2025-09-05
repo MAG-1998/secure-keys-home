@@ -15,6 +15,7 @@ import { Shield, Users, Home, Settings, UserCheck, UserX, LogOut, Banknote } fro
 import SecurityAuditPanel from "@/components/SecurityAuditPanel";
 import { forceLocalSignOut } from "@/lib/auth";
 import DistrictReviewPanel from "@/components/admin/DistrictReviewPanel";
+import { PhotoMigrationPanel } from "@/components/admin/PhotoMigrationPanel";
 import { useTranslation } from "@/hooks/useTranslation";
 
 interface UserWithRole {
@@ -839,6 +840,8 @@ export default function AdminDashboard() {
 
               <TabsContent value="security" className="space-y-6">
                 <SecurityAuditPanel />
+                <DistrictReviewPanel />
+                <PhotoMigrationPanel />
               </TabsContent>
             </Tabs>
             </main>
