@@ -365,6 +365,33 @@ export type Database = {
         }
         Relationships: []
       }
+      photo_url_backups: {
+        Row: {
+          backup_id: string
+          created_at: string | null
+          id: string
+          original_image_url: string | null
+          original_photos: Json | null
+          property_id: string
+        }
+        Insert: {
+          backup_id: string
+          created_at?: string | null
+          id?: string
+          original_image_url?: string | null
+          original_photos?: Json | null
+          property_id: string
+        }
+        Update: {
+          backup_id?: string
+          created_at?: string | null
+          id?: string
+          original_image_url?: string | null
+          original_photos?: Json | null
+          property_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
