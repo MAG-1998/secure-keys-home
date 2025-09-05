@@ -28,9 +28,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { propertyId, preview = false, forceConvert = false } = await req.json();
+    const { propertyId, preview = false, forceConvert = false, selectedProperties } = await req.json();
     
-    console.log('Starting photo migration process...', { propertyId, preview, forceConvert });
+    console.log('Starting photo migration process...', { propertyId, preview, forceConvert, selectedProperties });
     
     // Get properties with photos to migrate
     const query = supabase
@@ -39,6 +39,8 @@ Deno.serve(async (req) => {
     
     if (propertyId) {
       query.eq('id', propertyId);
+    } else if (selectedProperties && selectedProperties.length > 0) {
+      query.in('id', selectedProperties);
     }
     
     const { data: properties, error: fetchError } = await query;
@@ -172,7 +174,7 @@ Deno.serve(async (req) => {
             continue;
           }
           
-          // Construct the new public URL
+          // Construct the new public URL (using relative path for consistency)
           const newUrl = `/storage/v1/object/public/properties/${newStoragePath}`;
           migratedUrls.set(photo.url, newUrl);
           migratedPhotos.push(newUrl);
