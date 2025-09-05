@@ -427,7 +427,6 @@ export default function AdminDashboard() {
         updateData.halal_approved_by = user?.id;
       } else {
         updateData.is_halal_available = false;
-        updateData.halal_status = 'denied';
       }
 
       const { error } = await supabase

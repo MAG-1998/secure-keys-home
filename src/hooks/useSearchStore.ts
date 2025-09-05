@@ -243,6 +243,8 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
   clearCache: () => {
     try {
       localStorage.removeItem(STORAGE_KEY)
+      // Also clear any other search-related cache
+      localStorage.removeItem('search_results_cache')
     } catch (error) {
       console.warn('Failed to clear cache:', error)
     }

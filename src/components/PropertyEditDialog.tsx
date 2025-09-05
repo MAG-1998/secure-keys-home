@@ -241,7 +241,7 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
               <Switch
                 id="is_halal_available"
                 checked={formData.is_halal_available}
-                disabled={property.halal_status === 'denied'}
+                disabled={property.halal_status === 'denied' || property.halal_status === 'disabled'}
                 onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_halal_available: checked }))}
               />
               <Label htmlFor="is_halal_available">{t('edit.enableHalalFinancing')}</Label>
