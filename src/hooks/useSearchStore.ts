@@ -148,9 +148,9 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
         query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%`)
       }
 
-      // Apply halal filtering
+      // Apply halal filtering - only show properties that are both available and approved
       if (searchFilters.halalMode) {
-        query = query.or('is_halal_available.eq.true,halal_status.eq.approved')
+        query = query.eq('is_halal_available', true).eq('halal_status', 'approved')
       }
 
       // Apply other filters
