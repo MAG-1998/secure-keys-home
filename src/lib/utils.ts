@@ -13,11 +13,19 @@ export function getImageUrl(path: string | null | undefined): string {
     return path;
   }
   
-  // Convert relative storage path to full Supabase URL
   const supabaseUrl = 'https://mvndmnkgtoygsvesktgw.supabase.co';
   
-  // Remove leading slash if present
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  // If path already includes storage path, just prepend base URL
+  if (path.startsWith('/storage/v1/object/public/')) {
+    return `${supabaseUrl}${path}`;
+  }
   
+  // If path starts with storage path without leading slash
+  if (path.startsWith('storage/v1/object/public/')) {
+    return `${supabaseUrl}/${path}`;
+  }
+  
+  // Convert relative storage path to full Supabase URL
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   return `${supabaseUrl}/storage/v1/object/public/${cleanPath}`;
 }
