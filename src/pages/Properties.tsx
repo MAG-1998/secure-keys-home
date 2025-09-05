@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -29,6 +30,7 @@ interface Property {
 }
 
 const Properties = () => {
+  const navigate = useNavigate()
   const { t, language } = useTranslation()
   const [filters, setFilters] = useState({
     district: 'all',
@@ -171,7 +173,7 @@ const Properties = () => {
             ) : (
               <div className="space-y-4">
                 {filtered.map((p) => (
-                  <div key={p.id} className="flex items-center justify-between rounded-lg border p-4 cursor-pointer hover:bg-muted/30" onClick={() => window.location.assign(`/property/${p.id}`)} role="button">
+                  <div key={p.id} className="flex items-center justify-between rounded-lg border p-4 cursor-pointer hover:bg-muted/30" onClick={() => navigate(`/property/${p.id}`)} role="button">
                     <div>
                       <div className="font-medium">{p.title}</div>
                       <div className="text-sm text-muted-foreground">{localizeDistrictLib(p.district as any, language)} • {p.type}</div>
