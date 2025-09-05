@@ -384,6 +384,51 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleHalalPropertyAction = async (propertyId: string, status: 'approved' | 'denied') => {
+    try {
+      console.log(`Handling halal property ${propertyId} with status: ${status}`);
+      
+      // Update property halal status
+      const updateData: any = {
+        halal_status: status,
+        reviewed_at: new Date().toISOString(),
+        reviewed_by: user?.id
+      };
+
+      if (status === 'approved') {
+        updateData.is_halal_available = true;
+        updateData.halal_approved_once = true;
+        updateData.halal_approved_at = new Date().toISOString();
+        updateData.halal_approved_by = user?.id;
+      } else {
+        updateData.is_halal_available = false;
+        updateData.halal_status = 'denied';
+      }
+
+      const { error } = await supabase
+        .from('properties')
+        .update(updateData)
+        .eq('id', propertyId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Halal listing ${status} successfully`,
+      });
+
+      // Refresh data
+      fetchAllData();
+    } catch (error: any) {
+      console.error('Error updating halal property:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update halal property",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleHalalRequestAction = async (requestId: string, status: 'approved' | 'denied') => {
     try {
       console.log(`Handling halal request ${requestId} with status: ${status}`);
@@ -819,7 +864,7 @@ export default function AdminDashboard() {
         </TabsContent>
 
         <TabsContent value="halal-listing" className="space-y-6">
-          {halalRequests.filter(req => req.property_id && !req.cash_available).length === 0 ? (
+          {properties.filter(prop => prop.halal_status === 'pending_approval').length === 0 ? (
             <Card>
               <CardContent className="p-6 text-center">
                 <p className="text-muted-foreground">No halal listing requests found.</p>
@@ -827,57 +872,64 @@ export default function AdminDashboard() {
             </Card>
           ) : (
             <div className="grid gap-6">
-              {halalRequests
-                .filter(req => req.property_id && !req.cash_available) // Filter for property listing requests
-                .map((request) => (
-                <Card key={request.id}>
+              {properties
+                .filter(prop => prop.halal_status === 'pending_approval') // Filter for properties requesting halal listing
+                .map((property) => (
+                <Card key={property.id}>
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold">Property Halal Listing Request</h3>
-                          {getHalalBadge({ 
-                            halal_financing_status: request.status,
-                            is_halal_financed: false,
-                            halal_status: request.status === 'approved' ? 'approved' : 'pending'
-                          })}
+                          <h3 className="font-semibold">{property.title}</h3>
+                          {getHalalBadge(property)}
                         </div>
-                        <p className="text-xs text-muted-foreground">Request ID: {request.id}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Property: {request.property?.title || 'Unknown'}
+                        <p className="text-xs text-muted-foreground">Property ID: {property.id}</p>
+                        <p className="text-sm text-muted-foreground">{property.location}</p>
+                        <p className="text-sm">Price: ${property.price?.toLocaleString()}</p>
+                        <p className="text-sm">
+                          {property.property_type === 'house' && property.land_area_sotka ? 
+                            `Living: ${property.area} m² | Land: ${property.land_area_sotka} соток` : 
+                            `Area: ${property.area} m²`
+                          }
                         </p>
-                        <p className="text-sm text-muted-foreground">
-                          Owner: {request.user?.full_name} ({request.user?.email})
-                        </p>
-                        <p className="text-sm">Status: {request.status}</p>
-                        <p className="text-sm">Created: {new Date(request.created_at).toLocaleDateString()}</p>
-                        {request.request_notes && (
-                          <p className="text-sm mt-2 p-2 bg-muted rounded">
-                            <strong>Notes:</strong> {request.request_notes}
-                          </p>
+                        <p className="text-sm">Owner: {property.profiles?.full_name} ({property.profiles?.email})</p>
+                        <p className="text-sm">Listed: {new Date(property.created_at).toLocaleDateString()}</p>
+                        {(Array.isArray(property.photos) && property.photos.length > 0 || property.image_url) && (
+                          <div className="mt-3 flex gap-2">
+                            {[...(Array.isArray(property.photos) ? property.photos.slice(0,3) : []), ...(property.image_url ? [property.image_url] : [])]
+                              .slice(0,3)
+                              .map((url: string, idx: number) => (
+                                <img
+                                  key={idx}
+                                  src={url}
+                                  alt="Property photo thumbnail"
+                                  loading="lazy"
+                                  className="h-16 w-20 rounded-md object-cover border border-border"
+                                  onError={(e) => {
+                                    e.currentTarget.src = '/placeholder.svg'
+                                  }}
+                                />
+                              ))}
+                          </div>
                         )}
                       </div>
                       <div className="flex gap-2">
-                        {request.status === 'pending' && (
-                          <>
-                            <Button
-                              variant="default"
-                              size="sm"
-                              onClick={() => handleHalalRequestAction(request.id, 'approved')}
-                            >
-                              <UserCheck className="w-4 h-4 mr-2" />
-                              Approve
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleHalalRequestAction(request.id, 'denied')}
-                            >
-                              <UserX className="w-4 h-4 mr-2" />
-                              Deny
-                            </Button>
-                          </>
-                        )}
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={() => handleHalalPropertyAction(property.id, 'approved')}
+                        >
+                          <UserCheck className="w-4 h-4 mr-2" />
+                          Approve
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleHalalPropertyAction(property.id, 'denied')}
+                        >
+                          <UserX className="w-4 h-4 mr-2" />
+                          Deny
+                        </Button>
                       </div>
                     </div>
                   </CardContent>

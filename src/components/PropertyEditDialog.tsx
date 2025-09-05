@@ -89,20 +89,9 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
         if (formData.is_halal_available) {
           // Turning ON halal financing
           if (!property.halal_approved_once) {
-            // First time enabling - requires approval, create listing request
+            // First time enabling - requires approval
             updateData.halal_status = 'pending_approval';
             updateData.is_halal_available = false; // Keep false until approved
-            
-            // Create halal listing request in halal_financing_requests
-            await supabase
-              .from("halal_financing_requests")
-              .insert({
-                property_id: property.id,
-                user_id: property.user_id,
-                status: 'pending',
-                stage: 'submitted',
-                request_notes: 'Halal financing listing requested during property edit'
-              });
           } else {
             // Previously approved - can enable immediately
             updateData.halal_status = 'approved';
