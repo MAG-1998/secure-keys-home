@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
@@ -73,7 +72,6 @@ interface UserProviderProps {
 }
 
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [role, setRole] = useState<UserRole>('user');
@@ -167,7 +165,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
               if (banned) {
                 try { localStorage.setItem('magit_ban_reason', banned.reason || 'Banned'); } catch {}
                 await supabase.auth.signOut();
-                navigate('/auth?banned=1');
+                window.location.replace('/auth?banned=1');
                 return;
               }
             }
