@@ -435,6 +435,46 @@ const translations: Translations = {
     ru: 'От',
     uz: 'Dan boshlab'
   },
+  'halal.cashPayment': {
+    en: 'Cash Payment',
+    ru: 'Наличный платеж',
+    uz: 'Naqd toʻlov'
+  },
+  'halal.requestFinancing': {
+    en: 'Request Financing',
+    ru: 'Запросить финансирование',
+    uz: 'Moliyalashtirish soʻrash'
+  },
+  'halal.paymentBreakdown': {
+    en: 'Payment Breakdown',
+    ru: 'Разбивка платежей',
+    uz: 'Toʻlov tafsiloti'
+  },
+  'halal.enterDetailsForBreakdown': {
+    en: 'Enter cash available and period to see payment breakdown',
+    ru: 'Введите наличные средства и период для просмотра разбивки платежей',
+    uz: 'Toʻlov tafsilotini koʻrish uchun naqd pul va muddatni kiriting'
+  },
+  'halal.enterCashAmount': {
+    en: 'Enter cash amount',
+    ru: 'Введите сумму наличных',
+    uz: 'Naqd pul miqdorini kiriting'
+  },
+  'halal.selectPeriod': {
+    en: 'Select period',
+    ru: 'Выберите период',
+    uz: 'Muddatni tanlang'
+  },
+  'halal.minimumCashRequired': {
+    en: 'Minimum cash required:',
+    ru: 'Минимум наличных требуется:',
+    uz: 'Minimum naqd pul kerak:'
+  },
+  'halal.noFinancingNeeded': {
+    en: 'No financing needed - you have enough cash!',
+    ru: 'Финансирование не требуется - у вас достаточно наличных!',
+    uz: 'Moliyalashtirish kerak emas - sizda yetarli naqd pul bor!'
+  },
 
   // Common
   'common.any': {
