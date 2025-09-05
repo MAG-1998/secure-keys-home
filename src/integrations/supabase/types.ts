@@ -444,14 +444,10 @@ export type Database = {
           documents: Json | null
           halal_approved_at: string | null
           halal_approved_by: string | null
-          halal_approved_once: boolean | null
-          halal_financing_requested: boolean | null
-          halal_financing_status: string | null
           halal_status: string | null
           id: string
           image_url: string | null
           is_halal_available: boolean | null
-          is_halal_financed: boolean | null
           is_verified: boolean | null
           land_area_sotka: number | null
           latitude: number | null
@@ -483,14 +479,10 @@ export type Database = {
           documents?: Json | null
           halal_approved_at?: string | null
           halal_approved_by?: string | null
-          halal_approved_once?: boolean | null
-          halal_financing_requested?: boolean | null
-          halal_financing_status?: string | null
           halal_status?: string | null
           id?: string
           image_url?: string | null
           is_halal_available?: boolean | null
-          is_halal_financed?: boolean | null
           is_verified?: boolean | null
           land_area_sotka?: number | null
           latitude?: number | null
@@ -522,14 +514,10 @@ export type Database = {
           documents?: Json | null
           halal_approved_at?: string | null
           halal_approved_by?: string | null
-          halal_approved_once?: boolean | null
-          halal_financing_requested?: boolean | null
-          halal_financing_status?: string | null
           halal_status?: string | null
           id?: string
           image_url?: string | null
           is_halal_available?: boolean | null
-          is_halal_financed?: boolean | null
           is_verified?: boolean | null
           land_area_sotka?: number | null
           latitude?: number | null
