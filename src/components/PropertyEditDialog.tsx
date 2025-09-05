@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/hooks/useTranslation";
 import { supabase } from "@/integrations/supabase/client";
 import { DragDropPhotoManager } from "./DragDropPhotoManager";
+import LocationPicker from "./LocationPicker";
+import { Textarea } from "@/components/ui/textarea";
 
 interface PropertyEditDialogProps {
   open: boolean;
@@ -26,7 +28,11 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
     display_name: "",
     price: 0,
     property_type: "",
-    is_halal_available: false
+    is_halal_available: false,
+    location: "",
+    description: "",
+    latitude: null as number | null,
+    longitude: null as number | null
   });
   const [photos, setPhotos] = useState<{ url: string; order_index: number }[]>([]);
 
@@ -36,7 +42,11 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
         display_name: property.display_name || property.title || "",
         price: property.price || 0,
         property_type: property.property_type || "",
-        is_halal_available: property.is_halal_available || false
+        is_halal_available: property.is_halal_available || false,
+        location: property.location || "",
+        description: property.description || "",
+        latitude: property.latitude || null,
+        longitude: property.longitude || null
       });
       
       // Load photos from property_photos table if exists, otherwise from photos field
@@ -81,6 +91,10 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
         title: formData.display_name, // Keep title in sync
         price: formData.price,
         property_type: formData.property_type,
+        location: formData.location,
+        description: formData.description,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
         image_url: photos.length > 0 ? photos[0].url : null
       };
 
@@ -177,8 +191,9 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
         </DialogHeader>
         
         <Tabs defaultValue="general" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="general">{t('property.generalInfo')}</TabsTrigger>
+            <TabsTrigger value="location">{t('property.location')}</TabsTrigger>
             <TabsTrigger value="photos">{t('property.photos')}</TabsTrigger>
             <TabsTrigger value="financing">{t('property.financing')}</TabsTrigger>
           </TabsList>
@@ -221,6 +236,43 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
                 </SelectContent>
               </Select>
             </div>
+            
+            <div>
+              <Label htmlFor="description">{t('property.description')}</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                placeholder={t('property.descriptionPlaceholder')}
+                rows={3}
+              />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="location" className="space-y-4">
+            <div>
+              <Label htmlFor="location">{t('property.address')}</Label>
+              <Input
+                id="location"
+                value={formData.location}
+                onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                placeholder={t('property.addressPlaceholder')}
+              />
+            </div>
+            
+            <LocationPicker
+              onLocationSelect={(lat: number, lng: number, address?: string) => {
+                setFormData(prev => ({
+                  ...prev,
+                  latitude: lat,
+                  longitude: lng,
+                  location: address || prev.location
+                }));
+              }}
+              selectedLat={formData.latitude || undefined}
+              selectedLng={formData.longitude || undefined}
+              initialAddress={formData.location}
+            />
           </TabsContent>
           
           <TabsContent value="photos">
