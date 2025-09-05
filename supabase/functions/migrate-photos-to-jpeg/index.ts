@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
       
       // Check which photos need conversion
       for (const photo of photos) {
-        if (typeof photo === 'string' && photo.includes('/properties/')) {
+        if (typeof photo === 'string' && (photo.includes('/properties/') || photo.includes('properties/'))) {
           const fileName = photo.split('/').pop() || '';
           const extension = fileName.split('.').pop()?.toLowerCase();
           
@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
       }
       
       // Check image_url too
-      if (property.image_url && property.image_url.includes('/properties/')) {
+      if (property.image_url && (property.image_url.includes('/properties/') || property.image_url.includes('properties/'))) {
         const fileName = property.image_url.split('/').pop() || '';
         const extension = fileName.split('.').pop()?.toLowerCase();
         
@@ -122,13 +122,27 @@ Deno.serve(async (req) => {
         try {
           console.log(`Converting ${photo.fileName} (${photo.extension} -> jpg)`);
           
+          // Extract storage path from URL - handle various URL formats
+          let storagePath = photo.url;
+          
+          // Remove Supabase storage URL prefix if present
+          if (storagePath.includes('/storage/v1/object/public/properties/')) {
+            storagePath = storagePath.split('/storage/v1/object/public/properties/')[1];
+          } else if (storagePath.includes('properties/')) {
+            // Handle cases where it's just "properties/..." 
+            const parts = storagePath.split('properties/');
+            storagePath = parts[parts.length - 1];
+          }
+          
+          console.log(`Downloading from storage path: ${storagePath}`);
+          
           // Download the original image
           const { data: imageData, error: downloadError } = await supabase.storage
             .from('properties')
-            .download(photo.url.replace('/storage/v1/object/public/properties/', ''));
+            .download(storagePath);
           
           if (downloadError || !imageData) {
-            console.error(`Failed to download ${photo.fileName}:`, downloadError);
+            console.error(`Failed to download ${photo.fileName} from path ${storagePath}:`, downloadError);
             continue;
           }
           
@@ -136,14 +150,16 @@ Deno.serve(async (req) => {
           const arrayBuffer = await imageData.arrayBuffer();
           const uint8Array = new Uint8Array(arrayBuffer);
           
-          // Generate new JPEG filename
+          // Generate new JPEG filename and path
           const jpegFileName = photo.fileName.replace(/\.[^/.]+$/, '.jpg');
-          const storagePath = photo.url.replace('/storage/v1/object/public/properties/', '').replace(photo.fileName, jpegFileName);
+          const newStoragePath = storagePath.replace(photo.fileName, jpegFileName);
+          
+          console.log(`Uploading to storage path: ${newStoragePath}`);
           
           // For now, just re-upload with .jpg extension and proper MIME type
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from('properties')
-            .upload(storagePath, uint8Array, {
+            .upload(newStoragePath, uint8Array, {
               contentType: 'image/jpeg',
               upsert: true
             });
@@ -153,7 +169,8 @@ Deno.serve(async (req) => {
             continue;
           }
           
-          const newUrl = photo.url.replace(photo.fileName, jpegFileName);
+          // Construct the new public URL
+          const newUrl = `/storage/v1/object/public/properties/${newStoragePath}`;
           migratedUrls.set(photo.url, newUrl);
           migratedPhotos.push(newUrl);
           
@@ -191,7 +208,14 @@ Deno.serve(async (req) => {
         
         // Clean up old files
         for (const [oldUrl] of migratedUrls) {
-          const oldPath = oldUrl.replace('/storage/v1/object/public/properties/', '');
+          let oldPath = oldUrl;
+          if (oldPath.includes('/storage/v1/object/public/properties/')) {
+            oldPath = oldPath.split('/storage/v1/object/public/properties/')[1];
+          } else if (oldPath.includes('properties/')) {
+            const parts = oldPath.split('properties/');
+            oldPath = parts[parts.length - 1];
+          }
+          console.log(`Removing old file: ${oldPath}`);
           await supabase.storage.from('properties').remove([oldPath]);
         }
       }
