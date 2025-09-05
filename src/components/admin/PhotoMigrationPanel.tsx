@@ -47,11 +47,11 @@ export const PhotoMigrationPanel = () => {
     }
   };
 
-  const runSpecificProperty = async (propertyId: string, preview = false) => {
+  const runSpecificProperty = async (propertyId: string, preview = false, forceConvert = false) => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('migrate-photos-to-jpeg', {
-        body: { propertyId, preview }
+        body: { propertyId, preview, forceConvert }
       });
 
       if (error) throw error;
@@ -90,6 +90,13 @@ export const PhotoMigrationPanel = () => {
             variant="default"
           >
             {isLoading ? 'Migrating...' : 'Run Migration'}
+          </Button>
+          <Button 
+            onClick={() => runSpecificProperty('c0316ec3-fa2f-4a9c-a4d2-11e7b06d5b2e', false, true)} 
+            disabled={isLoading}
+            variant="destructive"
+          >
+            {isLoading ? 'Force Converting...' : 'Force Convert HEIC (NRG oybek)'}
           </Button>
         </div>
 
