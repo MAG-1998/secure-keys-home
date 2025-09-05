@@ -36,13 +36,13 @@ export const useGlobalHalalMode = () => {
 
     // Apply consistent CSS variables
     if (isHalalMode) {
-      // Halal mode: Orange/warm colors
-      document.documentElement.style.setProperty('--primary', '25 85% 53%');
-      document.documentElement.style.setProperty('--accent', '38 84% 60%');
-    } else {
-      // Normal mode: Cyan/cool colors  
+      // Halal mode: Cyan/trust colors
       document.documentElement.style.setProperty('--primary', '176 64% 45%');
       document.documentElement.style.setProperty('--accent', '176 44% 65%');
+    } else {
+      // Normal mode: Orange/warm colors  
+      document.documentElement.style.setProperty('--primary', '25 85% 53%');
+      document.documentElement.style.setProperty('--accent', '38 84% 60%');
     }
   }, [isHalalMode]);
 
