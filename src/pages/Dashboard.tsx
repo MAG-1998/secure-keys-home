@@ -27,7 +27,6 @@ const Dashboard = memo(() => {
       if (!session) {
         await forceLocalSignOut();
         navigate("/");
-        setTimeout(() => window.location.reload(), 0);
         return;
       }
 
@@ -44,11 +43,9 @@ const Dashboard = memo(() => {
       }
       await forceLocalSignOut();
       navigate("/");
-      setTimeout(() => window.location.reload(), 0);
     } catch (err) {
       await forceLocalSignOut();
       navigate("/");
-      setTimeout(() => window.location.reload(), 0);
     }
   };
 

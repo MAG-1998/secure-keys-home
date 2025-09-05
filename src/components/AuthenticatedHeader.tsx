@@ -38,7 +38,6 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
         await forceLocalSignOut();
         toast({ title: "Signed out", description: "You have been logged out." });
         navigate('/');
-        setTimeout(() => window.location.reload(), 0);
         return;
       }
 
@@ -55,12 +54,10 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
       await forceLocalSignOut();
       toast({ title: "Signed out", description: "You have been logged out." });
       navigate('/');
-      setTimeout(() => window.location.reload(), 0);
     } catch (err) {
       await forceLocalSignOut();
       toast({ title: "Signed out", description: "You have been logged out." });
       navigate('/');
-      setTimeout(() => window.location.reload(), 0);
     }
   }
 

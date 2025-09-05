@@ -828,6 +828,12 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
                   <Textarea
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                      }
+                    }}
                     placeholder="Type your message..."
                     className="flex-1"
                     rows={2}

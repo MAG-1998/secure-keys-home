@@ -47,7 +47,6 @@ export default function AdminDashboard() {
         await forceLocalSignOut();
         navigate('/');
         toast({ title: "Signed out successfully", description: "You have been logged out." });
-        setTimeout(() => window.location.reload(), 0);
         return;
       }
 
@@ -64,12 +63,10 @@ export default function AdminDashboard() {
       await forceLocalSignOut();
       navigate('/');
       toast({ title: t('common.signedOut'), description: t('common.loggedOut') });
-      setTimeout(() => window.location.reload(), 0);
     } catch (error) {
       await forceLocalSignOut();
       navigate('/');
       toast({ title: t('common.signedOut'), description: t('common.loggedOut') });
-      setTimeout(() => window.location.reload(), 0);
     }
   };
 
