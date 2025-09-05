@@ -15,17 +15,16 @@ export function getImageUrl(path: string | null | undefined): string {
   
   const supabaseUrl = 'https://mvndmnkgtoygsvesktgw.supabase.co';
   
-  // If path already includes storage path, just prepend base URL
+  // Convert to full Supabase URL - add storage path if missing
   if (path.startsWith('/storage/v1/object/public/')) {
     return `${supabaseUrl}${path}`;
   }
   
-  // If path starts with storage path without leading slash
   if (path.startsWith('storage/v1/object/public/')) {
     return `${supabaseUrl}/${path}`;
   }
   
-  // Convert relative storage path to full Supabase URL
+  // Add storage path for relative paths
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   return `${supabaseUrl}/storage/v1/object/public/${cleanPath}`;
 }
