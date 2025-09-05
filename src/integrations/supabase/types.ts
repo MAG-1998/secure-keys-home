@@ -155,6 +155,45 @@ export type Database = {
           },
         ]
       }
+      halal_financing_listing_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          id: string
+          property_id: string
+          requested_at: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          property_id: string
+          requested_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          property_id?: string
+          requested_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       halal_financing_requests: {
         Row: {
           admin_notes: string | null
@@ -453,6 +492,7 @@ export type Database = {
           is_halal_available: boolean | null
           is_halal_financed: boolean | null
           is_verified: boolean | null
+          land_area_sotka: number | null
           latitude: number | null
           location: string
           longitude: number | null
@@ -491,6 +531,7 @@ export type Database = {
           is_halal_available?: boolean | null
           is_halal_financed?: boolean | null
           is_verified?: boolean | null
+          land_area_sotka?: number | null
           latitude?: number | null
           location: string
           longitude?: number | null
@@ -529,6 +570,7 @@ export type Database = {
           is_halal_available?: boolean | null
           is_halal_financed?: boolean | null
           is_verified?: boolean | null
+          land_area_sotka?: number | null
           latitude?: number | null
           location?: string
           longitude?: number | null
