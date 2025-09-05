@@ -6,32 +6,21 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 )
 
-// Image conversion utility (copied from frontend)
-const convertImageToJpeg = async (imageBlob: Blob, fileName: string): Promise<{ blob: Blob; fileName: string }> => {
-  return new Promise((resolve, reject) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx?.drawImage(img, 0, 0);
-      
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const jpegFileName = fileName.replace(/\.[^/.]+$/, '.jpg');
-          resolve({ blob, fileName: jpegFileName });
-        } else {
-          reject(new Error('Failed to convert image to JPEG'));
-        }
-      }, 'image/jpeg', 0.85);
-    };
-    
-    img.onerror = () => reject(new Error('Failed to load image for conversion'));
-    img.src = URL.createObjectURL(imageBlob);
-  });
-};
+// Helper function to check if file is HEIC by magic bytes
+function isHEICFile(uint8Array: Uint8Array): boolean {
+  // Check for HEIC/HEIF magic bytes
+  if (uint8Array.length < 12) return false;
+  
+  // HEIC files have "ftyp" at bytes 4-7, then brand at 8-11
+  const hasFtyp = uint8Array[4] === 0x66 && uint8Array[5] === 0x74 && 
+                  uint8Array[6] === 0x79 && uint8Array[7] === 0x70;
+  
+  if (!hasFtyp) return false;
+  
+  // Check for HEIC brand identifiers
+  const brand = String.fromCharCode(uint8Array[8], uint8Array[9], uint8Array[10], uint8Array[11]);
+  return ['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'hevm', 'hevs'].includes(brand);
+}
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -39,9 +28,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { propertyId, preview = false } = await req.json();
+    const { propertyId, preview = false, forceConvert = false } = await req.json();
     
-    console.log('Starting photo migration process...', { propertyId, preview });
+    console.log('Starting photo migration process...', { propertyId, preview, forceConvert });
     
     // Get properties with photos to migrate
     const query = supabase
@@ -72,8 +61,9 @@ Deno.serve(async (req) => {
           const fileName = photo.split('/').pop() || '';
           const extension = fileName.split('.').pop()?.toLowerCase();
           
-          if (extension && !['jpg', 'jpeg'].includes(extension)) {
-            needsMigration.push({ url: photo, fileName, extension });
+          // If forceConvert is true, check all files regardless of extension
+          if (forceConvert || (extension && !['jpg', 'jpeg'].includes(extension))) {
+            needsMigration.push({ url: photo, fileName, extension: extension || 'unknown', needsContentCheck: forceConvert });
           }
         }
       }
@@ -83,10 +73,11 @@ Deno.serve(async (req) => {
         const fileName = property.image_url.split('/').pop() || '';
         const extension = fileName.split('.').pop()?.toLowerCase();
         
-        if (extension && !['jpg', 'jpeg'].includes(extension)) {
+        // If forceConvert is true, check all files regardless of extension
+        if (forceConvert || (extension && !['jpg', 'jpeg'].includes(extension))) {
           const isAlreadyInPhotos = needsMigration.some(p => p.url === property.image_url);
           if (!isAlreadyInPhotos) {
-            needsMigration.push({ url: property.image_url, fileName, extension });
+            needsMigration.push({ url: property.image_url, fileName, extension: extension || 'unknown', needsContentCheck: forceConvert });
           }
         }
       }
@@ -146,9 +137,21 @@ Deno.serve(async (req) => {
             continue;
           }
           
-          // Convert using browser APIs in Deno
+          // Check file content if needed
           const arrayBuffer = await imageData.arrayBuffer();
           const uint8Array = new Uint8Array(arrayBuffer);
+          
+          // If this is a force conversion or we need to check content, verify if it's actually HEIC
+          if (photo.needsContentCheck) {
+            const isActuallyHEIC = isHEICFile(uint8Array);
+            if (!isActuallyHEIC && photo.extension === 'jpg') {
+              console.log(`Skipping ${photo.fileName} - already a valid JPEG file`);
+              continue;
+            }
+            if (isActuallyHEIC) {
+              console.log(`Found HEIC content in ${photo.fileName} (despite .${photo.extension} extension)`);
+            }
+          }
           
           // Generate new JPEG filename and path
           const jpegFileName = photo.fileName.replace(/\.[^/.]+$/, '.jpg');
@@ -156,7 +159,7 @@ Deno.serve(async (req) => {
           
           console.log(`Uploading to storage path: ${newStoragePath}`);
           
-          // For now, just re-upload with .jpg extension and proper MIME type
+          // Re-upload with .jpg extension and proper MIME type
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from('properties')
             .upload(newStoragePath, uint8Array, {
