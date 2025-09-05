@@ -489,18 +489,16 @@ const PropertyDetails = () => {
       const cashAvailable = parseFloat(financingStore.cashAvailable || '0');
       const periodMonths = parseInt(financingStore.periodMonths || '0');
       
-      // Ensure we have valid numeric values
-      if (cashAvailable > 0 && periodMonths > 0) {
-        const calculation = calculateHalalFinancing(cashAvailable, property.price, periodMonths);
+      // Ensure we have valid numeric values and minimum cash requirement
+      if (cashAvailable > 0 && periodMonths > 0 && cashAvailable >= property.price * 0.5) {
+        // Always show the original property price, regardless of financing
         console.log('Price calculation:', {
           propertyPrice: property.price,
           cashAvailable,
           periodMonths,
-          calculation,
-          totalDisplayPrice: calculation.totalCost
+          displayPrice: property.price
         });
-        // Return the total cost which includes property price + financing fees
-        return calculation.totalCost;
+        return property.price;
       }
     }
     
