@@ -24,7 +24,14 @@ export function getImageUrl(path: string | null | undefined): string {
     return `${supabaseUrl}/${path}`;
   }
   
-  // For relative paths, add the full storage path
+  // For relative paths - check if they already contain /properties/
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  
+  // If path already contains 'properties/', just add storage base path
+  if (cleanPath.includes('properties/')) {
+    return `${supabaseUrl}/storage/v1/object/public/${cleanPath}`;
+  }
+  
+  // Otherwise add the full storage path with properties folder
   return `${supabaseUrl}/storage/v1/object/public/properties/${cleanPath}`;
 }
