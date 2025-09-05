@@ -195,7 +195,7 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
         bathrooms: Number(prop.bathrooms) || 1,
         area: Number(prop.area) || 50,
         verified: prop.status === 'approved',
-        financingAvailable: prop.is_halal_financed || prop.halal_financing_status === 'approved',
+        financingAvailable: prop.is_halal_available && prop.halal_status === 'approved',
         image_url: Array.isArray(prop.photos) && prop.photos.length > 0 ? prop.photos[0] : '/placeholder.svg',
         latitude: Number(prop.latitude),
         longitude: Number(prop.longitude)
