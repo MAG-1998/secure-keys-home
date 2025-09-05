@@ -12,23 +12,23 @@ import { SearchSection } from "@/components/SearchSection"
 import { Footer } from "@/components/Footer"
 import { useScroll } from "@/hooks/use-scroll"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useGlobalHalalMode } from "@/hooks/useGlobalHalalMode"
 import { Shield, Home, Calculator, MapPin, Users, CheckCircle, Menu } from "lucide-react"
 import type { Language } from "@/hooks/useTranslation"
 
 interface UnauthenticatedViewProps {
   language: Language
   setLanguage: (lang: Language) => void
-  isHalalMode: boolean
-  setIsHalalMode: (value: boolean) => void
   t: (key: string) => string
 }
 
-export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsHalalMode, t }: UnauthenticatedViewProps) => {
+export const UnauthenticatedView = ({ language, setLanguage, t }: UnauthenticatedViewProps) => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const navigate = useNavigate()
   const { scrollY, isScrolled } = useScroll()
   const isMobile = useIsMobile()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { isHalalMode, toggleHalalMode } = useGlobalHalalMode()
 
   return (
     <>
@@ -205,7 +205,7 @@ export const UnauthenticatedView = ({ language, setLanguage, isHalalMode, setIsH
         <div className="w-full px-4">
           <SearchSection 
             isHalalMode={isHalalMode} 
-            onHalalModeChange={setIsHalalMode}
+            onHalalModeChange={toggleHalalMode}
             t={t}
           />
         </div>

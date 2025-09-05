@@ -21,6 +21,7 @@ import { forceLocalSignOut } from "@/lib/auth";
 import { parseISO, isValid, format } from "date-fns";
 import { HalalFinancingBreakdown } from "@/components/HalalFinancingBreakdown";
 import { useFinancingStore } from "@/stores/financingStore";
+import { useGlobalHalalMode } from "@/hooks/useGlobalHalalMode";
 import { PropertyEditDialog } from "@/components/PropertyEditDialog";
 import { VisitLimitChecker } from "@/components/VisitLimitChecker";
 import { formatCurrency, calculateHalalFinancing } from "@/utils/halalFinancing";
@@ -58,24 +59,26 @@ const PropertyDetails = () => {
   const { language, setLanguage, t } = useTranslation();
   const [searchParams] = useSearchParams();
   const financingStore = useFinancingStore();
+  const { isHalalMode } = useGlobalHalalMode();
 
-  // Initialize halal mode and financing from URL params (one-time only)
+  // Initialize financing parameters from URL params (one-time only)
   useEffect(() => {
     const halalParam = searchParams.get('halal');
     if (halalParam === '1') {
       const urlCash = searchParams.get('cash') || '';
       const urlPeriod = searchParams.get('period') || '';
       
-      // Only initialize if not already in halal mode or if URL has different values
-      if (!financingStore.isHalalMode || 
-          (urlCash && urlCash !== financingStore.cashAvailable) || 
-          (urlPeriod && urlPeriod !== financingStore.periodMonths)) {
-        
-        financingStore.updateState({ 
-          isHalalMode: true,
-          ...(urlCash && { cashAvailable: urlCash }),
-          ...(urlPeriod && { periodMonths: urlPeriod })
-        });
+      // Only set URL params, don't force halal mode - let user's global preference handle that
+      const updates: any = {};
+      if (urlCash && urlCash !== financingStore.cashAvailable) {
+        updates.cashAvailable = urlCash;
+      }
+      if (urlPeriod && urlPeriod !== financingStore.periodMonths) {
+        updates.periodMonths = urlPeriod;
+      }
+      
+      if (Object.keys(updates).length > 0) {
+        financingStore.updateState(updates);
       }
     }
   }, []); // Empty dependency array for one-time initialization
@@ -809,8 +812,8 @@ const PropertyDetails = () => {
                     </CardContent>
                   </Card>
 
-                  {/* Halal Financing Breakdown - only show for halal financed properties */}
-                  {property.is_halal_financed && (
+                  {/* Halal Financing Breakdown - only show when halal mode is ON and property supports it */}
+                  {isHalalMode && property.is_halal_financed && (
                     <HalalFinancingBreakdown 
                       propertyPrice={property.price}
                       onRequestFinancing={(cashAvailable, periodMonths) => {

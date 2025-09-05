@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Check, CheckCheck, AlertCircle, Headset } from "lucide-react";
 import { AuthenticatedHeader } from "@/components/AuthenticatedHeader";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useGlobalHalalMode } from "@/hooks/useGlobalHalalMode";
 
 interface Message {
   id: string;
@@ -42,7 +43,7 @@ export default function MessagesPage() {
   const [supportOpen, setSupportOpen] = useState(false);
   const [supportText, setSupportText] = useState("");
   const { language, setLanguage, t } = useTranslation();
-  const [isHalalMode, setIsHalalMode] = useState(false);
+  const { isHalalMode } = useGlobalHalalMode();
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -87,27 +88,6 @@ export default function MessagesPage() {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Initialize Halal mode from persisted preference (if any)
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('isHalalMode');
-      if (saved === 'true') setIsHalalMode(true);
-      if (saved === 'false') setIsHalalMode(false);
-    } catch {}
-  }, []);
-
-  // Apply global design changes based on Halal mode
-  useEffect(() => {
-    try { localStorage.setItem('isHalalMode', String(isHalalMode)); } catch {}
-    document.documentElement.setAttribute('data-halal-mode', String(isHalalMode));
-    if (isHalalMode) {
-      document.documentElement.style.setProperty('--primary', '176 64% 45%');
-      document.documentElement.style.setProperty('--accent', '176 44% 65%');
-    } else {
-      document.documentElement.style.setProperty('--primary', '25 85% 53%');
-      document.documentElement.style.setProperty('--accent', '38 84% 60%');
-    }
-  }, [isHalalMode]);
 
   const fetchConversations = async () => {
     if (!user) return;

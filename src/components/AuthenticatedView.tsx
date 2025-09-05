@@ -12,20 +12,20 @@ import { useUserCounts } from "@/hooks/useOptimizedQuery";
 import type { User } from "@supabase/supabase-js";
 import { useTranslation } from "@/hooks/useTranslation";
 import { FinancingRequestsSection } from "@/components/FinancingRequestsSection";
+import { useGlobalHalalMode } from "@/hooks/useGlobalHalalMode";
 
 interface AuthenticatedViewProps {
   user: User;
   isHalalMode: boolean;
-  setIsHalalMode: (value: boolean) => void;
   t: (key: string) => string;
 }
 
 export const AuthenticatedView = memo(({
   user,
   isHalalMode,
-  setIsHalalMode,
   t
 }: AuthenticatedViewProps) => {
+  const { toggleHalalMode } = useGlobalHalalMode();
   const navigate = useNavigate();
   const {
     scrollY,
@@ -57,7 +57,7 @@ export const AuthenticatedView = memo(({
           <div className="w-full px-4">
             <SearchSection 
               isHalalMode={isHalalMode} 
-              onHalalModeChange={setIsHalalMode} 
+              onHalalModeChange={toggleHalalMode} 
               t={t}
             />
           </div>

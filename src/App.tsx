@@ -13,6 +13,7 @@ import { UserProvider } from "./contexts/UserContext";
 import { MagitLogo } from "./components/MagitLogo";
 import { FaviconManager } from "./components/FaviconManager";
 import ChatWidget from "./components/ChatWidget";
+import { useGlobalHalalMode } from "./hooks/useGlobalHalalMode";
 
 // Lazy load heavy components
 const ListProperty = lazy(() => import("./pages/ListProperty"));
@@ -58,155 +59,166 @@ const PageLoading = () => (
   </div>
 );
 
+const AppContent = () => {
+  // Initialize global halal mode for consistent state management
+  useGlobalHalalMode();
+  
+  return (
+    <>
+      <Toaster />
+      <Sonner />
+      {/* Favicon manager updates the tab icon based on theme and Halal mode */}
+      <FaviconManager />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/dashboard" element={
+            <OptimizedRoute>
+              <Dashboard />
+            </OptimizedRoute>
+          } />
+          <Route path="/profile" element={
+            <OptimizedRoute>
+              <Suspense fallback={<PageLoading />}>
+                <Profile />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/list-property" element={
+            <OptimizedRoute>
+              <Suspense fallback={<PageLoading />}>
+                <ListProperty />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/my-properties" element={
+            <OptimizedRoute>
+              <Suspense fallback={<PageLoading />}>
+                <MyProperties />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/saved-properties" element={
+            <OptimizedRoute>
+              <Suspense fallback={<PageLoading />}>
+                <SavedProperties />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/my-requests" element={
+            <OptimizedRoute>
+              <Suspense fallback={<PageLoading />}>
+                <MyRequests />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/my-financing" element={
+            <OptimizedRoute>
+              <Suspense fallback={<PageLoading />}>
+                <MyFinancing />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/my-financing/:requestId" element={
+            <OptimizedRoute>
+              <Suspense fallback={<PageLoading />}>
+                <MyFinancing />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/visit-requests" element={
+            <OptimizedRoute>
+              <Suspense fallback={<PageLoading />}>
+                <VisitRequests />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/messages" element={
+            <OptimizedRoute>
+              <Suspense fallback={<PageLoading />}>
+                <Messages />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/moderator" element={
+            <OptimizedRoute requiredRoles={['moderator', 'admin']}>
+              <Suspense fallback={<PageLoading />}>
+                <ModeratorDashboard />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/admin" element={
+            <OptimizedRoute requiredRoles={['admin']}>
+              <Suspense fallback={<PageLoading />}>
+                <AdminDashboard />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/admin/financing" element={
+            <OptimizedRoute requiredRoles={['admin', 'moderator']}>
+              <Suspense fallback={<PageLoading />}>
+                <AdminFinancing />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/admin/financing/:requestId" element={
+            <OptimizedRoute requiredRoles={['admin', 'moderator']}>
+              <Suspense fallback={<PageLoading />}>
+                <AdminFinancing />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/payment-success" element={
+            <Suspense fallback={<PageLoading />}>
+              <PaymentSuccess />
+            </Suspense>
+          } />
+          <Route path="/payment-cancelled" element={
+            <Suspense fallback={<PageLoading />}> 
+              <PaymentCancelled />
+            </Suspense>
+          } />
+          <Route path="/properties" element={
+            <Suspense fallback={<PageLoading />}>
+              <Properties />
+            </Suspense>
+          } />
+          <Route path="/property/:id" element={
+            <Suspense fallback={<PageLoading />}>
+              <PropertyDetails />
+            </Suspense>
+          } />
+          <Route path="/property/:id/manage" element={
+            <OptimizedRoute>
+              <Suspense fallback={<PageLoading />}>
+                <ManageProperty />
+              </Suspense>
+            </OptimizedRoute>
+          } />
+          <Route path="/all-results" element={
+            <Suspense fallback={<PageLoading />}>
+              <AllResults />
+            </Suspense>
+          } />
+          <Route path="*" element={
+            <Suspense fallback={<PageLoading />}> 
+              <NotFound />
+            </Suspense>
+          } />
+        </Routes>
+        <ChatWidget />
+      </BrowserRouter>
+    </>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="light">
       <TooltipProvider>
         <UserProvider>
-          <Toaster />
-          <Sonner />
-          {/* Favicon manager updates the tab icon based on theme and Halal mode */}
-          <FaviconManager />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/dashboard" element={
-                <OptimizedRoute>
-                  <Dashboard />
-                </OptimizedRoute>
-              } />
-              <Route path="/profile" element={
-                <OptimizedRoute>
-                  <Suspense fallback={<PageLoading />}>
-                    <Profile />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/list-property" element={
-                <OptimizedRoute>
-                  <Suspense fallback={<PageLoading />}>
-                    <ListProperty />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/my-properties" element={
-                <OptimizedRoute>
-                  <Suspense fallback={<PageLoading />}>
-                    <MyProperties />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/saved-properties" element={
-                <OptimizedRoute>
-                  <Suspense fallback={<PageLoading />}>
-                    <SavedProperties />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/my-requests" element={
-                <OptimizedRoute>
-                  <Suspense fallback={<PageLoading />}>
-                    <MyRequests />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/my-financing" element={
-                <OptimizedRoute>
-                  <Suspense fallback={<PageLoading />}>
-                    <MyFinancing />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/my-financing/:requestId" element={
-                <OptimizedRoute>
-                  <Suspense fallback={<PageLoading />}>
-                    <MyFinancing />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/visit-requests" element={
-                <OptimizedRoute>
-                  <Suspense fallback={<PageLoading />}>
-                    <VisitRequests />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/messages" element={
-                <OptimizedRoute>
-                  <Suspense fallback={<PageLoading />}>
-                    <Messages />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/moderator" element={
-                <OptimizedRoute requiredRoles={['moderator', 'admin']}>
-                  <Suspense fallback={<PageLoading />}>
-                    <ModeratorDashboard />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/admin" element={
-                <OptimizedRoute requiredRoles={['admin']}>
-                  <Suspense fallback={<PageLoading />}>
-                    <AdminDashboard />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/admin/financing" element={
-                <OptimizedRoute requiredRoles={['admin', 'moderator']}>
-                  <Suspense fallback={<PageLoading />}>
-                    <AdminFinancing />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/admin/financing/:requestId" element={
-                <OptimizedRoute requiredRoles={['admin', 'moderator']}>
-                  <Suspense fallback={<PageLoading />}>
-                    <AdminFinancing />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/payment-success" element={
-                <Suspense fallback={<PageLoading />}>
-                  <PaymentSuccess />
-                </Suspense>
-              } />
-              <Route path="/payment-cancelled" element={
-                <Suspense fallback={<PageLoading />}> 
-                  <PaymentCancelled />
-                </Suspense>
-              } />
-              <Route path="/properties" element={
-                <Suspense fallback={<PageLoading />}>
-                  <Properties />
-                </Suspense>
-              } />
-              <Route path="/property/:id" element={
-                <Suspense fallback={<PageLoading />}>
-                  <PropertyDetails />
-                </Suspense>
-              } />
-              <Route path="/property/:id/manage" element={
-                <OptimizedRoute>
-                  <Suspense fallback={<PageLoading />}>
-                    <ManageProperty />
-                  </Suspense>
-                </OptimizedRoute>
-              } />
-              <Route path="/all-results" element={
-                <Suspense fallback={<PageLoading />}>
-                  <AllResults />
-                </Suspense>
-              } />
-              <Route path="*" element={
-                <Suspense fallback={<PageLoading />}> 
-                  <NotFound />
-                </Suspense>
-              } />
-            </Routes>
-            <ChatWidget />
-          </BrowserRouter>
+          <AppContent />
         </UserProvider>
       </TooltipProvider>
     </ThemeProvider>
