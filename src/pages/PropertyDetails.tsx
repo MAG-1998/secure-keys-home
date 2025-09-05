@@ -39,6 +39,7 @@ interface PropertyDetail {
   bedrooms: number | null;
   bathrooms: number | null;
   area: number | null;
+  land_area_sotka: number | null;
   image_url: string | null;
   photos: string[] | null;
   visit_hours: any;
@@ -491,6 +492,11 @@ const PropertyDetails = () => {
       const cashAvailable = parseFloat(financingStore.cashAvailable || '0');
       const periodMonths = parseInt(financingStore.periodMonths || '0');
       
+      // If cash available > property price, just show property price
+      if (cashAvailable >= property.price) {
+        return property.price;
+      }
+      
       // Ensure we have valid numeric values and minimum cash requirement
       if (cashAvailable > 0 && periodMonths > 0 && cashAvailable >= property.price * 0.5) {
         const calculation = calculateHalalFinancing(cashAvailable, property.price, periodMonths);
@@ -637,7 +643,8 @@ const PropertyDetails = () => {
                      {property.bedrooms != null && (<span className="inline-flex items-center"><Bed className="h-4 w-4 mr-1" /> {property.bedrooms} {property.bedrooms === 1 ? t('property.bed') : t('property.beds')}</span>)}
                      {property.bathrooms != null && (<span className="inline-flex items-center"><Bath className="h-4 w-4 mr-1" /> {property.bathrooms} {property.bathrooms === 1 ? t('property.bath') : t('property.baths')}</span>)}
                      {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} m²</span>)}
-                  </div>
+                     {property.property_type === 'house' && property.land_area_sotka != null && (<span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {property.land_area_sotka} sotka</span>)}
+                   </div>
                    <PriceOdometer 
                      value={displayPrice}
                      className="text-3xl font-bold text-primary"
