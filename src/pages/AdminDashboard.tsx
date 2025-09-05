@@ -172,24 +172,35 @@ export default function AdminDashboard() {
     }
   };
 
-  // New: Fetch Halal Financing Requests
+  // Fetch both financing requests and halal listing requests
   const fetchHalalRequests = async () => {
     try {
-      const { data: requests, error } = await supabase
+      // Fetch buyer financing requests
+      const { data: financingRequests, error: financingError } = await supabase
         .from('halal_financing_requests')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (financingError) throw financingError;
 
-      const propertyIds = (requests || []).map((r: any) => r.property_id).filter(Boolean);
-      const userIds = (requests || []).map((r: any) => r.user_id).filter(Boolean);
+      // Fetch halal listing requests (properties requesting halal approval)
+      const { data: halalListingRequests, error: listingError } = await supabase
+        .from('properties')
+        .select('*')
+        .eq('halal_status', 'pending_approval')
+        .order('created_at', { ascending: false });
+
+      if (listingError) throw listingError;
+
+      // Process financing requests
+      const propertyIds = (financingRequests || []).map((r: any) => r.property_id).filter(Boolean);
+      const userIds = [...(financingRequests || []).map((r: any) => r.user_id), ...(halalListingRequests || []).map((p: any) => p.user_id)].filter(Boolean);
 
       const propertiesById: Record<string, any> = {};
       if (propertyIds.length > 0) {
         const { data: propsData } = await supabase
           .from('properties')
-          .select('id, title, image_url, photos, is_halal_financed, halal_financing_status, user_id')
+          .select('id, title, image_url, photos, is_halal_available, halal_status, user_id')
           .in('id', propertyIds);
         (propsData || []).forEach((p: any) => { propertiesById[p.id] = p; });
       }
@@ -203,13 +214,27 @@ export default function AdminDashboard() {
         (profsData || []).forEach((pr: any) => { profilesByUserId[pr.user_id] = pr; });
       }
 
-      const merged = (requests || []).map((r: any) => ({
+      const mergedFinancingRequests = (financingRequests || []).map((r: any) => ({
         ...r,
+        type: 'financing_request',
         property: propertiesById[r.property_id],
         requester: profilesByUserId[r.user_id]
       }));
 
-      setHalalRequests(merged);
+      const mergedListingRequests = (halalListingRequests || []).map((p: any) => ({
+        id: p.id,
+        type: 'listing_request',
+        property: p,
+        requester: profilesByUserId[p.user_id],
+        created_at: p.created_at,
+        status: p.halal_status
+      }));
+
+      // Combine both types
+      const allRequests = [...mergedFinancingRequests, ...mergedListingRequests]
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      setHalalRequests(allRequests);
     } catch (error) {
       console.error('Error fetching halal requests:', error);
       toast({
@@ -864,7 +889,7 @@ export default function AdminDashboard() {
         </TabsContent>
 
         <TabsContent value="halal-listing" className="space-y-6">
-          {properties.filter(prop => prop.halal_status === 'pending_approval').length === 0 ? (
+          {halalRequests.filter(req => req.type === 'listing_request').length === 0 ? (
             <Card>
               <CardContent className="p-6 text-center">
                 <p className="text-muted-foreground">No halal listing requests found.</p>
@@ -872,69 +897,72 @@ export default function AdminDashboard() {
             </Card>
           ) : (
             <div className="grid gap-6">
-              {properties
-                .filter(prop => prop.halal_status === 'pending_approval') // Filter for properties requesting halal listing
-                .map((property) => (
-                <Card key={property.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold">{property.title}</h3>
-                          {getHalalBadge(property)}
-                        </div>
-                        <p className="text-xs text-muted-foreground">Property ID: {property.id}</p>
-                        <p className="text-sm text-muted-foreground">{property.location}</p>
-                        <p className="text-sm">Price: ${property.price?.toLocaleString()}</p>
-                        <p className="text-sm">
-                          {property.property_type === 'house' && property.land_area_sotka ? 
-                            `Living: ${property.area} m² | Land: ${property.land_area_sotka} соток` : 
-                            `Area: ${property.area} m²`
-                          }
-                        </p>
-                        <p className="text-sm">Owner: {property.profiles?.full_name} ({property.profiles?.email})</p>
-                        <p className="text-sm">Listed: {new Date(property.created_at).toLocaleDateString()}</p>
-                        {(Array.isArray(property.photos) && property.photos.length > 0 || property.image_url) && (
-                          <div className="mt-3 flex gap-2">
-                            {[...(Array.isArray(property.photos) ? property.photos.slice(0,3) : []), ...(property.image_url ? [property.image_url] : [])]
-                              .slice(0,3)
-                              .map((url: string, idx: number) => (
-                                <img
-                                  key={idx}
-                                  src={url}
-                                  alt="Property photo thumbnail"
-                                  loading="lazy"
-                                  className="h-16 w-20 rounded-md object-cover border border-border"
-                                  onError={(e) => {
-                                    e.currentTarget.src = '/placeholder.svg'
-                                  }}
-                                />
-                              ))}
+              {halalRequests
+                .filter(req => req.type === 'listing_request')
+                .map((request) => {
+                  const property = request.property;
+                  return (
+                    <Card key={request.id}>
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <h3 className="font-semibold">{property.title}</h3>
+                              <Badge variant="secondary">Halal Listing Request</Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground">Property ID: {property.id}</p>
+                            <p className="text-sm text-muted-foreground">{property.location}</p>
+                            <p className="text-sm">Price: ${property.price?.toLocaleString()}</p>
+                            <p className="text-sm">
+                              {property.property_type === 'house' && property.land_area_sotka ? 
+                                `Living: ${property.area} m² | Land: ${property.land_area_sotka} соток` : 
+                                `Area: ${property.area} m²`
+                              }
+                            </p>
+                            <p className="text-sm">Owner: {request.requester?.full_name} ({request.requester?.email})</p>
+                            <p className="text-sm">Requested: {new Date(request.created_at).toLocaleDateString()}</p>
+                            {(Array.isArray(property.photos) && property.photos.length > 0 || property.image_url) && (
+                              <div className="mt-3 flex gap-2">
+                                {[...(Array.isArray(property.photos) ? property.photos.slice(0,3) : []), ...(property.image_url ? [property.image_url] : [])]
+                                  .slice(0,3)
+                                  .map((url: string, idx: number) => (
+                                    <img
+                                      key={idx}
+                                      src={url}
+                                      alt="Property photo thumbnail"
+                                      loading="lazy"
+                                      className="h-16 w-20 rounded-md object-cover border border-border"
+                                      onError={(e) => {
+                                        e.currentTarget.src = '/placeholder.svg'
+                                      }}
+                                    />
+                                  ))}
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="default"
-                          size="sm"
-                          onClick={() => handleHalalPropertyAction(property.id, 'approved')}
-                        >
-                          <UserCheck className="w-4 h-4 mr-2" />
-                          Approve
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleHalalPropertyAction(property.id, 'denied')}
-                        >
-                          <UserX className="w-4 h-4 mr-2" />
-                          Deny
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                          <div className="flex gap-2">
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => handleHalalPropertyAction(property.id, 'approved')}
+                            >
+                              <UserCheck className="w-4 h-4 mr-2" />
+                              Approve
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleHalalPropertyAction(property.id, 'denied')}
+                            >
+                              <UserX className="w-4 h-4 mr-2" />
+                              Deny
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
             </div>
           )}
         </TabsContent>

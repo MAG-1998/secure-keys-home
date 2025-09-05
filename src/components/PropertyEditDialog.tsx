@@ -84,22 +84,24 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
         image_url: photos.length > 0 ? photos[0].url : null
       };
 
-      // Halal financing approval logic
+      // Halal financing logic
       if (formData.is_halal_available !== property.is_halal_available) {
         if (formData.is_halal_available) {
           // Turning ON halal financing
           if (!property.halal_approved_once) {
-            // First time enabling - requires approval
+            // First time enabling - send for approval
             updateData.halal_status = 'pending_approval';
             updateData.is_halal_available = false; // Keep false until approved
-          } else {
+          } else if (property.halal_status === 'approved') {
             // Previously approved - can enable immediately
-            updateData.halal_status = 'approved';
             updateData.is_halal_available = true;
+          } else {
+            // Was denied or disabled, need new approval
+            updateData.halal_status = 'pending_approval';
+            updateData.is_halal_available = false;
           }
         } else {
-          // Turning OFF halal financing
-          updateData.halal_status = 'disabled';
+          // Turning OFF halal financing (keep status for history)
           updateData.is_halal_available = false;
         }
       }
@@ -239,23 +241,53 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
               <Switch
                 id="is_halal_available"
                 checked={formData.is_halal_available}
+                disabled={property.halal_status === 'denied'}
                 onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_halal_available: checked }))}
               />
               <Label htmlFor="is_halal_available">{t('edit.enableHalalFinancing')}</Label>
             </div>
             
+            {/* Status Display */}
             {property.halal_status === 'pending_approval' && (
-              <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg">
-                <p className="text-sm text-warning">
-                  {t('edit.halalPendingApproval')}
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-sm text-amber-700 font-medium">
+                  Pending Admin Approval
+                </p>
+                <p className="text-xs text-amber-600 mt-1">
+                  Your halal financing request is being reviewed by administrators.
                 </p>
               </div>
             )}
             
-            {property.halal_approved_once && (
-              <div className="p-3 bg-success/10 border border-success/20 rounded-lg">
-                <p className="text-sm text-success">
-                  {t('edit.halalApproved')}
+            {property.halal_status === 'approved' && property.is_halal_available && (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-700 font-medium">
+                  Halal Financing Active
+                </p>
+                <p className="text-xs text-green-600 mt-1">
+                  Your property is listed with halal financing option.
+                </p>
+              </div>
+            )}
+            
+            {property.halal_status === 'approved' && !property.is_halal_available && (
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-700 font-medium">
+                  Halal Financing Approved
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  You can enable halal financing for this property anytime.
+                </p>
+              </div>
+            )}
+            
+            {property.halal_status === 'denied' && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-700 font-medium">
+                  Halal Financing Denied
+                </p>
+                <p className="text-xs text-red-600 mt-1">
+                  Your halal financing request was not approved. Contact support for more information.
                 </p>
               </div>
             )}
