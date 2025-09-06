@@ -175,9 +175,10 @@ const Properties = () => {
           {/* Advanced Filters */}
           <Card className="mb-6">
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+              {/* Row 1: Search and Location */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 {/* Search Text */}
-                <div className="lg:col-span-2">
+                <div className="md:col-span-2">
                   <label className="text-sm font-medium mb-2 block">Search by name</label>
                   <Input
                     placeholder="Search properties..."
@@ -199,7 +200,10 @@ const Properties = () => {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
 
+              {/* Row 2: Property Details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 {/* District */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">{t('filter.district')}</label>
@@ -216,9 +220,7 @@ const Properties = () => {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
                 {/* Property Type */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">Property Type</label>
@@ -270,7 +272,10 @@ const Properties = () => {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
 
+              {/* Row 3: Ranges and Areas */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 {/* Price Range */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">Price (USD)</label>
@@ -290,35 +295,6 @@ const Properties = () => {
                   </div>
                 </div>
 
-                {/* Clear Filters */}
-                <div className="flex items-end">
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => {
-                      setFilters({
-                        district: 'all',
-                        city: 'tashkent',
-                        minPrice: '',
-                        maxPrice: '',
-                        minArea: '',
-                        maxArea: '',
-                        minLandArea: '',
-                        maxLandArea: '',
-                        bedrooms: 'all',
-                        bathrooms: 'all',
-                        propertyType: 'all',
-                        searchText: '',
-                        halalOnly: false,
-                      })
-                    }}
-                  >
-                    Clear Filters
-                  </Button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Living Area */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">Living Area (m²)</label>
@@ -338,24 +314,26 @@ const Properties = () => {
                   </div>
                 </div>
 
-                {/* Land Area (for houses) */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Land Area (sotka)</label>
-                  <div className="grid grid-cols-2 gap-1">
-                    <Input 
-                      type="number" 
-                      placeholder="Min" 
-                      value={filters.minLandArea} 
-                      onChange={(e) => setFilters(prev => ({ ...prev, minLandArea: e.target.value }))} 
-                    />
-                    <Input 
-                      type="number" 
-                      placeholder="Max" 
-                      value={filters.maxLandArea} 
-                      onChange={(e) => setFilters(prev => ({ ...prev, maxLandArea: e.target.value }))} 
-                    />
+                {/* Land Area (for houses only) */}
+                {filters.propertyType === 'house' && (
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Land Area (sotka)</label>
+                    <div className="grid grid-cols-2 gap-1">
+                      <Input 
+                        type="number" 
+                        placeholder="Min" 
+                        value={filters.minLandArea} 
+                        onChange={(e) => setFilters(prev => ({ ...prev, minLandArea: e.target.value }))} 
+                      />
+                      <Input 
+                        type="number" 
+                        placeholder="Max" 
+                        value={filters.maxLandArea} 
+                        onChange={(e) => setFilters(prev => ({ ...prev, maxLandArea: e.target.value }))} 
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Halal Financing */}
                 <div className="flex items-end">
@@ -368,6 +346,32 @@ const Properties = () => {
                     Halal financing available
                   </label>
                 </div>
+              </div>
+
+              {/* Clear Filters Button */}
+              <div className="flex justify-end">
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    setFilters({
+                      district: 'all',
+                      city: 'tashkent',
+                      minPrice: '',
+                      maxPrice: '',
+                      minArea: '',
+                      maxArea: '',
+                      minLandArea: '',
+                      maxLandArea: '',
+                      bedrooms: 'all',
+                      bathrooms: 'all',
+                      propertyType: 'all',
+                      searchText: '',
+                      halalOnly: false,
+                    })
+                  }}
+                >
+                  Clear Filters
+                </Button>
               </div>
             </CardContent>
           </Card>
