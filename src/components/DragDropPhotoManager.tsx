@@ -175,6 +175,17 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
           .from('properties')
           .getPublicUrl(filePath);
 
+        // Save to property_photos table
+        const { error: dbError } = await supabase
+          .from('property_photos')
+          .insert({
+            property_id: propertyId,
+            url: publicUrl,
+            order_index: photos.length + i
+          });
+
+        if (dbError) throw dbError;
+
         uploadedPhotos.push({
           url: publicUrl,
           order_index: photos.length + i
@@ -202,7 +213,7 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
     }
   };
 
-  const removePhoto = (index: number) => {
+  const removePhoto = async (index: number) => {
     if (photos.length <= 1) {
       toast({
         title: t('photo.cannotRemove'),
@@ -212,12 +223,50 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
       return;
     }
 
-    const newPhotos = photos.filter((_, i) => i !== index).map((photo, i) => ({
-      ...photo,
-      order_index: i
-    }));
+    const photoToRemove = photos[index];
     
-    onPhotosChange(newPhotos);
+    try {
+      // Extract file path from URL to delete from storage
+      const url = photoToRemove.url;
+      if (url.includes('/storage/v1/object/public/properties/')) {
+        const filePath = url.split('/storage/v1/object/public/properties/')[1];
+        if (filePath) {
+          const { error: deleteError } = await supabase.storage
+            .from('properties')
+            .remove([filePath]);
+          
+          if (deleteError) {
+            console.warn('Failed to delete file from storage:', deleteError);
+          }
+        }
+      }
+
+      // Remove from property_photos table
+      await supabase
+        .from('property_photos')
+        .delete()
+        .eq('property_id', propertyId)
+        .eq('url', photoToRemove.url);
+
+      const newPhotos = photos.filter((_, i) => i !== index).map((photo, i) => ({
+        ...photo,
+        order_index: i
+      }));
+      
+      onPhotosChange(newPhotos);
+      
+      toast({
+        title: t('photo.removed'),
+        description: t('photo.removedSuccess')
+      });
+    } catch (error: any) {
+      console.error('Error removing photo:', error);
+      toast({
+        title: t('photo.removeFailed'),
+        description: error.message || 'Failed to remove photo',
+        variant: "destructive"
+      });
+    }
   };
 
   return (

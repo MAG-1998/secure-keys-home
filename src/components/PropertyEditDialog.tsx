@@ -124,7 +124,7 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
 
       if (propertyError) throw propertyError;
 
-      // Update or create photo records
+      // Update photo records in property_photos table
       if (photos.length > 0) {
         // Delete existing photos
         await supabase
@@ -145,10 +145,13 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
 
         if (photosError) throw photosError;
 
-        // Also update legacy photos field for backward compatibility
+        // Update legacy photos field for backward compatibility
         await supabase
           .from("properties")
-          .update({ photos: photos.map(p => p.url) })
+          .update({ 
+            photos: photos.map(p => p.url),
+            image_url: photos[0].url // Set primary image
+          })
           .eq("id", property.id);
       }
 

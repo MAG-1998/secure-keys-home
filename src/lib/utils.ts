@@ -27,16 +27,16 @@ export function getImageUrl(path: string | null | undefined): string {
   // For relative paths - handle different formats
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   
-  // OLD FORMAT: "9a9fc7db-abc-def/properties/image.jpg" -> needs full URL prefix
-  if (cleanPath.includes('/') && !cleanPath.startsWith('properties/')) {
-    return `${supabaseUrl}/storage/v1/object/public/${cleanPath}`;
+  // Handle legacy paths with user ID prefix
+  if (cleanPath.includes('/properties/') && !cleanPath.startsWith('properties/')) {
+    return `${supabaseUrl}/storage/v1/object/public/properties/${cleanPath}`;
   }
   
-  // NEW FORMAT: "properties/xyz/image.jpg" -> just add storage base path
+  // Standard new format: "properties/userId/propertyId/image.jpg"
   if (cleanPath.startsWith('properties/')) {
     return `${supabaseUrl}/storage/v1/object/public/${cleanPath}`;
   }
   
-  // DEFAULT: add full path with properties folder
+  // DEFAULT: assume it's a relative path in properties bucket
   return `${supabaseUrl}/storage/v1/object/public/properties/${cleanPath}`;
 }

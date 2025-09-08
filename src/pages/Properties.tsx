@@ -414,7 +414,8 @@ const Properties = () => {
                         area={property.area || 0}
                         landAreaSotka={property.land_area_sotka}
                         propertyType={property.property_type}
-                        imageUrl={property.image_url || (property.photos && property.photos.length > 0 ? property.photos[0].url : null)}
+                        imageUrl={property.property_photos?.[0]?.url || property.image_url}
+                        property={{...property, property_photos: property.property_photos}}
                         isVerified={property.is_verified || false}
                         isHalalFinanced={property.isHalal}
                       />
