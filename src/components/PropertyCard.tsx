@@ -101,7 +101,7 @@ export const PropertyCard = ({
   const actualLandArea = landAreaSotka || property?.land_area_sotka
   const actualPropertyType = propertyType || property?.property_type
   // Get first photo from property_photos or fallback to legacy image_url
-  const primaryImageUrl = property?.property_photos?.[0]?.url || imageUrl || image_url || property?.image_url
+  const primaryImageUrl = property?.image_url || property?.property_photos?.[0]?.url || imageUrl || image_url
   const actualImageUrl = getImageUrl(primaryImageUrl)
   const [imageError, setImageError] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
