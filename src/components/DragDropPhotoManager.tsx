@@ -175,19 +175,24 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
           .from('properties')
           .getPublicUrl(filePath);
 
+        // Format the URL properly (ensure it starts with full URL)
+        const formattedUrl = publicUrl.startsWith('http') 
+          ? publicUrl 
+          : `https://mvndmnkgtoygsvesktgw.supabase.co/storage/v1/object/public/properties/${filePath}`;
+
         // Save to property_photos table
         const { error: dbError } = await supabase
           .from('property_photos')
           .insert({
             property_id: propertyId,
-            url: publicUrl,
+            url: formattedUrl,
             order_index: photos.length + i
           });
 
         if (dbError) throw dbError;
 
         uploadedPhotos.push({
-          url: publicUrl,
+          url: formattedUrl,
           order_index: photos.length + i
         });
       }
