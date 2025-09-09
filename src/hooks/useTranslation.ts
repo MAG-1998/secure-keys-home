@@ -3985,6 +3985,11 @@ const translations: Translations = {
     ru: 'Документы',
     uz: 'Hujjatlar'
   },
+  'admin.financing.stageFinalApproval': {
+    en: 'Final Approval',
+    ru: 'Финальное Одобрение',
+    uz: 'Yakuniy Tasdiqlash'
+  },
   // My Financing page
   'myFinancing.title': {
     en: 'My Financing Requests',
