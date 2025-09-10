@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.ai-property-search]
 verify_jwt = false
+
+[functions.migrate-document-files]
+verify_jwt = false
