@@ -1152,15 +1152,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      migrate_documents_to_new_bucket: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          doc_request_id: string
-          migration_status: string
-          new_urls: Json
-          old_urls: Json
-        }[]
-      }
       restore_photo_urls: {
         Args: { backup_uuid: string }
         Returns: number
