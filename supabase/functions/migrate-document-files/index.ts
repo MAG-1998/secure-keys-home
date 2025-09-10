@@ -1,3 +1,4 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
@@ -5,134 +6,115 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-interface DocumentRecord {
-  id: string;
-  user_file_urls: string[];
-}
-
-Deno.serve(async (req) => {
-  // Handle CORS preflight requests
+serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
-    console.log('Starting document migration process...');
-
-    // Get all document requests with file URLs pointing to properties bucket
-    const { data: docRequests, error: fetchError } = await supabaseClient
+    // Get all document requests with file URLs
+    const { data: docRequests, error: fetchError } = await supabase
       .from('halal_finance_doc_requests')
       .select('id, user_file_urls')
-      .not('user_file_urls', 'is', null);
+      .not('user_file_urls', 'is', null)
 
     if (fetchError) {
-      console.error('Error fetching document requests:', fetchError);
-      throw fetchError;
+      throw fetchError
     }
 
-    console.log(`Found ${docRequests?.length || 0} document requests to process`);
+    const migrationResults = []
 
-    const migrationResults = [];
+    for (const docRequest of docRequests) {
+      const fileUrls = docRequest.user_file_urls as string[]
+      const newFileUrls = []
 
-    for (const docRequest of docRequests || []) {
-      const updatedUrls = [];
-      
-      for (const fileUrl of docRequest.user_file_urls) {
-        if (typeof fileUrl === 'string' && fileUrl.includes('/storage/v1/object/public/properties/')) {
-          // Extract the file path from the properties bucket
-          const pathAfterProperties = fileUrl.split('/storage/v1/object/public/properties/')[1];
+      for (const fileUrl of fileUrls) {
+        if (fileUrl.includes('/storage/v1/object/public/properties/')) {
+          // Extract the path after 'properties/'
+          const sourcePath = fileUrl.split('/storage/v1/object/public/properties/')[1]
           
           try {
-            // Download file from properties bucket
-            const { data: fileData, error: downloadError } = await supabaseClient.storage
+            // Download the file from properties bucket
+            const { data: fileData, error: downloadError } = await supabase.storage
               .from('properties')
-              .download(pathAfterProperties);
+              .download(sourcePath)
 
             if (downloadError) {
-              console.error(`Error downloading file ${pathAfterProperties}:`, downloadError);
-              updatedUrls.push(fileUrl); // Keep original URL if download fails
-              continue;
+              console.error(`Failed to download ${sourcePath}:`, downloadError)
+              newFileUrls.push(fileUrl) // Keep original URL if download fails
+              continue
             }
 
             // Upload to documents bucket
-            const { error: uploadError } = await supabaseClient.storage
+            const { error: uploadError } = await supabase.storage
               .from('documents')
-              .upload(pathAfterProperties, fileData, {
-                contentType: fileData.type,
-                upsert: true
-              });
+              .upload(sourcePath, fileData, {
+                upsert: true,
+                contentType: fileData.type
+              })
 
             if (uploadError) {
-              console.error(`Error uploading file ${pathAfterProperties}:`, uploadError);
-              updatedUrls.push(fileUrl); // Keep original URL if upload fails
-              continue;
+              console.error(`Failed to upload ${sourcePath}:`, uploadError)
+              newFileUrls.push(fileUrl) // Keep original URL if upload fails
+              continue
             }
 
-            // Get the new public URL
-            const { data: publicUrlData } = supabaseClient.storage
-              .from('documents')
-              .getPublicUrl(pathAfterProperties);
+            // Update URL to point to documents bucket
+            const newUrl = fileUrl.replace('/storage/v1/object/public/properties/', '/storage/v1/object/public/documents/')
+            newFileUrls.push(newUrl)
 
-            updatedUrls.push(publicUrlData.publicUrl);
-            console.log(`Successfully migrated: ${pathAfterProperties}`);
-
+            console.log(`Successfully migrated: ${sourcePath}`)
           } catch (error) {
-            console.error(`Error processing file ${pathAfterProperties}:`, error);
-            updatedUrls.push(fileUrl); // Keep original URL if processing fails
+            console.error(`Error migrating ${sourcePath}:`, error)
+            newFileUrls.push(fileUrl) // Keep original URL if migration fails
           }
         } else {
-          updatedUrls.push(fileUrl); // Keep non-properties URLs as is
+          newFileUrls.push(fileUrl) // Keep URL as is if not from properties bucket
         }
       }
 
       // Update the document request with new URLs
-      const { error: updateError } = await supabaseClient
+      const { error: updateError } = await supabase
         .from('halal_finance_doc_requests')
-        .update({ user_file_urls: updatedUrls })
-        .eq('id', docRequest.id);
+        .update({ user_file_urls: newFileUrls })
+        .eq('id', docRequest.id)
 
       if (updateError) {
-        console.error(`Error updating document request ${docRequest.id}:`, updateError);
+        console.error(`Failed to update doc request ${docRequest.id}:`, updateError)
       }
 
       migrationResults.push({
-        id: docRequest.id,
-        originalUrls: docRequest.user_file_urls,
-        newUrls: updatedUrls,
-        success: !updateError
-      });
+        docRequestId: docRequest.id,
+        originalUrls: fileUrls,
+        newUrls: newFileUrls,
+        status: 'migrated'
+      })
     }
-
-    console.log('Migration process completed');
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'Document migration completed',
+        message: 'Document files migration completed',
         results: migrationResults
       }),
-      {
+      { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
+        status: 200 
       }
-    );
+    )
 
   } catch (error) {
-    console.error('Migration error:', error);
+    console.error('Error in migrate-document-files function:', error)
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        success: false 
-      }),
-      {
+      JSON.stringify({ error: error.message }),
+      { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
+        status: 500 
       }
-    );
+    )
   }
-});
+})
