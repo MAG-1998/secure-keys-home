@@ -61,13 +61,13 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
         const fileName = `${user?.id}/${docRequestId}/${Date.now()}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
-          .from('properties')
+          .from('documents')
           .upload(fileName, file);
 
         if (uploadError) throw uploadError;
 
         const { data: { publicUrl } } = supabase.storage
-          .from('properties')
+          .from('documents')
           .getPublicUrl(fileName);
 
         uploadedUrls.push(publicUrl);
