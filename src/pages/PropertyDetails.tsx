@@ -27,6 +27,7 @@ import { VisitLimitChecker } from "@/components/VisitLimitChecker";
 import { formatCurrency, calculateHalalFinancing } from "@/utils/halalFinancing";
 import { PriceOdometer } from "@/components/PriceOdometer";
 import { getImageUrl } from "@/lib/utils";
+import { PropertyLocationMap } from "@/components/PropertyLocationMap";
 
 interface PropertyDetail {
   id: string;
@@ -49,6 +50,8 @@ interface PropertyDetail {
   cash_min_percent?: number;
   period_options?: string[];
   property_type?: string;
+  latitude?: number | null;
+  longitude?: number | null;
   profiles?: { full_name?: string | null; email?: string | null; user_id?: string } | null;
 }
 
@@ -654,6 +657,22 @@ const PropertyDetails = () => {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Property Location Map */}
+              {property.latitude && property.longitude && (
+                <Card>
+                  <CardContent className="p-6 space-y-4">
+                    <h3 className="font-semibold">Location</h3>
+                    <PropertyLocationMap
+                      latitude={property.latitude}
+                      longitude={property.longitude}
+                      title={property.title}
+                      language={language}
+                      className="w-full h-64 rounded-lg"
+                    />
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
             <div className="lg:w-1/3 w-full space-y-6">
