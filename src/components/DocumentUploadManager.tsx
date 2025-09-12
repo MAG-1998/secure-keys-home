@@ -73,18 +73,16 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
         uploadedUrls.push(publicUrl);
       }
 
-      // Update the document request with file URLs and notes
-      const { error } = await supabase
-        .from('halal_finance_doc_requests')
-        .update({
-          user_file_urls: uploadedUrls,
-          response_notes: responseNotes[docRequestId] || null,
-          status: 'submitted',
-          submitted_at: new Date().toISOString()
-        })
-        .eq('id', docRequestId);
+      // Atomically mark the document as submitted via RPC (handles RLS and stage progression)
+      const { data: rpcRes, error: rpcError } = await supabase.rpc('mark_doc_submitted', {
+        doc_req_id: docRequestId,
+        uploaded_urls: uploadedUrls,
+        response_notes: responseNotes[docRequestId] || null,
+      });
 
-      if (error) throw error;
+      if (rpcError || rpcRes?.ok === false) {
+        throw new Error(rpcError?.message || rpcRes?.err || 'Failed to finalize document upload');
+      }
 
       // Get the financing request to find responsible person
       const { data: financingRequest } = await supabase

@@ -233,6 +233,20 @@ useEffect(() => {
       });
       console.log('[YandexMap] Map initialized successfully');
 
+      // Suppress default Yandex POI balloons; only our placemarks should open balloons
+      try {
+        map.current.options.set('suppressMapOpenBlock', true);
+        // Close any provider balloons opened by background clicks
+        map.current.events.add(['click','dblclick','contextmenu'], (e: any) => {
+          const target = e.get('target');
+          if (target === map.current) {
+            map.current.balloon?.close?.();
+          }
+        });
+      } catch (e) {
+        console.warn('[YandexMap] Could not apply POI suppression options', e);
+      }
+
       // Initialize clusterer for better performance
       clusterer.current = new window.ymaps.Clusterer({
         preset: 'islands#invertedVioletClusterIcons',
