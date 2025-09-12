@@ -47,7 +47,7 @@ export const PropertyLocationMap: React.FC<PropertyLocationMapProps> = ({
       ctx.quadraticCurveTo(44, 38, 22, 10);
       ctx.quadraticCurveTo(0, 38, 22, 58);
       ctx.closePath();
-      ctx.fillStyle = 'hsl(0 72% 50%)'; // red color like main map
+      ctx.fillStyle = 'hsl(24 95% 53%)'; // brand orange like main map
       ctx.fill();
       ctx.lineWidth = 2;
       ctx.strokeStyle = 'hsl(0 0% 100% / 0.5)';
