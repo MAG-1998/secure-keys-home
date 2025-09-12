@@ -324,21 +324,23 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
                       <AlertDialogHeader>
                         <AlertDialogTitle>Confirm Document Submission</AlertDialogTitle>
                         <AlertDialogDescription>
-                          You are about to submit {selectedFiles[docRequest.id]?.length} document(s) for "{docRequest.document_type}".
-                          {responseNotes[docRequest.id] && (
-                            <div className="mt-2 p-2 bg-muted rounded">
-                              <strong>Your notes:</strong> {responseNotes[docRequest.id]}
+                          <div>
+                            You are about to submit {selectedFiles[docRequest.id]?.length} document(s) for "{docRequest.document_type}".
+                            {responseNotes[docRequest.id] && (
+                              <div className="mt-2 p-2 bg-muted rounded">
+                                <strong>Your notes:</strong> {responseNotes[docRequest.id]}
+                              </div>
+                            )}
+                            <div className="mt-2">
+                              <strong>Files to submit:</strong>
+                              <ul className="list-disc list-inside mt-1 text-sm">
+                                {Array.from(selectedFiles[docRequest.id] || []).map((file, index) => (
+                                  <li key={index}>{file.name}</li>
+                                ))}
+                              </ul>
                             </div>
-                          )}
-                          <div className="mt-2">
-                            <strong>Files to submit:</strong>
-                            <ul className="list-disc list-inside mt-1 text-sm">
-                              {Array.from(selectedFiles[docRequest.id] || []).map((file, index) => (
-                                <li key={index}>{file.name}</li>
-                              ))}
-                            </ul>
+                            This action cannot be undone.
                           </div>
-                          This action cannot be undone.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
