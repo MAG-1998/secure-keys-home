@@ -1152,6 +1152,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      mark_doc_submitted: {
+        Args: {
+          doc_req_id: string
+          response_notes?: string
+          uploaded_urls: Json
+        }
+        Returns: Json
+      }
       migrate_documents_to_new_bucket: {
         Args: Record<PropertyKey, never>
         Returns: {

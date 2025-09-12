@@ -74,14 +74,15 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
       }
 
       // Atomically mark the document as submitted via RPC (handles RLS and stage progression)
-      const { data: rpcRes, error: rpcError } = await supabase.rpc('mark_doc_submitted', {
+      const { data: rpcRes, error: rpcError } = await supabase.rpc('mark_doc_submitted' as any, {
         doc_req_id: docRequestId,
         uploaded_urls: uploadedUrls,
         response_notes: responseNotes[docRequestId] || null,
       });
 
-      if (rpcError || rpcRes?.ok === false) {
-        throw new Error(rpcError?.message || rpcRes?.err || 'Failed to finalize document upload');
+      const rpcResult = rpcRes as { ok: boolean; err?: string } | null;
+      if (rpcError || rpcResult?.ok === false) {
+        throw new Error(rpcError?.message || rpcResult?.err || 'Failed to finalize document upload');
       }
 
       // Get the financing request to find responsible person
