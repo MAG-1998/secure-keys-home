@@ -77,12 +77,13 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
       const { data: rpcRes, error: rpcError } = await supabase.rpc('mark_doc_submitted' as any, {
         doc_req_id: docRequestId,
         uploaded_urls: uploadedUrls,
-        response_notes: responseNotes[docRequestId] || null,
+        response_notes_param: responseNotes[docRequestId] || null,
       });
 
       const rpcResult = rpcRes as { ok: boolean; err?: string } | null;
       if (rpcError || rpcResult?.ok === false) {
-        throw new Error(rpcError?.message || rpcResult?.err || 'Failed to finalize document upload');
+        const errorMessage = rpcError?.message || rpcResult?.err || 'Failed to finalize document upload';
+        throw new Error(errorMessage);
       }
 
       // Get the financing request to find responsible person
@@ -158,9 +159,10 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
       console.error('Upload error:', error);
       toast({
         title: "Error",
-        description: "Failed to upload documents",
+        description: error instanceof Error ? error.message : "Failed to upload documents",
         variant: "destructive"
       });
+      // Keep selected files for retry on error
     } finally {
       setUploading(null);
     }

@@ -36,8 +36,10 @@ const Auth = () => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        // Simple redirect to main page for existing sessions
-        navigate("/")
+        // Check for redirect parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = urlParams.get('redirect');
+        navigate(redirect || "/");
       }
     }
     checkSession()
@@ -45,8 +47,10 @@ const Auth = () => {
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session && event === 'SIGNED_IN') {
-        // Simple redirect to main page on sign in
-        navigate("/")
+        // Check for redirect parameter on sign in
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = urlParams.get('redirect');
+        navigate(redirect || "/");
       }
     })
 

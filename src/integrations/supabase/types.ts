@@ -1155,7 +1155,7 @@ export type Database = {
       mark_doc_submitted: {
         Args: {
           doc_req_id: string
-          response_notes?: string
+          response_notes_param?: string
           uploaded_urls: Json
         }
         Returns: Json
