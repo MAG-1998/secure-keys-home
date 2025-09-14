@@ -86,7 +86,7 @@ export const Footer = ({ isHalalMode = false, t }: FooterProps) => {
               <h3 className="font-heading font-semibold text-foreground mb-3">{t('footer.platform')}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.browseHomes')}</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.financing')}</a></li>
+                <li><a href="/financing-info" className="hover:text-foreground transition-colors">{t('footer.financing')}</a></li>
                 <li><a href="#" className="hover:text-foreground transition-colors">{t('footer.howItWorks')}</a></li>
               </ul>
             </div>

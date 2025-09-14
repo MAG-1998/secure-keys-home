@@ -498,6 +498,183 @@ const translations: Translations = {
     ru: 'Отмена',
     uz: 'Bekor qilish'
   },
+  'common.back': {
+    en: 'Back',
+    ru: 'Назад',
+    uz: 'Orqaga'
+  },
+
+  // Financing Information Page
+  'financing.pageTitle': {
+    en: 'How Financing Works',
+    ru: 'Как работает финансирование',
+    uz: 'Moliyalashtirish qanday ishlaydi'
+  },
+  'financing.pageSubtitle': {
+    en: 'Understand our transparent and flexible financing options for your dream home',
+    ru: 'Узнайте о наших прозрачных и гибких вариантах финансирования для дома вашей мечты',
+    uz: 'Orzuingizdagi uy uchun shaffof va moslashuvchan moliyalashtirish variantlarini tushuning'
+  },
+  'financing.shariaCompliant': {
+    en: '✓ Sharia Compliant',
+    ru: '✓ Соответствует шариату',
+    uz: '✓ Shariatga mos'
+  },
+  'financing.transparentFinancing': {
+    en: '✓ Transparent Financing',
+    ru: '✓ Прозрачное финансирование',
+    uz: '✓ Shaffof moliyalashtirish'
+  },
+  'financing.howItWorks': {
+    en: 'How It Works',
+    ru: 'Как это работает',
+    uz: 'Bu qanday ishlaydi'
+  },
+  'financing.step1Title': {
+    en: '1. Calculate Your Budget',
+    ru: '1. Рассчитайте свой бюджет',
+    uz: '1. Budjetingizni hisoblang'
+  },
+  'financing.step1Description': {
+    en: 'Use our halal financing calculator to determine how much you can afford based on your available cash and preferred payment period.',
+    ru: 'Используйте наш калькулятор халяльного финансирования, чтобы определить, сколько вы можете себе позволить, исходя из ваших наличных средств и предпочтительного периода платежей.',
+    uz: 'Mavjud naqd pulingiz va afzal ko\'rgan to\'lov muddatingiz asosida qanchaga sig\'ishingizni aniqlash uchun halol moliyalashtirish kalkulyatorimizdan foydalaning.'
+  },
+  'financing.step2Title': {
+    en: '2. Submit Your Application',
+    ru: '2. Подайте заявку',
+    uz: '2. Arizangizni yuboring'
+  },
+  'financing.step2Description': {
+    en: 'Complete our simple application form with your financial information and upload required documents for verification.',
+    ru: 'Заполните нашу простую форму заявки с вашей финансовой информацией и загрузите необходимые документы для проверки.',
+    uz: 'Moliyaviy ma\'lumotlaringiz bilan oddiy ariza formasini to\'ldiring va tekshirish uchun kerakli hujjatlarni yuklang.'
+  },
+  'financing.step3Title': {
+    en: '3. Get Approved & Move In',
+    ru: '3. Получите одобрение и въезжайте',
+    uz: '3. Tasdiqlang va ko\'chib boring'
+  },
+  'financing.step3Description': {
+    en: 'Once approved, finalize your financing terms and begin making monthly payments while enjoying your new home.',
+    ru: 'После одобрения завершите условия финансирования и начните вносить ежемесячные платежи, наслаждаясь своим новым домом.',
+    uz: 'Tasdiqlangach, moliyalashtirish shartlarini yakunlang va yangi uyingizdan zavqlanganingizda oylik to\'lovlarni boshlang.'
+  },
+  'financing.featuresTitle': {
+    en: 'Why Choose Our Financing',
+    ru: 'Почему выбрать наше финансирование',
+    uz: 'Nima uchun bizning moliyalashtirishimizni tanlash kerak'
+  },
+  'financing.noInterestTitle': {
+    en: 'No Interest Rates',
+    ru: 'Без процентных ставок',
+    uz: 'Foizsiz'
+  },
+  'financing.noInterestDescription': {
+    en: 'Our halal financing model eliminates traditional interest rates, making homeownership more accessible and Sharia-compliant.',
+    ru: 'Наша модель халяльного финансирования исключает традиционные процентные ставки, делая владение жильем более доступным и соответствующим шариату.',
+    uz: 'Bizning halol moliyalashtirish modelimiz an\'anaviy foiz stavkalarini yo\'q qiladi va uy egaliligini yanada qulayroq va shariatga mos qiladi.'
+  },
+  'financing.secureTitle': {
+    en: 'Secure & Transparent',
+    ru: 'Безопасно и прозрачно',
+    uz: 'Xavfsiz va shaffof'
+  },
+  'financing.secureDescription': {
+    en: 'All transactions are secured and transparent with clear breakdown of fees and payment schedules.',
+    ru: 'Все транзакции защищены и прозрачны с четкой разбивкой комиссий и графиков платежей.',
+    uz: 'Barcha tranzaktsiyalar xavfsiz va shaffof bo\'lib, to\'lovlar va to\'lov jadvallari aniq ko\'rsatilgan.'
+  },
+  'financing.flexibleTitle': {
+    en: 'Flexible Terms',
+    ru: 'Гибкие условия',
+    uz: 'Moslashuvchan shartlar'
+  },
+  'financing.flexibleDescription': {
+    en: 'Choose from multiple financing periods (6 months to 5 years) to fit your financial situation.',
+    ru: 'Выберите из нескольких периодов финансирования (от 6 месяцев до 5 лет), чтобы соответствовать вашей финансовой ситуации.',
+    uz: 'Moliyaviy holatingizniga mos keladigan bir nechta moliyalashtirish muddatlaridan (6 oydan 5 yilgacha) tanlang.'
+  },
+  'financing.supportTitle': {
+    en: 'Expert Support',
+    ru: 'Экспертная поддержка',
+    uz: 'Mutaxassis yordami'
+  },
+  'financing.supportDescription': {
+    en: 'Our team of financing experts is available to guide you through every step of the process.',
+    ru: 'Наша команда экспертов по финансированию готова провести вас через каждый этап процесса.',
+    uz: 'Bizning moliyalashtirish bo\'yicha mutaxassislar jamoamiz jarayonning har bir bosqichida sizga rahbarlik qilishga tayyor.'
+  },
+  'financing.termsTitle': {
+    en: 'Eligibility & Requirements',
+    ru: 'Требования и условия',
+    uz: 'Huquq va talablar'
+  },
+  'financing.eligibilityTitle': {
+    en: 'Eligibility Criteria',
+    ru: 'Критерии соответствия',
+    uz: 'Muvofiqlik mezonlari'
+  },
+  'financing.eligibility1': {
+    en: 'Minimum 18 years old',
+    ru: 'Минимум 18 лет',
+    uz: 'Minimum 18 yoshda'
+  },
+  'financing.eligibility2': {
+    en: 'Stable income for at least 6 months',
+    ru: 'Стабильный доход минимум 6 месяцев',
+    uz: 'Kamida 6 oy barqaror daromad'
+  },
+  'financing.eligibility3': {
+    en: 'Valid Uzbekistan residency',
+    ru: 'Действительное резидентство Узбекистана',
+    uz: 'Yaroqli O\'zbekiston rezidentligi'
+  },
+  'financing.eligibility4': {
+    en: 'Minimum 30% down payment',
+    ru: 'Минимум 30% первоначальный взнос',
+    uz: 'Minimum 30% dastlabki to\'lov'
+  },
+  'financing.documentsTitle': {
+    en: 'Required Documents',
+    ru: 'Необходимые документы',
+    uz: 'Kerakli hujjatlar'
+  },
+  'financing.documents1': {
+    en: 'Government-issued ID',
+    ru: 'Государственное удостоверение личности',
+    uz: 'Davlat tomonidan berilgan shaxsni tasdiqlovchi hujjat'
+  },
+  'financing.documents2': {
+    en: 'Proof of income (last 6 months)',
+    ru: 'Справка о доходах (последние 6 месяцев)',
+    uz: 'Daromad to\'g\'risida ma\'lumotnoma (oxirgi 6 oy)'
+  },
+  'financing.documents3': {
+    en: 'Bank statements',
+    ru: 'Банковские выписки',
+    uz: 'Bank hisobotlari'
+  },
+  'financing.documents4': {
+    en: 'Employment verification',
+    ru: 'Подтверждение трудоустройства',
+    uz: 'Ish joyini tasdiqlash'
+  },
+  'financing.ctaTitle': {
+    en: 'Ready to Get Started?',
+    ru: 'Готовы начать?',
+    uz: 'Boshlashga tayyormisiz?'
+  },
+  'financing.ctaDescription': {
+    en: 'Use our financing calculator to see what you can afford and start your homeownership journey today.',
+    ru: 'Используйте наш калькулятор финансирования, чтобы увидеть, что вы можете себе позволить, и начните свой путь к владению жильем сегодня.',
+    uz: 'Qanchaga sig\'ishingizni ko\'rish uchun moliyalashtirish kalkulyatorimizdan foydalaning va bugun uy egasi bo\'lish sayohatingizni boshlang.'
+  },
+  'financing.startCalculating': {
+    en: 'Start Calculating',
+    ru: 'Начать расчет',
+    uz: 'Hisoblashni boshlash'
+  },
   'common.delete': {
     en: 'Delete',
     ru: 'Удалить',
