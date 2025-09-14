@@ -675,6 +675,253 @@ const translations: Translations = {
     ru: 'Начать расчет',
     uz: 'Hisoblashni boshlash'
   },
+
+  // FAQ Page
+  'faq.pageTitle': {
+    en: 'Frequently Asked Questions',
+    ru: 'Часто задаваемые вопросы',
+    uz: 'Tez-tez beriladigan savollar'
+  },
+  'faq.pageSubtitle': {
+    en: 'Find answers to common questions about our platform and services',
+    ru: 'Найдите ответы на часто задаваемые вопросы о нашей платформе и услугах',
+    uz: 'Platformamiz va xizmatlarimiz haqida tez-tez beriladigan savollarga javoblar toping'
+  },
+  'faq.helpCenter': {
+    en: '✓ Help Center',
+    ru: '✓ Центр помощи',
+    uz: '✓ Yordam markazi'
+  },
+  'faq.searchPlaceholder': {
+    en: 'Search for questions...',
+    ru: 'Поиск вопросов...',
+    uz: 'Savollarni qidirish...'
+  },
+  'faq.generalTitle': {
+    en: 'General Questions',
+    ru: 'Общие вопросы',
+    uz: 'Umumiy savollar'
+  },
+  'faq.propertyTitle': {
+    en: 'Property Listings',
+    ru: 'Объявления о недвижимости',
+    uz: 'Ko\'chmas mulk e\'lonlari'
+  },
+  'faq.financingTitle': {
+    en: 'Financing & Payments',
+    ru: 'Финансирование и платежи',
+    uz: 'Moliyalashtirish va to\'lovlar'
+  },
+  'faq.visitsTitle': {
+    en: 'Property Visits',
+    ru: 'Просмотры недвижимости',
+    uz: 'Mulkni ko\'rib chiqish'
+  },
+  'faq.whatIsMagit': {
+    en: 'What is Magit?',
+    ru: 'Что такое Magit?',
+    uz: 'Magit nima?'
+  },
+  'faq.whatIsMagitAnswer': {
+    en: 'Magit is a verified real estate marketplace in Tashkent that connects buyers with verified property owners. We offer transparent pricing and halal financing options to make homeownership accessible.',
+    ru: 'Magit - это проверенная площадка недвижимости в Ташкенте, которая соединяет покупателей с проверенными владельцами недвижимости. Мы предлагаем прозрачные цены и халяльное финансирование для доступного владения жильем.',
+    uz: 'Magit - Toshkentdagi tekshirilgan ko\'chmas mulk bozori bo\'lib, xaridorlarni tekshirilgan mulk egalari bilan bog\'laydi. Biz uy egaliligini qulay qilish uchun shaffof narxlar va halol moliyalashtirish imkoniyatlarini taklif qilamiz.'
+  },
+  'faq.howToCreateAccount': {
+    en: 'How do I create an account?',
+    ru: 'Как создать аккаунт?',
+    uz: 'Qanday hisob yaratish mumkin?'
+  },
+  'faq.howToCreateAccountAnswer': {
+    en: 'Click "Sign In" on the homepage, then choose "Sign Up" to create a new account. You can register using your email address or phone number. Verification is required for account security.',
+    ru: 'Нажмите "Войти" на главной странице, затем выберите "Зарегистрироваться" для создания нового аккаунта. Вы можете зарегистрироваться, используя адрес электронной почты или номер телефона. Для безопасности аккаунта требуется верификация.',
+    uz: 'Bosh sahifada "Kirish" tugmasini bosing, keyin yangi hisob yaratish uchun "Ro\'yxatdan o\'tish"ni tanlang. Elektron pochta manzili yoki telefon raqami orqali ro\'yxatdan o\'tishingiz mumkin. Hisob xavfsizligi uchun tasdiqlash talab qilinadi.'
+  },
+  'faq.isItFree': {
+    en: 'Is Magit free to use?',
+    ru: 'Бесплатно ли использовать Magit?',
+    uz: 'Magitdan foydalanish bepulmi?'
+  },
+  'faq.isItFreeAnswer': {
+    en: 'Yes, browsing properties and creating an account is completely free. You get one free property visit request per week. Additional visits cost 50,000 UZS each.',
+    ru: 'Да, просмотр недвижимости и создание аккаунта полностью бесплатны. Вы получаете одну бесплатную заявку на просмотр недвижимости в неделю. Дополнительные посещения стоят 50,000 сум каждое.',
+    uz: 'Ha, mulklarni ko\'rish va hisob yaratish mutlaqo bepul. Haftasiga bitta bepul mulkni ko\'rish so\'roviga egasiz. Qo\'shimcha tashriflar har biri 50,000 so\'m turadi.'
+  },
+  'faq.howToContactSupport': {
+    en: 'How can I contact customer support?',
+    ru: 'Как связаться с поддержкой клиентов?',
+    uz: 'Mijozlarni qo\'llab-quvvatlash xizmati bilan qanday bog\'lanish mumkin?'
+  },
+  'faq.howToContactSupportAnswer': {
+    en: 'You can reach our support team via phone at +998 (71) 123-45-67, email at support@magit.uz, or use the live chat feature available on our website.',
+    ru: 'Вы можете связаться с нашей службой поддержки по телефону +998 (71) 123-45-67, по электронной почте support@magit.uz или использовать функцию онлайн-чата на нашем сайте.',
+    uz: '+998 (71) 123-45-67 telefon raqami orqali, support@magit.uz elektron pochta manzili orqali yoki veb-saytimizda mavjud jonli chat funksiyasidan foydalanib qo\'llab-quvvatlash guruhimiz bilan bog\'lanishingiz mumkin.'
+  },
+  'faq.howToListProperty': {
+    en: 'How do I list my property?',
+    ru: 'Как разместить свою недвижимость?',
+    uz: 'O\'z mulkimni qanday joylashtirish mumkin?'
+  },
+  'faq.howToListPropertyAnswer': {
+    en: 'After creating an account, go to "List Property" in your dashboard. Fill out the property details, upload high-quality photos, and submit for verification. Approved listings appear within 24 hours.',
+    ru: 'После создания аккаунта перейдите в "Разместить недвижимость" в вашей панели управления. Заполните детали недвижимости, загрузите качественные фотографии и отправьте на проверку. Одобренные объявления появляются в течение 24 часов.',
+    uz: 'Hisob yaratgach, boshqaruv panelingizdagi "Mulkni joylashtirish" bo\'limiga o\'ting. Mulk tafsilotlarini to\'ldiring, sifatli rasmlar yuklang va tekshirish uchun yuboring. Tasdiqlangan e\'lonlar 24 soat ichida paydo bo\'ladi.'
+  },
+  'faq.propertyVerification': {
+    en: 'How does property verification work?',
+    ru: 'Как работает проверка недвижимости?',
+    uz: 'Mulkni tekshirish qanday ishlaydi?'
+  },
+  'faq.propertyVerificationAnswer': {
+    en: 'Our team verifies property ownership documents, checks property condition through photos/videos, and confirms location accuracy. This process typically takes 24-48 hours.',
+    ru: 'Наша команда проверяет документы на право собственности, проверяет состояние недвижимости через фотографии/видео и подтверждает точность местоположения. Этот процесс обычно занимает 24-48 часов.',
+    uz: 'Bizning jamoamiz mulk egaligi hujjatlarini tekshiradi, foto/video orqali mulk holatini tekshiradi va joylashuv aniqligini tasdiqlaydi. Bu jarayon odatda 24-48 soat davom etadi.'
+  },
+  'faq.editProperty': {
+    en: 'Can I edit my property listing?',
+    ru: 'Могу ли я редактировать свое объявление?',
+    uz: 'O\'z e\'lonimni tahrirlashim mumkinmi?'
+  },
+  'faq.editPropertyAnswer': {
+    en: 'Yes, you can edit your property details, update photos, and modify pricing through your dashboard. Changes require re-verification and may take 24 hours to appear.',
+    ru: 'Да, вы можете редактировать детали недвижимости, обновлять фотографии и изменять цены через вашу панель управления. Изменения требуют повторной проверки и могут появиться в течение 24 часов.',
+    uz: 'Ha, boshqaruv panelingiz orqali mulk tafsilotlarini tahrirlashingiz, rasmlarni yangilashingiz va narxlarni o\'zgartirishingiz mumkin. O\'zgarishlar qayta tekshirishni talab qiladi va 24 soat ichida paydo bo\'lishi mumkin.'
+  },
+  'faq.propertyPhotos': {
+    en: 'What photo requirements are there?',
+    ru: 'Какие требования к фотографиям?',
+    uz: 'Rasmlar uchun qanday talablar bor?'
+  },
+  'faq.propertyPhotosAnswer': {
+    en: 'Upload high-resolution photos (minimum 1080p) showing all rooms, exterior, and important features. Avoid filters and ensure good lighting. Minimum 5 photos, maximum 20 photos per listing.',
+    ru: 'Загружайте фотографии высокого разрешения (минимум 1080p), показывающие все комнаты, экстерьер и важные особенности. Избегайте фильтров и обеспечьте хорошее освещение. Минимум 5 фотографий, максимум 20 фотографий на объявление.',
+    uz: 'Barcha xonalar, tashqi ko\'rinish va muhim xususiyatlarni ko\'rsatuvchi yuqori aniqlikdagi rasmlarni (minimum 1080p) yuklang. Filtrlardan qoching va yaxshi yoritishni ta\'minlang. E\'lon uchun minimum 5 ta, maksimum 20 ta rasm.'
+  },
+  'faq.whatIsHalalFinancing': {
+    en: 'What is halal financing?',
+    ru: 'Что такое халяльное финансирование?',
+    uz: 'Halol moliyalashtirish nima?'
+  },
+  'faq.whatIsHalalFinancingAnswer': {
+    en: 'Halal financing is a Sharia-compliant payment system without traditional interest rates. Instead of interest, we use a profit-sharing model with transparent fees and no hidden charges.',
+    ru: 'Халяльное финансирование - это система платежей, соответствующая шариату, без традиционных процентных ставок. Вместо процентов мы используем модель распределения прибыли с прозрачными комиссиями и без скрытых платежей.',
+    uz: 'Halol moliyalashtirish - bu an\'anaviy foiz stavkalarsiz shariatga mos to\'lov tizimi. Foiz o\'rniga biz shaffof to\'lovlar va yashirin to\'lovsiz foyda taqsimlash modelidan foydalanamiz.'
+  },
+  'faq.minimumDownPayment': {
+    en: 'What is the minimum down payment?',
+    ru: 'Какой минимальный первоначальный взнос?',
+    uz: 'Minimum dastlabki to\'lov qancha?'
+  },
+  'faq.minimumDownPaymentAnswer': {
+    en: 'The minimum down payment is 30% of the property value. This ensures affordable monthly payments and reduces overall financing costs.',
+    ru: 'Минимальный первоначальный взнос составляет 30% от стоимости недвижимости. Это обеспечивает доступные ежемесячные платежи и снижает общую стоимость финансирования.',
+    uz: 'Minimum dastlabki to\'lov mulk qiymatining 30% ini tashkil qiladi. Bu qulay oylik to\'lovlarni ta\'minlaydi va umumiy moliyalashtirish xarajatlarini kamaytiradi.'
+  },
+  'faq.financingPeriods': {
+    en: 'What financing periods are available?',
+    ru: 'Какие периоды финансирования доступны?',
+    uz: 'Qanday moliyalashtirish muddatlari mavjud?'
+  },
+  'faq.financingPeriodsAnswer': {
+    en: 'We offer flexible financing periods from 6 months to 5 years. Longer periods mean lower monthly payments but higher total costs.',
+    ru: 'Мы предлагаем гибкие периоды финансирования от 6 месяцев до 5 лет. Более длительные периоды означают более низкие ежемесячные платежи, но более высокие общие затраты.',
+    uz: '6 oydan 5 yilgacha moslashuvchan moliyalashtirish muddatlarini taklif qilamiz. Uzunroq muddatlar pastroq oylik to\'lovlarni, lekin yuqoriroq umumiy xarajatlarni anglatadi.'
+  },
+  'faq.financingRequirements': {
+    en: 'What are the financing requirements?',
+    ru: 'Каковы требования для финансирования?',
+    uz: 'Moliyalashtirish uchun qanday talablar bor?'
+  },
+  'faq.financingRequirementsAnswer': {
+    en: 'You must be 18+, have stable income for 6+ months, valid Uzbekistan residency, and provide required documents including ID, income proof, and bank statements.',
+    ru: 'Вы должны быть 18+, иметь стабильный доход более 6 месяцев, действительное резидентство Узбекистана и предоставить необходимые документы, включая удостоверение личности, справку о доходах и банковские выписки.',
+    uz: '18+ yoshda bo\'lishingiz, 6+ oy davomida barqaror daromadga ega bo\'lishingiz, O\'zbekistonda yaroqli rezidentlikka ega bo\'lishingiz va ID, daromad to\'g\'risida ma\'lumotnoma va bank hisobotlari kabi kerakli hujjatlarni taqdim etishingiz kerak.'
+  },
+  'faq.howToScheduleVisit': {
+    en: 'How do I schedule a property visit?',
+    ru: 'Как запланировать просмотр недвижимости?',
+    uz: 'Mulkni ko\'rishni qanday rejalashtirish mumkin?'
+  },
+  'faq.howToScheduleVisitAnswer': {
+    en: 'Click "Schedule Visit" on any property listing, choose your preferred date and time, and submit your request. The property owner will confirm or suggest alternative times.',
+    ru: 'Нажмите "Запланировать просмотр" на любом объявлении недвижимости, выберите предпочтительную дату и время и отправьте запрос. Владелец недвижимости подтвердит или предложит альтернативное время.',
+    uz: 'Istalgan mulk e\'lonida "Tashrifni rejalashtirish" tugmasini bosing, afzal ko\'rgan sana va vaqtni tanlang va so\'rovingizni yuboring. Mulk egasi tasdiqlaydi yoki muqobil vaqtlarni taklif qiladi.'
+  },
+  'faq.visitCost': {
+    en: 'How much do property visits cost?',
+    ru: 'Сколько стоят просмотры недвижимости?',
+    uz: 'Mulkni ko\'rish qancha turadi?'
+  },
+  'faq.visitCostAnswer': {
+    en: 'You get one free property visit per week. Additional visits cost 50,000 UZS each. Payment is required before scheduling additional visits.',
+    ru: 'Вы получаете один бесплатный просмотр недвижимости в неделю. Дополнительные посещения стоят 50,000 сум каждое. Оплата требуется перед планированием дополнительных посещений.',
+    uz: 'Haftasiga bitta bepul mulkni ko\'rishga egasiz. Qo\'shimcha tashriflar har biri 50,000 so\'m turadi. Qo\'shimcha tashriflarni rejalashtirish uchun to\'lov talab qilinadi.'
+  },
+  'faq.cancelVisit': {
+    en: 'Can I cancel or reschedule a visit?',
+    ru: 'Могу ли я отменить или перенести просмотр?',
+    uz: 'Tashrifni bekor qilish yoki boshqa vaqtga o\'tkazish mumkinmi?'
+  },
+  'faq.cancelVisitAnswer': {
+    en: 'Yes, you can cancel or reschedule visits up to 2 hours before the scheduled time. Cancellations within 2 hours may not be refunded.',
+    ru: 'Да, вы можете отменить или перенести посещения за 2 часа до запланированного времени. Отмены в течение 2 часов могут не возмещаться.',
+    uz: 'Ha, rejalashtirilgan vaqtdan 2 soat oldin tashriflarni bekor qilish yoki boshqa vaqtga o\'tkazish mumkin. 2 soat ichida bekor qilish to\'lovi qaytarilmasligi mumkin.'
+  },
+  'faq.visitPreparation': {
+    en: 'How should I prepare for a property visit?',
+    ru: 'Как подготовиться к просмотру недвижимости?',
+    uz: 'Mulkni ko\'rishga qanday tayyorgarlik ko\'rish kerak?'
+  },
+  'faq.visitPreparationAnswer': {
+    en: 'Bring a valid ID, prepare questions about the property, neighborhood, and utilities. Consider bringing a checklist of important features you want to verify.',
+    ru: 'Принесите действительное удостоверение личности, подготовьте вопросы о недвижимости, районе и коммунальных услугах. Рассмотрите возможность принести контрольный список важных особенностей, которые вы хотите проверить.',
+    uz: 'Yaroqli shaxsni tasdiqlovchi hujjat olib keling, mulk, mahalla va kommunal xizmatlar haqida savollar tayyorlang. Tekshirishni istagan muhim xususiyatlar ro\'yxatini olib kelishni o\'ylab ko\'ring.'
+  },
+  'faq.stillHaveQuestions': {
+    en: 'Still have questions?',
+    ru: 'Остались вопросы?',
+    uz: 'Hali ham savollaringiz bormi?'
+  },
+  'faq.contactUsDescription': {
+    en: 'Our support team is here to help you with any questions or concerns.',
+    ru: 'Наша команда поддержки готова помочь вам с любыми вопросами или проблемами.',
+    uz: 'Qo\'llab-quvvatlash guruhimiz har qanday savol yoki muammolar bilan sizga yordam berishga tayyor.'
+  },
+  'faq.callUs': {
+    en: 'Call Us',
+    ru: 'Позвоните нам',
+    uz: 'Bizga qo\'ng\'iroq qiling'
+  },
+  'faq.callDescription': {
+    en: 'Speak directly with our support team',
+    ru: 'Говорите напрямую с нашей командой поддержки',
+    uz: 'Qo\'llab-quvvatlash guruhimiz bilan bevosita gaplashing'
+  },
+  'faq.emailUs': {
+    en: 'Email Us',
+    ru: 'Напишите нам',
+    uz: 'Bizga email yuboring'
+  },
+  'faq.emailDescription': {
+    en: 'Send us a detailed message',
+    ru: 'Отправьте нам подробное сообщение',
+    uz: 'Bizga batafsil xabar yuboring'
+  },
+  'faq.liveChat': {
+    en: 'Live Chat',
+    ru: 'Онлайн-чат',
+    uz: 'Jonli chat'
+  },
+  'faq.liveChatDescription': {
+    en: 'Get instant help online',
+    ru: 'Получите мгновенную помощь онлайн',
+    uz: 'Onlayn tezkor yordam oling'
+  },
+  'faq.startChat': {
+    en: 'Start Chat',
+    ru: 'Начать чат',
+    uz: 'Chatni boshlash'
+  },
   'common.delete': {
     en: 'Delete',
     ru: 'Удалить',

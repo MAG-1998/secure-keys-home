@@ -35,6 +35,7 @@ const PropertyDetails = lazy(() => import("./pages/PropertyDetails"));
 const Messages = lazy(() => import("./pages/Messages"));
 const AllResults = lazy(() => import("./pages/AllResults"));
 const FinancingInfo = lazy(() => import("./pages/FinancingInfo"));
+const FAQ = lazy(() => import("./pages/FAQ"));
 
 // Optimized QueryClient configuration
 const queryClient = new QueryClient({
@@ -205,6 +206,11 @@ const AppContent = () => {
           <Route path="/financing-info" element={
             <Suspense fallback={<PageLoading />}>
               <FinancingInfo />
+            </Suspense>
+          } />
+          <Route path="/faq" element={
+            <Suspense fallback={<PageLoading />}>
+              <FAQ />
             </Suspense>
           } />
           <Route path="*" element={
