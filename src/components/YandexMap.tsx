@@ -87,9 +87,8 @@ const YandexMap: React.FC<YandexMapProps> = memo(({ isHalalMode = false, t, lang
       return data || [];
     },
     {
-      staleTime: 0,
-      refetchOnWindowFocus: true,
-      refetchOnMount: 'always',
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnWindowFocus: false,
       retry: 3,
       retryDelay: 1000,
     }

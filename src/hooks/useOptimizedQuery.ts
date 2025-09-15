@@ -11,8 +11,9 @@ export function useOptimizedQuery<T>(
     queryKey: key,
     queryFn,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes (replaces cacheTime in v5)
+    gcTime: 15 * 60 * 1000, // 15 minutes (extended for better caching)
     refetchOnWindowFocus: false,
+    refetchOnMount: false, // Prevent unnecessary refetches
     ...options,
   })
 }

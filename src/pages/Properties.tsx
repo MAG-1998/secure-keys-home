@@ -7,9 +7,10 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Search, Bed, Bath, ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
+import { useOptimizedQuery } from '@/hooks/useOptimizedQuery'
 import { useTranslation } from '@/hooks/useTranslation'
 import { extractDistrictFromText, getDistrictOptions, localizeDistrict as localizeDistrictLib } from '@/lib/districts'
-import { PropertyCard } from '@/components/PropertyCard'
+import { VirtualizedPropertyList } from '@/components/VirtualizedPropertyList'
 import { Header } from '@/components/Header'
 
 interface Property {
@@ -60,12 +61,10 @@ const Properties = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 15
 
-  const [properties, setProperties] = useState<Property[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchProps = async () => {
-      setLoading(true)
+  // Use optimized query instead of manual state management
+  const { data: properties = [], isLoading: loading } = useOptimizedQuery(
+    ['properties', 'list'],
+    async () => {
       const { data, error } = await supabase
         .from('properties')
         .select('*, property_photos(*)')
@@ -75,14 +74,12 @@ const Properties = () => {
 
       if (error) {
         console.error('Error fetching properties:', error)
-        setProperties([])
-      } else {
-        setProperties((data || []) as Property[])
+        throw error
       }
-      setLoading(false)
+      
+      return (data || []) as Property[]
     }
-    fetchProps()
-  }, [])
+  )
 
   const all = useMemo(() => (properties || []).map((p) => ({
     ...p,
@@ -399,27 +396,13 @@ const Properties = () => {
                 </div>
               ) : (
                 <>
-                  {/* Properties Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                    {paginatedResults.map((property) => (
-                      <PropertyCard
-                        key={property.id}
-                        id={property.id}
-                        title={property.display_name || property.title || 'Property'}
-                        location={property.location}
-                        price={property.price}
-                        priceUsd={property.price}
-                        bedrooms={property.bedrooms || 0}
-                        bathrooms={property.bathrooms || 0}
-                        area={property.area || 0}
-                        landAreaSotka={property.land_area_sotka}
-                        propertyType={property.property_type}
-                        imageUrl={property.image_url || property.property_photos?.[0]?.url}
-                        property={{...property, property_photos: property.property_photos}}
-                        isVerified={property.is_verified || false}
-                        isHalalFinanced={property.isHalal}
-                      />
-                    ))}
+                  {/* Properties Grid with Virtualization */}
+                  <div className="mb-6">
+                    <VirtualizedPropertyList 
+                      properties={filtered}
+                      currentPage={currentPage}
+                      itemsPerPage={itemsPerPage}
+                    />
                   </div>
 
                   {/* Pagination */}
