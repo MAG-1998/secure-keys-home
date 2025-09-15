@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -7,6 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { calculateHalalFinancing } from "@/utils/halalFinancing"
 import { useTranslation } from "@/hooks/useTranslation"
 import { getImageUrl } from "@/lib/utils"
+import { CachedImage } from "@/components/CachedImage"
 
 interface PropertyCardProps {
   id: string
@@ -103,8 +103,6 @@ export const PropertyCard = ({
   // Get first photo from property_photos or fallback to legacy image_url
   const primaryImageUrl = property?.image_url || property?.property_photos?.[0]?.url || imageUrl || image_url
   const actualImageUrl = getImageUrl(primaryImageUrl)
-  const [imageError, setImageError] = useState(false)
-  const [imageLoading, setImageLoading] = useState(true)
   const actualIsVerified = isVerified ?? verified ?? property?.verified ?? false
   const actualIsHalalFinanced = isHalalFinanced ?? financingAvailable ?? property?.financingAvailable ?? (property?.is_halal_available && property?.halal_status === 'approved') ?? false
 
@@ -119,22 +117,12 @@ export const PropertyCard = ({
   return (
     <Card onClick={handleNavigate} className="group hover:shadow-warm transition-all duration-300 cursor-pointer min-w-[250px] max-w-[400px] flex flex-col">
       <div className="relative">
-        <img 
-          src={imageError ? '/placeholder.svg' : actualImageUrl} 
+        <CachedImage
+          src={actualImageUrl}
           alt={actualTitle}
-          className="w-full h-48 object-cover"
-          loading="lazy"
-          onLoad={() => setImageLoading(false)}
-          onError={() => {
-            setImageError(true)
-            setImageLoading(false)
-          }}
+          className="w-full h-48"
+          lazy={true}
         />
-        {imageLoading && (
-          <div className="absolute inset-0 bg-muted animate-pulse flex items-center justify-center">
-            <div className="text-muted-foreground text-sm">Loading...</div>
-          </div>
-        )}
         <Button 
           variant="ghost" 
           size="sm"
