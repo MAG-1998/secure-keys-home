@@ -23,7 +23,7 @@ const FAQ = () => {
     if (user) {
       navigate('/messages')
     } else {
-      navigate('/auth')
+      navigate('/auth?redirect=/messages')
     }
   }
 
@@ -219,7 +219,9 @@ const FAQ = () => {
                 <p className="text-muted-foreground text-sm mb-4">
                   {t('faq.callDescription')}
                 </p>
-                <Button variant="outline">+998 (71) 123-45-67</Button>
+                <Button variant="outline" asChild>
+                  <a href="tel:+998977586669">+998 97 758 66 69</a>
+                </Button>
               </CardContent>
             </Card>
 
@@ -230,7 +232,9 @@ const FAQ = () => {
                 <p className="text-muted-foreground text-sm mb-4">
                   {t('faq.emailDescription')}
                 </p>
-                <Button variant="outline">support@magit.uz</Button>
+                <Button variant="outline" asChild>
+                  <a href="mailto:magit.startup@gmail.com">magit.startup@gmail.com</a>
+                </Button>
               </CardContent>
             </Card>
 
