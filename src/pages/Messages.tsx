@@ -247,8 +247,17 @@ export default function MessagesPage() {
       <AuthenticatedHeader user={user} language={language} setLanguage={setLanguage} isHalalMode={isHalalMode} />
       <div className="container mx-auto py-6 grid grid-cols-1 md:grid-cols-3 gap-4">
       <Card className="md:col-span-1">
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>{t('messages.conversations')}</CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSupportOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <Headset className="h-4 w-4" />
+            Support
+          </Button>
         </CardHeader>
         <CardContent className="space-y-2 max-h-[70vh] overflow-auto">
           {conversations.length === 0 && (
