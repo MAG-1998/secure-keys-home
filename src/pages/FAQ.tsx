@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useGlobalHalalMode } from "@/hooks/useGlobalHalalMode"
+import { useUser } from "@/contexts/UserContext"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { useState } from "react"
@@ -15,7 +16,16 @@ const FAQ = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const { isHalalMode } = useGlobalHalalMode()
+  const { user } = useUser()
   const [searchQuery, setSearchQuery] = useState("")
+
+  const handleStartChat = () => {
+    if (user) {
+      navigate('/messages')
+    } else {
+      navigate('/auth')
+    }
+  }
 
   const faqCategories = [
     {
@@ -233,6 +243,7 @@ const FAQ = () => {
                 </p>
                 <Button 
                   className={isHalalMode ? 'bg-magit-trust hover:bg-magit-trust/90' : ''}
+                  onClick={handleStartChat}
                 >
                   {t('faq.startChat')}
                 </Button>
