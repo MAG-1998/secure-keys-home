@@ -1,6 +1,17 @@
 {
   "rewrites": [
     {
+      "source": "/property/:id",
+      "destination": "/api/og-property?id=:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(facebookexternalhit|Twitterbot|TelegramBot|WhatsApp|Slackbot|Discordbot|LinkedInBot|bingbot|Googlebot).*"
+        }
+      ]
+    },
+    {
       "source": "/((?!api|_next|static|favicon.ico|manifest.webmanifest|robots.txt|sw.js|icons).*)",
       "destination": "/index.html"
     }
