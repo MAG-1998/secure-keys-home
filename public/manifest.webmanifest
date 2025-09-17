@@ -9,15 +9,21 @@
   "theme_color": "#0ea5e9",
   "icons": [
     {
-      "src": "/favicon.ico",
+      "src": "/icons/magit-favicon-light.png",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "/placeholder.svg",
+      "src": "/magit-app-icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/magit-app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
