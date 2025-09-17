@@ -261,6 +261,11 @@ const PropertyDetails = () => {
           .maybeSingle();
         if (error) throw error;
         if (!prop) {
+          toast({
+            title: "Property Not Found",
+            description: "The property you're looking for doesn't exist or has been removed.",
+            variant: "destructive"
+          });
           navigate("/properties");
           return;
         }
@@ -295,7 +300,18 @@ const PropertyDetails = () => {
         }
       } catch (e: any) {
         console.error(e);
-        toast({ title: "Error", description: e.message || "Failed to load property" });
+        const errorMessage = e.message || "Failed to load property";
+        
+        // Handle specific error types
+        if (errorMessage.includes("not found") || errorMessage.includes("404")) {
+          toast({ 
+            title: "Property Not Found", 
+            description: "The property you're looking for doesn't exist or has been removed." 
+          });
+          navigate("/properties");
+        } else {
+          toast({ title: "Error", description: errorMessage });
+        }
       } finally {
         setLoading(false);
       }
@@ -527,11 +543,20 @@ const PropertyDetails = () => {
 
   if (loading) {
     return (
-      <section className="py-10">
-        <div className="container mx-auto px-4">
-          <div className="text-muted-foreground">Loading property...</div>
+      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+        <div className="text-center">
+          <MagitLogo size="lg" isLoading={true} />
+          <div className="animate-pulse">
+            <div className="h-4 bg-muted rounded w-32 mx-auto mt-4"></div>
+          </div>
+          <div className="mt-3 text-sm text-muted-foreground/70">
+            Loading property details...
+          </div>
+          <div className="mt-2 text-xs text-muted-foreground/50">
+            If this takes too long, please refresh the page
+          </div>
         </div>
-      </section>
+      </div>
     );
   }
 

@@ -438,7 +438,7 @@ const composePinImage = (color: string, priceText: string) => {
         {
           href: composedHref,
           hintContent: property.title,
-          balloonContentHeader: `<a href="/property/${property.id}" style="text-decoration: underline; color: hsl(var(--primary));" onclick="window.location.assign('/property/${property.id}'); return false;">${property.title}</a>`,
+          balloonContentHeader: `<a href="/property/${property.id}" style="text-decoration: underline; color: hsl(var(--primary));" data-property-id="${property.id}">${property.title}</a>`,
           balloonContentBody: `
             <div style="padding: 10px; font-family: system-ui;">
               ${property.photos && property.photos.length > 0 ? `
@@ -475,6 +475,29 @@ const composePinImage = (color: string, priceText: string) => {
     });
 
     const placemarks = await Promise.all(placemarkPromises);
+    
+    // Add click event listeners to each placemark for React Router navigation
+    placemarks.forEach((placemark, index) => {
+      placemark.events.add('balloonopen', () => {
+        // Wait for balloon to render, then add click listeners
+        setTimeout(() => {
+          const balloon = map.current?.balloon;
+          if (balloon && balloon.getElement) {
+            const balloonElement = balloon.getElement();
+            const links = balloonElement?.querySelectorAll('a[data-property-id]');
+            links?.forEach((link: any) => {
+              link.addEventListener('click', (e: Event) => {
+                e.preventDefault();
+                const propertyId = link.getAttribute('data-property-id');
+                if (propertyId) {
+                  navigate(`/property/${propertyId}`);
+                }
+              });
+            });
+          }
+        }, 100);
+      });
+    });
     
     // Add to clusterer instead of directly to map
     clusterer.current.add(placemarks);
