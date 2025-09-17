@@ -16,9 +16,34 @@
       "destination": "/index.html"
     }
   ],
+  "redirects": [
+    {
+      "source": "/favicon.ico",
+      "destination": "/icons/magit-favicon-light.png",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/magit-og-2025-09.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/icons/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
