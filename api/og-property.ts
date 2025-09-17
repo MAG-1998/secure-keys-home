@@ -38,15 +38,31 @@ export default async function handler(req: any, res: any) {
         <!DOCTYPE html>
         <html>
           <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            
+            <!-- Favicon Links -->
+            <link rel="icon" href="https://magit.uz/icons/magit-favicon-light.png" type="image/png">
+            <link rel="icon" href="https://magit.uz/icons/magit-favicon-dark.png" type="image/png" media="(prefers-color-scheme: dark)">
+            <link rel="apple-touch-icon" href="https://magit.uz/magit-app-icon-512.png">
+            <link rel="manifest" href="https://magit.uz/manifest.webmanifest">
+            
+            <!-- Open Graph -->
             <meta property="og:title" content="Property Not Found - Magit" />
             <meta property="og:description" content="This property is no longer available. Discover other verified homes with Sharia-compliant financing in Uzbekistan." />
-            <meta property="og:image" content="https://magit.uz/magit-og-image-v3.png" />
+            <meta property="og:image" content="https://magit.uz/magit-og-2025-09.png?v=${Date.now()}" />
+            <meta property="og:image:secure_url" content="https://magit.uz/magit-og-2025-09.png?v=${Date.now()}" />
             <meta property="og:url" content="https://magit.uz/property/${id}" />
             <meta property="og:type" content="website" />
+            <meta property="og:site_name" content="Magit" />
+            
+            <!-- Twitter -->
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:title" content="Property Not Found - Magit" />
             <meta name="twitter:description" content="This property is no longer available. Discover other verified homes with Sharia-compliant financing in Uzbekistan." />
-            <meta name="twitter:image" content="https://magit.uz/magit-og-image-v3.png" />
+            <meta name="twitter:image" content="https://magit.uz/magit-og-2025-09.png?v=${Date.now()}" />
+            
+            <title>Property Not Found - Magit</title>
             <script>window.location.href = '/property/${id}';</script>
           </head>
           <body></body>
@@ -57,8 +73,9 @@ export default async function handler(req: any, res: any) {
     // Format price
     const formattedPrice = new Intl.NumberFormat('en-US').format(property.price)
     
-    // Get the best image
-    let imageUrl = 'https://magit.uz/magit-og-image-v3.png'
+    // Get the best image with cache busting
+    const cacheBuster = Date.now()
+    let imageUrl = `https://magit.uz/magit-og-2025-09.png?v=${cacheBuster}`
     if (property.photos && property.photos.length > 0) {
       const firstPhoto = property.photos[0]
       if (typeof firstPhoto === 'string') {
@@ -77,9 +94,20 @@ export default async function handler(req: any, res: any) {
       <!DOCTYPE html>
       <html>
         <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          
+          <!-- Favicon Links -->
+          <link rel="icon" href="https://magit.uz/icons/magit-favicon-light.png" type="image/png">
+          <link rel="icon" href="https://magit.uz/icons/magit-favicon-dark.png" type="image/png" media="(prefers-color-scheme: dark)">
+          <link rel="apple-touch-icon" href="https://magit.uz/magit-app-icon-512.png">
+          <link rel="manifest" href="https://magit.uz/manifest.webmanifest">
+          
+          <!-- Open Graph -->
           <meta property="og:title" content="${title}" />
           <meta property="og:description" content="${description}" />
           <meta property="og:image" content="${imageUrl}" />
+          <meta property="og:image:secure_url" content="${imageUrl}" />
           <meta property="og:url" content="${url}" />
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content="Magit" />
@@ -87,6 +115,7 @@ export default async function handler(req: any, res: any) {
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
           
+          <!-- Twitter -->
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content="${title}" />
           <meta name="twitter:description" content="${description}" />

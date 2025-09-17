@@ -1,6 +1,6 @@
-const CACHE_NAME = 'magit-cache-v1';
-const IMAGE_CACHE_NAME = 'magit-images-v1';
-const STATIC_CACHE_NAME = 'magit-static-v1';
+const CACHE_NAME = 'magit-cache-v2';
+const IMAGE_CACHE_NAME = 'magit-images-v2';
+const STATIC_CACHE_NAME = 'magit-static-v2';
 
 // Cache static assets for 1 year
 const STATIC_ASSETS = [
@@ -8,7 +8,10 @@ const STATIC_ASSETS = [
   '/icons/magit-favicon-light.png',
   '/icons/magit-favicon-dark.png',
   '/icons/magit-favicon-halal-light.png',
-  '/icons/magit-favicon-halal-dark.png'
+  '/icons/magit-favicon-halal-dark.png',
+  '/magit-app-icon-512.png',
+  '/magit-og-2025-09.png',
+  '/manifest.webmanifest'
 ];
 
 // Supabase storage URL pattern
