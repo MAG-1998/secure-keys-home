@@ -924,13 +924,17 @@ const ListProperty = () => {
                 <span className="text-sm text-muted-foreground">{t('listProperty.stepProgress').replace('{current}', currentStep.toString()).replace('{total}', totalSteps.toString())}</span>
                 <span className="text-sm text-muted-foreground">{t('listProperty.percentComplete').replace('{percent}', Math.round(currentStep / totalSteps * 100).toString())}</span>
               </div>
-              <div className="w-full bg-muted/20 rounded-full h-4 relative overflow-hidden apple-glow-container">
+              <div className="w-full bg-muted/20 rounded-full h-4 relative overflow-hidden apple-glow-container purple-orange-shimmer">
                 <div 
-                  className="h-full rounded-full transition-all duration-500 relative bg-gradient-to-r from-[hsl(25,85%,53%)] to-[hsl(38,84%,60%)] shadow-[0_0_30px_hsl(25,85%,53%/0.6),0_0_60px_hsl(38,84%,60%/0.4)] apple-glow-active" 
-                  style={{ width: `${currentStep / totalSteps * 100}%` }}
+                  className="h-full rounded-full transition-all duration-500 relative bg-gradient-to-r from-[hsl(25,85%,53%)] to-[hsl(38,84%,60%)] apple-glow-active" 
+                  style={{ 
+                    width: `${currentStep / totalSteps * 100}%`,
+                    boxShadow: `0 0 30px hsl(25 85% 53% / 0.7), 0 0 60px hsl(270 100% 60% / 0.5), 0 0 90px hsl(25 85% 53% / 0.3), 0 0 120px hsl(270 100% 60% / 0.2)`
+                  }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-[shimmer_1.5s_ease-in-out_infinite] transform -skew-x-12 w-full opacity-80" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[hsl(25,85%,70%)] to-[hsl(38,84%,75%)] opacity-30 rounded-full" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[hsl(25,85%,70%/0.8)] via-[hsl(270,100%,70%/0.9)] to-transparent animate-[shimmer_1s_ease-in-out_infinite] transform -skew-x-12 w-full" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[hsl(25,85%,60%)] via-[hsl(270,100%,65%)] to-[hsl(38,84%,65%)] opacity-40 rounded-full blur-[1px]" />
+                  <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-[hsl(270,100%,70%/0.3)] to-[hsl(25,85%,70%/0.3)] rounded-full" />
                 </div>
               </div>
             </div>
