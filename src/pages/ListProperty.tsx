@@ -340,7 +340,7 @@ const ListProperty = () => {
         latitude: formData.latitude,
         longitude: formData.longitude,
         is_halal_available: formData.halalFinancingRequested,
-        halal_status: formData.halalFinancingRequested ? 'pending_approval' : 'none',
+        halal_status: formData.halalFinancingRequested ? 'pending_approval' : 'disabled',
         district: formData.district || extractDistrictFromText(formData.address),
         status: 'pending'
       };
