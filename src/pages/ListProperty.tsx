@@ -64,8 +64,6 @@ const ListProperty = () => {
     photos: [] as File[],
     // Visit Hours
     visitHours: [] as string[],
-    // Additional Services
-    virtualTour: false,
     // Halal Financing
     halalFinancingRequested: false
   });
@@ -223,7 +221,7 @@ const ListProperty = () => {
         documents: [],
         photos: [],
         visitHours: [],
-        virtualTour: false,
+        
         halalFinancingRequested: false
       });
       setCurrentStep(1);
@@ -240,7 +238,7 @@ const ListProperty = () => {
 
   // Calculate total amount based on selected features
   const calculateTotalAmount = () => {
-    return formData.virtualTour ? 300000 : 0; // 300,000 UZS for virtual tour
+    return 0; // No paid features
   };
   // Photo upload helpers
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -338,7 +336,7 @@ const ListProperty = () => {
         land_area_sotka: formData.propertyType === 'house' && formData.landAreaSotka ? parseFloat(formData.landAreaSotka) : null,
         description: formData.description,
         visit_hours: formData.visitHours,
-        virtual_tour: formData.virtualTour,
+        
         latitude: formData.latitude,
         longitude: formData.longitude,
         is_halal_available: formData.halalFinancingRequested,
@@ -709,22 +707,6 @@ const ListProperty = () => {
                 </div>
               </div>
               
-              <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
-                <div className="flex items-start gap-3">
-                  <Checkbox 
-                    id="virtualTour" 
-                    checked={formData.virtualTour}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, virtualTour: checked as boolean }))}
-                  />
-                  <div className="flex-1">
-                    <Label htmlFor="virtualTour" className="font-semibold text-sm text-blue-900 dark:text-blue-100 cursor-pointer">Professional Virtual Tour (+300,000 UZS)</Label>
-                    <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
-                      Our certified agent will visit your property within 2-3 business days 
-                      to verify details and create professional virtual tour photos.
-                    </p>
-                  </div>
-                </div>
-              </div>
 
               <div className="bg-green-50 dark:bg-green-950/20 p-4 rounded-lg">
                 <div className="flex items-start gap-3">
@@ -761,12 +743,6 @@ const ListProperty = () => {
                     <span className="text-muted-foreground">Basic Listing:</span>
                     <span className="font-semibold text-green-600">FREE</span>
                   </div>
-                  {formData.virtualTour && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Professional Virtual Tour:</span>
-                      <span>300,000 UZS</span>
-                    </div>
-                  )}
                   <div className="border-t pt-2 flex justify-between font-semibold">
                     <span>Total:</span>
                     <span>{calculateTotalAmount().toLocaleString()} UZS</span>
