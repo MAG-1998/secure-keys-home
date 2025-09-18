@@ -926,14 +926,13 @@ const ListProperty = () => {
               </div>
               <div className="w-full bg-muted/20 rounded-full h-4 relative overflow-hidden apple-glow-container purple-orange-shimmer">
                 <div 
-                  className="h-full rounded-full transition-all duration-500 relative bg-gradient-to-r from-[hsl(25,100%,55%)] via-[hsl(270,100%,60%)] to-[hsl(25,100%,55%)] apple-glow-active" 
+                  className="h-full rounded-full transition-all duration-500 relative bg-gradient-to-r from-[hsl(15,100%,60%)] via-[hsl(270,100%,65%)] via-[hsl(300,100%,70%)] to-[hsl(25,100%,65%)] apple-glow-active" 
                   style={{ 
                     width: `${currentStep / totalSteps * 100}%`,
-                    boxShadow: `0 0 30px hsl(25 100% 55% / 0.7), 0 0 60px hsl(270 100% 60% / 0.5), 0 0 90px hsl(25 100% 55% / 0.3), 0 0 120px hsl(270 100% 60% / 0.2)`
+                    boxShadow: `0 0 8px hsl(25 100% 60% / 0.4), 0 0 16px hsl(270 100% 65% / 0.3), inset 0 1px 0 rgba(255,255,255,0.2)`
                   }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-[shimmer_1s_ease-in-out_infinite] transform -skew-x-12 w-full" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[hsl(270,100%,65%)] via-[hsl(25,100%,60%)] to-[hsl(270,100%,65%)] opacity-50 rounded-full blur-[0.5px]" />
                   <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-[hsl(25,100%,70%/0.4)] via-[hsl(270,100%,70%/0.6)] to-[hsl(25,100%,70%/0.4)] rounded-full" />
                 </div>
               </div>
