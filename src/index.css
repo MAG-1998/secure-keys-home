@@ -60,7 +60,6 @@ All colors MUST be HSL.
     /* Apple-style Neon Glow System */
     --glow-cyan: 180 100% 50%;
     --glow-orange: 25 100% 60%;
-    --glow-purple: 270 100% 60%;
     --glow-intensity-low: 0.3;
     --glow-intensity-mid: 0.6;
     --glow-intensity-high: 0.9;
@@ -75,11 +74,6 @@ All colors MUST be HSL.
     --glow-orange-outer: 0 0 40px hsl(var(--glow-orange) / var(--glow-intensity-low));
     --glow-orange-aura: 0 0 80px hsl(var(--glow-orange) / 0.2);
     --glow-orange-backdrop: 0 0 120px hsl(var(--glow-orange) / 0.1);
-    
-    --glow-purple-inner: 0 0 20px hsl(var(--glow-purple) / var(--glow-intensity-mid));
-    --glow-purple-outer: 0 0 40px hsl(var(--glow-purple) / var(--glow-intensity-low));
-    --glow-purple-aura: 0 0 80px hsl(var(--glow-purple) / 0.2);
-    --glow-purple-backdrop: 0 0 120px hsl(var(--glow-purple) / 0.1);
 
     --sidebar-background: 0 0% 98%;
 
@@ -301,17 +295,6 @@ All colors MUST be HSL.
   );
 }
 
-.apple-glow-container.purple-orange-shimmer::before {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    hsl(var(--glow-orange) / 0.7),
-    hsl(var(--glow-purple) / 0.8),
-    hsl(var(--glow-orange) / 0.7),
-    transparent
-  );
-}
-
 /* Enhanced shimmer for light mode */
 :root .apple-glow-container.cyan-shimmer::before {
   background: linear-gradient(
@@ -331,17 +314,6 @@ All colors MUST be HSL.
     hsl(var(--glow-cyan) / 0.5),
     hsl(var(--glow-orange) / 0.4),
     hsl(var(--glow-cyan) / 0.5),
-    transparent
-  );
-}
-
-:root .apple-glow-container.purple-orange-shimmer::before {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    hsl(var(--glow-orange) / 0.8),
-    hsl(var(--glow-purple) / 0.9),
-    hsl(var(--glow-orange) / 0.8),
     transparent
   );
 }
