@@ -18,7 +18,7 @@ import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
+  rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import {
   useSortable,
@@ -117,7 +117,7 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
     })
   );
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (active.id !== over?.id) {
@@ -130,6 +130,24 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
       }));
 
       onPhotosChange(reorderedPhotos);
+
+      // Update order in database
+      try {
+        for (const photo of reorderedPhotos) {
+          await supabase
+            .from('property_photos')
+            .update({ order_index: photo.order_index })
+            .eq('property_id', propertyId)
+            .eq('url', photo.url);
+        }
+      } catch (error) {
+        console.error('Failed to update photo order:', error);
+        toast({
+          title: t('photo.reorderFailed'),
+          description: 'Failed to save new photo order',
+          variant: "destructive"
+        });
+      }
     }
   };
 
@@ -308,7 +326,7 @@ export const DragDropPhotoManager = ({ photos, onPhotosChange, propertyId, userI
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
           >
-            <SortableContext items={photos.map(p => p.url)} strategy={verticalListSortingStrategy}>
+            <SortableContext items={photos.map(p => p.url)} strategy={rectSortingStrategy}>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {photos.map((photo, index) => (
                   <SortablePhotoItem
