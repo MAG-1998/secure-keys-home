@@ -464,7 +464,6 @@ export type Database = {
           title: string
           updated_at: string
           user_id: string
-          virtual_tour: boolean | null
           visit_hours: Json | null
         }
         Insert: {
@@ -499,7 +498,6 @@ export type Database = {
           title: string
           updated_at?: string
           user_id: string
-          virtual_tour?: boolean | null
           visit_hours?: Json | null
         }
         Update: {
@@ -534,7 +532,6 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
-          virtual_tour?: boolean | null
           visit_hours?: Json | null
         }
         Relationships: [
