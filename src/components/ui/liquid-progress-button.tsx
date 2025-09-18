@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const liquidProgressButtonVariants = cva(
-  "relative overflow-hidden transition-all duration-300",
+  "transition-all duration-300",
   {
     variants: {
       variant: {
@@ -66,30 +66,6 @@ export const LiquidProgressButton = React.forwardRef<
       disabled={disabled || isLoading}
       {...props}
     >
-      {/* Liquid fill background */}
-      {showProgress && (
-        <div 
-          className="absolute inset-0 z-0 transition-all duration-500 ease-out"
-          style={{
-            transform: `translateY(${100 - progressPercentage}%)`,
-            backgroundColor: `hsl(var(--magit-success))`,
-          }}
-        >
-          {/* Wave effect */}
-          <div 
-            className="absolute top-0 left-0 w-full h-3 opacity-40 animate-wave"
-            style={{
-              background: `repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent 8px,
-                rgba(255,255,255,0.2) 8px,
-                rgba(255,255,255,0.2) 16px
-              )`
-            }}
-          />
-        </div>
-      )}
       
       {/* Button content */}
       <span className="relative z-10 font-medium">
