@@ -924,7 +924,7 @@ const ListProperty = () => {
                 <span className="text-sm text-muted-foreground">{t('listProperty.stepProgress').replace('{current}', currentStep.toString()).replace('{total}', totalSteps.toString())}</span>
                 <span className="text-sm text-muted-foreground">{t('listProperty.percentComplete').replace('{percent}', Math.round(currentStep / totalSteps * 100).toString())}</span>
               </div>
-              <div className="w-full bg-muted/20 rounded-full h-4 relative overflow-hidden border border-border/30">
+              <div className="w-full bg-muted/20 rounded-full h-4 relative overflow-hidden border-2 border-border/60">
                 <div 
                   className="h-full rounded-full transition-all duration-500 relative bg-gradient-to-r from-[hsl(25,85%,53%)] to-[hsl(38,84%,60%)] shadow-[0_0_20px_hsl(25,85%,53%/0.4)]" 
                   style={{ width: `${currentStep / totalSteps * 100}%` }}
