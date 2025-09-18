@@ -109,15 +109,25 @@ const VisitRequestCard = ({
               <span className="text-sm">{r.properties?.location}</span>
             </div>
 
-            {/* Visitor name */}
+            {/* Visitor name and request time */}
             {r.visitor_profile && (
-              <div className="flex items-center text-muted-foreground mb-3">
-                <span className="text-sm font-medium">
-                  {t('visitRequests.requestedBy')}: {r.visitor_profile.display_name}
-                </span>
-                <Badge variant="outline" className="ml-2 text-xs">
-                  {r.visitor_profile.user_type}
-                </Badge>
+              <div className="flex items-center justify-between text-muted-foreground mb-3">
+                <div className="flex items-center">
+                  <span className="text-sm font-medium">
+                    {t('visitRequests.requestedBy')}: {r.visitor_profile.display_name}
+                  </span>
+                  <Badge variant="outline" className="ml-2 text-xs">
+                    {r.visitor_profile.user_type}
+                  </Badge>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {t('visitRequests.requestSent')}: {new Date(r.created_at).toLocaleDateString(undefined, { 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </div>
               </div>
             )}
 
@@ -273,8 +283,9 @@ const VisitRequests = () => {
       const requestsWithProfiles = await Promise.all(
         rows.map(async (request) => {
           try {
-            const { data: profileData } = await supabase.rpc('get_safe_profile_for_messaging', { 
-              target_user_id: request.visitor_id 
+            const { data: profileData } = await supabase.rpc('get_visitor_profile_for_property_owner', { 
+              visitor_user_id: request.visitor_id,
+              property_id_param: request.property_id
             });
             return {
               ...request,

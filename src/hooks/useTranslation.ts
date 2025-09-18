@@ -2196,6 +2196,11 @@ const translations: Translations = {
     ru: 'Запросил',
     uz: 'So\'ragan'
   },
+  'visitRequests.requestSent': {
+    en: 'Request sent',
+    ru: 'Заявка отправлена',
+    uz: 'So\'rov yuborilgan'
+  },
   'visitRequests.alternativeTime': {
     en: 'Alternative time',
     ru: 'Альтернативное время',

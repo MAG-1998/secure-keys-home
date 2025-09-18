@@ -1119,6 +1119,15 @@ export type Database = {
           user_type: string
         }[]
       }
+      get_visitor_profile_for_property_owner: {
+        Args: { property_id_param: string; visitor_user_id: string }
+        Returns: {
+          created_at: string
+          display_name: string
+          user_id: string
+          user_type: string
+        }[]
+      }
       handle_no_show_penalty: {
         Args: {
           moderator_id_param: string
