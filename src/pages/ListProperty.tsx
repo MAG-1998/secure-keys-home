@@ -17,10 +17,26 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import LocationPicker from "@/components/LocationPicker";
-import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail, Save, Trash2 } from "lucide-react";
+import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail, Save, Trash2, GripVertical, X } from "lucide-react";
 import { extractDistrictFromText, getDistrictOptions } from "@/lib/districts";
 import { debounce } from "@/utils/debounce";
 import { convertImagesToJpeg } from "@/utils/imageConverter";
+import { SortablePhotoItem } from "@/components/SortablePhotoItem";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
 const sanitizeFilename = (name: string) => {
   const dot = name.lastIndexOf(".");
   const base = dot > 0 ? name.slice(0, dot) : name;
@@ -44,6 +60,13 @@ const ListProperty = () => {
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [submissionProgress, setSubmissionProgress] = useState(0);
+  
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
   const [submissionCurrentStep, setSubmissionCurrentStep] = useState("");
   const [formData, setFormData] = useState({
     // Property Details
@@ -294,6 +317,18 @@ const ListProperty = () => {
     // Reset input so selecting the same files again triggers change
     if (fileInputRef.current) fileInputRef.current.value = "";
     if (e.target) e.target.value = "";
+  };
+
+  const handlePhotoDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = parseInt(active.id as string);
+      const newIndex = parseInt(over?.id as string);
+
+      const reorderedPhotos = arrayMove(formData.photos, oldIndex, newIndex);
+      setFormData(prev => ({ ...prev, photos: reorderedPhotos }));
+    }
   };
 
   const removePhoto = (index: number) => {
@@ -663,22 +698,30 @@ const ListProperty = () => {
               </div>
 
               {formData.photos.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {formData.photos.map((file, i) => (
-                    <div key={i} className="relative rounded-md overflow-hidden border">
-                      {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={`Property photo ${i + 1}`}
-                        className="h-32 w-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Button size="sm" variant="secondary" onClick={() => removePhoto(i)}>
-                          Remove
-                        </Button>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Drag photos to reorder • {formData.photos.length}/20 photos
+                  </p>
+                  
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handlePhotoDragEnd}
+                  >
+                    <SortableContext items={formData.photos.map((_, i) => i.toString())} strategy={rectSortingStrategy}>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {formData.photos.map((file, i) => (
+                          <SortablePhotoItem
+                            key={i}
+                            id={i.toString()}
+                            file={file}
+                            index={i}
+                            onRemove={() => removePhoto(i)}
+                          />
+                        ))}
                       </div>
-                    </div>
-                  ))}
+                    </SortableContext>
+                  </DndContext>
                 </div>
               )}
               
