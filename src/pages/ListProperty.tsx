@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { MagitLogo } from "@/components/MagitLogo";
 import { PaymentMethods } from "@/components/PaymentMethods";
 import { Footer } from "@/components/Footer";
+import { LiquidProgressButton } from "@/components/ui/liquid-progress-button";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,6 +43,8 @@ const ListProperty = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [submissionProgress, setSubmissionProgress] = useState(0);
+  const [submissionCurrentStep, setSubmissionCurrentStep] = useState("");
   const [formData, setFormData] = useState({
     // Property Details
     displayName: "",
@@ -298,6 +301,8 @@ const ListProperty = () => {
   };
   const handleSubmitApplication = async () => {
     setIsSubmitting(true);
+    setSubmissionProgress(0);
+    setSubmissionCurrentStep("Validating information");
     try {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) {
@@ -315,8 +320,13 @@ const ListProperty = () => {
         toast({ title: "Missing information", description: validationErrors[0], variant: "destructive" });
         const targetStep = (!formData.latitude || !formData.longitude) ? 2 : (formData.photos.length < 5 ? 3 : 1);
         setCurrentStep(targetStep);
+        setSubmissionProgress(0);
+        setSubmissionCurrentStep("");
         return;
       }
+
+      setSubmissionProgress(10);
+      setSubmissionCurrentStep("Creating property listing");
 
       const bedroomCount = formData.bedrooms === "custom" ? 
         Number(formData.customBedrooms) : Number(formData.bedrooms);
@@ -353,11 +363,18 @@ const ListProperty = () => {
 
       if (error) throw error;
 
+      setSubmissionProgress(15);
+      setSubmissionCurrentStep("Uploading photos");
+
       // Upload photos to Storage and update property row
       if (property && formData.photos.length > 0) {
         const uploadedUrls: string[] = [];
         for (let i = 0; i < formData.photos.length; i++) {
           const file = formData.photos[i];
+          const photoProgress = 15 + ((i / formData.photos.length) * 70); // 15% to 85%
+          setSubmissionProgress(photoProgress);
+          setSubmissionCurrentStep(`Uploading photo ${i + 1} of ${formData.photos.length}`);
+          
           // All files are now JPEG, so use .jpg extension
           const filePath = `${user.user.id}/${property.id}/${Date.now()}_${i}.jpg`;
           const { data: uploadData, error: uploadError } = await supabase
@@ -375,6 +392,9 @@ const ListProperty = () => {
           uploadedUrls.push(publicUrlData.publicUrl);
         }
 
+        setSubmissionProgress(85);
+        setSubmissionCurrentStep("Updating property details");
+        
         await supabase
           .from('properties')
           .update({ image_url: uploadedUrls[0] ?? null, photos: uploadedUrls })
@@ -383,6 +403,8 @@ const ListProperty = () => {
 
       // Submit halal financing request if requested
       if (formData.halalFinancingRequested && property) {
+        setSubmissionProgress(95);
+        setSubmissionCurrentStep("Setting up halal financing");
         const { error: halalError } = await supabase
           .from('halal_financing_requests')
           .insert({
@@ -395,6 +417,10 @@ const ListProperty = () => {
           console.error('Error submitting halal financing request:', halalError);
         }
       }
+
+      setSubmissionProgress(98);
+      setSubmissionCurrentStep("Finalizing submission");
+      
       // Clear draft after successful submission
       try {
         localStorage.removeItem(STORAGE_KEY);
@@ -402,7 +428,10 @@ const ListProperty = () => {
         setLastSaved(null);
       } catch {}
 
+      setSubmissionProgress(100);
+      setSubmissionCurrentStep("Application submitted");
       setApplicationSubmitted(true);
+      
       toast({
         title: "Success",
         description: formData.halalFinancingRequested 
@@ -418,6 +447,10 @@ const ListProperty = () => {
       });
     } finally {
       setIsSubmitting(false);
+      if (!applicationSubmitted) {
+        setSubmissionProgress(0);
+        setSubmissionCurrentStep("");
+      }
     }
   };
   const renderStepContent = () => {
@@ -930,15 +963,18 @@ const ListProperty = () => {
                 >
                   {t('listProperty.nextStep')}
                   <ArrowRight className="w-4 h-4" />
-                </Button> : <Button
+                </Button> : <LiquidProgressButton
                   variant="success"
                   className="flex items-center gap-2"
                   onClick={handleSubmitApplication}
                   disabled={isSubmitting || applicationSubmitted}
+                  isLoading={isSubmitting}
+                  progress={submissionProgress}
+                  loadingText={submissionCurrentStep}
                 >
-                  {isSubmitting ? t('listProperty.submitting') : applicationSubmitted ? t('listProperty.applicationSubmitted') : t('listProperty.completeApplication')}
+                  {applicationSubmitted ? t('listProperty.applicationSubmitted') : t('listProperty.completeApplication')}
                   <CheckCircle className="w-4 h-4" />
-                </Button>}
+                </LiquidProgressButton>}
             </div>
           </div>
         </div>
