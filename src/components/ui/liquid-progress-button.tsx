@@ -57,7 +57,7 @@ export const LiquidProgressButton = React.forwardRef<
   ...props 
 }, ref) => {
   const progressPercentage = Math.min(Math.max(progress, 0), 100);
-  const showProgress = isLoading && progressPercentage > 0;
+  const showProgress = isLoading;
   
   return (
     <Button
@@ -69,25 +69,22 @@ export const LiquidProgressButton = React.forwardRef<
       {/* Liquid fill background */}
       {showProgress && (
         <div 
-          className="absolute inset-0 bg-gradient-to-r from-magit-success via-magit-success to-magit-success/90 transition-all duration-300 ease-out"
+          className="absolute inset-0 z-0 transition-all duration-500 ease-out"
           style={{
             transform: `translateY(${100 - progressPercentage}%)`,
-            background: `linear-gradient(135deg, 
-              hsl(var(--magit-success)) 0%, 
-              hsl(var(--magit-success)) 70%, 
-              hsl(var(--magit-success)/0.9) 100%)`
+            backgroundColor: `hsl(var(--magit-success))`,
           }}
         >
           {/* Wave effect */}
           <div 
-            className={`absolute top-0 left-0 w-full h-2 opacity-30 ${progressPercentage > 0 ? 'animate-wave' : ''}`}
+            className="absolute top-0 left-0 w-full h-3 opacity-40 animate-wave"
             style={{
               background: `repeating-linear-gradient(
                 90deg,
                 transparent,
-                transparent 10px,
-                rgba(255,255,255,0.1) 10px,
-                rgba(255,255,255,0.1) 20px
+                transparent 8px,
+                rgba(255,255,255,0.2) 8px,
+                rgba(255,255,255,0.2) 16px
               )`
             }}
           />
@@ -99,7 +96,7 @@ export const LiquidProgressButton = React.forwardRef<
         {showProgress ? (
           <>
             {loadingText ? `${loadingText} ` : ""}
-            {progressPercentage}%
+            {Math.round(progressPercentage)}%
           </>
         ) : (
           children
