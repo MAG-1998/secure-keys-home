@@ -93,7 +93,7 @@ const ListProperty = () => {
     // Halal Financing
     halalFinancingRequested: false
   });
-  const totalSteps = 6;
+  const totalSteps = 5;
 
   // Persistence constants
   const STORAGE_KEY = 'magit_property_draft';
@@ -198,13 +198,8 @@ const ListProperty = () => {
     }
 
     if (currentStep < totalSteps) {
-      let nextStepNum = currentStep + 1;
-      // Skip payment step if no paid features are selected
-      if (currentStep === 4 && calculateTotalAmount() === 0) {
-        nextStepNum = currentStep + 2;
-      }
-      setCurrentStep(nextStepNum);
-      updateStepInUrl(nextStepNum);
+      setCurrentStep(currentStep + 1);
+      updateStepInUrl(currentStep + 1);
     }
   };
   const prevStep = () => {
@@ -807,36 +802,6 @@ const ListProperty = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
-                {t('listProperty.paymentFees')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="bg-gradient-card p-6 rounded-lg">
-                <h3 className="font-semibold mb-4">Listing Fees</h3>
-                
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Basic Listing:</span>
-                    <span className="font-semibold text-green-600">FREE</span>
-                  </div>
-                  <div className="border-t pt-2 flex justify-between font-semibold">
-                    <span>Total:</span>
-                    <span>{calculateTotalAmount().toLocaleString()} UZS</span>
-                  </div>
-                </div>
-              </div>
-              
-              <PaymentMethods 
-                amount={calculateTotalAmount()} 
-                onPaymentSuccess={() => setCurrentStep(5)} 
-              />
-            </CardContent>
-          </Card>;
-      case 6:
-        return <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
                 Review & Submit
               </CardTitle>
             </CardHeader>
@@ -959,10 +924,13 @@ const ListProperty = () => {
                 <span className="text-sm text-muted-foreground">{t('listProperty.stepProgress').replace('{current}', currentStep.toString()).replace('{total}', totalSteps.toString())}</span>
                 <span className="text-sm text-muted-foreground">{t('listProperty.percentComplete').replace('{percent}', Math.round(currentStep / totalSteps * 100).toString())}</span>
               </div>
-              <div className="w-full bg-muted rounded-full h-2 apple-glow-container overflow-hidden">
-                <div className="h-2 rounded-full transition-all duration-500 apple-glow-active orange-shimmer" style={{
-                width: `${currentStep / totalSteps * 100}%`
-              }} />
+              <div className="w-full bg-muted/20 rounded-full h-4 relative overflow-hidden">
+                <div 
+                  className="h-full rounded-full transition-all duration-500 relative bg-gradient-to-r from-[hsl(25,85%,53%)] to-[hsl(38,84%,60%)] shadow-[0_0_20px_hsl(25,85%,53%/0.4)]" 
+                  style={{ width: `${currentStep / totalSteps * 100}%` }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_2s_ease-in-out_infinite] transform -skew-x-12 w-full" />
+                </div>
               </div>
             </div>
           </div>
