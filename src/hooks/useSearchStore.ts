@@ -159,7 +159,12 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
       }
 
       if (searchFilters.propertyType && searchFilters.propertyType !== 'all') {
-        query = query.eq('property_type', searchFilters.propertyType)
+        if (searchFilters.propertyType === 'apartment') {
+          // When searching for apartments, include both apartments and studios
+          query = query.in('property_type', ['apartment', 'studio'])
+        } else {
+          query = query.eq('property_type', searchFilters.propertyType)
+        }
       }
       
       if (searchFilters.priceMin) {
