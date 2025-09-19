@@ -374,6 +374,16 @@ const translations: Translations = {
     ru: 'Студия',
     uz: 'Studiya'
   },
+  'filter.commercial': {
+    en: 'Commercial',
+    ru: 'Коммерческая',
+    uz: 'Tijorat'
+  },
+  'filter.land': {
+    en: 'Land',
+    ru: 'Участок',
+    uz: 'Yer'
+  },
   'filter.bedrooms': {
     en: 'Bedrooms',
     ru: 'Комнаты',
@@ -1088,6 +1098,21 @@ const translations: Translations = {
     en: 'Studio',
     ru: 'Студия',
     uz: 'Studiya'
+  },
+  'listProperty.commercial': {
+    en: 'Commercial',
+    ru: 'Коммерческая',
+    uz: 'Tijorat'
+  },
+  'listProperty.land': {
+    en: 'Land',
+    ru: 'Участок',
+    uz: 'Yer'
+  },
+  'listProperty.halalFinancingNotAvailable': {
+    en: 'Halal financing is not currently available for this property type',
+    ru: 'Халяль финансирование пока недоступно для этого типа недвижимости',
+    uz: 'Halol moliyalashtirish hozircha ushbu mulk turi uchun mavjud emas'
   },
   'listProperty.addressPlaceholder': {
     en: 'Enter full address in Tashkent',
@@ -4626,6 +4651,33 @@ const translations: Translations = {
     en: 'Pending (Legacy)',
     ru: 'Ожидает (Старая)',
     uz: 'Kutilmoqda (Eski)'
+  },
+
+  // Property type translations for components
+  'propertyType.apartment': {
+    en: 'Apartment',
+    ru: 'Квартира',
+    uz: 'Kvartira'
+  },
+  'propertyType.house': {
+    en: 'House',
+    ru: 'Дом',
+    uz: 'Uy'
+  },
+  'propertyType.studio': {
+    en: 'Studio',
+    ru: 'Студия',
+    uz: 'Studiya'
+  },
+  'propertyType.commercial': {
+    en: 'Commercial',
+    ru: 'Коммерческая',
+    uz: 'Tijorat'
+  },
+  'propertyType.land': {
+    en: 'Land',
+    ru: 'Участок',
+    uz: 'Yer'
   }
 };
 const LANGUAGE_STORAGE_KEY = 'magit_language';

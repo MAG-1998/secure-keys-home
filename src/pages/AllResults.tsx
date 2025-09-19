@@ -209,6 +209,8 @@ const AllResults = () => {
                         <SelectItem value="apartment">Apartment</SelectItem>
                         <SelectItem value="house">House</SelectItem>
                         <SelectItem value="studio">Studio</SelectItem>
+                        <SelectItem value="commercial">Commercial</SelectItem>
+                        <SelectItem value="land">Land</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

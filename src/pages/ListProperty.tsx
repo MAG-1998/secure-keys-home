@@ -514,6 +514,8 @@ const ListProperty = () => {
                     <SelectItem value="apartment">{t('listProperty.apartment')}</SelectItem>
                     <SelectItem value="house">{t('listProperty.house')}</SelectItem>
                     <SelectItem value="studio">{t('listProperty.studio')}</SelectItem>
+                    <SelectItem value="commercial">{t('listProperty.commercial')}</SelectItem>
+                    <SelectItem value="land">{t('listProperty.land')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -559,9 +561,11 @@ const ListProperty = () => {
                 </div>
               )}
               
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="bedrooms">{t('listProperty.bedrooms')}</Label>
+              {/* Hide bedrooms/bathrooms for Land properties */}
+              {formData.propertyType !== 'land' && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="bedrooms">{t('listProperty.bedrooms')}</Label>
                   <div className="space-y-2">
                     <Select value={formData.bedrooms} onValueChange={value => handleInputChange("bedrooms", value)}>
                       <SelectTrigger>
@@ -591,6 +595,7 @@ const ListProperty = () => {
                   </div>
                 </div>
               </div>
+              )}
               
               <div>
                 <Label htmlFor="description">{t('listProperty.propertyDescription')}</Label>
@@ -784,6 +789,7 @@ const ListProperty = () => {
                   <Checkbox 
                     id="halalFinancing" 
                     checked={formData.halalFinancingRequested}
+                    disabled={formData.propertyType === 'commercial' || formData.propertyType === 'land'}
                     onCheckedChange={(checked) => setFormData(prev => ({ ...prev, halalFinancingRequested: checked as boolean }))}
                   />
                   <div className="flex-1">
@@ -792,6 +798,11 @@ const ListProperty = () => {
                       Request to make your property available for Sharia-compliant financing. 
                       Our Islamic finance team will contact you within 1 week to discuss options.
                     </p>
+                    {(formData.propertyType === 'commercial' || formData.propertyType === 'land') && (
+                      <p className="text-sm text-amber-700 dark:text-amber-300 mt-2 bg-amber-50 dark:bg-amber-950/20 p-2 rounded border border-amber-200 dark:border-amber-800">
+                        ⚠️ {t('listProperty.halalFinancingNotAvailable')}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

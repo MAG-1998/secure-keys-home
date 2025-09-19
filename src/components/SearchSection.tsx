@@ -375,6 +375,8 @@ export const SearchSection = ({
                         <SelectItem value="house">{t('filter.house')}</SelectItem>
                         <SelectItem value="apartment">{t('filter.apartment')}</SelectItem>
                         <SelectItem value="studio">{t('filter.studio')}</SelectItem>
+                        <SelectItem value="commercial">{t('filter.commercial')}</SelectItem>
+                        <SelectItem value="land">{t('filter.land')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

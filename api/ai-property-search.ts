@@ -64,7 +64,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 Парсь запрос пользователя в JSON-объект со строго следующими полями:
 priceMin, priceMax, familySize, nearTashkent, maxDistanceKm, bedroomsMin, bathroomsMin, areaMin, verifiedOnly, financing, halalFinancing, districts[], propertyType.
 Поддерживаемые районы: Bektemir, Chilonzor, Mirobod, Mirzo-Ulugbek, Sergeli, Shaykhantahur, Uchtepa, Yakkasaray, Yunusobod, Yashnobod, Olmazor, Yangihayot.
-Типы недвижимости: apartment, house, studio, commercial.
+Типы недвижимости: apartment, house, studio, commercial, land.
 Если не уверен — оставляй поле пустым. Ответ строго в JSON без пояснений.`;
 
     const user = `Запрос: """${q}"""
