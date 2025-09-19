@@ -23,7 +23,7 @@ interface PropertyEditDialogProps {
 
 export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpdate }: PropertyEditDialogProps) => {
   const { toast } = useToast();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     display_name: "",
@@ -348,12 +348,12 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
                 </SelectTrigger>
                 <SelectContent className="bg-background border shadow-lg z-50">
                   <SelectItem value="">{t('common.any')}</SelectItem>
-                  {getDistrictOptions('ru' as Language).map(district => (
+                  {getDistrictOptions(language as Language).map(district => (
                     <SelectItem key={district.value} value={district.value}>
                       {district.label}
                     </SelectItem>
                   ))}
-                  <SelectItem value="Other">{localizeDistrict('Other', 'ru' as Language)}</SelectItem>
+                  <SelectItem value="Other">{localizeDistrict('Other', language as Language)}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
