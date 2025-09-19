@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { DragDropPhotoManager } from "./DragDropPhotoManager";
 import LocationPicker from "./LocationPicker";
 import { Textarea } from "@/components/ui/textarea";
+import { getDistrictOptions, localizeDistrict, type Language } from "@/lib/districts";
 
 interface PropertyEditDialogProps {
   open: boolean;
@@ -341,12 +342,20 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
             
             <div>
               <Label htmlFor="district">{t('filter.district')}</Label>
-              <Input
-                id="district"
-                value={formData.district}
-                onChange={(e) => setFormData(prev => ({ ...prev, district: e.target.value }))}
-                placeholder="Yunusobod, Shaykhontohur, etc."
-              />
+              <Select value={formData.district || ''} onValueChange={(value) => setFormData(prev => ({ ...prev, district: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t('filter.chooseDistrict')} />
+                </SelectTrigger>
+                <SelectContent className="bg-background border shadow-lg z-50">
+                  <SelectItem value="">{t('common.any')}</SelectItem>
+                  {getDistrictOptions('ru' as Language).map(district => (
+                    <SelectItem key={district.value} value={district.value}>
+                      {district.label}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="Other">{localizeDistrict('Other', 'ru' as Language)}</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             
             <LocationPicker
