@@ -618,7 +618,7 @@ const PropertyDetails = () => {
                   <div className="relative">
                     {images.length > 0 ? (
                       <>
-                        <Carousel className="w-full">
+                        <Carousel className="w-full relative">
                           <CarouselContent>
                             {images.map((src, idx) => (
                               <CarouselItem key={idx}>
@@ -641,8 +641,8 @@ const PropertyDetails = () => {
                               </CarouselItem>
                             ))}
                           </CarouselContent>
-                          <CarouselPrevious />
-                          <CarouselNext />
+                          <CarouselPrevious className="left-4" />
+                          <CarouselNext className="right-4" />
                         </Carousel>
                       </>
                     ) : (
