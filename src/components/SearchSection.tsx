@@ -470,35 +470,7 @@ export const SearchSection = ({
                 </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6">
-                    {results.slice(0, 15).map((property, index) => (
-                      <div 
-                        key={property.id}
-                        className={`
-                          ${index >= 3 ? 'hidden sm:block' : ''}
-                          ${index >= 6 ? 'hidden lg:block' : ''}
-                          ${index >= 9 ? 'hidden xl:block' : ''}
-                          ${index >= 12 ? 'hidden 2xl:block' : ''}
-                        `}
-                      >
-                        <PropertyCard 
-                          id={property.id} 
-                          title={property.title} 
-                          location={property.location} 
-                          price={property.priceUsd} 
-                          priceUsd={property.priceUsd} 
-                          bedrooms={property.bedrooms} 
-                          bathrooms={property.bathrooms} 
-                          area={property.area} 
-                          imageUrl={property.image_url} 
-                          isVerified={property.verified} 
-                          isHalalFinanced={property.financingAvailable} 
-                          isHalalMode={isHalalMode} 
-                          cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} 
-                          financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} 
-                          onClick={() => handlePropertyClick(property)}
-                        />
-                      </div>
-                    ))}
+                    {results.slice(0, 18).map(property => <PropertyCard key={property.id} id={property.id} title={property.title} location={property.location} price={property.priceUsd} priceUsd={property.priceUsd} bedrooms={property.bedrooms} bathrooms={property.bathrooms} area={property.area} imageUrl={property.image_url} isVerified={property.verified} isHalalFinanced={property.financingAvailable} isHalalMode={isHalalMode} cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} onClick={() => handlePropertyClick(property)} />)}
                   </div>
 
                   {/* View All Properties Button */}
