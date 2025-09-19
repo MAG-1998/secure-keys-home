@@ -169,11 +169,52 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       const coords = placemark.current.geometry.getCoordinates();
       getAddress(coords[0], coords[1]);
       onLocationSelect(coords[0], coords[1]);
+      // Re-assert overlay z-index after drag
+      try {
+        const overlayMaybePromise = placemark.current.getOverlay
+          ? placemark.current.getOverlay()
+          : placemark.current.getOverlaySync
+          ? Promise.resolve(placemark.current.getOverlaySync())
+          : null;
+        if (overlayMaybePromise) {
+          Promise.resolve(overlayMaybePromise)
+            .then((overlay: any) => {
+              const el = overlay?.getElement ? overlay.getElement() : overlay?._element;
+              if (el) {
+                (el as HTMLElement).style.zIndex = '4000';
+              }
+            })
+            .catch(() => {});
+        }
+      } catch {}
     });
 
     map.current.geoObjects.add(placemark.current);
-    
-    
+
+    // Force overlay z-index after render
+    try {
+      const overlayMaybePromise = placemark.current.getOverlay
+        ? placemark.current.getOverlay()
+        : placemark.current.getOverlaySync
+        ? Promise.resolve(placemark.current.getOverlaySync())
+        : null;
+      if (overlayMaybePromise) {
+        Promise.resolve(overlayMaybePromise)
+          .then((overlay: any) => {
+            const el = overlay?.getElement ? overlay.getElement() : overlay?._element;
+            if (el) {
+              (el as HTMLElement).style.zIndex = '4000';
+              try {
+                console.log('[LocationPicker] Placemark overlay z-index set to', getComputedStyle(el).zIndex);
+              } catch {}
+            }
+          })
+          .catch((e: any) => console.warn('[LocationPicker] getOverlay failed', e));
+      }
+    } catch (e) {
+      console.warn('[LocationPicker] overlay zIndex set failed', e);
+    }
+
     onLocationSelect(lat, lng);
   };
 
@@ -323,11 +364,12 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         </div>
         <style>
           {`
-            .ymaps-top-pins .ymaps-2-1-79-places-pane,
-            .ymaps-top-pins .ymaps-2-1-79-geoobjects-pane,
-            .ymaps-top-pins .ymaps-2-1-79-placemark-overlay,
-            .ymaps-top-pins .ymaps-2-1-79-labels-pane,
-            .ymaps-top-pins .ymaps-2-1-79-balloon-pane {
+            .ymaps-top-pins [class$='-places-pane'],
+            .ymaps-top-pins [class$='-geoobjects-pane'],
+            .ymaps-top-pins [class$='-placemark-overlay'],
+            .ymaps-top-pins [class$='-labels-pane'],
+            .ymaps-top-pins [class$='-balloon-pane'],
+            .ymaps-top-pins [class$='-overlay'] {
               z-index: 4000 !important;
             }
           `}
