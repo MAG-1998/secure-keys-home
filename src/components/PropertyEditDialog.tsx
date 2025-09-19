@@ -342,12 +342,12 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
             
             <div>
               <Label htmlFor="district">{t('filter.district')}</Label>
-              <Select value={formData.district || ''} onValueChange={(value) => setFormData(prev => ({ ...prev, district: value }))}>
+              <Select value={formData.district || 'all'} onValueChange={(value) => setFormData(prev => ({ ...prev, district: value === 'all' ? '' : value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder={t('filter.chooseDistrict')} />
                 </SelectTrigger>
                 <SelectContent className="bg-background border shadow-lg z-50">
-                  <SelectItem value="">{t('common.any')}</SelectItem>
+                  <SelectItem value="all">{t('common.any')}</SelectItem>
                   {getDistrictOptions(language as Language).map(district => (
                     <SelectItem key={district.value} value={district.value}>
                       {district.label}
