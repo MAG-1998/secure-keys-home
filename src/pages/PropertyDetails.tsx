@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
-import { MapPin, Bed, Bath, Square, Calendar as CalendarIcon, MessageCircle, Heart, Maximize2, LogOut, Edit, Trash2, Flag } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Calendar as CalendarIcon, MessageCircle, Heart, Maximize2, LogOut, Edit, Trash2, Flag, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -895,7 +895,15 @@ const PropertyDetails = () => {
         <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
           <DialogContent className="max-w-5xl p-0">
             <div className="relative">
-              <Carousel className="w-full">
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute top-4 right-4 z-50 bg-background/80 backdrop-blur-sm"
+                onClick={() => setLightboxOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+              <Carousel className="w-full" opts={{ startIndex: lightboxIndex }}>
                 <CarouselContent>
                   {images.map((src, idx) => (
                     <CarouselItem key={idx} className="flex items-center justify-center bg-black">
