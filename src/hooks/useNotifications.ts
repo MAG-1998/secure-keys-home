@@ -15,7 +15,7 @@ export type AppNotification = {
   created_at: string
 }
 
-export function useNotifications(limit = 25) {
+export function useNotifications(limit = 5) {
   const { user } = useUser()
   const [notifications, setNotifications] = useState<AppNotification[]>([])
   const [loading, setLoading] = useState(false)
@@ -25,6 +25,11 @@ export function useNotifications(limit = 25) {
   const fetchNotifications = useCallback(async () => {
     if (!userId) return
     setLoading(true)
+    
+    // Clean up old notifications first (keep only latest 5)
+    await supabase.rpc('cleanup_old_notifications')
+    
+    // Fetch the latest notifications
     const { data } = await supabase
       .from('notifications')
       .select('*')

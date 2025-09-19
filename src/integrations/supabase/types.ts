@@ -1094,6 +1094,10 @@ export type Database = {
           reason: string
         }[]
       }
+      cleanup_old_notifications: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       create_property_from_application: {
         Args: { application_id: string }
         Returns: string

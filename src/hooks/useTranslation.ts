@@ -3107,6 +3107,11 @@ const translations: Translations = {
     ru: 'Недвижимость одобрена',
     uz: 'Mulk tasdiqlandi'
   },
+  'notification.property.rejected': {
+    en: 'Property rejected',
+    ru: 'Недвижимость отклонена',
+    uz: 'Mulk rad etildi'
+  },
   'notification.property.sold': {
     en: 'Property sold',
     ru: 'Недвижимость продана',
@@ -3116,6 +3121,16 @@ const translations: Translations = {
     en: 'Property listed for financing',
     ru: 'Недвижимость добавлена для финансирования',
     uz: 'Mulk moliyalashtirish uchun qo\'shildi'
+  },
+  'notification.property.halal_approved': {
+    en: 'Halal financing approved',
+    ru: 'Халяльное финансирование одобрено',
+    uz: 'Halol moliyalashtirish tasdiqlandi'
+  },
+  'notification.property.halal_denied': {
+    en: 'Halal financing denied',
+    ru: 'Халяльное финансирование отклонено',
+    uz: 'Halol moliyalashtirish rad etildi'
   },
   'notification.saved.new': {
     en: 'Property saved',
@@ -3200,6 +3215,26 @@ const translations: Translations = {
     en: 'Your property has been successfully verified',
     ru: 'Ваша недвижимость успешно верифицирована',
     uz: 'Mulkingiz muvaffaqiyatli tasdiqlandi'
+  },
+  'notification.body.property.approved': {
+    en: 'Your property listing has been approved and is now visible to buyers',
+    ru: 'Ваше объявление о недвижимости одобрено и теперь видно покупателям',
+    uz: 'Mulk e\'loningiz tasdiqlandi va endi xaridorlarga ko\'rinadi'
+  },
+  'notification.body.property.rejected': {
+    en: 'Your property listing was rejected. Please review the feedback and resubmit',
+    ru: 'Ваше объявление о недвижимости было отклонено. Пожалуйста, ознакомьтесь с отзывами и подайте заново',
+    uz: 'Mulk e\'loningiz rad etildi. Iltimos, fikr-mulohazalarni ko\'rib chiqing va qayta yuboring'
+  },
+  'notification.body.property.halal_approved': {
+    en: 'Your property has been approved for Sharia-compliant financing',
+    ru: 'Ваша недвижимость одобрена для шариатского финансирования',
+    uz: 'Mulkingiz shariat qoidalariga mos moliyalashtirish uchun tasdiqlandi'
+  },
+  'notification.body.property.halal_denied': {
+    en: 'Your halal financing request has been denied. Contact support for details',
+    ru: 'Ваша заявка на халяльное финансирование отклонена. Обратитесь в поддержку за подробностями',
+    uz: 'Halol moliyalashtirish so\'rovingiz rad etildi. Tafsilotlar uchun qo\'llab-quvvatlash xizmatiga murojaat qiling'
   },
 
   // Additional notification body translations

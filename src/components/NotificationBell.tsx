@@ -31,8 +31,11 @@ export function NotificationBell() {
       'financing:sent_back': 'notification.financing.sent_back',
       'property:verified': 'notification.property.verified',
       'property:approved': 'notification.property.approved',
+      'property:rejected': 'notification.property.rejected',
       'property:sold': 'notification.property.sold',
       'property:financing_listed': 'notification.property.financing_listed',
+      'property:halal_approved': 'notification.property.halal_approved',
+      'property:halal_denied': 'notification.property.halal_denied',
       'saved:new': 'notification.saved.new',
       'support:ticket_new': 'notification.support.ticket_new',
       'support:ticket_escalated': 'notification.support.ticket_escalated',
@@ -80,6 +83,10 @@ export function NotificationBell() {
       'financing:final_approval': 'notification.body.financing.final_approval',
       'financing:sent_back': 'notification.body.financing.sent_back',
       'property:verified': 'notification.body.property.verified',
+      'property:approved': 'notification.body.property.approved',
+      'property:rejected': 'notification.body.property.rejected',
+      'property:halal_approved': 'notification.body.property.halal_approved',
+      'property:halal_denied': 'notification.body.property.halal_denied',
       'support:ticket_new': 'notification.body.support.ticket_new',
       'support:ticket_escalated': 'notification.body.support.ticket_escalated',
       'report:new': 'notification.body.report.new'
@@ -126,8 +133,11 @@ export function NotificationBell() {
     if (type.startsWith('financing:')) return <DollarSign className="h-4 w-4" />
     if (type === 'property:verified') return <ShieldCheck className="h-4 w-4" />
     if (type === 'property:approved') return <BadgeCheck className="h-4 w-4" />
+    if (type === 'property:rejected') return <XCircle className="h-4 w-4" />
     if (type === 'property:sold') return <Home className="h-4 w-4" />
     if (type === 'property:financing_listed') return <DollarSign className="h-4 w-4" />
+    if (type === 'property:halal_approved') return <BadgeCheck className="h-4 w-4" />
+    if (type === 'property:halal_denied') return <XCircle className="h-4 w-4" />
     if (type.startsWith('saved:')) return <Home className="h-4 w-4" />
     if (type.startsWith('support:')) return <MessageSquare className="h-4 w-4" />
     if (type.startsWith('report:')) return <Bell className="h-4 w-4" />
@@ -156,7 +166,7 @@ export function NotificationBell() {
         {notifications.length === 0 && (
           <div className="p-4 text-sm text-muted-foreground">{t('notifications.allCaughtUp')}</div>
         )}
-        {notifications.slice(0, 10).map((n) => (
+        {notifications.map((n) => (
           <DropdownMenuItem
             key={n.id}
             className={`flex items-start gap-3 py-3 px-3 relative ${!n.read_at ? 'bg-muted/40' : ''}`}
@@ -180,10 +190,10 @@ export function NotificationBell() {
             </div>
           </DropdownMenuItem>
         ))}
-        {notifications.length > 10 && (
+        {notifications.length === 5 && (
           <>
             <DropdownMenuSeparator />
-            <div className="px-3 py-2 text-xs text-muted-foreground">{t('notifications.showingLatest')} {Math.min(10, notifications.length)} {t('notifications.of')} {notifications.length}</div>
+            <div className="px-3 py-2 text-xs text-muted-foreground">Showing latest 5 notifications</div>
           </>
         )}
       </DropdownMenuContent>
