@@ -222,6 +222,15 @@ export default function ModeratorDashboard() {
     try {
       console.log(`Reviewing application ${applicationId} with status: ${status}`);
       
+      // Get the application details first to access user_id for notifications
+      const { data: applicationData, error: fetchError } = await supabase
+        .from('properties')
+        .select('user_id, title, location')
+        .eq('id', applicationId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
       const updateData: any = {
         status: status === 'approved' ? 'active' : status,
         moderator_notes: moderatorNotes[applicationId] || '',
@@ -245,6 +254,38 @@ export default function ModeratorDashboard() {
       if (appError) {
         console.error('Supabase error:', appError);
         throw appError;
+      }
+
+      // Create notification for property owner
+      const notificationType = status === 'approved' ? 'property:approved' : 'property:rejected';
+      const notificationTitle = status === 'approved' ? 'Property Approved' : 'Property Rejected';
+      const notificationBody = status === 'approved' 
+        ? `Your property "${applicationData.title || applicationData.location}" has been approved and is now live.`
+        : `Your property "${applicationData.title || applicationData.location}" was rejected. ${moderatorNotes[applicationId] ? 'Review the notes for more details.' : ''}`;
+
+      try {
+        const { error: notificationError } = await supabase
+          .from('notifications')
+          .insert({
+            user_id: applicationData.user_id,
+            type: notificationType,
+            title: notificationTitle,
+            body: notificationBody,
+            entity_type: 'property',
+            entity_id: applicationId,
+            data: {
+              moderator_notes: moderatorNotes[applicationId] || null,
+              status: status
+            }
+          });
+
+        if (notificationError) {
+          console.error('Error creating notification:', notificationError);
+          // Don't throw here - notification failure shouldn't break the approval process
+        }
+      } catch (notificationError) {
+        console.error('Failed to create notification:', notificationError);
+        // Continue with the process even if notification fails
       }
 
       toast({
