@@ -159,9 +159,9 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         iconImageSize: [44, 60],
         iconImageOffset: [-22, -60],
         draggable: true,
-        pane: 'places',
-        zIndex: 2000,
-        zIndexHover: 2100
+        zIndex: 4000,
+        zIndexHover: 4100,
+        iconZIndex: 4000
       }
     );
 
@@ -173,12 +173,6 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 
     map.current.geoObjects.add(placemark.current);
     
-    // Ensure placemark appears on top
-    setTimeout(() => {
-      if (placemark.current) {
-        placemark.current.options.set('zIndex', 999);
-      }
-    }, 100);
     
     onLocationSelect(lat, lng);
   };
@@ -324,9 +318,20 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
               </div>
             </div>
           ) : (
-            <div ref={mapContainer} className="absolute inset-0" />
+            <div ref={mapContainer} className="absolute inset-0 ymaps-top-pins" />
           )}
         </div>
+        <style>
+          {`
+            .ymaps-top-pins .ymaps-2-1-79-places-pane,
+            .ymaps-top-pins .ymaps-2-1-79-geoobjects-pane,
+            .ymaps-top-pins .ymaps-2-1-79-placemark-overlay,
+            .ymaps-top-pins .ymaps-2-1-79-labels-pane,
+            .ymaps-top-pins .ymaps-2-1-79-balloon-pane {
+              z-index: 4000 !important;
+            }
+          `}
+        </style>
         
         {selectedAddress && (
           <div className="bg-muted/50 p-3 rounded-lg">
