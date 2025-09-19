@@ -203,7 +203,15 @@ async function queryRealProperties(supabase: any, f: ParsedFilters, opts: { curs
     if (f.verifiedOnly) query = query.eq('is_verified', true);
     if (f.financing || f.halalFinancing) query = query.eq('is_halal_financed', true);
     if (f.districts?.length) query = query.in('district', f.districts);
-    if (f.propertyType) query = query.eq('property_type', f.propertyType);
+    
+    // Special handling for property types - apartment includes studio
+    if (f.propertyType) {
+      if (f.propertyType === 'apartment') {
+        query = query.in('property_type', ['apartment', 'studio']);
+      } else {
+        query = query.eq('property_type', f.propertyType);
+      }
+    }
 
     query = query.limit(opts.pageSize);
 
@@ -279,7 +287,17 @@ function scoreProperty(p: SanitizedProperty, f: ParsedFilters): number {
   if ((f.financing || f.halalFinancing) && !p.financingAvailable) score += 15
   if (f.verifiedOnly && !p.verified) score += 10
   if (f.districts?.length && p.district && !f.districts.includes(p.district)) score += 8
-  if (f.propertyType && p.propertyType !== f.propertyType) score += 12
+  
+  // Property type scoring - apartment search should accept studios with low penalty
+  if (f.propertyType && p.propertyType) {
+    if (f.propertyType === 'apartment' && p.propertyType === 'studio') {
+      score += 2; // Small penalty for studio when searching apartment
+    } else if (f.propertyType !== p.propertyType) {
+      score += 12; // High penalty for different types
+    }
+  } else if (f.propertyType && !p.propertyType) {
+    score += 12;
+  }
 
   // Bonuses for good features
   if (p.verified) score -= 2
@@ -346,8 +364,16 @@ function buildWhyGood(p: SanitizedProperty, f: ParsedFilters, mode: 'strict'|'re
   }
 
   // Property type analysis
-  if (f.propertyType && p.propertyType !== f.propertyType) {
-    cons.push(`другой тип недвижимости (${p.propertyType || 'не указан'})`)
+  if (f.propertyType && p.propertyType) {
+    if (f.propertyType === 'apartment' && p.propertyType === 'studio') {
+      pros.push(`студия (подходит для поиска квартир)`)
+    } else if (f.propertyType !== p.propertyType) {
+      cons.push(`другой тип недвижимости (${p.propertyType})`)
+    } else {
+      pros.push(`тип: ${p.propertyType}`)
+    }
+  } else if (f.propertyType && !p.propertyType) {
+    cons.push(`тип недвижимости не указан`)
   } else if (p.propertyType) {
     pros.push(`тип: ${p.propertyType}`)
   }
