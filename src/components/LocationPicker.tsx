@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useId } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MapPin, Check, Search, LocateFixed } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useMapLoader } from "@/hooks/useMapLoader";
 
 interface LocationPickerProps {
   onLocationSelect: (lat: number, lng: number, address?: string) => void;
@@ -25,38 +26,21 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   initialAddress
 }) => {
   const { language, t } = useTranslation();
+  const { mapLoaded, loadMap } = useMapLoader(language);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
   const placemark = useRef<any>(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const suggestView = useRef<any>(null);
+  const inputId = useId();
 
-  // Load Yandex Maps API
+  // Load map when needed
   useEffect(() => {
-    if (window.ymaps) {
-      setMapLoaded(true);
-      return;
+    if (!mapLoaded) {
+      loadMap();
     }
-
-    const ymLang = language === 'ru' ? 'ru_RU' : (language === 'uz' ? 'uz_UZ' : 'en_US');
-    const script = document.createElement('script');
-    script.src = `https://api-maps.yandex.ru/2.1/?apikey=8baec550-0c9b-458c-b9bd-e9893af7beb7&lang=${ymLang}`;
-    script.async = true;
-    script.onload = () => {
-      window.ymaps.ready(() => {
-        setMapLoaded(true);
-      });
-    };
-    document.head.appendChild(script);
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
-  }, []);
+  }, [mapLoaded, loadMap]);
 
   // Initialize map
   useEffect(() => {
@@ -69,6 +53,26 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       zoom: selectedLat && selectedLng ? 15 : 11,
       controls: ['zoomControl', 'typeSelector', 'geolocationControl']
     });
+
+    // Add ResizeObserver to handle container size changes
+    const resizeObserver = new ResizeObserver(() => {
+      if (map.current && map.current.container) {
+        setTimeout(() => {
+          map.current.container.fitToViewport();
+        }, 100);
+      }
+    });
+
+    if (mapContainer.current) {
+      resizeObserver.observe(mapContainer.current);
+    }
+
+    // Initial fitToViewport after map loads
+    setTimeout(() => {
+      if (map.current && map.current.container) {
+        map.current.container.fitToViewport();
+      }
+    }, 300);
 
     // Add existing placemark if coordinates provided
     if (selectedLat && selectedLng) {
@@ -98,12 +102,18 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       addPlacemark(coords[0], coords[1]);
       getAddress(coords[0], coords[1]);
     });
-  }, [mapLoaded, selectedLat, selectedLng, initialAddress, onLocationSelect]);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [mapLoaded]);
 
   const addPlacemark = (lat: number, lng: number) => {
-    // Remove existing placemark
+    // Update existing placemark coordinates if it exists
     if (placemark.current) {
-      map.current.geoObjects.remove(placemark.current);
+      placemark.current.geometry.setCoordinates([lat, lng]);
+      onLocationSelect(lat, lng);
+      return;
     }
 
     // Create custom pin image like main map
@@ -137,7 +147,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       return canvas.toDataURL('image/png');
     };
 
-    // Add new placemark with custom Magit icon
+    // Add new placemark with custom Magit icon and high z-index
     placemark.current = new window.ymaps.Placemark(
       [lat, lng],
       {
@@ -147,7 +157,11 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         iconLayout: 'default#image',
         iconImageHref: composePinImage(),
         iconImageSize: [44, 60],
-        iconImageOffset: [-22, -60]
+        iconImageOffset: [-22, -60],
+        draggable: true,
+        pane: 'places',
+        zIndex: 2000,
+        zIndexHover: 2100
       }
     );
 
@@ -158,6 +172,14 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     });
 
     map.current.geoObjects.add(placemark.current);
+    
+    // Ensure placemark appears on top
+    setTimeout(() => {
+      if (placemark.current) {
+        placemark.current.options.set('zIndex', 999);
+      }
+    }, 100);
+    
     onLocationSelect(lat, lng);
   };
 
@@ -217,12 +239,21 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     );
   };
 
+  // Handle selectedLat/selectedLng prop changes
+  useEffect(() => {
+    if (selectedLat && selectedLng && map.current) {
+      addPlacemark(selectedLat, selectedLng);
+      map.current.setCenter([selectedLat, selectedLng], 15, { duration: 300 });
+    }
+  }, [selectedLat, selectedLng]);
+
   // Yandex Suggest for address search
   useEffect(() => {
     if (!mapLoaded || !window.ymaps || !window.ymaps.SuggestView) return;
     // Initialize SuggestView on the search input
     try {
-      suggestView.current = new window.ymaps.SuggestView('address-search-input', { results: 7 });
+      const searchInputId = `address-search-input-${inputId}`;
+      suggestView.current = new window.ymaps.SuggestView(searchInputId, { results: 7 });
       suggestView.current.events.add('select', (e: any) => {
         const value = e.get('item').value;
         setSearchQuery(value);
@@ -239,7 +270,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         }
       } catch {}
     };
-  }, [mapLoaded]);
+  }, [mapLoaded, inputId]);
 
   return (
     <Card>
@@ -256,7 +287,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             <div className="bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur border rounded-md p-2 shadow-sm">
               <div className="flex items-center gap-2">
                 <Input
-                  id="address-search-input"
+                  id={`address-search-input-${inputId}`}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('address.searchPlaceholder')}
