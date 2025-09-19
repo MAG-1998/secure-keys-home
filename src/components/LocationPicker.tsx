@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState, useId } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MapPin, Check, Search, LocateFixed } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useMapLoader } from "@/hooks/useMapLoader";
 
 interface LocationPickerProps {
   onLocationSelect: (lat: number, lng: number, address?: string) => void;
@@ -26,21 +25,38 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   initialAddress
 }) => {
   const { language, t } = useTranslation();
-  const { mapLoaded, loadMap } = useMapLoader(language);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
   const placemark = useRef<any>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const suggestView = useRef<any>(null);
-  const inputId = useId();
 
-  // Load map when needed
+  // Load Yandex Maps API
   useEffect(() => {
-    if (!mapLoaded) {
-      loadMap();
+    if (window.ymaps) {
+      setMapLoaded(true);
+      return;
     }
-  }, [mapLoaded, loadMap]);
+
+    const ymLang = language === 'ru' ? 'ru_RU' : (language === 'uz' ? 'uz_UZ' : 'en_US');
+    const script = document.createElement('script');
+    script.src = `https://api-maps.yandex.ru/2.1/?apikey=8baec550-0c9b-458c-b9bd-e9893af7beb7&lang=${ymLang}`;
+    script.async = true;
+    script.onload = () => {
+      window.ymaps.ready(() => {
+        setMapLoaded(true);
+      });
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, []);
 
   // Initialize map
   useEffect(() => {
@@ -53,26 +69,6 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       zoom: selectedLat && selectedLng ? 15 : 11,
       controls: ['zoomControl', 'typeSelector', 'geolocationControl']
     });
-
-    // Add ResizeObserver to handle container size changes
-    const resizeObserver = new ResizeObserver(() => {
-      if (map.current && map.current.container) {
-        setTimeout(() => {
-          map.current.container.fitToViewport();
-        }, 100);
-      }
-    });
-
-    if (mapContainer.current) {
-      resizeObserver.observe(mapContainer.current);
-    }
-
-    // Initial fitToViewport after map loads
-    setTimeout(() => {
-      if (map.current && map.current.container) {
-        map.current.container.fitToViewport();
-      }
-    }, 300);
 
     // Add existing placemark if coordinates provided
     if (selectedLat && selectedLng) {
@@ -102,18 +98,12 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       addPlacemark(coords[0], coords[1]);
       getAddress(coords[0], coords[1]);
     });
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [mapLoaded]);
+  }, [mapLoaded, selectedLat, selectedLng, initialAddress, onLocationSelect]);
 
   const addPlacemark = (lat: number, lng: number) => {
-    // Update existing placemark coordinates if it exists
+    // Remove existing placemark
     if (placemark.current) {
-      placemark.current.geometry.setCoordinates([lat, lng]);
-      onLocationSelect(lat, lng);
-      return;
+      map.current.geoObjects.remove(placemark.current);
     }
 
     // Create custom pin image like main map
@@ -147,7 +137,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       return canvas.toDataURL('image/png');
     };
 
-    // Add new placemark with custom Magit icon and high z-index
+    // Add new placemark with custom Magit icon
     placemark.current = new window.ymaps.Placemark(
       [lat, lng],
       {
@@ -157,11 +147,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         iconLayout: 'default#image',
         iconImageHref: composePinImage(),
         iconImageSize: [44, 60],
-        iconImageOffset: [-22, -60],
-        draggable: true,
-        zIndex: 4000,
-        zIndexHover: 4100,
-        iconZIndex: 4000
+        iconImageOffset: [-22, -60]
       }
     );
 
@@ -169,52 +155,9 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       const coords = placemark.current.geometry.getCoordinates();
       getAddress(coords[0], coords[1]);
       onLocationSelect(coords[0], coords[1]);
-      // Re-assert overlay z-index after drag
-      try {
-        const overlayMaybePromise = placemark.current.getOverlay
-          ? placemark.current.getOverlay()
-          : placemark.current.getOverlaySync
-          ? Promise.resolve(placemark.current.getOverlaySync())
-          : null;
-        if (overlayMaybePromise) {
-          Promise.resolve(overlayMaybePromise)
-            .then((overlay: any) => {
-              const el = overlay?.getElement ? overlay.getElement() : overlay?._element;
-              if (el) {
-                (el as HTMLElement).style.zIndex = '4000';
-              }
-            })
-            .catch(() => {});
-        }
-      } catch {}
     });
 
     map.current.geoObjects.add(placemark.current);
-
-    // Force overlay z-index after render
-    try {
-      const overlayMaybePromise = placemark.current.getOverlay
-        ? placemark.current.getOverlay()
-        : placemark.current.getOverlaySync
-        ? Promise.resolve(placemark.current.getOverlaySync())
-        : null;
-      if (overlayMaybePromise) {
-        Promise.resolve(overlayMaybePromise)
-          .then((overlay: any) => {
-            const el = overlay?.getElement ? overlay.getElement() : overlay?._element;
-            if (el) {
-              (el as HTMLElement).style.zIndex = '4000';
-              try {
-                console.log('[LocationPicker] Placemark overlay z-index set to', getComputedStyle(el).zIndex);
-              } catch {}
-            }
-          })
-          .catch((e: any) => console.warn('[LocationPicker] getOverlay failed', e));
-      }
-    } catch (e) {
-      console.warn('[LocationPicker] overlay zIndex set failed', e);
-    }
-
     onLocationSelect(lat, lng);
   };
 
@@ -274,21 +217,12 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     );
   };
 
-  // Handle selectedLat/selectedLng prop changes
-  useEffect(() => {
-    if (selectedLat && selectedLng && map.current) {
-      addPlacemark(selectedLat, selectedLng);
-      map.current.setCenter([selectedLat, selectedLng], 15, { duration: 300 });
-    }
-  }, [selectedLat, selectedLng]);
-
   // Yandex Suggest for address search
   useEffect(() => {
     if (!mapLoaded || !window.ymaps || !window.ymaps.SuggestView) return;
     // Initialize SuggestView on the search input
     try {
-      const searchInputId = `address-search-input-${inputId}`;
-      suggestView.current = new window.ymaps.SuggestView(searchInputId, { results: 7 });
+      suggestView.current = new window.ymaps.SuggestView('address-search-input', { results: 7 });
       suggestView.current.events.add('select', (e: any) => {
         const value = e.get('item').value;
         setSearchQuery(value);
@@ -305,7 +239,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
         }
       } catch {}
     };
-  }, [mapLoaded, inputId]);
+  }, [mapLoaded]);
 
   return (
     <Card>
@@ -322,7 +256,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             <div className="bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur border rounded-md p-2 shadow-sm">
               <div className="flex items-center gap-2">
                 <Input
-                  id={`address-search-input-${inputId}`}
+                  id="address-search-input"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('address.searchPlaceholder')}
@@ -359,21 +293,9 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
               </div>
             </div>
           ) : (
-            <div ref={mapContainer} className="absolute inset-0 ymaps-top-pins" />
+            <div ref={mapContainer} className="absolute inset-0" />
           )}
         </div>
-        <style>
-          {`
-            .ymaps-top-pins [class$='-places-pane'],
-            .ymaps-top-pins [class$='-geoobjects-pane'],
-            .ymaps-top-pins [class$='-placemark-overlay'],
-            .ymaps-top-pins [class$='-labels-pane'],
-            .ymaps-top-pins [class$='-balloon-pane'],
-            .ymaps-top-pins [class$='-overlay'] {
-              z-index: 4000 !important;
-            }
-          `}
-        </style>
         
         {selectedAddress && (
           <div className="bg-muted/50 p-3 rounded-lg">
