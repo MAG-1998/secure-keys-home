@@ -663,7 +663,7 @@ const PropertyDetails = () => {
                     )}
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                    <span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {property.location}</span>
+                    <span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {t('admin.dashboard.properties.location')}: {property.location}</span>
                     {property.is_verified && (<Badge variant="success">Verified</Badge>)}
                     {property.is_halal_available && property.halal_status === 'approved' && (<Badge variant="trust">Halal Financing</Badge>)}
                   </div>

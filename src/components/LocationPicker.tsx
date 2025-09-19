@@ -106,18 +106,48 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       map.current.geoObjects.remove(placemark.current);
     }
 
-    // Add new placemark with higher z-index
+    // Create custom pin image like main map
+    const composePinImage = () => {
+      const WIDTH = 44;
+      const HEIGHT = 60;
+      const canvas = document.createElement('canvas');
+      canvas.width = WIDTH;
+      canvas.height = HEIGHT;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return '';
+
+      // Draw teardrop pin shape
+      ctx.beginPath();
+      ctx.moveTo(22, 58);
+      ctx.quadraticCurveTo(44, 38, 22, 10);
+      ctx.quadraticCurveTo(0, 38, 22, 58);
+      ctx.closePath();
+      ctx.fillStyle = 'hsl(24 95% 53%)'; // brand orange like main map
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'hsl(0 0% 100% / 0.5)';
+      ctx.stroke();
+
+      // Inner circle for accent
+      ctx.beginPath();
+      ctx.arc(22, 22, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'hsl(0 0% 100% / 0.85)';
+      ctx.fill();
+
+      return canvas.toDataURL('image/png');
+    };
+
+    // Add new placemark with custom Magit icon
     placemark.current = new window.ymaps.Placemark(
       [lat, lng],
       {
         balloonContent: 'Selected location'
       },
       {
-        preset: 'islands#redIcon',
-        draggable: true,
-        zIndex: 1000,
-        zIndexActive: 1001,
-        zIndexHover: 1002
+        iconLayout: 'default#image',
+        iconImageHref: composePinImage(),
+        iconImageSize: [44, 60],
+        iconImageOffset: [-22, -60]
       }
     );
 
