@@ -504,7 +504,8 @@ const ListProperty = () => {
                   id="displayName" 
                   placeholder={t('listProperty.propertyName')} 
                   value={formData.displayName || ""} 
-                  onChange={e => handleInputChange("displayName", e.target.value)} 
+                  onChange={e => handleInputChange("displayName", e.target.value)}
+                  autoComplete="off"
                 />
               </div>
               
