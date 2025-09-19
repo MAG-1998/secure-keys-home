@@ -470,7 +470,27 @@ export const SearchSection = ({
                 </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6">
-                    {results.slice(0, 15).map(property => <PropertyCard key={property.id} id={property.id} title={property.title} location={property.location} price={property.priceUsd} priceUsd={property.priceUsd} bedrooms={property.bedrooms} bathrooms={property.bathrooms} area={property.area} imageUrl={property.image_url} isVerified={property.verified} isHalalFinanced={property.financingAvailable} isHalalMode={isHalalMode} cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} onClick={() => handlePropertyClick(property)} />)}
+                    {/* Show exactly 3 rows for each breakpoint */}
+                    <div className="contents sm:hidden">
+                      {/* Mobile: 1 column × 3 rows = 3 properties */}
+                      {results.slice(0, 3).map(property => <PropertyCard key={property.id} id={property.id} title={property.title} location={property.location} price={property.priceUsd} priceUsd={property.priceUsd} bedrooms={property.bedrooms} bathrooms={property.bathrooms} area={property.area} imageUrl={property.image_url} isVerified={property.verified} isHalalFinanced={property.financingAvailable} isHalalMode={isHalalMode} cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} onClick={() => handlePropertyClick(property)} />)}
+                    </div>
+                    <div className="contents hidden sm:block lg:hidden">
+                      {/* Small: 2 columns × 3 rows = 6 properties */}
+                      {results.slice(0, 6).map(property => <PropertyCard key={property.id} id={property.id} title={property.title} location={property.location} price={property.priceUsd} priceUsd={property.priceUsd} bedrooms={property.bedrooms} bathrooms={property.bathrooms} area={property.area} imageUrl={property.image_url} isVerified={property.verified} isHalalFinanced={property.financingAvailable} isHalalMode={isHalalMode} cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} onClick={() => handlePropertyClick(property)} />)}
+                    </div>
+                    <div className="contents hidden lg:block xl:hidden">
+                      {/* Large: 3 columns × 3 rows = 9 properties */}
+                      {results.slice(0, 9).map(property => <PropertyCard key={property.id} id={property.id} title={property.title} location={property.location} price={property.priceUsd} priceUsd={property.priceUsd} bedrooms={property.bedrooms} bathrooms={property.bathrooms} area={property.area} imageUrl={property.image_url} isVerified={property.verified} isHalalFinanced={property.financingAvailable} isHalalMode={isHalalMode} cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} onClick={() => handlePropertyClick(property)} />)}
+                    </div>
+                    <div className="contents hidden xl:block 2xl:hidden">
+                      {/* XL: 4 columns × 3 rows = 12 properties */}
+                      {results.slice(0, 12).map(property => <PropertyCard key={property.id} id={property.id} title={property.title} location={property.location} price={property.priceUsd} priceUsd={property.priceUsd} bedrooms={property.bedrooms} bathrooms={property.bathrooms} area={property.area} imageUrl={property.image_url} isVerified={property.verified} isHalalFinanced={property.financingAvailable} isHalalMode={isHalalMode} cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} onClick={() => handlePropertyClick(property)} />)}
+                    </div>
+                    <div className="contents hidden 2xl:block">
+                      {/* 2XL: 5 columns × 3 rows = 15 properties */}
+                      {results.slice(0, 15).map(property => <PropertyCard key={property.id} id={property.id} title={property.title} location={property.location} price={property.priceUsd} priceUsd={property.priceUsd} bedrooms={property.bedrooms} bathrooms={property.bathrooms} area={property.area} imageUrl={property.image_url} isVerified={property.verified} isHalalFinanced={property.financingAvailable} isHalalMode={isHalalMode} cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} onClick={() => handlePropertyClick(property)} />)}
+                    </div>
                   </div>
 
                   {/* View All Properties Button */}
