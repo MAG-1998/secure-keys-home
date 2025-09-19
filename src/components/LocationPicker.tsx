@@ -106,7 +106,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       map.current.geoObjects.remove(placemark.current);
     }
 
-    // Add new placemark
+    // Add new placemark with higher z-index
     placemark.current = new window.ymaps.Placemark(
       [lat, lng],
       {
@@ -114,7 +114,10 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       },
       {
         preset: 'islands#redIcon',
-        draggable: true
+        draggable: true,
+        zIndex: 1000,
+        zIndexActive: 1001,
+        zIndexHover: 1002
       }
     );
 
