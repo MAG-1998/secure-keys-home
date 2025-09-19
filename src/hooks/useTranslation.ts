@@ -2891,6 +2891,7 @@ const translations: Translations = {
   'property.edit': { en: 'Edit', ru: 'Редактировать', uz: 'Tahrirlash' },
   'property.save': { en: 'Save Changes', ru: 'Сохранить изменения', uz: 'O\'zgarishlarni saqlash' },
   'property.generalInfo': { en: 'General Info', ru: 'Общая информация', uz: 'Umumiy ma\'lumot' },
+  'property.location': { en: 'Location', ru: 'Местоположение', uz: 'Joylashuv' },
   'property.photos': { en: 'Photos', ru: 'Фотографии', uz: 'Suratlar' },
   'property.financing': { en: 'Financing', ru: 'Финансирование', uz: 'Moliyalashtirish' },
   'property.displayName': { en: 'Display Name', ru: 'Отображаемое имя', uz: 'Ko\'rsatiladigan nom' },
