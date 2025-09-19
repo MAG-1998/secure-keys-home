@@ -502,10 +502,12 @@ const ListProperty = () => {
                 <Label htmlFor="displayName">{t('listProperty.propertyName')}</Label>
                 <Input 
                   id="displayName" 
+                  name="property-title"
                   placeholder={t('listProperty.propertyName')} 
                   value={formData.displayName || ""} 
                   onChange={e => handleInputChange("displayName", e.target.value)}
-                  autoComplete="off"
+                  autoComplete="new-password"
+                  spellCheck={false}
                 />
               </div>
               
@@ -527,7 +529,15 @@ const ListProperty = () => {
               
               <div>
                 <Label htmlFor="address">{t('listProperty.propertyAddress')}</Label>
-                <Input id="address" placeholder={t('listProperty.addressPlaceholder')} value={formData.address} onChange={e => handleInputChange("address", e.target.value)} />
+                <Input 
+                  id="address" 
+                  name="property-address"
+                  placeholder={t('listProperty.addressPlaceholder')} 
+                  value={formData.address} 
+                  onChange={e => handleInputChange("address", e.target.value)}
+                  autoComplete="new-password"
+                  spellCheck={false}
+                />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
@@ -573,7 +583,16 @@ const ListProperty = () => {
                           <SelectItem value="custom">{t('listProperty.otherCustom')}</SelectItem>
                         </SelectContent>
                       </Select>
-                      {formData.bedrooms === "custom" && <Input type="number" placeholder={t('listProperty.enterBedrooms')} min="0" value={formData.customBedrooms} autoFocus onChange={e => handleInputChange("customBedrooms", e.target.value)} />}
+                      {formData.bedrooms === "custom" && <Input 
+                        type="number" 
+                        name="custom-bedrooms"
+                        placeholder={t('listProperty.enterBedrooms')} 
+                        min="0" 
+                        value={formData.customBedrooms} 
+                        autoFocus 
+                        onChange={e => handleInputChange("customBedrooms", e.target.value)}
+                        autoComplete="off"
+                      />}
                     </div>
                   </div>
                 )}
@@ -592,7 +611,16 @@ const ListProperty = () => {
                           <SelectItem value="custom">{t('listProperty.otherCustom')}</SelectItem>
                         </SelectContent>
                       </Select>
-                      {formData.bathrooms === "custom" && <Input type="number" placeholder={t('listProperty.enterBathrooms')} min="1" value={formData.customBathrooms} autoFocus onChange={e => handleInputChange("customBathrooms", e.target.value)} />}
+                      {formData.bathrooms === "custom" && <Input 
+                        type="number" 
+                        name="custom-bathrooms"
+                        placeholder={t('listProperty.enterBathrooms')} 
+                        min="1" 
+                        value={formData.customBathrooms} 
+                        autoFocus 
+                        onChange={e => handleInputChange("customBathrooms", e.target.value)}
+                        autoComplete="off"
+                      />}
                     </div>
                   </div>
                 )}
