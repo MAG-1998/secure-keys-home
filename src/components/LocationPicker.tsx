@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MapPin, Check, Search, LocateFixed } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useMapLoader } from "@/hooks/useMapLoader";
 
 interface LocationPickerProps {
   onLocationSelect: (lat: number, lng: number, address?: string) => void;
@@ -18,95 +19,140 @@ declare global {
   }
 }
 
-const LocationPicker: React.FC<LocationPickerProps> = ({ 
-  onLocationSelect, 
-  selectedLat, 
+const LocationPicker: React.FC<LocationPickerProps> = ({
+  onLocationSelect,
+  selectedLat,
   selectedLng,
-  initialAddress
+  initialAddress,
 }) => {
   const { language, t } = useTranslation();
+  const { mapLoaded, status } = useMapLoader(language as any);
+
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
   const placemark = useRef<any>(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
+  const suggestView = useRef<any>(null);
+  const cssInjectedRef = useRef(false);
+
   const [selectedAddress, setSelectedAddress] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const suggestView = useRef<any>(null);
 
-  // Load Yandex Maps API
-  useEffect(() => {
-    if (window.ymaps) {
-      setMapLoaded(true);
-      return;
-    }
+  // Unique input id to avoid collisions if multiple pickers are mounted
+  const reactId = useId();
+  const inputId = `address-search-input-${reactId}`;
 
-    const ymLang = language === 'ru' ? 'ru_RU' : (language === 'uz' ? 'uz_UZ' : 'en_US');
-    const script = document.createElement('script');
-    script.src = `https://api-maps.yandex.ru/2.1/?apikey=8baec550-0c9b-458c-b9bd-e9893af7beb7&lang=${ymLang}`;
-    script.async = true;
-    script.onload = () => {
-      window.ymaps.ready(() => {
-        setMapLoaded(true);
-      });
-    };
-    document.head.appendChild(script);
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
+  // Validate container (important inside dialogs)
+  const validateContainer = useCallback(() => {
+    if (!mapContainer.current) return false;
+    const rect = mapContainer.current.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
   }, []);
 
-  // Initialize map
+  // Initialize map when API is ready and container is measurable
   useEffect(() => {
-    if (!mapLoaded || !mapContainer.current || map.current) return;
-
-    const center = selectedLat && selectedLng ? [selectedLat, selectedLng] : [41.2995, 69.2401];
-    
-    map.current = new window.ymaps.Map(mapContainer.current, {
-      center,
-      zoom: selectedLat && selectedLng ? 15 : 11,
-      controls: ['zoomControl', 'typeSelector', 'geolocationControl']
-    });
-
-    // Add existing placemark if coordinates provided
-    if (selectedLat && selectedLng) {
-      addPlacemark(selectedLat, selectedLng);
-    } else if (initialAddress) {
-      try {
-        const geocoder = window.ymaps.geocode(initialAddress);
-        geocoder.then((result: any) => {
-          const firstGeoObject = result.geoObjects.get(0);
-          if (firstGeoObject) {
-            const coords = firstGeoObject.geometry.getCoordinates();
-            const address = firstGeoObject.getAddressLine();
-            addPlacemark(coords[0], coords[1]);
-            setSelectedAddress(address);
-            onLocationSelect(coords[0], coords[1], address);
-            map.current.setCenter(coords, 15, { duration: 300 });
-          }
-        });
-      } catch (e) {
-        console.warn('Failed to geocode initial address', e);
-      }
+    if (!mapLoaded || map.current) return;
+    if (!validateContainer()) {
+      // Retry shortly (dialog animations, etc.)
+      const t = setTimeout(() => {
+        if (mapLoaded && !map.current && validateContainer()) {
+          // force rerun by setting a noop state (not needed here) — we'll rely on next effect cycle
+        }
+      }, 120);
+      return () => clearTimeout(t);
     }
 
-    // Add click listener
-    map.current.events.add('click', (e: any) => {
-      const coords = e.get('coords');
-      addPlacemark(coords[0], coords[1]);
-      getAddress(coords[0], coords[1]);
-    });
-  }, [mapLoaded, selectedLat, selectedLng, initialAddress, onLocationSelect]);
+    if (!window.ymaps || !window.ymaps.Map) return;
+
+    try {
+      const center = (selectedLat && selectedLng) ? [selectedLat, selectedLng] : [41.2995, 69.2401];
+      map.current = new window.ymaps.Map(mapContainer.current, {
+        center,
+        zoom: (selectedLat && selectedLng) ? 15 : 11,
+        controls: ['zoomControl', 'typeSelector', 'geolocationControl'],
+      });
+
+      // Make Yandex overlay panes transparent within this container scope
+      if (mapContainer.current && !cssInjectedRef.current) {
+        mapContainer.current.classList.add('ymaps-transparent-scope');
+        const styleEl = document.createElement('style');
+        styleEl.setAttribute('data-ymaps-transparent', 'true');
+        styleEl.textContent = `
+.ymaps-transparent-scope .ymaps-2-1-79-placemark-overlay,
+.ymaps-transparent-scope .ymaps-2-1-79-placemark,
+.ymaps-transparent-scope .ymaps-2-1-79-placemark-container,
+.ymaps-transparent-scope .ymaps-2-1-79-balloon,
+.ymaps-transparent-scope .ymaps-2-1-79-balloon__content,
+.ymaps-transparent-scope .ymaps-2-1-79-zoom__button,
+.ymaps-transparent-scope .ymaps-2-1-79-controls__control,
+.ymaps-transparent-scope .ymaps-2-1-79-copyrights-pane,
+.ymaps-transparent-scope .ymaps-2-1-79-ground-pane {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+        `;
+        document.head.appendChild(styleEl);
+        cssInjectedRef.current = true;
+      }
+
+      // Existing placemark / initial address
+      if (selectedLat && selectedLng) {
+        addPlacemark(selectedLat, selectedLng);
+        getAddress(selectedLat, selectedLng);
+      } else if (initialAddress) {
+        try {
+          window.ymaps
+            .geocode(initialAddress)
+            .then((result: any) => {
+              const first = result?.geoObjects?.get?.(0);
+              if (first) {
+                const coords = first.geometry.getCoordinates();
+                const address = first.getAddressLine();
+                addPlacemark(coords[0], coords[1]);
+                setSelectedAddress(address);
+                onLocationSelect(coords[0], coords[1], address);
+                map.current?.setCenter(coords, 15, { duration: 300 });
+              }
+            })
+            .catch(() => {});
+        } catch {}
+      }
+
+      // Click to set placemark
+      map.current.events.add('click', (e: any) => {
+        const coords = e.get('coords');
+        addPlacemark(coords[0], coords[1]);
+        getAddress(coords[0], coords[1]);
+      });
+
+      // Fit after container resizes (dialog open, viewport change)
+      const ro = new ResizeObserver(() => {
+        try {
+          map.current?.container?.fitToViewport?.();
+        } catch {}
+      });
+      if (mapContainer.current) ro.observe(mapContainer.current);
+
+      // Cleanup
+      return () => {
+        try { ro.disconnect(); } catch {}
+        try { map.current?.destroy?.(); } catch {}
+        map.current = null;
+      };
+    } catch (e) {
+      console.error('[LocationPicker] Failed to init map', e);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapLoaded, validateContainer]);
 
   const addPlacemark = (lat: number, lng: number) => {
-    // Remove existing placemark
+    if (!map.current || !window.ymaps) return;
+
+    // Remove existing
     if (placemark.current) {
-      map.current.geoObjects.remove(placemark.current);
+      try { map.current.geoObjects.remove(placemark.current); } catch {}
     }
 
-    // Create custom pin image like main map
     const composePinImage = () => {
       const WIDTH = 44;
       const HEIGHT = 60;
@@ -122,7 +168,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       ctx.quadraticCurveTo(44, 38, 22, 10);
       ctx.quadraticCurveTo(0, 38, 22, 58);
       ctx.closePath();
-      ctx.fillStyle = 'hsl(24 95% 53%)'; // brand orange like main map
+      ctx.fillStyle = 'hsl(24 95% 53%)';
       ctx.fill();
       ctx.lineWidth = 2;
       ctx.strokeStyle = 'hsl(0 0% 100% / 0.5)';
@@ -137,63 +183,59 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       return canvas.toDataURL('image/png');
     };
 
-    // Add new placemark with custom Magit icon
     placemark.current = new window.ymaps.Placemark(
       [lat, lng],
-      {
-        balloonContent: 'Selected location'
-      },
+      { balloonContent: 'Selected location' },
       {
         iconLayout: 'default#image',
         iconImageHref: composePinImage(),
         iconImageSize: [44, 60],
-        iconImageOffset: [-22, -60]
+        iconImageOffset: [-22, -60],
+        // Ensure above ground pane
+        zIndex: 700,
+        zIndexHover: 800,
       }
     );
-
-    placemark.current.events.add('dragend', () => {
-      const coords = placemark.current.geometry.getCoordinates();
-      getAddress(coords[0], coords[1]);
-      onLocationSelect(coords[0], coords[1]);
-    });
 
     map.current.geoObjects.add(placemark.current);
     onLocationSelect(lat, lng);
   };
 
-  const getAddress = async (lat: number, lng: number) => {
+  const getAddress = (lat: number, lng: number) => {
     try {
-      const geocoder = window.ymaps.geocode([lat, lng]);
-      geocoder.then((result: any) => {
-        const firstGeoObject = result.geoObjects.get(0);
-        if (firstGeoObject) {
-          const address = firstGeoObject.getAddressLine();
-          setSelectedAddress(address);
-          onLocationSelect(lat, lng, address);
-        }
-      });
+      window.ymaps
+        .geocode([lat, lng])
+        .then((result: any) => {
+          const first = result?.geoObjects?.get?.(0);
+          if (first) {
+            const address = first.getAddressLine();
+            setSelectedAddress(address);
+            onLocationSelect(lat, lng, address);
+          }
+        })
+        .catch(() => {});
     } catch (error) {
       console.error('Error getting address:', error);
     }
   };
 
-  const geocodeAddress = async (query: string) => {
+  const geocodeAddress = (query: string) => {
     if (!query) return;
     try {
-      const geocoder = window.ymaps.geocode(query);
-      geocoder.then((result: any) => {
-        const firstGeoObject = result.geoObjects.get(0);
-        if (firstGeoObject) {
-          const coords = firstGeoObject.geometry.getCoordinates();
-          const address = firstGeoObject.getAddressLine();
-          addPlacemark(coords[0], coords[1]);
-          setSelectedAddress(address);
-          onLocationSelect(coords[0], coords[1], address);
-          if (map.current) {
-            map.current.setCenter(coords, 15, { duration: 300 });
+      window.ymaps
+        .geocode(query)
+        .then((result: any) => {
+          const first = result?.geoObjects?.get?.(0);
+          if (first) {
+            const coords = first.geometry.getCoordinates();
+            const address = first.getAddressLine();
+            addPlacemark(coords[0], coords[1]);
+            setSelectedAddress(address);
+            onLocationSelect(coords[0], coords[1], address);
+            map.current?.setCenter(coords, 15, { duration: 300 });
           }
-        }
-      });
+        })
+        .catch(() => {});
     } catch (error) {
       console.error('Error geocoding address:', error);
     }
@@ -205,9 +247,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       (pos) => {
         const { latitude, longitude } = pos.coords;
         addPlacemark(latitude, longitude);
-        if (map.current) {
-          map.current.setCenter([latitude, longitude], 15, { duration: 300 });
-        }
+        map.current?.setCenter([latitude, longitude], 15, { duration: 300 });
         getAddress(latitude, longitude);
       },
       (err) => {
@@ -217,29 +257,30 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     );
   };
 
-  // Yandex Suggest for address search
+  // Suggest View for the search input
   useEffect(() => {
     if (!mapLoaded || !window.ymaps || !window.ymaps.SuggestView) return;
-    // Initialize SuggestView on the search input
+
     try {
-      suggestView.current = new window.ymaps.SuggestView('address-search-input', { results: 7 });
+      suggestView.current = new window.ymaps.SuggestView(inputId, { results: 7 });
       suggestView.current.events.add('select', (e: any) => {
-        const value = e.get('item').value;
-        setSearchQuery(value);
-        geocodeAddress(value);
+        const value = e.get('item')?.value;
+        if (value) {
+          setSearchQuery(value);
+          geocodeAddress(value);
+        }
       });
     } catch (e) {
       console.warn('SuggestView init failed', e);
     }
 
     return () => {
-      try {
-        if (suggestView.current && suggestView.current.destroy) {
-          suggestView.current.destroy();
-        }
-      } catch {}
+      try { suggestView.current?.destroy?.(); } catch {}
+      suggestView.current = null;
     };
-  }, [mapLoaded]);
+  }, [mapLoaded, inputId]);
+
+  const loadingState = !mapLoaded || status !== 'ready';
 
   return (
     <Card>
@@ -256,7 +297,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             <div className="bg-background/90 supports-[backdrop-filter]:bg-background/60 backdrop-blur border rounded-md p-2 shadow-sm">
               <div className="flex items-center gap-2">
                 <Input
-                  id="address-search-input"
+                  id={inputId}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('address.searchPlaceholder')}
@@ -285,7 +326,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             </div>
           </div>
 
-          {!mapLoaded ? (
+          {loadingState ? (
             <div className="absolute inset-0 bg-muted/20 flex items-center justify-center">
               <div className="text-center">
                 <MapPin className="h-8 w-8 text-primary mx-auto mb-2 animate-pulse" />
@@ -296,7 +337,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             <div ref={mapContainer} className="absolute inset-0" />
           )}
         </div>
-        
+
         {selectedAddress && (
           <div className="bg-muted/50 p-3 rounded-lg">
             <div className="flex items-start gap-2">
@@ -308,7 +349,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             </div>
           </div>
         )}
-        
+
         <p className="text-xs text-muted-foreground">
           {t('address.instructions')}
         </p>
