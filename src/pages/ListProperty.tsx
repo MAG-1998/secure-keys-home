@@ -833,6 +833,30 @@ const ListProperty = () => {
                       Request to make your property available for Sharia-compliant financing. 
                       Our Islamic finance team will contact you within 1 week to discuss options.
                     </p>
+                    
+                    {formData.halalFinancingRequested && formData.price && parseFloat(formData.price) > 0 && (
+                      <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800">
+                        <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100 mb-2">💰 Pricing Impact</h4>
+                        <div className="space-y-1 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-blue-700 dark:text-blue-300">Listed Price:</span>
+                            <span className="font-medium">${parseFloat(formData.price).toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-blue-700 dark:text-blue-300">Magit Fee (1%):</span>
+                            <span className="text-red-600">-${(parseFloat(formData.price) * 0.01).toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between font-semibold border-t border-blue-200 dark:border-blue-700 pt-1">
+                            <span className="text-blue-900 dark:text-blue-100">Your Net Proceeds:</span>
+                            <span className="text-green-600">${(parseFloat(formData.price) * 0.99).toLocaleString()}</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
+                          When you enable halal financing, Magit covers the 1% transaction fee to make your property accessible to Islamic finance buyers.
+                        </p>
+                      </div>
+                    )}
+                    
                     {(formData.propertyType === 'commercial' || formData.propertyType === 'land') && (
                       <p className="text-sm text-amber-700 dark:text-amber-300 mt-2 bg-amber-50 dark:bg-amber-950/20 p-2 rounded border border-amber-200 dark:border-amber-800">
                         ⚠️ {t('listProperty.halalFinancingNotAvailable')}
