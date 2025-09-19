@@ -175,11 +175,15 @@ const ListProperty = () => {
     if (!formData.address) errors.push('Please enter the property address');
     if (!Number.isFinite(price) || price <= 0) errors.push('Please enter a valid price');
     if (!Number.isFinite(area) || area <= 0) errors.push('Please enter a valid living area');
-    if (formData.propertyType === 'house' && (!formData.landAreaSotka || Number(formData.landAreaSotka) <= 0)) {
-      errors.push('Please enter a valid land area in соток for houses');
+    if ((formData.propertyType === 'house' || formData.propertyType === 'commercial') && (!formData.landAreaSotka || Number(formData.landAreaSotka) <= 0)) {
+      errors.push('Please enter a valid land area in соток for houses and commercial properties');
     }
-    if (!Number.isFinite(bedrooms) || bedrooms < 0) errors.push('Please specify bedrooms');
-    if (!Number.isFinite(bathrooms) || bathrooms < 1) errors.push('Please specify bathrooms');
+    if (!['land', 'commercial'].includes(formData.propertyType) && (!Number.isFinite(bedrooms) || bedrooms < 0)) {
+      errors.push('Please specify bedrooms');
+    }
+    if (formData.propertyType !== 'land' && (!Number.isFinite(bathrooms) || bathrooms < 1)) {
+      errors.push('Please specify bathrooms');
+    }
     if (!formData.latitude || !formData.longitude) errors.push('Please select the property location on the map');
     if (formData.photos.length < 5) errors.push('Please upload at least 5 photos (max 20)');
     if (formData.visitHours.length === 0) errors.push('Please select at least one visit time');
@@ -373,7 +377,7 @@ const ListProperty = () => {
         bedrooms: bedroomCount,
         bathrooms: bathroomCount,
         area: parseFloat(formData.area),
-        land_area_sotka: formData.propertyType === 'house' && formData.landAreaSotka ? parseFloat(formData.landAreaSotka) : null,
+        land_area_sotka: (formData.propertyType === 'house' || formData.propertyType === 'commercial') && formData.landAreaSotka ? parseFloat(formData.landAreaSotka) : null,
         description: formData.description,
         visit_hours: formData.visitHours,
         
@@ -524,78 +528,73 @@ const ListProperty = () => {
                 <Label htmlFor="address">{t('listProperty.propertyAddress')}</Label>
                 <Input id="address" placeholder={t('listProperty.addressPlaceholder')} value={formData.address} onChange={e => handleInputChange("address", e.target.value)} />
               </div>
-              <div>
-                <Label htmlFor="district">{t('listProperty.district')}</Label>
-                <Input id="district" list="districts" placeholder={t('listProperty.selectDistrict')} value={formData.district} onChange={(e) => handleInputChange('district', e.target.value)} />
-                <datalist id="districts">
-                  {getDistrictOptions(language).map(({ value, label }) => (
-                    <option key={value} value={value}>{label}</option>
-                  ))}
-                  <option value="Other">{t('listProperty.other')}</option>
-                </datalist>
-              </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="price">{t('listProperty.price')}</Label>
                   <Input id="price" type="number" placeholder="0" value={formData.price} onChange={e => handleInputChange("price", e.target.value)} />
                 </div>
-                <div>
-                  <Label htmlFor="area">
-                    {formData.propertyType === 'house' ? 'Living Area (m²)' : t('listProperty.area')}
-                  </Label>
-                  <Input id="area" type="number" placeholder="0" value={formData.area} onChange={e => handleInputChange("area", e.target.value)} />
-                </div>
+                 <div>
+                   <Label htmlFor="area">
+                     {formData.propertyType === 'commercial' ? t('listProperty.livingArea') :
+                      formData.propertyType === 'land' ? t('listProperty.landArea') :
+                      formData.propertyType === 'house' ? t('listProperty.livingArea') :
+                      t('listProperty.area')}
+                   </Label>
+                   <Input id="area" type="number" placeholder="0" value={formData.area} onChange={e => handleInputChange("area", e.target.value)} />
+                 </div>
               </div>
               
-              {formData.propertyType === 'house' && (
-                <div>
-                  <Label htmlFor="landAreaSotka">Land Area (соток)</Label>
-                  <Input 
-                    id="landAreaSotka" 
-                    type="number" 
-                    placeholder="0" 
-                    value={formData.landAreaSotka} 
-                    onChange={e => handleInputChange("landAreaSotka", e.target.value)} 
-                  />
-                </div>
-              )}
+               {(formData.propertyType === 'house' || formData.propertyType === 'commercial') && (
+                 <div>
+                   <Label htmlFor="landAreaSotka">{t('listProperty.landArea')}</Label>
+                   <Input 
+                     id="landAreaSotka" 
+                     type="number" 
+                     placeholder="0" 
+                     value={formData.landAreaSotka} 
+                     onChange={e => handleInputChange("landAreaSotka", e.target.value)} 
+                   />
+                 </div>
+               )}
               
-              {/* Hide bedrooms/bathrooms for Land properties */}
-              {formData.propertyType !== 'land' && (
-                <div className="grid grid-cols-2 gap-4">
+                {/* Bedrooms - only for apartments, houses, and studios */}
+                {!['land', 'commercial'].includes(formData.propertyType) && (
                   <div>
                     <Label htmlFor="bedrooms">{t('listProperty.bedrooms')}</Label>
-                  <div className="space-y-2">
-                    <Select value={formData.bedrooms} onValueChange={value => handleInputChange("bedrooms", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('listProperty.selectBedrooms')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[0, 1, 2, 3, 4, 5, 6].map(num => <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? t('listProperty.bedroom') : t('listProperty.bedroomsPlural')}</SelectItem>)}
-                        <SelectItem value="custom">{t('listProperty.otherCustom')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {formData.bedrooms === "custom" && <Input type="number" placeholder={t('listProperty.enterBedrooms')} min="0" value={formData.customBedrooms} autoFocus onChange={e => handleInputChange("customBedrooms", e.target.value)} />}
+                    <div className="space-y-2">
+                      <Select value={formData.bedrooms} onValueChange={value => handleInputChange("bedrooms", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder={t('listProperty.selectBedrooms')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[0, 1, 2, 3, 4, 5, 6].map(num => <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? t('listProperty.bedroom') : t('listProperty.bedroomsPlural')}</SelectItem>)}
+                          <SelectItem value="custom">{t('listProperty.otherCustom')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {formData.bedrooms === "custom" && <Input type="number" placeholder={t('listProperty.enterBedrooms')} min="0" value={formData.customBedrooms} autoFocus onChange={e => handleInputChange("customBedrooms", e.target.value)} />}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <Label htmlFor="bathrooms">{t('listProperty.bathrooms')}</Label>
-                  <div className="space-y-2">
-                    <Select value={formData.bathrooms} onValueChange={value => handleInputChange("bathrooms", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('listProperty.selectBathrooms')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[1, 2, 3, 4, 5].map(num => <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? t('listProperty.bathroom') : t('listProperty.bathroomsPlural')}</SelectItem>)}
-                        <SelectItem value="custom">{t('listProperty.otherCustom')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {formData.bathrooms === "custom" && <Input type="number" placeholder={t('listProperty.enterBathrooms')} min="1" value={formData.customBathrooms} autoFocus onChange={e => handleInputChange("customBathrooms", e.target.value)} />}
+                )}
+                
+                {/* Bathrooms - for all except land */}
+                {formData.propertyType !== 'land' && (
+                  <div>
+                    <Label htmlFor="bathrooms">{t('listProperty.bathrooms')}</Label>
+                    <div className="space-y-2">
+                      <Select value={formData.bathrooms} onValueChange={value => handleInputChange("bathrooms", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder={t('listProperty.selectBathrooms')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[1, 2, 3, 4, 5].map(num => <SelectItem key={num} value={num.toString()}>{num} {num === 1 ? t('listProperty.bathroom') : t('listProperty.bathroomsPlural')}</SelectItem>)}
+                          <SelectItem value="custom">{t('listProperty.otherCustom')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {formData.bathrooms === "custom" && <Input type="number" placeholder={t('listProperty.enterBathrooms')} min="1" value={formData.customBathrooms} autoFocus onChange={e => handleInputChange("customBathrooms", e.target.value)} />}
+                    </div>
                   </div>
-                </div>
-              </div>
-              )}
+                )}
               
               <div>
                 <Label htmlFor="description">{t('listProperty.propertyDescription')}</Label>

@@ -989,6 +989,16 @@ const translations: Translations = {
     ru: 'Площадь (м²)',
     uz: 'Maydon (m²)'
   },
+  'listProperty.livingArea': {
+    en: 'Living Area (m²)',
+    ru: 'Жилая площадь (м²)',
+    uz: 'Yashash maydoni (m²)'
+  },
+  'listProperty.landArea': {
+    en: 'Land Area (соток)',
+    ru: 'Площадь участка (соток)',
+    uz: 'Yer maydoni (sotix)'
+  },
   'listProperty.bedrooms': {
     en: 'Bedrooms',
     ru: 'Спальни',

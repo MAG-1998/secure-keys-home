@@ -32,7 +32,12 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
     location: "",
     description: "",
     latitude: null as number | null,
-    longitude: null as number | null
+    longitude: null as number | null,
+    area: 0,
+    land_area_sotka: 0,
+    bedrooms: 0,
+    bathrooms: 0,
+    district: ""
   });
   const [photos, setPhotos] = useState<{ url: string; order_index: number }[]>([]);
 
@@ -46,7 +51,12 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
         location: property.location || "",
         description: property.description || "",
         latitude: property.latitude || null,
-        longitude: property.longitude || null
+        longitude: property.longitude || null,
+        area: property.area || 0,
+        land_area_sotka: property.land_area_sotka || 0,
+        bedrooms: property.bedrooms || 0,
+        bathrooms: property.bathrooms || 0,
+        district: property.district || ""
       });
       
       // Load photos from property_photos table if exists, otherwise from photos field
@@ -95,6 +105,11 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
         description: formData.description,
         latitude: formData.latitude,
         longitude: formData.longitude,
+        area: formData.area,
+        land_area_sotka: (formData.property_type === 'house' || formData.property_type === 'commercial') ? formData.land_area_sotka : null,
+        bedrooms: !['land', 'commercial'].includes(formData.property_type) ? formData.bedrooms : null,
+        bathrooms: formData.property_type !== 'land' ? formData.bathrooms : null,
+        district: formData.district,
         image_url: photos.length > 0 ? photos[0].url : null
       };
 
@@ -243,6 +258,65 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
             </div>
             
             <div>
+              <Label htmlFor="area">
+                {formData.property_type === 'commercial' ? t('listProperty.livingArea') :
+                 formData.property_type === 'land' ? t('listProperty.landArea') :
+                 formData.property_type === 'house' ? t('listProperty.livingArea') :
+                 'Area (m²)'}
+              </Label>
+              <Input
+                id="area"
+                type="number"
+                value={formData.area || ''}
+                onChange={(e) => setFormData(prev => ({ ...prev, area: Number(e.target.value) }))}
+                placeholder="75"
+              />
+            </div>
+            
+            {/* Land area for houses and commercial */}
+            {(formData.property_type === 'house' || formData.property_type === 'commercial') && (
+              <div>
+                <Label htmlFor="landAreaSotka">{t('listProperty.landArea')}</Label>
+                <Input
+                  id="landAreaSotka"
+                  type="number"
+                  value={formData.land_area_sotka || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, land_area_sotka: Number(e.target.value) }))}
+                  placeholder="5"
+                  step="0.1"
+                />
+              </div>
+            )}
+            
+            {/* Bedrooms - only for apartments, houses, and studios */}
+            {!['land', 'commercial'].includes(formData.property_type) && (
+              <div>
+                <Label htmlFor="bedrooms">{t('filter.bedrooms')}</Label>
+                <Input
+                  id="bedrooms"
+                  type="number"
+                  value={formData.bedrooms || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, bedrooms: Number(e.target.value) }))}
+                  placeholder="2"
+                />
+              </div>
+            )}
+            
+            {/* Bathrooms - for all except land */}
+            {formData.property_type !== 'land' && (
+              <div>
+                <Label htmlFor="bathrooms">{t('filter.bathrooms')}</Label>
+                <Input
+                  id="bathrooms"
+                  type="number"
+                  value={formData.bathrooms || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, bathrooms: Number(e.target.value) }))}
+                  placeholder="1"
+                />
+              </div>
+            )}
+            
+            <div>
               <Label htmlFor="description">{t('property.description')}</Label>
               <Textarea
                 id="description"
@@ -254,7 +328,7 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
             </div>
           </TabsContent>
           
-          <TabsContent value="location" className="space-y-4">
+           <TabsContent value="location" className="space-y-4">
             <div>
               <Label htmlFor="location">{t('property.address')}</Label>
               <Input
@@ -262,6 +336,16 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
                 value={formData.location}
                 onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                 placeholder={t('property.addressPlaceholder')}
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="district">{t('filter.district')}</Label>
+              <Input
+                id="district"
+                value={formData.district}
+                onChange={(e) => setFormData(prev => ({ ...prev, district: e.target.value }))}
+                placeholder="Yunusobod, Shaykhontohur, etc."
               />
             </div>
             
