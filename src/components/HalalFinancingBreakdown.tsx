@@ -118,7 +118,7 @@ export const HalalFinancingBreakdown = ({
         </div>
 
         {calculation && (
-          <div className="space-y-4">
+            <div className="space-y-4">
             <Separator />
             
             <div className="space-y-2">
@@ -126,23 +126,43 @@ export const HalalFinancingBreakdown = ({
               
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('property.totalPropertyPrice')}</span>
-                  <span className="font-medium">{formatCurrency(calculation.propertyPrice! + calculation.serviceFee + calculation.fixedFee + calculation.tax)}</span>
+                  <span className="text-muted-foreground">Property Price:</span>
+                  <span className="font-medium">{formatCurrency(calculation.propertyPrice!)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">+ Financing Costs:</span>
+                  <span className="font-medium">{formatCurrency(calculation.serviceFee + calculation.fixedFee + calculation.tax)}</span>
+                </div>
+                <div className="flex justify-between text-muted-foreground border-t pt-2">
+                  <span>Subtotal:</span>
+                  <span>{formatCurrency(calculation.propertyPrice! + calculation.serviceFee + calculation.fixedFee + calculation.tax)}</span>
+                </div>
+                <div className="flex justify-between text-green-600">
+                  <span>- Magit Discount (1%):</span>
+                  <span>-{formatCurrency(calculation.magitDiscount)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t('halal.cashPayment')}:</span>
                   <span className="font-medium">{formatCurrency(parseFloat(cashAmount))}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('halal.tax')}:</span>
-                  <span className="font-medium">{formatCurrency(calculation.tax)}</span>
-                </div>
                 <div className="flex justify-between items-center pt-2 border-t">
-                  <span className="font-semibold">{t('halal.monthlyPayment')}:</span>
+                  <span className="font-semibold">Total After Discount:</span>
                   <Badge variant="default" className="text-base px-3 py-1">
+                    {formatCurrency(calculation.finalPriceAfterDiscount)}
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold">{t('halal.monthlyPayment')}:</span>
+                  <Badge variant="outline" className="text-base px-3 py-1">
                     {formatCurrency(calculation.requiredMonthlyPayment)}
                   </Badge>
                 </div>
+              </div>
+              
+              <div className="bg-green-50 dark:bg-green-950/20 p-3 rounded-lg mt-3">
+                <p className="text-sm text-green-700 dark:text-green-300">
+                  💡 <strong>Magit covers the 1% sales fee</strong> and passes the savings directly to you as a discount on your financing.
+                </p>
               </div>
             </div>
 

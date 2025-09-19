@@ -7,6 +7,8 @@ export interface HalalFinancingCalculation {
   serviceFee: number;
   tax: number;
   overpay: number;
+  magitDiscount: number;
+  finalPriceAfterDiscount: number;
 }
 
 export const calculateHalalFinancing = (
@@ -23,7 +25,9 @@ export const calculateHalalFinancing = (
       fixedFee: 0,
       serviceFee: 0,
       tax: 0,
-      overpay: 0
+      overpay: 0,
+      magitDiscount: 0,
+      finalPriceAfterDiscount: 0
     };
   }
 
@@ -48,9 +52,15 @@ export const calculateHalalFinancing = (
   // Overpay calculation
   const overpay = (SF + FF) * (1 + 0.20);
   
+  // Magit discount calculation (1% of property price)
+  const magitDiscount = P * 0.01;
+  
   // Total cost = loaned sum + overpay
   const totalCost = x + overpay;
   const requiredMonthlyPayment = totalCost / periodMonths;
+  
+  // Final price after Magit discount
+  const finalPriceAfterDiscount = totalCost - magitDiscount;
 
   return {
     totalCost,
@@ -60,7 +70,9 @@ export const calculateHalalFinancing = (
     fixedFee: FF,
     serviceFee: SF,
     tax: TAX,
-    overpay
+    overpay,
+    magitDiscount,
+    finalPriceAfterDiscount
   };
 };
 

@@ -637,10 +637,12 @@ const ListProperty = () => {
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    "09:00", "10:00", "11:00", "12:00", 
-                    "13:00", "14:00", "15:00", "16:00", 
-                    "17:00", "18:00", "19:00", "20:00"
-                  ].map((time) => (
+                    "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00",
+                    "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", 
+                    "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"
+                  ].map((time) => {
+                    const isInconvenientTime = (time >= "00:00" && time <= "08:00") || (time >= "21:00" && time <= "23:00");
+                    return (
                     <div key={time} className="flex items-center space-x-2">
                       <Checkbox
                         id={`time-${time}`}
@@ -659,15 +661,20 @@ const ListProperty = () => {
                           }
                         }}
                       />
-                      <Label htmlFor={`time-${time}`} className="text-sm cursor-pointer">
-                        {time}
+                      <Label htmlFor={`time-${time}`} className={`text-sm cursor-pointer ${isInconvenientTime ? 'text-orange-600 dark:text-orange-400' : ''}`}>
+                        {time} {isInconvenientTime ? '⚠️' : ''}
                       </Label>
                     </div>
-                  ))}
+                  )})}
                 </div>
                 {formData.visitHours.length === 0 && (
                   <p className="text-sm text-orange-600 dark:text-orange-400 mt-2">
                     {t('listProperty.selectTimeSlot')}
+                  </p>
+                )}
+                {formData.visitHours.some(time => (time >= "00:00" && time <= "08:00") || (time >= "21:00" && time <= "23:00")) && (
+                  <p className="text-sm text-orange-600 dark:text-orange-400 mt-2 bg-orange-50 dark:bg-orange-950/20 p-2 rounded border border-orange-200 dark:border-orange-800">
+                    ⚠️ Late night/early morning hours may be inconvenient for visitors. Consider offering daytime hours as well.
                   </p>
                 )}
               </div>
