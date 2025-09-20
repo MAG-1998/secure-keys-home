@@ -469,45 +469,27 @@ export const SearchSection = ({
                   {results.length >= 10}
                 </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6">
-                    {results.slice(0, 15).map((property, index) => {
-                      // Show 3 rows based on screen size: 1 col = 3, 2 cols = 6, 3 cols = 9, 4 cols = 12, 5 cols = 15
-                      const isVisible = index < 3 || // Always show first 3 (mobile 1 col)
-                                      (index < 6 && 'sm:block') || // Show 6 for small screens (2 cols)
-                                      (index < 9 && 'lg:block') || // Show 9 for large screens (3 cols) 
-                                      (index < 12 && 'xl:block') || // Show 12 for xl screens (4 cols)
-                                      (index < 15 && '2xl:block'); // Show 15 for 2xl screens (5 cols)
-                      
-                      return (
-                        <div 
-                          key={property.id} 
-                          className={`
-                            ${index >= 3 ? 'hidden sm:block' : ''}
-                            ${index >= 6 ? 'hidden lg:block' : ''}
-                            ${index >= 9 ? 'hidden xl:block' : ''}
-                            ${index >= 12 ? 'hidden 2xl:block' : ''}
-                          `}
-                        >
-                          <PropertyCard 
-                            id={property.id} 
-                            title={property.title} 
-                            location={property.location} 
-                            price={property.priceUsd} 
-                            priceUsd={property.priceUsd} 
-                            bedrooms={property.bedrooms} 
-                            bathrooms={property.bathrooms} 
-                            area={property.area} 
-                            imageUrl={property.image_url} 
-                            isVerified={property.verified} 
-                            isHalalFinanced={property.financingAvailable} 
-                            isHalalMode={isHalalMode} 
-                            cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} 
-                            financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} 
-                            onClick={() => handlePropertyClick(property)} 
-                          />
-                        </div>
-                      );
-                    })}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-4 md:gap-6">
+                    {results.slice(0, 9).map((property, index) => (
+                      <PropertyCard 
+                        key={property.id}
+                        id={property.id} 
+                        title={property.title} 
+                        location={property.location} 
+                        price={property.priceUsd} 
+                        priceUsd={property.priceUsd} 
+                        bedrooms={property.bedrooms} 
+                        bathrooms={property.bathrooms} 
+                        area={property.area} 
+                        imageUrl={property.image_url} 
+                        isVerified={property.verified} 
+                        isHalalFinanced={property.financingAvailable} 
+                        isHalalMode={isHalalMode} 
+                        cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} 
+                        financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} 
+                        onClick={() => handlePropertyClick(property)} 
+                      />
+                    ))}
                   </div>
 
                   {/* View All Properties Button */}

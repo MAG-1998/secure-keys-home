@@ -115,7 +115,7 @@ export const PropertyCard = ({
   }
 
   return (
-    <Card onClick={handleNavigate} className="group hover:shadow-warm transition-all duration-300 cursor-pointer min-w-[250px] max-w-[400px] flex flex-col">
+    <Card onClick={handleNavigate} className="group hover:shadow-warm transition-all duration-300 cursor-pointer w-full h-full flex flex-col">
       <div className="relative">
         <CachedImage
           src={actualImageUrl}
