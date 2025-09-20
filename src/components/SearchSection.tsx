@@ -469,7 +469,7 @@ export const SearchSection = ({
                   {results.length >= 10}
                 </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6">
                     {/* Mobile: 1 col × 3 rows = 3 properties */}
                     {results.slice(0, 3).map((property) => (
                       <PropertyCard 
@@ -518,6 +518,52 @@ export const SearchSection = ({
                     {/* Large screens: 3 cols × 3 rows = 9 properties (show 3 additional) */}
                     {results.slice(6, 9).map((property) => (
                       <div key={`lg-${property.id}`} className="hidden lg:block">
+                        <PropertyCard 
+                          id={property.id} 
+                          title={property.title} 
+                          location={property.location} 
+                          price={property.priceUsd} 
+                          priceUsd={property.priceUsd} 
+                          bedrooms={property.bedrooms} 
+                          bathrooms={property.bathrooms} 
+                          area={property.area} 
+                          imageUrl={property.image_url} 
+                          isVerified={property.verified} 
+                          isHalalFinanced={property.financingAvailable} 
+                          isHalalMode={isHalalMode} 
+                          cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} 
+                          financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} 
+                          onClick={() => handlePropertyClick(property)} 
+                        />
+                      </div>
+                    ))}
+                    
+                    {/* XL screens: 4 cols × 3 rows = 12 properties (show 3 additional) */}
+                    {results.slice(9, 12).map((property) => (
+                      <div key={`xl-${property.id}`} className="hidden xl:block">
+                        <PropertyCard 
+                          id={property.id} 
+                          title={property.title} 
+                          location={property.location} 
+                          price={property.priceUsd} 
+                          priceUsd={property.priceUsd} 
+                          bedrooms={property.bedrooms} 
+                          bathrooms={property.bathrooms} 
+                          area={property.area} 
+                          imageUrl={property.image_url} 
+                          isVerified={property.verified} 
+                          isHalalFinanced={property.financingAvailable} 
+                          isHalalMode={isHalalMode} 
+                          cashAvailable={filters.cashAvailable ? parseFloat(filters.cashAvailable.replace(/[^0-9.]/g, '')) : undefined} 
+                          financingPeriod={filters.periodMonths ? parseInt(filters.periodMonths) : undefined} 
+                          onClick={() => handlePropertyClick(property)} 
+                        />
+                      </div>
+                    ))}
+                    
+                    {/* 2XL screens: 5 cols × 3 rows = 15 properties (show 3 additional) */}
+                    {results.slice(12, 15).map((property) => (
+                      <div key={`2xl-${property.id}`} className="hidden 2xl:block">
                         <PropertyCard 
                           id={property.id} 
                           title={property.title} 
