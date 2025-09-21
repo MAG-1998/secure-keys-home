@@ -2618,9 +2618,9 @@ const translations: Translations = {
     uz: 'Maxfiylik'
   },
   'footer.terms': {
-    en: 'Terms',
-    ru: 'Условия',
-    uz: 'Shartlar'
+    en: 'Terms & Conditions',
+    ru: 'Условия использования',
+    uz: 'Foydalanish shartlari'
   },
   'footer.copyright': {
     en: '© 2024 Magit. All rights reserved. Made with care for families in Uzbekistan.',
@@ -3971,127 +3971,180 @@ const translations: Translations = {
     uz: 'Boshqarish'
   },
 
-  // Privacy Policy Page (replacing Terms & Conditions)
-  'privacy.title': {
-    en: 'Magit Privacy Policy',
-    ru: 'Политика конфиденциальности Magit',
-    uz: 'Magit maxfiylik siyosati'
+  // Terms & Conditions Page
+  'terms.title': {
+    en: 'Magit Terms & Conditions',
+    ru: 'Условия использования Magit',
+    uz: 'Magit foydalanish shartlari'
   },
-  'privacy.subtitle': {
-    en: 'Magit ("we", "our", "us") respects your privacy and is committed to protecting your personal information.',
-    ru: 'Magit ("мы", "наш", "нас") уважает вашу конфиденциальность и обязуется защищать вашу личную информацию.',
-    uz: 'Magit ("biz", "bizning", "bizni") sizning maxfiyligingizni hurmat qiladi va shaxsiy ma\'lumotlaringizni himoya qilishga sodiqdir.'
+  'terms.subtitle': {
+    en: 'Welcome to Magit! These Terms & Conditions ("Terms") govern your use of the Magit website, mobile application, and services ("Platform").',
+    ru: 'Добро пожаловать в Magit! Эти Условия использования ("Условия") регулируют ваше использование веб-сайта, мобильного приложения и услуг Magit ("Платформа").',
+    uz: 'Magit-ga xush kelibsiz! Ushbu Foydalanish shartlari ("Shartlar") Magit veb-sayti, mobil ilovasi va xizmatlaridan ("Platforma") foydalanishingizni tartibga soladi.'
   },
-  'privacy.lastUpdated': {
+  'terms.lastUpdated': {
     en: 'Last updated: December 15, 2024',
     ru: 'Последнее обновление: 15 декабря 2024 г.',
     uz: 'Oxirgi yangilanish: 15 dekabr 2024'
   },
-  'privacy.intro': {
-    en: 'This Privacy Policy explains how we collect, use, and protect your data when you use our website, mobile app, and services ("Platform").',
-    ru: 'Эта Политика конфиденциальности объясняет, как мы собираем, используем и защищаем ваши данные при использовании нашего веб-сайта, мобильного приложения и услуг ("Платформа").',
-    uz: 'Ushbu Maxfiylik siyosati bizning veb-saytimiz, mobil ilovamiz va xizmatlarimizdan ("Platforma") foydalanganda ma\'lumotlaringizni qanday yig\'ishimiz, ishlatishimiz va himoya qilishimizni tushuntiradi.'
+  'terms.intro': {
+    en: 'By accessing or using Magit, you agree to these Terms. If you do not agree, please do not use our Platform.',
+    ru: 'Получив доступ к Magit или используя его, вы соглашаетесь с этими Условиями. Если вы не согласны, пожалуйста, не используйте нашу Платформу.',
+    uz: 'Magit-ga kirishda yoki undan foydalanishda siz ushbu Shartlarga rozilik bildirasiz. Agar rozi bo\'lmasangiz, iltimos, bizning Platformamizdan foydalanmang.'
   },
 
-  // Section 1: Information We Collect
-  'privacy.section1.title': {
-    en: '1. Information We Collect',
-    ru: '1. Информация, которую мы собираем',
-    uz: '1. Biz yig\'adigan ma\'lumotlar'
+  // Section 1: Definitions
+  'terms.section1.title': {
+    en: '1. Definitions',
+    ru: '1. Определения',
+    uz: '1. Ta\'riflar'
   },
-  'privacy.section1.content': {
-    en: 'We may collect the following types of data: Personal details – full name, phone number, email address, date of birth. Identity verification data – information retrieved through OneID (Uzbekistan\'s national digital identification system) for user registration and verification. Property-related data – preferences, saved listings, visit requests. Financial information – income details, documents, and payment history (for financing applications). Payment information – bank card details, payment confirmations, receipts. Technical data – IP address, device type, browser, app usage patterns.',
-    ru: 'Мы можем собирать следующие типы данных: Личные данные – полное имя, номер телефона, адрес электронной почты, дата рождения. Данные для верификации личности – информация, полученная через OneID (национальная система цифровой идентификации Узбекистана) для регистрации и верификации пользователей. Данные, связанные с недвижимостью – предпочтения, сохраненные объявления, запросы на посещение. Финансовая информация – данные о доходах, документы и история платежей (для заявок на финансирование). Платежная информация – данные банковских карт, подтверждения платежей, чеки. Технические данные – IP-адрес, тип устройства, браузер, паттерны использования приложения.',
-    uz: 'Biz quyidagi turdagi ma\'lumotlarni yig\'ishimiz mumkin: Shaxsiy ma\'lumotlar – to\'liq ism, telefon raqami, elektron pochta manzili, tug\'ilgan sana. Shaxsni tasdiqlash ma\'lumotlari – foydalanuvchilarni ro\'yxatga olish va tasdiqlash uchun OneID (O\'zbekistonning milliy raqamli identifikatsiya tizimi) orqali olingan ma\'lumotlar. Mulkka oid ma\'lumotlar – afzalliklar, saqlangan e\'lonlar, tashrif so\'rovlari. Moliyaviy ma\'lumotlar – daromad tafsilotlari, hujjatlar va to\'lov tarixi (moliyalashtirish uchun arizalar). To\'lov ma\'lumotlari – bank karta tafsilotlari, to\'lov tasdiqlari, kvitansiyalar. Texnik ma\'lumotlar – IP manzili, qurilma turi, brauzer, ilova foydalanish andozalari.'
-  },
-
-  // Section 2: How We Use Your Data
-  'privacy.section2.title': {
-    en: '2. How We Use Your Data',
-    ru: '2. Как мы используем ваши данные',
-    uz: '2. Ma\'lumotlaringizni qanday ishlatamiz'
-  },
-  'privacy.section2.content': {
-    en: 'We use your data to: Verify user identity through OneID during registration. Provide access to verified property listings. Process visit requests and coordinate with sellers. Review financing applications and determine eligibility. Process payments securely through approved providers (e.g., Uzum, Payme, Click). Improve our services, user experience, and platform security. Comply with legal obligations under Uzbek law.',
-    ru: 'Мы используем ваши данные для: Верификации личности пользователя через OneID во время регистрации. Предоставления доступа к проверенным объявлениям о недвижимости. Обработки запросов на посещение и координации с продавцами. Рассмотрения заявок на финансирование и определения соответствия критериям. Безопасной обработки платежей через утвержденных провайдеров (например, Uzum, Payme, Click). Улучшения наших услуг, пользовательского опыта и безопасности платформы. Соблюдения правовых обязательств согласно узбекскому законодательству.',
-    uz: 'Biz ma\'lumotlaringizni quyidagilar uchun ishlatamiz: Ro\'yxatga olish vaqtida OneID orqali foydalanuvchi shaxsini tasdiqlash. Tekshirilgan mulk e\'lonlariga kirish imkonini berish. Tashrif so\'rovlarini qayta ishlash va sotuvchilar bilan muvofiqlashish. Moliyalashtirish arizalarini ko\'rib chiqish va muvofiqlikni aniqlash. Tasdiqlangan provayderlar (masalan, Uzum, Payme, Click) orqali to\'lovlarni xavfsiz qayta ishlash. Xizmatlarimiz, foydalanuvchi tajribasi va platforma xavfsizligini yaxshilash. O\'zbek qonunchiligiga muvofiq huquqiy majburiyatlarga rioya qilish.'
+  'terms.section1.content': {
+    en: '"Magit" – refers to [Your Company Name LLC], operator of the Platform. "User" – any individual or entity using the Platform (buyers, sellers, applicants). "Property" – real estate listed on the Platform. "Halal Financing" – Shariah-compliant financing option offered through Magit.',
+    ru: '"Magit" – относится к [Ваша компания ООО], оператору Платформы. "Пользователь" – любое физическое или юридическое лицо, использующее Платформу (покупатели, продавцы, заявители). "Недвижимость" – недвижимость, размещенная на Платформе. "Халяль финансирование" – финансирование, соответствующее Шариату, предлагаемое через Magit.',
+    uz: '"Magit" – Platformani boshqaruvchi [Kompaniya nomi MChJ]ga tegishli. "Foydalanuvchi" – Platformadan foydalanuvchi har qanday jismoniy yoki yuridik shaxs (xaridorlar, sotuvchilar, arizachilar). "Mulk" – Platformada joylashtirilgan ko\'chmas mulk. "Halol moliyalashtirish" – Magit orqali taklif qilinadigan Shariatga mos moliyalashtirish varianti.'
   },
 
-  // Section 3: Data Sharing
-  'privacy.section3.title': {
-    en: '3. Data Sharing',
-    ru: '3. Передача данных',
-    uz: '3. Ma\'lumotlarni ulashish'
+  // Section 2: Services Provided
+  'terms.section2.title': {
+    en: '2. Services Provided',
+    ru: '2. Предоставляемые услуги',
+    uz: '2. Taqdim etiladigan xizmatlar'
   },
-  'privacy.section3.content': {
-    en: 'We do not sell or rent your personal data. We may share it only with: OneID system – for secure identity verification. Payment providers and banks – for processing payments. Legal partners – for property verification and contracts. Government authorities – if required by law. Service providers – IT, hosting, or security services bound by confidentiality.',
-    ru: 'Мы не продаем и не сдаем в аренду ваши персональные данные. Мы можем передавать их только: Системе OneID – для безопасной верификации личности. Платежным провайдерам и банкам – для обработки платежей. Юридическим партнерам – для верификации недвижимости и контрактов. Государственным органам – если это требуется по закону. Поставщикам услуг – IT, хостинг или службы безопасности, связанные обязательствами конфиденциальности.',
-    uz: 'Biz sizning shaxsiy ma\'lumotlaringizni sotmaymiz yoki ijaraga bermaymiz. Biz uni faqat quyidagilar bilan baham ko\'rishimiz mumkin: OneID tizimi – xavfsiz shaxsni tasdiqlash uchun. To\'lov provayderlari va banklar – to\'lovlarni qayta ishlash uchun. Huquqiy hamkorlar – mulkni tasdiqlash va shartnomalar uchun. Davlat organlari – agar qonun talab qilsa. Xizmat ko\'rsatuvchi provayderlar – maxfiylik majburiyatlari bilan bog\'langan IT, hosting yoki xavfsizlik xizmatlari.'
-  },
-
-  // Section 4: Data Protection
-  'privacy.section4.title': {
-    en: '4. Data Protection',
-    ru: '4. Защита данных',
-    uz: '4. Ma\'lumotlarni himoya qilish'
-  },
-  'privacy.section4.content': {
-    en: 'All data is stored securely on servers located in Uzbekistan or trusted partners abroad. Sensitive data (payments, financial details, and OneID verification results) is encrypted. Access to user data is limited to authorized Magit staff only.',
-    ru: 'Все данные надежно хранятся на серверах, расположенных в Узбекистане или у доверенных партнеров за рубежом. Конфиденциальные данные (платежи, финансовые детали и результаты верификации OneID) зашифрованы. Доступ к пользовательским данным ограничен только уполномоченными сотрудниками Magit.',
-    uz: 'Barcha ma\'lumotlar O\'zbekistonda yoki chet eldagi ishonchli hamkorlarda joylashgan serverlarda xavfsiz saqlanadi. Maxfiy ma\'lumotlar (to\'lovlar, moliyaviy tafsilotlar va OneID tasdiqlash natijalari) shifrlangan. Foydalanuvchi ma\'lumotlariga kirish faqat vakolatli Magit xodimlari bilan cheklangan.'
+  'terms.section2.content': {
+    en: 'Verified property listings uploaded by Magit staff. Property search, visit scheduling, and buyer-seller coordination. Optional Halal financing services. Payment processing through supported channels (e.g., Uzum, Click, Payme, bank transfer, office cash).',
+    ru: 'Проверенные объявления о недвижимости, загруженные сотрудниками Magit. Поиск недвижимости, планирование посещений и координация между покупателями и продавцами. Дополнительные услуги халяль финансирования. Обработка платежей через поддерживаемые каналы (например, Uzum, Click, Payme, банковский перевод, наличные в офисе).',
+    uz: 'Magit xodimlari tomonidan yuklangan tekshirilgan mulk e\'lonlari. Mulk qidirish, tashrif rejalashtirish va xaridor-sotuvchi muvofiqlashuvi. Ixtiyoriy halol moliyalashtirish xizmatlari. Qo\'llab-quvvatlanadigan kanallar orqali to\'lovlarni qayta ishlash (masalan, Uzum, Click, Payme, bank o\'tkazmasi, ofis naqd puli).'
   },
 
-  // Section 5: User Rights
-  'privacy.section5.title': {
-    en: '5. User Rights',
-    ru: '5. Права пользователей',
-    uz: '5. Foydalanuvchi huquqlari'
+  // Section 3: User Responsibilities
+  'terms.section3.title': {
+    en: '3. User Responsibilities',
+    ru: '3. Обязанности пользователя',
+    uz: '3. Foydalanuvchi majburiyatlari'
   },
-  'privacy.section5.content': {
-    en: 'You have the right to: Request a copy of your personal data. Ask us to correct inaccurate or incomplete information. Request deletion of your data, unless retention is required by law. Withdraw consent for marketing communications.',
-    ru: 'Вы имеете право: Запросить копию ваших персональных данных. Попросить нас исправить неточную или неполную информацию. Запросить удаление ваших данных, если только их хранение не требуется по закону. Отозвать согласие на маркетинговые коммуникации.',
-    uz: 'Sizda quyidagi huquqlar bor: Shaxsiy ma\'lumotlaringizning nusxasini so\'rash. Noto\'g\'ri yoki to\'liq bo\'lmagan ma\'lumotlarni tuzatishimizni so\'rash. Agar qonun talab qilmasa, ma\'lumotlaringizni o\'chirishni so\'rash. Marketing aloqalari uchun rozilikni bekor qilish.'
-  },
-
-  // Section 6: Cookies & Tracking
-  'privacy.section6.title': {
-    en: '6. Cookies & Tracking',
-    ru: '6. Файлы cookie и отслеживание',
-    uz: '6. Cookie-lar va kuzatish'
-  },
-  'privacy.section6.content': {
-    en: 'Magit may use cookies and analytics tools to improve your experience. You can disable cookies in your browser, but some features may stop working properly.',
-    ru: 'Magit может использовать файлы cookie и инструменты аналитики для улучшения вашего опыта. Вы можете отключить файлы cookie в своем браузере, но некоторые функции могут перестать работать правильно.',
-    uz: 'Magit tajribangizni yaxshilash uchun cookie-lar va analitik vositalardan foydalanishi mumkin. Brauzeringizda cookie-larni o\'chirib qo\'yishingiz mumkin, lekin ba\'zi xususiyatlar to\'g\'ri ishlamasligi mumkin.'
+  'terms.section3.content': {
+    en: 'Provide accurate and truthful information when registering or applying. Not use the Platform for fraudulent, misleading, or illegal activities. Respect property owners, Magit staff, and other users during visits and transactions.',
+    ru: 'Предоставлять точную и правдивую информацию при регистрации или подаче заявления. Не использовать Платформу для мошеннических, вводящих в заблуждение или незаконных действий. Уважать владельцев недвижимости, сотрудников Magit и других пользователей во время посещений и сделок.',
+    uz: 'Ro\'yxatdan o\'tishda yoki ariza berishda aniq va haqiqiy ma\'lumot berish. Platformani firibgar, aldamchi yoki noqonuniy faoliyat uchun ishlatmaslik. Tashrif va bitimlar davomida mulk egalarini, Magit xodimlarini va boshqa foydalanuvchilarni hurmat qilish.'
   },
 
-  // Section 7: Data Retention
-  'privacy.section7.title': {
-    en: '7. Data Retention',
-    ru: '7. Хранение данных',
-    uz: '7. Ma\'lumotlarni saqlash'
+  // Section 4: Financing Terms
+  'terms.section4.title': {
+    en: '4. Financing Terms',
+    ru: '4. Условия финансирования',
+    uz: '4. Moliyalashtirish shartlari'
   },
-  'privacy.section7.content': {
-    en: 'We keep your data only as long as necessary to provide services or comply with legal obligations. After this, it will be securely deleted.',
-    ru: 'Мы храним ваши данные только столько, сколько необходимо для предоставления услуг или соблюдения правовых обязательств. После этого они будут безопасно удалены.',
-    uz: 'Biz sizning ma\'lumotlaringizni faqat xizmatlar ko\'rsatish yoki huquqiy majburiyatlarga rioya qilish uchun zarur bo\'lgan muddatgacha saqlaymiz. Shundan keyin ular xavfsiz tarzda o\'chiriladi.'
+  'terms.section4.content': {
+    en: 'Financing offers are subject to eligibility checks. Down payment required: typically between 30%–90% (depending on agreement). Payments are made in fixed installments as agreed in the financing contract. Missed payments may result in penalties, repossession of the property, or termination of financing. Financing is strictly interest-free (riba-free) and based on Shariah principles.',
+    ru: 'Предложения по финансированию зависят от проверки соответствия критериям. Требуется первоначальный взнос: обычно от 30% до 90% (в зависимости от соглашения). Платежи производятся фиксированными взносами согласно договору финансирования. Пропущенные платежи могут привести к штрафам, изъятию имущества или прекращению финансирования. Финансирование строго беспроцентное (без рибы) и основано на принципах Шариата.',
+    uz: 'Moliyalashtirish takliflari muvofiqlik tekshiruviga bog\'liq. Dastlabki to\'lov talab qilinadi: odatda 30% dan 90% gacha (kelishuvga qarab). To\'lovlar moliyalashtirish shartnomasida kelishilganidek qat\'iy to\'lovlarda amalga oshiriladi. To\'lovlarni o\'tkazib yuborish jarimalar, mulkni qaytarib olish yoki moliyalashtirishni tugatishga olib kelishi mumkin. Moliyalashtirish qat\'iyan foizsiz (ribosiz) va Shariat tamoyillariga asoslangan.'
   },
 
-  // Section 8: Contact Information
-  'privacy.section8.title': {
-    en: '8. Contact Information',
-    ru: '8. Контактная информация',
-    uz: '8. Aloqa ma\'lumotlari'
+  // Section 5: Platform Limitations
+  'terms.section5.title': {
+    en: '5. Platform Limitations',
+    ru: '5. Ограничения платформы',
+    uz: '5. Platforma cheklovlari'
   },
-  'privacy.section8.content': {
-    en: 'If you have questions or concerns, please contact us:',
-    ru: 'Если у вас есть вопросы или замечания, пожалуйста, свяжитесь с нами:',
-    uz: 'Agar savollaringiz yoki tashvishlaringiz bo\'lsa, iltimos biz bilan bog\'laning:'
+  'terms.section5.content': {
+    en: 'Magit does not guarantee property appreciation, resale value, or profitability. Magit is not responsible for disputes between buyers and sellers outside of verified processes. Listings are verified to the best of our ability, but Magit does not provide absolute guarantees against legal or ownership risks.',
+    ru: 'Magit не гарантирует рост стоимости недвижимости, стоимость перепродажи или прибыльность. Magit не несет ответственности за споры между покупателями и продавцами вне проверенных процессов. Объявления проверяются в меру наших возможностей, но Magit не предоставляет абсолютных гарантий против правовых рисков или рисков собственности.',
+    uz: 'Magit mulkning qadriga ko\'tarilishini, qayta sotish qiymatini yoki foydaliligini kafolatlamaydi. Magit tekshirilgan jarayonlardan tashqari xaridor va sotuvchilar o\'rtasidagi nizolar uchun javobgar emas. E\'lonlar imkonyatlarimiz doirasida tekshiriladi, lekin Magit huquqiy yoki mulkchilik xatarlariga qarshi mutlaq kafolat bermaydi.'
   },
-  'privacy.contact.email': {
+
+  // Section 6: Fees
+  'terms.section6.title': {
+    en: '6. Fees',
+    ru: '6. Сборы',
+    uz: '6. To\'lovlar'
+  },
+  'terms.section6.content': {
+    en: 'Property viewing, browsing, and listing are free for users. Financing agreements may involve administrative or service charges, disclosed at the time of contract. No verification fee is charged to buyers or sellers.',
+    ru: 'Просмотр, поиск и размещение недвижимости бесплатны для пользователей. Соглашения о финансировании могут включать административные или сервисные сборы, раскрываемые во время заключения контракта. С покупателей или продавцов не взимается плата за верификацию.',
+    uz: 'Mulkni ko\'rish, qidirish va e\'lon berish foydalanuvchilar uchun bepul. Moliyalashtirish shartnomalari shartnoma tuzish vaqtida e\'lon qilinadigan ma\'muriy yoki xizmat to\'lovlarini o\'z ichiga olishi mumkin. Xaridor yoki sotuvchilardan tekshirish to\'lovi olinmaydi.'
+  },
+
+  // Section 7: Intellectual Property
+  'terms.section7.title': {
+    en: '7. Intellectual Property',
+    ru: '7. Интеллектуальная собственность',
+    uz: '7. Intellektual mulk'
+  },
+  'terms.section7.content': {
+    en: 'All content on Magit (logos, text, photos, software) belongs to Magit unless otherwise stated. Users may not copy, modify, or distribute Platform content without permission.',
+    ru: 'Весь контент на Magit (логотипы, текст, фотографии, программное обеспечение) принадлежит Magit, если не указано иное. Пользователи не могут копировать, изменять или распространять контент Платформы без разрешения.',
+    uz: 'Magit-dagi barcha kontent (logotiplar, matn, fotosuratlar, dasturiy ta\'minot) agar boshqacha ko\'rsatilmagan bo\'lsa, Magit-ga tegishli. Foydalanuvchilar ruxsatsiz Platforma kontentini nusxalay, o\'zgartira yoki tarqata olmaydi.'
+  },
+
+  // Section 8: Privacy
+  'terms.section8.title': {
+    en: '8. Privacy',
+    ru: '8. Конфиденциальность',
+    uz: '8. Maxfiylik'
+  },
+  'terms.section8.content': {
+    en: 'User data (including financial details, documents, and payments) will be handled according to our Privacy Policy. By using the Platform, you consent to data collection and processing as described in that policy.',
+    ru: 'Данные пользователей (включая финансовые детали, документы и платежи) будут обрабатываться в соответствии с нашей Политикой конфиденциальности. Используя Платформу, вы соглашаетесь на сбор и обработку данных, как описано в этой политике.',
+    uz: 'Foydalanuvchi ma\'lumotlari (moliyaviy tafsilotlar, hujjatlar va to\'lovlarni o\'z ichiga olgan holda) bizning Maxfiylik siyosatimizga muvofiq ko\'rib chiqiladi. Platformadan foydalanish orqali siz ushbu siyosatda tasvirlangan ma\'lumotlarni yig\'ish va qayta ishlashga rozilik bildirasiz.'
+  },
+
+  // Section 9: Liability
+  'terms.section9.title': {
+    en: '9. Liability',
+    ru: '9. Ответственность',
+    uz: '9. Javobgarlik'
+  },
+  'terms.section9.content': {
+    en: 'Magit is not liable for losses resulting from user negligence, incorrect information, or third-party actions. Magit is not liable for payment failures due to banks, apps, or other payment providers.',
+    ru: 'Magit не несет ответственности за убытки, возникшие в результате небрежности пользователя, неверной информации или действий третьих лиц. Magit не несет ответственности за сбои в платежах из-за банков, приложений или других поставщиков платежных услуг.',
+    uz: 'Magit foydalanuvchi ehtiyotsizligi, noto\'g\'ri ma\'lumot yoki uchinchi shaxslar harakatlari natijasida yuzaga kelgan zararlar uchun javobgar emas. Magit banklar, ilovalar yoki boshqa to\'lov provayderlari sabab bo\'lgan to\'lov muvaffaqiyatsizliklari uchun javobgar emas.'
+  },
+
+  // Section 10: Termination
+  'terms.section10.title': {
+    en: '10. Termination',
+    ru: '10. Прекращение действия',
+    uz: '10. Tugatish'
+  },
+  'terms.section10.content': {
+    en: 'Magit reserves the right to suspend or terminate accounts if users violate these Terms.',
+    ru: 'Magit оставляет за собой право приостановить или прекратить учетные записи, если пользователи нарушают эти Условия.',
+    uz: 'Magit foydalanuvchilar ushbu Shartlarni buzgan taqdirda hisoblarni to\'xtatish yoki tugatish huquqini o\'zida saqlab qoladi.'
+  },
+
+  // Section 11: Governing Law
+  'terms.section11.title': {
+    en: '11. Governing Law',
+    ru: '11. Применимое право',
+    uz: '11. Amaldagi qonun'
+  },
+  'terms.section11.content': {
+    en: 'These Terms are governed by the laws of the Republic of Uzbekistan. Any disputes will be resolved in accordance with Uzbek legislation.',
+    ru: 'Эти Условия регулируются законами Республики Узбекистан. Любые споры будут разрешаться в соответствии с узбекским законодательством.',
+    uz: 'Ushbu Shartlar O\'zbekiston Respublikasi qonunlari bilan tartibga solinadi. Har qanday nizolar o\'zbek qonunchiligiga muvofiq hal qilinadi.'
+  },
+
+  // Section 12: Contact
+  'terms.section12.title': {
+    en: '12. Contact',
+    ru: '12. Контакты',
+    uz: '12. Aloqa'
+  },
+  'terms.section12.content': {
+    en: 'For questions, complaints, or support, please contact:',
+    ru: 'По вопросам, жалобам или поддержке обращайтесь:',
+    uz: 'Savollar, shikoyatlar yoki yordam uchun murojaat qiling:'
+  },
+  'terms.contact.email': {
     en: '📧 magit.startup@gmail.com',
     ru: '📧 magit.startup@gmail.com',
     uz: '📧 magit.startup@gmail.com'
+  },
+  'terms.contact.phone': {
+    en: '📞 +998975586669',
+    ru: '📞 +998975586669',
+    uz: '📞 +998975586669'
   },
 
   // Dashboard Page
