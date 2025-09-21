@@ -3971,6 +3971,165 @@ const translations: Translations = {
     uz: 'Boshqarish'
   },
 
+  // Terms and Conditions Page
+  'terms.title': {
+    en: 'Terms and Conditions',
+    ru: 'Условия использования',
+    uz: 'Foydalanish shartlari'
+  },
+  'terms.subtitle': {
+    en: 'Please read these terms and conditions carefully before using our service.',
+    ru: 'Пожалуйста, внимательно прочитайте эти условия использования перед использованием нашего сервиса.',
+    uz: 'Xizmatimizdan foydalanishdan oldin ushbu shartlarni diqqat bilan o\'qing.'
+  },
+  'terms.lastUpdated': {
+    en: 'Last updated: September 2024',
+    ru: 'Последнее обновление: сентябрь 2024',
+    uz: 'Oxirgi yangilanish: 2024-yil sentabr'
+  },
+
+  // Section 1: Acceptance of Terms
+  'terms.section1.title': {
+    en: '1. Acceptance of Terms',
+    ru: '1. Принятие условий',
+    uz: '1. Shartlarni qabul qilish'
+  },
+  'terms.section1.content': {
+    en: 'By accessing and using Magit, you accept and agree to be bound by the terms and provision of this agreement.',
+    ru: 'Получая доступ и используя Magit, вы принимаете и соглашаетесь соблюдать условия данного соглашения.',
+    uz: 'Magit-ga kirish va undan foydalanish orqali siz ushbu shartnoma shartlariga rozilik bildirasiz.'
+  },
+
+  // Section 2: Use License
+  'terms.section2.title': {
+    en: '2. Use License',
+    ru: '2. Лицензия на использование',
+    uz: '2. Foydalanish litsenziyasi'
+  },
+  'terms.section2.content': {
+    en: 'Permission is granted to temporarily download one copy of Magit per device for personal, non-commercial transitory viewing only.',
+    ru: 'Разрешается временно загрузить одну копию Magit на устройство только для личного, некоммерческого просмотра.',
+    uz: 'Magit-ning bir nusxasini har bir qurilmaga shaxsiy, tijorat bo\'lmagan ko\'rish uchun vaqtincha yuklab olishga ruxsat beriladi.'
+  },
+
+  // Section 3: Property Listings
+  'terms.section3.title': {
+    en: '3. Property Listings',
+    ru: '3. Объявления о недвижимости',
+    uz: '3. Ko\'chmas mulk e\'lonlari'
+  },
+  'terms.section3.content': {
+    en: 'Users are responsible for the accuracy of their property listings. Magit reserves the right to remove listings that violate our guidelines.',
+    ru: 'Пользователи несут ответственность за точность своих объявлений о недвижимости. Magit оставляет за собой право удалять объявления, нарушающие наши правила.',
+    uz: 'Foydalanuvchilar o\'zlarining ko\'chmas mulk e\'lonlarining to\'g\'riligiga javobgardirlar. Magit bizning qoidalarimizni buzadigan e\'lonlarni olib tashlash huquqini o\'zida saqlab qoladi.'
+  },
+
+  // Section 4: Financial Services
+  'terms.section4.title': {
+    en: '4. Financial Services',
+    ru: '4. Финансовые услуги',
+    uz: '4. Moliyaviy xizmatlar'
+  },
+  'terms.section4.content': {
+    en: 'Magit provides information about financing options but is not a financial institution. All financial decisions are made at your own risk.',
+    ru: 'Magit предоставляет информацию о вариантах финансирования, но не является финансовым учреждением. Все финансовые решения принимаются на ваш риск.',
+    uz: 'Magit moliyalashtirish imkoniyatlari haqida ma\'lumot beradi, lekin moliya muassasasi emas. Barcha moliyaviy qarorlar o\'z tavakkalingizga qabul qilinadi.'
+  },
+
+  // Section 5: User Accounts
+  'terms.section5.title': {
+    en: '5. User Accounts',
+    ru: '5. Учетные записи пользователей',
+    uz: '5. Foydalanuvchi hisoblari'
+  },
+  'terms.section5.content': {
+    en: 'You are responsible for safeguarding your account credentials and all activities under your account.',
+    ru: 'Вы несете ответственность за защиту учетных данных и всех действий в рамках вашей учетной записи.',
+    uz: 'Siz o\'z hisob ma\'lumotlaringizni himoya qilish va hisobingiz ostidagi barcha faoliyat uchun javobgarsiz.'
+  },
+
+  // Section 6: Privacy Policy
+  'terms.section6.title': {
+    en: '6. Privacy Policy',
+    ru: '6. Политика конфиденциальности',
+    uz: '6. Maxfiylik siyosati'
+  },
+  'terms.section6.content': {
+    en: 'Your privacy is important to us. Our Privacy Policy explains how we collect, use, and protect your information.',
+    ru: 'Ваша конфиденциальность важна для нас. Наша Политика конфиденциальности объясняет, как мы собираем, используем и защищаем вашу информацию.',
+    uz: 'Sizning maxfiyligingiz biz uchun muhim. Bizning Maxfiylik siyosatimiz ma\'lumotlaringizni qanday yig\'ish, ishlatish va himoya qilishimizni tushuntiradi.'
+  },
+
+  // Section 7: Prohibited Uses
+  'terms.section7.title': {
+    en: '7. Prohibited Uses',
+    ru: '7. Запрещенное использование',
+    uz: '7. Taqiqlangan foydalanish'
+  },
+  'terms.section7.content': {
+    en: 'You may not use our service for any unlawful purpose or to solicit others to perform unlawful acts.',
+    ru: 'Вы не можете использовать наш сервис для незаконных целей или для подстрекательства других к незаконным действиям.',
+    uz: 'Siz bizning xizmatimizni noqonuniy maqsadlar uchun yoki boshqalarni noqonuniy harakatlarga undash uchun ishlatishingiz mumkin emas.'
+  },
+
+  // Section 8: Content Liability
+  'terms.section8.title': {
+    en: '8. Content Liability',
+    ru: '8. Ответственность за контент',
+    uz: '8. Kontent uchun javobgarlik'
+  },
+  'terms.section8.content': {
+    en: 'We shall not be held responsible for any content that appears on your website or application.',
+    ru: 'Мы не несем ответственности за любой контент, который появляется на вашем веб-сайте или в приложении.',
+    uz: 'Biz sizning veb-saytingiz yoki ilovangizda paydo bo\'ladigan har qanday kontent uchun javobgar emasmiz.'
+  },
+
+  // Section 9: Limitation of Liability
+  'terms.section9.title': {
+    en: '9. Limitation of Liability',
+    ru: '9. Ограничение ответственности',
+    uz: '9. Javobgarlik cheklovi'
+  },
+  'terms.section9.content': {
+    en: 'In no event shall Magit be liable for any damages arising out of the use or inability to use the service.',
+    ru: 'Ни при каких обстоятельствах Magit не несет ответственности за любой ущерб, возникший в результате использования или невозможности использования сервиса.',
+    uz: 'Hech qanday holatda Magit xizmatdan foydalanish yoki foydalana olmaslik natijasida yuzaga keladigan har qanday zarar uchun javobgar bo\'lmaydi.'
+  },
+
+  // Section 10: Revisions and Errata
+  'terms.section10.title': {
+    en: '10. Revisions and Errata',
+    ru: '10. Пересмотр и исправления',
+    uz: '10. Qayta ko\'rib chiqish va tuzatishlar'
+  },
+  'terms.section10.content': {
+    en: 'We reserve the right to revise these terms at any time without notice. By using this web site, you agree to be bound by the current version.',
+    ru: 'Мы оставляем за собой право пересматривать эти условия в любое время без уведомления. Используя этот веб-сайт, вы соглашаетесь соблюдать текущую версию.',
+    uz: 'Biz ushbu shartlarni istalgan vaqtda ogohlantirishsiz qayta ko\'rib chiqish huquqini o\'zimizda saqlab qolamiz. Ushbu veb-saytdan foydalanib, siz joriy versiyaga rioya qilishga rozilik bildirasiz.'
+  },
+
+  // Section 11: Contact Information
+  'terms.section11.title': {
+    en: '11. Contact Information',
+    ru: '11. Контактная информация',
+    uz: '11. Aloqa ma\'lumotlari'
+  },
+  'terms.section11.content': {
+    en: 'If you have any questions about these Terms and Conditions, please contact us at:',
+    ru: 'Если у вас есть вопросы по данным Условиям использования, свяжитесь с нами по адресу:',
+    uz: 'Agar ushbu Foydalanish shartlari bo\'yicha savollaringiz bo\'lsa, biz bilan bog\'laning:'
+  },
+  'terms.contact.email': {
+    en: 'Email: magit.startup@gmail.com',
+    ru: 'Email: magit.startup@gmail.com',
+    uz: 'Email: magit.startup@gmail.com'
+  },
+  'terms.contact.phone': {
+    en: 'Phone: +998975586669',
+    ru: 'Телефон: +998975586669',
+    uz: 'Telefon: +998975586669'
+  },
+
   // Dashboard Page
   'dashboard.welcome': {
     en: 'Welcome',
