@@ -20,137 +20,106 @@ const TermsAndConditions = () => {
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4">
-            {t('terms.title')}
+            {t('privacy.title')}
           </h1>
           <p className="text-muted-foreground text-lg mb-4">
-            {t('terms.subtitle')}
+            {t('privacy.subtitle')}
           </p>
           <p className="text-muted-foreground text-sm">
-            {t('terms.lastUpdated')}
+            {t('privacy.lastUpdated')}
+          </p>
+          <p className="text-muted-foreground text-sm mt-2">
+            {t('privacy.intro')}
           </p>
         </div>
 
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl">{t('terms.section1.title')}</CardTitle>
+            <CardTitle className="text-2xl">{t('privacy.section1.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              {t('terms.section1.content')}
+              {t('privacy.section1.content')}
             </p>
           </CardContent>
         </Card>
 
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl">{t('terms.section2.title')}</CardTitle>
+            <CardTitle className="text-2xl">{t('privacy.section2.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              {t('terms.section2.content')}
+              {t('privacy.section2.content')}
             </p>
           </CardContent>
         </Card>
 
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl">{t('terms.section3.title')}</CardTitle>
+            <CardTitle className="text-2xl">{t('privacy.section3.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              {t('terms.section3.content')}
+              {t('privacy.section3.content')}
             </p>
           </CardContent>
         </Card>
 
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl">{t('terms.section4.title')}</CardTitle>
+            <CardTitle className="text-2xl">{t('privacy.section4.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              {t('terms.section4.content')}
+              {t('privacy.section4.content')}
             </p>
           </CardContent>
         </Card>
 
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl">{t('terms.section5.title')}</CardTitle>
+            <CardTitle className="text-2xl">{t('privacy.section5.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              {t('terms.section5.content')}
+              {t('privacy.section5.content')}
             </p>
           </CardContent>
         </Card>
 
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl">{t('terms.section6.title')}</CardTitle>
+            <CardTitle className="text-2xl">{t('privacy.section6.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              {t('terms.section6.content')}
+              {t('privacy.section6.content')}
             </p>
           </CardContent>
         </Card>
 
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl">{t('terms.section7.title')}</CardTitle>
+            <CardTitle className="text-2xl">{t('privacy.section7.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              {t('terms.section7.content')}
+              {t('privacy.section7.content')}
             </p>
           </CardContent>
         </Card>
 
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl">{t('terms.section8.title')}</CardTitle>
+            <CardTitle className="text-2xl">{t('privacy.section8.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              {t('terms.section8.content')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-2xl">{t('terms.section9.title')}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground leading-relaxed">
-              {t('terms.section9.content')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-2xl">{t('terms.section10.title')}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground leading-relaxed">
-              {t('terms.section10.content')}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-2xl">{t('terms.section11.title')}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground leading-relaxed">
-              {t('terms.section11.content')}
+              {t('privacy.section8.content')}
             </p>
             <div className="space-y-2 text-muted-foreground">
-              <p>{t('terms.contact.email')}</p>
-              <p>{t('terms.contact.phone')}</p>
+              <p>{t('privacy.contact.email')}</p>
             </div>
           </CardContent>
         </Card>
@@ -159,7 +128,7 @@ const TermsAndConditions = () => {
 
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            These terms and conditions are effective as of {new Date().toLocaleDateString()} and will remain in effect except with respect to any changes in its provisions in the future, 
+            This privacy policy is effective as of December 15, 2024 and will remain in effect except with respect to any changes in its provisions in the future, 
             which will be in effect immediately after being posted on this page.
           </p>
         </div>
