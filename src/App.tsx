@@ -33,6 +33,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Properties = lazy(() => import("./pages/Properties"));
 const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
 const ManageProperty = lazy(() => import("./pages/ManageProperty"));
 const PropertyDetails = lazy(() => import("./pages/PropertyDetails"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -226,6 +227,11 @@ const AppContent = () => {
           <Route path="/privacy" element={
             <Suspense fallback={<PageLoading />}>
               <PrivacyPolicy />
+            </Suspense>
+          } />
+          <Route path="/about" element={
+            <Suspense fallback={<PageLoading />}>
+              <AboutUs />
             </Suspense>
           } />
           <Route path="*" element={

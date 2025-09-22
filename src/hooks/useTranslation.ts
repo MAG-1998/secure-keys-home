@@ -3983,9 +3983,9 @@ const translations: Translations = {
     uz: 'Magit-ga xush kelibsiz! Ushbu Foydalanish shartlari ("Shartlar") Magit veb-sayti, mobil ilovasi va xizmatlaridan ("Platforma") foydalanishingizni tartibga soladi.'
   },
   'terms.lastUpdated': {
-    en: 'Last updated: December 15, 2024',
-    ru: 'Последнее обновление: 15 декабря 2024 г.',
-    uz: 'Oxirgi yangilanish: 15 dekabr 2024'
+    en: 'Last updated: 1 Sept 2025',
+    ru: 'Последнее обновление: 1 сентября 2025',
+    uz: 'Oxirgi yangilanish: 1 sentyabr 2025'
   },
   'terms.intro': {
     en: 'By accessing or using Magit, you agree to these Terms. If you do not agree, please do not use our Platform.',
@@ -4914,9 +4914,9 @@ const translations: Translations = {
     uz: 'Sizning maxfiyligingiz biz uchun muhim'
   },
   'privacy.lastUpdated': {
-    en: 'Last updated: [Date]',
-    ru: 'Последнее обновление: [Дата]',
-    uz: 'Oxirgi yangilanish: [Sana]'
+    en: 'Last updated: 1 Sept 2025',
+    ru: 'Последнее обновление: 1 сентября 2025',
+    uz: 'Oxirgi yangilanish: 1 sentyabr 2025'
   },
   'privacy.intro': {
     en: 'Magit ("we", "our", "us") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and protect your data when you use our website, mobile app, and services ("Platform").',
@@ -5132,6 +5132,93 @@ const translations: Translations = {
     en: '📞 +998 97 558 66 69',
     ru: '📞 +998 97 558 66 69',
     uz: '📞 +998 97 558 66 69'
+  },
+
+  // About Us
+  'about.title': {
+    en: 'About Us',
+    ru: 'О нас',
+    uz: 'Biz haqimizda'
+  },
+  'about.subtitle': {
+    en: 'Learn about our mission to revolutionize real estate in Uzbekistan',
+    ru: 'Узнайте о нашей миссии по революционизации недвижимости в Узбекистане',
+    uz: 'O\'zbekistonda ko\'chmas mulk sohasini inqilob qilish bo\'yicha missiyamiz haqida bilib oling'
+  },
+  'about.story.title': {
+    en: 'Our Story',
+    ru: 'Наша история',
+    uz: 'Bizning hikoyamiz'
+  },
+  'about.story.intro': {
+    en: 'For years, real estate in Uzbekistan has been controlled by intermediaries who add no value — only extra cost and stress. Sellers lose money through 3–5% commissions, while buyers face endless headaches with fake listings, hidden prices, and late-night calls.',
+    ru: 'Годами недвижимость в Узбекистане контролировалась посредниками, которые не добавляют никакой ценности — только дополнительные расходы и стресс. Продавцы теряют деньги через комиссии в 3–5%, а покупатели сталкиваются с бесконечными головными болями от поддельных объявлений, скрытых цен и звонков поздно ночью.',
+    uz: 'Yillar davomida O\'zbekistondagi ko\'chmas mulk hech qanday qiymat qo\'shmaydigan vositachilar tomonidan nazorat qilingan — faqat qo\'shimcha xarajatlar va stress. Sotuvchilar 3-5% komissiya orqali pul yo\'qotadilar, xaridorlar esa soxta e\'lonlar, yashirin narxlar va kechki qo\'ng\'iroqlar bilan cheksiz muammolarga duch kelishadi.'
+  },
+  'about.story.experience': {
+    en: 'I personally experienced this frustration — both as a seller and as a buyer. On both sides of the deal, I met the same wall: a broken system that benefits middlemen but never helps real people.',
+    ru: 'Я лично испытал это разочарование — как продавец и как покупатель. С обеих сторон сделки я встретил одну и ту же стену: сломанную систему, которая приносит пользу посредникам, но никогда не помогает реальным людям.',
+    uz: 'Men shaxsan bu xafagarchilikni boshdan kechirdim — ham sotuvchi, ham xaridor sifatida. Bitimning har ikki tomonida men bir xil devorga duch keldim: vositachilarga foyda keltiradigan, lekin haqiqiy odamlarga hech qachon yordam bermaydigan buzilgan tizim.'
+  },
+  'about.story.why': {
+    en: "That's why Magit was born.",
+    ru: 'Именно поэтому родился Magit.',
+    uz: 'Shuning uchun Magit tug\'ildi.'
+  },
+  'about.story.solution': {
+    en: 'Magit removes unnecessary intermediaries, verifies every property, and protects sellers from commission fees. For buyers, it offers a simple, transparent marketplace combined with Islamic, interest-free financing.',
+    ru: 'Magit устраняет ненужных посредников, проверяет каждую недвижимость и защищает продавцов от комиссионных сборов. Для покупателей он предлагает простую, прозрачную площадку в сочетании с исламским, беспроцентным финансированием.',
+    uz: 'Magit keraksiz vositachilarni olib tashlaydi, har bir mulkni tekshiradi va sotuvchilarni komissiya to\'lovlaridan himoya qiladi. Xaridorlar uchun islomiy, foizsiz moliyalashtirish bilan birgalikda oddiy, shaffof bozor taklif etadi.'
+  },
+  'about.story.timing': {
+    en: "In a country where the majority are Muslim, Halal financing isn't just an option — it's essential. And with recent government support for Islamic financial instruments, the timing is right to finally bring fairness and comfort into the housing market.",
+    ru: 'В стране, где большинство мусульман, халяльное финансирование — это не просто вариант, это необходимость. И при недавней государственной поддержке исламских финансовых инструментов время подходящее, чтобы наконец привнести справедливость и комфорт на рынок жилья.',
+    uz: "Ko'pchilik musulmon bo'lgan mamlakatda halol moliyalashtirish shunchaki variant emas — bu muhim. Va islomiy moliya vositalariga so'nggi davlat yordami bilan uy-joy bozoriga adolat va qulaylikni olib kelish uchun vaqt mos keldi."
+  },
+  'about.mission.title': {
+    en: 'Our Mission',
+    ru: 'Наша миссия',
+    uz: 'Bizning missiyamiz'
+  },
+  'about.mission.content': {
+    en: 'To make buying and selling homes in Uzbekistan transparent, safe, and accessible by removing unnecessary intermediaries, verifying every property, and offering Halal, interest-free financing — so families can achieve homeownership with comfort and dignity.',
+    ru: 'Сделать покупку и продажу домов в Узбекистане прозрачными, безопасными и доступными, устранив ненужных посредников, проверив каждую недвижимость и предложив халяльное, беспроцентное финансирование — чтобы семьи могли достичь домовладения с комфортом и достоинством.',
+    uz: 'O\'zbekistonda uy sotib olish va sotishni shaffof, xavfsiz va qulay qilish, keraksiz vositachilarni olib tashlash, har bir mulkni tekshirish va halol, foizsiz moliyalashtirish taklif etish orqali — oilalar qulaylik va qadr-qimmat bilan uy egasi bo\'lishga erishishlari uchun.'
+  },
+  'about.vision.title': {
+    en: 'Our Vision',
+    ru: 'Наше видение',
+    uz: 'Bizning ko\'zlagan maqsadimiz'
+  },
+  'about.vision.content': {
+    en: 'To become the most trusted real estate platform in Central Asia, where every family can find and finance their home without fear of scams, hidden costs, or unethical practices — setting a new standard for fairness and innovation in housing.',
+    ru: 'Стать самой надёжной платформой недвижимости в Центральной Азии, где каждая семья может найти и финансировать свой дом без страха мошенничества, скрытых расходов или неэтичных практик — устанавливая новый стандарт справедливости и инноваций в жилье.',
+    uz: 'Markaziy Osiyodagi eng ishonchli ko\'chmas mulk platformasiga aylanish, bu yerda har bir oila firibgarlik, yashirin xarajatlar yoki noaxloqiy amaliyotlardan qo\'rqmasdan o\'z uyini topishi va moliyalashtirishishi mumkin — uy-joy sohasida adolat va innovatsiyalar uchun yangi standart o\'rnatish.'
+  },
+  'about.future.title': {
+    en: 'Future Expansion – Magit Invest',
+    ru: 'Будущее расширение — Magit Invest',
+    uz: 'Kelajak kengayishi — Magit Invest'
+  },
+  'about.future.intro': {
+    en: 'After building trust with property buyers and sellers, Magit will introduce Magit Invest — a platform where individuals can invest their savings directly into Halal home financing projects. This creates a win–win model:',
+    ru: 'После создания доверия с покупателями и продавцами недвижимости, Magit представит Magit Invest — платформу, где частные лица могут инвестировать свои сбережения напрямую в халяльные проекты финансирования жилья. Это создаёт взаимовыгодную модель:',
+    uz: 'Ko\'chmas mulk xaridorlari va sotuvchilar bilan ishonch o\'rnatgandan so\'ng, Magit Magit Invest-ni taqdim etadi — shaxslar o\'z jamg\'armalarini to\'g\'ridan-to\'g\'ri halol uy moliyalashtiruvi loyihalariga sarmoya kiritishlari mumkin bo\'lgan platforma. Bu g\'alaba-g\'alaba modelini yaratadi:'
+  },
+  'about.future.families': {
+    en: 'Families get fair, interest-free financing to buy homes.',
+    ru: 'Семьи получают справедливое, беспроцентное финансирование для покупки домов.',
+    uz: 'Oilalar uy sotib olish uchun adolatli, foizsiz moliyalashtirish oladilar.'
+  },
+  'about.future.investors': {
+    en: 'Everyday investors get a chance to earn stable, Halal passive income from real assets.',
+    ru: 'Обычные инвесторы получают возможность зарабатывать стабильный, халяльный пассивный доход от реальных активов.',
+    uz: 'Oddiy investorlar haqiqiy aktivlardan barqaror, halol passiv daromad olish imkoniyatiga ega bo\'ladilar.'
+  },
+  'about.future.community': {
+    en: 'The community as a whole reduces dependence on banks and high-risk credit.',
+    ru: 'Сообщество в целом снижает зависимость от банков и высокорискованных кредитов.',
+    uz: 'Jamoa umuman banklar va yuqori xavfli kreditlarga bog\'liqlikni kamaytiradi.'
   }
 };
 const LANGUAGE_STORAGE_KEY = 'magit_language';
