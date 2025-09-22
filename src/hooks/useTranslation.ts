@@ -4900,6 +4900,238 @@ const translations: Translations = {
     en: 'Land',
     ru: 'Участок',
     uz: 'Yer'
+  },
+
+  // Privacy Policy
+  'privacy.title': {
+    en: 'Magit Privacy Policy',
+    ru: 'Политика конфиденциальности Magit',
+    uz: 'Magit maxfiylik siyosati'
+  },
+  'privacy.subtitle': {
+    en: 'Your privacy matters to us',
+    ru: 'Ваша конфиденциальность важна для нас',
+    uz: 'Sizning maxfiyligingiz biz uchun muhim'
+  },
+  'privacy.lastUpdated': {
+    en: 'Last updated: [Date]',
+    ru: 'Последнее обновление: [Дата]',
+    uz: 'Oxirgi yangilanish: [Sana]'
+  },
+  'privacy.intro': {
+    en: 'Magit ("we", "our", "us") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and protect your data when you use our website, mobile app, and services ("Platform").',
+    ru: 'Magit ("мы", "наш", "нас") уважает вашу конфиденциальность и обязуется защищать вашу личную информацию. Данная Политика конфиденциальности объясняет, как мы собираем, используем и защищаем ваши данные при использовании нашего веб-сайта, мобильного приложения и услуг ("Платформа").',
+    uz: 'Magit ("biz", "bizning") sizning maxfiyligingizni hurmat qiladi va shaxsiy ma\'lumotlaringizni himoya qilishga majburdir. Ushbu Maxfiylik siyosati bizning veb-saytimiz, mobil ilovamiz va xizmatlarimizdan ("Platforma") foydalanganda ma\'lumotlaringizni qanday yig\'ishimiz, ishlatishimiz va himoya qilishimizni tushuntiradi.'
+  },
+  'privacy.section1.title': {
+    en: '1. Information We Collect',
+    ru: '1. Информация, которую мы собираем',
+    uz: '1. Biz yig\'gan ma\'lumotlar'
+  },
+  'privacy.section1.content': {
+    en: 'We may collect the following types of data:',
+    ru: 'Мы можем собирать следующие типы данных:',
+    uz: 'Biz quyidagi turdagi ma\'lumotlarni yig\'ishimiz mumkin:'
+  },
+  'privacy.section1.personal': {
+    en: 'Personal details – full name, phone number, email address, date of birth.',
+    ru: 'Личные данные – полное имя, номер телефона, адрес электронной почты, дата рождения.',
+    uz: 'Shaxsiy ma\'lumotlar – to\'liq ism, telefon raqami, elektron pochta manzili, tug\'ilgan sana.'
+  },
+  'privacy.section1.identity': {
+    en: 'Identity verification data – information retrieved through OneID (Uzbekistan\'s national digital identification system) for user registration and verification.',
+    ru: 'Данные верификации личности – информация, полученная через OneID (национальная система цифровой идентификации Узбекистана) для регистрации и верификации пользователей.',
+    uz: 'Shaxsni tasdiqlash ma\'lumotlari – foydalanuvchilarni ro\'yxatdan o\'tkazish va tasdiqlash uchun OneID (O\'zbekistonning milliy raqamli identifikatsiya tizimi) orqali olingan ma\'lumotlar.'
+  },
+  'privacy.section1.property': {
+    en: 'Property-related data – preferences, saved listings, visit requests.',
+    ru: 'Данные, связанные с недвижимостью – предпочтения, сохранённые объявления, запросы на просмотр.',
+    uz: 'Ko\'chmas mulk bilan bog\'liq ma\'lumotlar – afzalliklar, saqlangan e\'lonlar, ko\'rish so\'rovlari.'
+  },
+  'privacy.section1.financial': {
+    en: 'Financial information – income details, documents, and payment history (for financing applications).',
+    ru: 'Финансовая информация – данные о доходах, документы и история платежей (для заявок на финансирование).',
+    uz: 'Moliyaviy ma\'lumotlar – daromad ma\'lumotlari, hujjatlar va to\'lov tarixi (moliyalashtirish uchun arizalar).'
+  },
+  'privacy.section1.payment': {
+    en: 'Payment information – bank card details, payment confirmations, receipts.',
+    ru: 'Платёжная информация – данные банковских карт, подтверждения платежей, квитанции.',
+    uz: 'To\'lov ma\'lumotlari – bank kartasi ma\'lumotlari, to\'lov tasdiqlamalari, kvitansiyalar.'
+  },
+  'privacy.section1.technical': {
+    en: 'Technical data – IP address, device type, browser, app usage patterns.',
+    ru: 'Технические данные – IP-адрес, тип устройства, браузер, шаблоны использования приложения.',
+    uz: 'Texnik ma\'lumotlar – IP manzil, qurilma turi, brauzer, ilova foydalanish namunalari.'
+  },
+  'privacy.section2.title': {
+    en: '2. How We Use Your Data',
+    ru: '2. Как мы используем ваши данные',
+    uz: '2. Ma\'lumotlaringizni qanday ishlatamiz'
+  },
+  'privacy.section2.content': {
+    en: 'We use your data to:',
+    ru: 'Мы используем ваши данные для:',
+    uz: 'Biz sizning ma\'lumotlaringizni quyidagilar uchun ishlatamiz:'
+  },
+  'privacy.section2.verify': {
+    en: 'Verify user identity through OneID during registration.',
+    ru: 'Верификации личности пользователя через OneID при регистрации.',
+    uz: 'Ro\'yxatdan o\'tish paytida OneID orqali foydalanuvchi shaxsini tasdiqlash.'
+  },
+  'privacy.section2.provide': {
+    en: 'Provide access to verified property listings.',
+    ru: 'Предоставления доступа к проверенным объявлениям недвижимости.',
+    uz: 'Tasdiqlangan ko\'chmas mulk e\'lonlariga kirish imkonini berish.'
+  },
+  'privacy.section2.process': {
+    en: 'Process visit requests and coordinate with sellers.',
+    ru: 'Обработки запросов на просмотр и координации с продавцами.',
+    uz: 'Ko\'rish so\'rovlarini qayta ishlash va sotuvchilar bilan muvofiqlashtirish.'
+  },
+  'privacy.section2.review': {
+    en: 'Review financing applications and determine eligibility.',
+    ru: 'Рассмотрения заявок на финансирование и определения соответствия критериям.',
+    uz: 'Moliyalashtirish arizalarini ko\'rib chiqish va muvofiqligini aniqlash.'
+  },
+  'privacy.section2.payments': {
+    en: 'Process payments securely through approved providers (e.g., Uzum, Payme, Click).',
+    ru: 'Безопасной обработки платежей через одобренных провайдеров (например, Uzum, Payme, Click).',
+    uz: 'Tasdiqlangan provaiderlar (masalan, Uzum, Payme, Click) orqali to\'lovlarni xavfsiz qayta ishlash.'
+  },
+  'privacy.section2.improve': {
+    en: 'Improve our services, user experience, and platform security.',
+    ru: 'Улучшения наших услуг, пользовательского опыта и безопасности платформы.',
+    uz: 'Xizmatlarimiz, foydalanuvchi tajribasi va platforma xavfsizligini yaxshilash.'
+  },
+  'privacy.section2.comply': {
+    en: 'Comply with legal obligations under Uzbek law.',
+    ru: 'Соблюдения правовых обязательств согласно законодательству Узбекистана.',
+    uz: 'O\'zbekiston qonunchiligiga muvofiq huquqiy majburiyatlarni bajarish.'
+  },
+  'privacy.section3.title': {
+    en: '3. Data Sharing',
+    ru: '3. Обмен данными',
+    uz: '3. Ma\'lumotlar almashish'
+  },
+  'privacy.section3.content': {
+    en: 'We do not sell or rent your personal data. We may share it only with:',
+    ru: 'Мы не продаём и не сдаём в аренду ваши личные данные. Мы можем делиться ими только с:',
+    uz: 'Biz sizning shaxsiy ma\'lumotlaringizni sotmaymiz yoki ijaraga bermaymiz. Biz ularni faqat quyidagilar bilan baham ko\'rishimiz mumkin:'
+  },
+  'privacy.section3.oneId': {
+    en: 'OneID system – for secure identity verification.',
+    ru: 'Системой OneID – для безопасной верификации личности.',
+    uz: 'OneID tizimi – xavfsiz shaxsni tasdiqlash uchun.'
+  },
+  'privacy.section3.payment': {
+    en: 'Payment providers and banks – for processing payments.',
+    ru: 'Платёжными провайдерами и банками – для обработки платежей.',
+    uz: 'To\'lov provayderlari va banklar – to\'lovlarni qayta ishlash uchun.'
+  },
+  'privacy.section3.legal': {
+    en: 'Legal partners – for property verification and contracts.',
+    ru: 'Юридическими партнёрами – для верификации недвижимости и контрактов.',
+    uz: 'Huquqiy sheriklar – ko\'chmas mulkni tasdiqlash va shartnomalar uchun.'
+  },
+  'privacy.section3.government': {
+    en: 'Government authorities – if required by law.',
+    ru: 'Государственными органами – если требуется по закону.',
+    uz: 'Davlat organlari – qonun talabi bo\'yicha.'
+  },
+  'privacy.section3.service': {
+    en: 'Service providers – IT, hosting, or security services bound by confidentiality.',
+    ru: 'Поставщиками услуг – IT, хостинг или охранные услуги, связанные обязательствами конфиденциальности.',
+    uz: 'Xizmat ko\'rsatuvchilar – maxfiylik majburiyatlari bilan bog\'langan IT, hosting yoki xavfsizlik xizmatlari.'
+  },
+  'privacy.section4.title': {
+    en: '4. Data Protection',
+    ru: '4. Защита данных',
+    uz: '4. Ma\'lumotlarni himoya qilish'
+  },
+  'privacy.section4.storage': {
+    en: 'All data is stored securely on servers located in Uzbekistan or trusted partners abroad.',
+    ru: 'Все данные надёжно хранятся на серверах, расположенных в Узбекистане или у доверенных партнёров за рубежом.',
+    uz: 'Barcha ma\'lumotlar O\'zbekistonda yoki chet eldagi ishonchli sheriklarda joylashgan serverlarda xavfsiz saqlanadi.'
+  },
+  'privacy.section4.encryption': {
+    en: 'Sensitive data (payments, financial details, and OneID verification results) is encrypted.',
+    ru: 'Чувствительные данные (платежи, финансовые детали и результаты верификации OneID) зашифрованы.',
+    uz: 'Nozik ma\'lumotlar (to\'lovlar, moliyaviy tafsilotlar va OneID tasdiqlash natijalari) shifrlangan.'
+  },
+  'privacy.section4.access': {
+    en: 'Access to user data is limited to authorized Magit staff only.',
+    ru: 'Доступ к пользовательским данным ограничен только авторизованными сотрудниками Magit.',
+    uz: 'Foydalanuvchi ma\'lumotlariga kirish faqat vakolatli Magit xodimlari bilan cheklangan.'
+  },
+  'privacy.section5.title': {
+    en: '5. User Rights',
+    ru: '5. Права пользователей',
+    uz: '5. Foydalanuvchi huquqlari'
+  },
+  'privacy.section5.content': {
+    en: 'You have the right to:',
+    ru: 'У вас есть право:',
+    uz: 'Sizning quyidagi huquqlaringiz bor:'
+  },
+  'privacy.section5.request': {
+    en: 'Request a copy of your personal data.',
+    ru: 'Запросить копию ваших личных данных.',
+    uz: 'Shaxsiy ma\'lumotlaringiz nusxasini so\'rash.'
+  },
+  'privacy.section5.correct': {
+    en: 'Ask us to correct inaccurate or incomplete information.',
+    ru: 'Попросить нас исправить неточную или неполную информацию.',
+    uz: 'Noto\'g\'ri yoki to\'liq bo\'lmagan ma\'lumotlarni tuzatishni so\'rash.'
+  },
+  'privacy.section5.delete': {
+    en: 'Request deletion of your data, unless retention is required by law.',
+    ru: 'Запросить удаление ваших данных, если их сохранение не требуется по закону.',
+    uz: 'Qonun tomonidan saqlash talab qilinmasa, ma\'lumotlaringizni o\'chirishni so\'rash.'
+  },
+  'privacy.section5.withdraw': {
+    en: 'Withdraw consent for marketing communications.',
+    ru: 'Отозвать согласие на маркетинговые коммуникации.',
+    uz: 'Marketing aloqalari uchun rozilikni qaytarib olish.'
+  },
+  'privacy.section6.title': {
+    en: '6. Cookies & Tracking',
+    ru: '6. Куки и отслеживание',
+    uz: '6. Cookie va kuzatuv'
+  },
+  'privacy.section6.content': {
+    en: 'Magit may use cookies and analytics tools to improve your experience. You can disable cookies in your browser, but some features may stop working properly.',
+    ru: 'Magit может использовать куки и аналитические инструменты для улучшения вашего опыта. Вы можете отключить куки в своём браузере, но некоторые функции могут перестать работать правильно.',
+    uz: 'Magit tajribangizni yaxshilash uchun cookie va tahlil vositalaridan foydalanishi mumkin. Brauzerdagi cookie-larni o\'chirib qo\'yishingiz mumkin, lekin ba\'zi xususiyatlar to\'g\'ri ishlamasligi mumkin.'
+  },
+  'privacy.section7.title': {
+    en: '7. Data Retention',
+    ru: '7. Сохранение данных',
+    uz: '7. Ma\'lumotlarni saqlash'
+  },
+  'privacy.section7.content': {
+    en: 'We keep your data only as long as necessary to provide services or comply with legal obligations. After this, it will be securely deleted.',
+    ru: 'Мы храним ваши данные только до тех пор, пока это необходимо для предоставления услуг или соблюдения правовых обязательств. После этого они будут надёжно удалены.',
+    uz: 'Biz sizning ma\'lumotlaringizni faqat xizmatlar ko\'rsatish yoki qonuniy majburiyatlarni bajarish uchun zarur bo\'lgan vaqt davomida saqlaymiz. Shundan so\'ng ular xavfsiz tarzda o\'chiriladi.'
+  },
+  'privacy.section8.title': {
+    en: '8. Contact Information',
+    ru: '8. Контактная информация',
+    uz: '8. Aloqa ma\'lumotlari'
+  },
+  'privacy.section8.content': {
+    en: 'If you have questions or concerns, please contact us:',
+    ru: 'Если у вас есть вопросы или сомнения, пожалуйста, свяжитесь с нами:',
+    uz: 'Savollaringiz yoki xavotiringiz bo\'lsa, biz bilan bog\'laning:'
+  },
+  'privacy.contact.email': {
+    en: '📧 magit.startup@gmail.com',
+    ru: '📧 magit.startup@gmail.com',
+    uz: '📧 magit.startup@gmail.com'
+  },
+  'privacy.contact.phone': {
+    en: '📞 +998 97 558 66 69',
+    ru: '📞 +998 97 558 66 69',
+    uz: '📞 +998 97 558 66 69'
   }
 };
 const LANGUAGE_STORAGE_KEY = 'magit_language';
