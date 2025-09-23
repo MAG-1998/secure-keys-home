@@ -5228,19 +5228,325 @@ const translations: Translations = {
     uz: 'Magit qanday ishlaydi'
   },
   'howItWorks.subtitle': {
-    en: 'A simple, transparent process that puts you in control of your property journey',
-    ru: 'Простой, прозрачный процесс, который дает вам контроль над вашим путешествием в недвижимости',
-    uz: 'Sizni ko\'chmas mulk sayohatingizda nazoratga oluvchi oddiy, shaffof jarayon'
+    en: 'Choose your path and discover how to buy property the smart way',
+    ru: 'Выберите свой путь и узнайте, как умно покупать недвижимость',
+    uz: 'O\'z yo\'lingizni tanlang va mulkni aqlli usulda sotib olishni o\'rganing'
+  },
+  
+  // Coin Flip Section
+  'howItWorks.coinQuestion': {
+    en: 'How do you want to purchase your property?',
+    ru: 'Как вы хотите купить свою недвижимость?',
+    uz: 'Mulkingizni qanday sotib olmoqchisiz?'
+  },
+  'howItWorks.cashOption': {
+    en: 'Cash Purchase',
+    ru: 'Наличными',
+    uz: 'Naqd to\'lov'
+  },
+  'howItWorks.financingOption': {
+    en: 'Halal Financing',
+    ru: 'Халяль финансирование',
+    uz: 'Halol moliyalashtirish'
+  },
+
+  // Coin Sides Information
+  'howItWorks.cashSide.title': {
+    en: 'Cash Purchase',
+    ru: 'Наличная покупка',
+    uz: 'Naqd xarid'
+  },
+  'howItWorks.cashSide.subtitle': {
+    en: 'Direct marketplace buying',
+    ru: 'Прямая покупка на площадке',
+    uz: 'To\'g\'ridan-to\'g\'ri bozordan xarid'
+  },
+  'howItWorks.cashSide.feature1': {
+    en: 'Instant ownership',
+    ru: 'Мгновенное владение',
+    uz: 'Darhol egalik'
+  },
+  'howItWorks.cashSide.feature2': {
+    en: 'No interest fees',
+    ru: 'Без процентов',
+    uz: 'Foizsiz'
+  },
+  'howItWorks.cashSide.feature3': {
+    en: 'Simple process',
+    ru: 'Простой процесс',
+    uz: 'Oddiy jarayon'
+  },
+  'howItWorks.financingSide.title': {
+    en: 'Halal Financing',
+    ru: 'Халяль финансирование',
+    uz: 'Halol moliyalashtirish'
+  },
+  'howItWorks.financingSide.subtitle': {
+    en: 'Interest-free installments',
+    ru: 'Беспроцентная рассрочка',
+    uz: 'Foizsiz bo\'lib to\'lash'
+  },
+  'howItWorks.financingSide.feature1': {
+    en: 'Sharia compliant',
+    ru: 'По шариату',
+    uz: 'Shariatga mos'
+  },
+  'howItWorks.financingSide.feature2': {
+    en: 'Flexible payments',
+    ru: 'Гибкие платежи',
+    uz: 'Moslashuvchan to\'lovlar'
+  },
+  'howItWorks.financingSide.feature3': {
+    en: 'Community trusted',
+    ru: 'Доверие общества',
+    uz: 'Jamiyat ishonchi'
+  },
+
+  // Path-specific badges
+  'howItWorks.cashBadge': {
+    en: '✓ Verified Marketplace',
+    ru: '✓ Проверенная площадка',
+    uz: '✓ Tekshirilgan platforma'
+  },
+  'howItWorks.financingBadge': {
+    en: '✓ Sharia-Compliant Platform',
+    ru: '✓ Шариатская платформа',
+    uz: '✓ Shariatga mos platforma'
+  },
+
+  // Cash Purchase Steps
+  'howItWorks.cashStepsTitle': {
+    en: 'Cash Purchase Process',
+    ru: 'Процесс покупки наличными',
+    uz: 'Naqd xarid jarayoni'
+  },
+  'howItWorks.cashStepsSubtitle': {
+    en: 'Four simple steps to own your property',
+    ru: 'Четыре простых шага к владению недвижимостью',
+    uz: 'Mulk egasi bo\'lish uchun to\'rtta oddiy qadam'
+  },
+  'howItWorks.cash.step1.title': {
+    en: 'Browse Verified Properties',
+    ru: 'Просмотр проверенных объектов',
+    uz: 'Tekshirilgan mulklarni ko\'rish'
+  },
+  'howItWorks.cash.step1.description': {
+    en: 'Search through our verified marketplace with transparent pricing and no hidden fees',
+    ru: 'Ищите на нашей проверенной площадке с прозрачными ценами и без скрытых комиссий',
+    uz: 'Shaffof narxlar va yashirin to\'lovsiz tekshirilgan bozorimizda qidiring'
+  },
+  'howItWorks.cash.step1.feature1': {
+    en: 'ID-verified sellers only',
+    ru: 'Только проверенные продавцы',
+    uz: 'Faqat tekshirilgan sotuvchilar'
+  },
+  'howItWorks.cash.step1.feature2': {
+    en: 'No broker commissions',
+    ru: 'Без комиссий брокеров',
+    uz: 'Broker komissiyasisiz'
+  },
+  'howItWorks.cash.step1.feature3': {
+    en: 'Real-time property updates',
+    ru: 'Обновления в реальном времени',
+    uz: 'Real vaqtda yangilanishlar'
+  },
+  'howItWorks.cash.step2.title': {
+    en: 'Schedule & Visit',
+    ru: 'Запланировать и посетить',
+    uz: 'Rejalashtirish va tashrif'
+  },
+  'howItWorks.cash.step2.description': {
+    en: 'Book verified visits with property owners through our secure platform',
+    ru: 'Бронируйте проверенные посещения с владельцами через нашу безопасную платформу',
+    uz: 'Xavfsiz platformamiz orqali mulk egalari bilan tekshirilgan tashriflarni bron qiling'
+  },
+  'howItWorks.cash.step2.feature1': {
+    en: 'Direct owner contact',
+    ru: 'Прямой контакт с владельцем',
+    uz: 'Egasi bilan to\'g\'ridan-to\'g\'ri aloqa'
+  },
+  'howItWorks.cash.step2.feature2': {
+    en: 'Visit confirmation system',
+    ru: 'Система подтверждения визитов',
+    uz: 'Tashrif tasdiqlash tizimi'
+  },
+  'howItWorks.cash.step2.feature3': {
+    en: 'Safety guidelines provided',
+    ru: 'Предоставлены правила безопасности',
+    uz: 'Xavfsizlik qoidalari taqdim etilgan'
+  },
+  'howItWorks.cash.step3.title': {
+    en: 'Secure Payment',
+    ru: 'Безопасный платеж',
+    uz: 'Xavfsiz to\'lov'
+  },
+  'howItWorks.cash.step3.description': {
+    en: 'Make secure payments using verified payment methods with buyer protection',
+    ru: 'Совершайте безопасные платежи проверенными способами с защитой покупателя',
+    uz: 'Xaridor himoyasi bilan tekshirilgan to\'lov usullari orqali xavfsiz to\'lovlar qiling'
+  },
+  'howItWorks.cash.step3.feature1': {
+    en: 'Escrow payment protection',
+    ru: 'Защита эскроу платежей',
+    uz: 'Eskrou to\'lov himoyasi'
+  },
+  'howItWorks.cash.step3.feature2': {
+    en: 'Multiple payment options',
+    ru: 'Множественные способы оплаты',
+    uz: 'Ko\'p to\'lov variantlari'
+  },
+  'howItWorks.cash.step3.feature3': {
+    en: 'Transaction verification',
+    ru: 'Проверка транзакций',
+    uz: 'Tranzaksiya tasdiqlanishi'
+  },
+  'howItWorks.cash.step4.title': {
+    en: 'Property Transfer',
+    ru: 'Передача собственности',
+    uz: 'Mulk o\'tkazish'
+  },
+  'howItWorks.cash.step4.description': {
+    en: 'Complete the legal transfer process with our guided documentation support',
+    ru: 'Завершите процесс правовой передачи с нашей поддержкой документооборота',
+    uz: 'Bizning hujjat yuritish yordamimiz bilan qonuniy o\'tkazish jarayonini yakunlang'
+  },
+  'howItWorks.cash.step4.feature1': {
+    en: 'Legal documentation help',
+    ru: 'Помощь с юридическими документами',
+    uz: 'Huquqiy hujjatlar yordami'
+  },
+  'howItWorks.cash.step4.feature2': {
+    en: 'Title transfer assistance',
+    ru: 'Помощь с передачей права собственности',
+    uz: 'Huquq o\'tkazish yordami'
+  },
+  'howItWorks.cash.step4.feature3': {
+    en: 'Post-purchase support',
+    ru: 'Поддержка после покупки',
+    uz: 'Xariddan keyingi yordam'
+  },
+
+  // Halal Financing Steps
+  'howItWorks.financingStepsTitle': {
+    en: 'Halal Financing Process',
+    ru: 'Процесс халяль финансирования',
+    uz: 'Halol moliyalashtirish jarayoni'
+  },
+  'howItWorks.financingStepsSubtitle': {
+    en: 'Four steps to Sharia-compliant property ownership',
+    ru: 'Четыре шага к владению недвижимостью по шариату',
+    uz: 'Shariatga mos mulk egachiligiga to\'rtta qadam'
+  },
+  'howItWorks.financing.step1.title': {
+    en: 'Browse & Filter',
+    ru: 'Просмотр и фильтрация',
+    uz: 'Ko\'rish va filtrlash'
+  },
+  'howItWorks.financing.step1.description': {
+    en: 'Search financing-eligible properties and calculate your halal payment plan',
+    ru: 'Ищите объекты, подходящие для финансирования, и рассчитайте халяль план платежей',
+    uz: 'Moliyalashtirish uchun mos mulklarni qidiring va halol to\'lov rejangizni hisoblang'
+  },
+  'howItWorks.financing.step1.feature1': {
+    en: 'Halal-eligible properties only',
+    ru: 'Только халяль объекты',
+    uz: 'Faqat halol mulklar'
+  },
+  'howItWorks.financing.step1.feature2': {
+    en: 'Payment calculator included',
+    ru: 'Включен калькулятор платежей',
+    uz: 'To\'lov kalkulyatori mavjud'
+  },
+  'howItWorks.financing.step1.feature3': {
+    en: 'Flexible payment terms',
+    ru: 'Гибкие условия платежей',
+    uz: 'Moslashuvchan to\'lov shartlari'
+  },
+  'howItWorks.financing.step2.title': {
+    en: 'Visit & Apply',
+    ru: 'Посещение и заявка',
+    uz: 'Tashrif va ariza'
+  },
+  'howItWorks.financing.step2.description': {
+    en: 'Visit properties and submit your halal financing application with required documents',
+    ru: 'Посетите объекты и подайте заявку на халяль финансирование с необходимыми документами',
+    uz: 'Mulklarni ko\'ring va kerakli hujjatlar bilan halol moliyalashtirish arizangizni yuboring'
+  },
+  'howItWorks.financing.step2.feature1': {
+    en: 'Quick application process',
+    ru: 'Быстрый процесс заявки',
+    uz: 'Tez ariza jarayoni'
+  },
+  'howItWorks.financing.step2.feature2': {
+    en: 'Document verification help',
+    ru: 'Помощь с проверкой документов',
+    uz: 'Hujjat tekshirish yordami'
+  },
+  'howItWorks.financing.step2.feature3': {
+    en: 'Pre-approval available',
+    ru: 'Доступно предварительное одобрение',
+    uz: 'Oldindan tasdiqlash mavjud'
+  },
+  'howItWorks.financing.step3.title': {
+    en: 'Financing Approval',
+    ru: 'Одобрение финансирования',
+    uz: 'Moliyalashtirish tasdiqlanishi'
+  },
+  'howItWorks.financing.step3.description': {
+    en: 'Get approved for halal financing with transparent terms and no hidden interest',
+    ru: 'Получите одобрение халяль финансирования с прозрачными условиями и без скрытых процентов',
+    uz: 'Shaffof shartlar va yashirin foizsiz halol moliyalashtirish uchun tasdiqlang'
+  },
+  'howItWorks.financing.step3.feature1': {
+    en: 'No interest charges ever',
+    ru: 'Никогда без процентов',
+    uz: 'Hech qachon foizsiz'
+  },
+  'howItWorks.financing.step3.feature2': {
+    en: 'Clear payment schedule',
+    ru: 'Четкий график платежей',
+    uz: 'Aniq to\'lov jadvali'
+  },
+  'howItWorks.financing.step3.feature3': {
+    en: 'Sharia board certified',
+    ru: 'Сертифицировано шариатским советом',
+    uz: 'Shariat kengashi tomonidan sertifikatlangan'
+  },
+  'howItWorks.financing.step4.title': {
+    en: 'Move In & Pay',
+    ru: 'Заселение и оплата',
+    uz: 'Ko\'chish va to\'lash'
+  },
+  'howItWorks.financing.step4.description': {
+    en: 'Move into your new home and make convenient monthly payments until full ownership',
+    ru: 'Переезжайте в новый дом и делайте удобные ежемесячные платежи до полного владения',
+    uz: 'Yangi uyingizga ko\'ching va to\'liq egalik huquqi olguncha qulay oylik to\'lovlar qiling'
+  },
+  'howItWorks.financing.step4.feature1': {
+    en: 'Immediate occupancy',
+    ru: 'Немедленное заселение',
+    uz: 'Darhol egallash'
+  },
+  'howItWorks.financing.step4.feature2': {
+    en: 'Flexible payment options',
+    ru: 'Гибкие варианты оплаты',
+    uz: 'Moslashuvchan to\'lov variantlari'
+  },
+  'howItWorks.financing.step4.feature3': {
+    en: 'Early payment rewards',
+    ru: 'Награды за досрочную оплату',
+    uz: 'Erta to\'lov mukofotlari'
+  },
+
+  'howItWorks.stepLabel': {
+    en: 'Step',
+    ru: 'Шаг',
+    uz: 'Qadam'
   },
   'howItWorks.badge': {
     en: 'No Hidden Fees • No Intermediaries • 100% Verified',
     ru: 'Без скрытых комиссий • Без посредников • 100% проверено',
     uz: 'Yashirin to\'lovlar yo\'q • Vositachilar yo\'q • 100% tasdiqlangan'
-  },
-  'howItWorks.stepLabel': {
-    en: 'Step',
-    ru: 'Шаг',
-    uz: 'Qadam'
   },
   
   'howItWorks.step1.title': {
