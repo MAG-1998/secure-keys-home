@@ -5219,6 +5219,168 @@ const translations: Translations = {
     en: 'The community as a whole reduces dependence on banks and high-risk credit.',
     ru: 'Сообщество в целом снижает зависимость от банков и высокорискованных кредитов.',
     uz: 'Jamoa umuman banklar va yuqori xavfli kreditlarga bog\'liqlikni kamaytiradi.'
+  },
+
+  // How It Works page
+  'howItWorks.title': {
+    en: 'How Magit Works',
+    ru: 'Как работает Magit',
+    uz: 'Magit qanday ishlaydi'
+  },
+  'howItWorks.subtitle': {
+    en: 'A simple, transparent process that puts you in control of your property journey',
+    ru: 'Простой, прозрачный процесс, который дает вам контроль над вашим путешествием в недвижимости',
+    uz: 'Sizni ko\'chmas mulk sayohatingizda nazoratga oluvchi oddiy, shaffof jarayon'
+  },
+  'howItWorks.badge': {
+    en: 'No Hidden Fees • No Intermediaries • 100% Verified',
+    ru: 'Без скрытых комиссий • Без посредников • 100% проверено',
+    uz: 'Yashirin to\'lovlar yo\'q • Vositachilar yo\'q • 100% tasdiqlangan'
+  },
+  'howItWorks.stepLabel': {
+    en: 'Step',
+    ru: 'Шаг',
+    uz: 'Qadam'
+  },
+  
+  'howItWorks.step1.title': {
+    en: 'Browse Verified Properties',
+    ru: 'Просматривайте проверенную недвижимость',
+    uz: 'Tasdiqlangan mulklarni ko\'rib chiqing'
+  },
+  'howItWorks.step1.description': {
+    en: 'Every property on Magit is personally verified by our staff. No fake listings, no hidden surprises.',
+    ru: 'Каждая недвижимость на Magit лично проверяется нашими сотрудниками. Никаких фейковых объявлений, никаких скрытых сюрпризов.',
+    uz: 'Magitdagi har bir mulk bizning xodimlarimiz tomonidan shaxsan tekshiriladi. Soxta e\'lonlar yo\'q, yashirin kutilmagan holatlar yo\'q.'
+  },
+  'howItWorks.step1.feature1': {
+    en: 'All properties verified by Magit staff before listing',
+    ru: 'Все объекты проверяются сотрудниками Magit перед размещением',
+    uz: 'Barcha mulklar e\'lon qilishdan oldin Magit xodimlari tomonidan tekshiriladi'
+  },
+  'howItWorks.step1.feature2': {
+    en: 'Real photos and accurate property details',
+    ru: 'Настоящие фотографии и точные детали недвижимости',
+    uz: 'Haqiqiy rasmlar va aniq mulk tafsilotlari'
+  },
+  'howItWorks.step1.feature3': {
+    en: 'Transparent pricing with no hidden costs',
+    ru: 'Прозрачные цены без скрытых расходов',
+    uz: 'Yashirin xarajatlarsiz shaffof narxlar'
+  },
+  
+  'howItWorks.step2.title': {
+    en: 'Schedule Property Visits',
+    ru: 'Запланируйте просмотр недвижимости',
+    uz: 'Mulkni ko\'rishni rejalashtiring'
+  },
+  'howItWorks.step2.description': {
+    en: 'Book visits directly through the platform. Our team coordinates everything for a smooth experience.',
+    ru: 'Бронируйте просмотры прямо через платформу. Наша команда координирует все для гладкого опыта.',
+    uz: 'Tashrif buyurishni to\'g\'ridan-to\'g\'ri platforma orqali bron qiling. Bizning jamoamiz silliq tajriba uchun hamma narsani muvofiqlashtiradi.'
+  },
+  'howItWorks.step2.feature1': {
+    en: 'Easy online visit scheduling',
+    ru: 'Легкое онлайн планирование визитов',
+    uz: 'Oson onlayn tashrif rejalashtirish'
+  },
+  'howItWorks.step2.feature2': {
+    en: 'Magit staff coordinates with property owners',
+    ru: 'Сотрудники Magit координируются с владельцами недвижимости',
+    uz: 'Magit xodimlari mulk egalari bilan muvofiqlashadi'
+  },
+  'howItWorks.step2.feature3': {
+    en: 'Professional guidance during property visits',
+    ru: 'Профессиональное руководство во время просмотра недвижимости',
+    uz: 'Mulkni ko\'rish paytida professional yo\'l-yo\'riq'
+  },
+  
+  'howItWorks.step3.title': {
+    en: 'Apply for Halal Financing',
+    ru: 'Подайте заявку на халяльное финансирование',
+    uz: 'Halol moliyalashtirish uchun ariza bering'
+  },
+  'howItWorks.step3.description': {
+    en: 'Get interest-free, Shariah-compliant financing with flexible terms and competitive rates.',
+    ru: 'Получите беспроцентное, соответствующее шариату финансирование с гибкими условиями и конкурентными ставками.',
+    uz: 'Moslashuvchan shartlar va raqobatbardosh stavkalar bilan foizsiz, Shariatga mos moliyalashtirish oling.'
+  },
+  'howItWorks.step3.feature1': {
+    en: '100% interest-free (riba-free) financing',
+    ru: '100% беспроцентное (без риба) финансирование',
+    uz: '100% foizsiz (riba-free) moliyalashtirish'
+  },
+  'howItWorks.step3.feature2': {
+    en: 'Down payments from 30-90% based on agreement',
+    ru: 'Первоначальные взносы от 30-90% на основе соглашения',
+    uz: 'Kelishuv asosida 30-90% gacha boshlang\'ich to\'lovlar'
+  },
+  'howItWorks.step3.feature3': {
+    en: 'Fixed monthly installments with no hidden charges',
+    ru: 'Фиксированные ежемесячные взносы без скрытых комиссий',
+    uz: 'Yashirin to\'lovlarsiz qat\'iy oylik to\'lovlar'
+  },
+  
+  'howItWorks.step4.title': {
+    en: 'Secure Payment & Ownership',
+    ru: 'Безопасный платеж и право собственности',
+    uz: 'Xavfsiz to\'lov va egalik huquqi'
+  },
+  'howItWorks.step4.description': {
+    en: 'Complete your purchase through secure payment methods and trusted legal processes.',
+    ru: 'Завершите покупку через безопасные способы оплаты и надежные юридические процессы.',
+    uz: 'Xavfsiz to\'lov usullari va ishonchli yuridik jarayonlar orqali xaridingizni yakunlang.'
+  },
+  'howItWorks.step4.feature1': {
+    en: 'Multiple payment options (Uzum, Click, Payme, bank transfer)',
+    ru: 'Множественные варианты оплаты (Uzum, Click, Payme, банковский перевод)',
+    uz: 'Ko\'plab to\'lov variantlari (Uzum, Click, Payme, bank o\'tkazmasi)'
+  },
+  'howItWorks.step4.feature2': {
+    en: 'Legal documentation handled by our partners',
+    ru: 'Юридическая документация обрабатывается нашими партнерами',
+    uz: 'Yuridik hujjatlar bizning hamkorlarimiz tomonidan ko\'rib chiqiladi'
+  },
+  'howItWorks.step4.feature3': {
+    en: 'Full ownership transfer with government registration',
+    ru: 'Полная передача права собственности с государственной регистрацией',
+    uz: 'Davlat ro\'yxatiga olish bilan to\'liq egalik huquqini o\'tkazish'
+  },
+  
+  'howItWorks.whyChoose.title': {
+    en: 'Why Choose Magit?',
+    ru: 'Почему выбрать Magit?',
+    uz: 'Nega Magitni tanlash kerak?'
+  },
+  'howItWorks.whyChoose.reason1.title': {
+    en: 'Verified & Secure',
+    ru: 'Проверено и безопасно',
+    uz: 'Tasdiqlangan va xavfsiz'
+  },
+  'howItWorks.whyChoose.reason1.description': {
+    en: 'Every property is personally verified by our team. Your data and payments are protected.',
+    ru: 'Каждая недвижимость лично проверяется нашей командой. Ваши данные и платежи защищены.',
+    uz: 'Har bir mulk bizning jamoamiz tomonidan shaxsan tekshiriladi. Sizning ma\'lumotlaringiz va to\'lovlaringiz himoyalangan.'
+  },
+  'howItWorks.whyChoose.reason2.title': {
+    en: 'No Commission Fees',
+    ru: 'Без комиссионных',
+    uz: 'Komissiya to\'lovlari yo\'q'
+  },
+  'howItWorks.whyChoose.reason2.description': {
+    en: 'Sellers keep 100% of their sale price. Buyers pay no verification or platform fees.',
+    ru: 'Продавцы сохраняют 100% цены продажи. Покупатели не платят за проверку или использование платформы.',
+    uz: 'Sotuvchilar o\'z sotuv narxining 100% ini saqlab qoladilar. Xaridorlar tekshirish yoki platforma to\'lovlarini to\'lamaydilar.'
+  },
+  'howItWorks.whyChoose.reason3.title': {
+    en: 'Halal Financing',
+    ru: 'Халяльное финансирование',
+    uz: 'Halol moliyalashtirish'
+  },
+  'howItWorks.whyChoose.reason3.description': {
+    en: 'Interest-free financing that complies with Islamic principles and Uzbek regulations.',
+    ru: 'Беспроцентное финансирование, соответствующее исламским принципам и узбекским правилам.',
+    uz: 'Islom tamoyillari va O\'zbekiston qoidalariga mos foizsiz moliyalashtirish.'
   }
 };
 const LANGUAGE_STORAGE_KEY = 'magit_language';
