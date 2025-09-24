@@ -17,10 +17,8 @@ const HowItWorks = () => {
     setIsFlipping(true)
     setTimeout(() => {
       setSelectedOption(option)
-    }, 1500) // Match coin flip duration
-    setTimeout(() => {
       setIsFlipping(false)
-    }, 2100) // Allow for settling animation
+    }, 600)
   }
 
   const getCashSteps = () => [
@@ -138,82 +136,49 @@ const HowItWorks = () => {
                 <div 
                   className={`relative w-80 h-80 mx-auto transition-all duration-1000 ${
                     selectedOption ? 'scale-110' : 'scale-100'
-                  } ${isFlipping ? 'coin-flipping' : selectedOption ? 'coin-settled' : ''}`}
+                  } ${isFlipping ? 'animate-spin' : ''}`}
                   style={{ 
                     perspective: '1000px'
                   }}
                 >
                   {/* Coin */}
                   <div 
-                    className="absolute inset-0 rounded-full shadow-2xl transition-all duration-700"
+                    className="absolute inset-0 rounded-full border-8 border-primary/20 shadow-2xl transition-all duration-700"
                     style={{ 
                       transformStyle: 'preserve-3d',
-                      transform: selectedOption === 'financing' ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                      background: 'linear-gradient(45deg, #ffd700, #ffed4e, #ffd700)',
-                      border: '6px solid #b8860b',
-                      boxShadow: '0 0 30px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.2)'
+                      transform: selectedOption === 'financing' ? 'rotateY(180deg)' : 'rotateY(0deg)'
                     }}
                   >
                     {/* Cash Side */}
                     <div 
-                      className="absolute inset-0 rounded-full p-8 flex flex-col items-center justify-center text-white"
-                      style={{ 
-                        backfaceVisibility: 'hidden',
-                        background: 'radial-gradient(circle at 30% 30%, #ff6b35, #f7931e, #ff6b35)',
-                        border: '4px solid rgba(255, 255, 255, 0.3)',
-                        boxShadow: 'inset 0 0 30px rgba(255, 255, 255, 0.2)'
-                      }}
+                      className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 p-6 flex flex-col items-center justify-center text-white"
+                      style={{ backfaceVisibility: 'hidden' }}
                     >
-                      <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4 backdrop-blur-sm">
-                        <CreditCard className="w-8 h-8" />
-                      </div>
-                      <h3 className="text-xl font-bold mb-3 text-center drop-shadow-lg">{t('howItWorks.cashSide.title')}</h3>
-                      <p className="text-sm text-center opacity-95 mb-4 drop-shadow-md">{t('howItWorks.cashSide.subtitle')}</p>
-                      <div className="text-xs space-y-2 text-center">
-                        <div className="flex items-center justify-center">
-                          <div className="w-1 h-1 bg-white rounded-full mr-2"></div>
-                          {t('howItWorks.cashSide.feature1')}
-                        </div>
-                        <div className="flex items-center justify-center">
-                          <div className="w-1 h-1 bg-white rounded-full mr-2"></div>
-                          {t('howItWorks.cashSide.feature2')}
-                        </div>
-                        <div className="flex items-center justify-center">
-                          <div className="w-1 h-1 bg-white rounded-full mr-2"></div>
-                          {t('howItWorks.cashSide.feature3')}
-                        </div>
+                      <CreditCard className="w-12 h-12 mb-3" />
+                      <h3 className="text-lg font-bold mb-2 text-center">{t('howItWorks.cashSide.title')}</h3>
+                      <p className="text-xs text-center opacity-90 mb-3">{t('howItWorks.cashSide.subtitle')}</p>
+                      <div className="text-[10px] space-y-1 text-center">
+                        <div>• {t('howItWorks.cashSide.feature1')}</div>
+                        <div>• {t('howItWorks.cashSide.feature2')}</div>
+                        <div>• {t('howItWorks.cashSide.feature3')}</div>
                       </div>
                     </div>
                     
                     {/* Financing Side */}
                     <div 
-                      className="absolute inset-0 rounded-full p-8 flex flex-col items-center justify-center text-white"
+                      className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 p-6 flex flex-col items-center justify-center text-white"
                       style={{ 
                         backfaceVisibility: 'hidden',
-                        transform: 'rotateY(180deg)',
-                        background: 'radial-gradient(circle at 30% 30%, #00d4aa, #20b2aa, #00d4aa)',
-                        border: '4px solid rgba(255, 255, 255, 0.3)',
-                        boxShadow: 'inset 0 0 30px rgba(255, 255, 255, 0.2)'
+                        transform: 'rotateY(180deg)'
                       }}
                     >
-                      <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4 backdrop-blur-sm">
-                        <Shield className="w-8 h-8" />
-                      </div>
-                      <h3 className="text-xl font-bold mb-3 text-center drop-shadow-lg">{t('howItWorks.financingSide.title')}</h3>
-                      <p className="text-sm text-center opacity-95 mb-4 drop-shadow-md">{t('howItWorks.financingSide.subtitle')}</p>
-                      <div className="text-xs space-y-2 text-center">
-                        <div className="flex items-center justify-center">
-                          <div className="w-1 h-1 bg-white rounded-full mr-2"></div>
-                          {t('howItWorks.financingSide.feature1')}
-                        </div>
-                        <div className="flex items-center justify-center">
-                          <div className="w-1 h-1 bg-white rounded-full mr-2"></div>
-                          {t('howItWorks.financingSide.feature2')}
-                        </div>
-                        <div className="flex items-center justify-center">
-                          <div className="w-1 h-1 bg-white rounded-full mr-2"></div>
-                          {t('howItWorks.financingSide.feature3')}
-                        </div>
+                      <Shield className="w-12 h-12 mb-3" />
+                      <h3 className="text-lg font-bold mb-2 text-center">{t('howItWorks.financingSide.title')}</h3>
+                      <p className="text-xs text-center opacity-90 mb-3">{t('howItWorks.financingSide.subtitle')}</p>
+                      <div className="text-[10px] space-y-1 text-center">
+                        <div>• {t('howItWorks.financingSide.feature1')}</div>
+                        <div>• {t('howItWorks.financingSide.feature2')}</div>
+                        <div>• {t('howItWorks.financingSide.feature3')}</div>
                       </div>
                     </div>
                   </div>
