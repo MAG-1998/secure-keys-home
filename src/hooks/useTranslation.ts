@@ -5239,6 +5239,11 @@ const translations: Translations = {
     ru: 'Как вы хотите купить свою недвижимость?',
     uz: 'Mulkingizni qanday sotib olmoqchisiz?'
   },
+  'howItWorks.pleaseChoose': {
+    en: 'please choose...',
+    ru: 'пожалуйста, выберите...',
+    uz: 'iltimos tanlang...'
+  },
   'howItWorks.cashOption': {
     en: 'Cash Purchase',
     ru: 'Наличными',

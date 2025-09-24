@@ -444,11 +444,59 @@ All colors MUST be HSL.
     inset 0 0 11.3px hsl(var(--glow-orange) / 0.113) !important;
 }
 
+/* Hand-written text animation */
+@keyframes writing {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes cursor-blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.writing-text {
+  font-family: 'Courier New', monospace;
+  font-style: italic;
+  font-weight: 400;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: writing 2s steps(20) 0.5s forwards;
+  width: 0;
+}
+
+.writing-text::after {
+  content: '|';
+  position: absolute;
+  right: -2px;
+  animation: cursor-blink 1s infinite;
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .apple-glow-inactive,
   .apple-glow-active,
   .apple-glow-container::before {
     animation: none;
+  }
+  
+  .writing-text {
+    animation: none;
+    width: 100%;
+  }
+  
+  .writing-text::after {
+    animation: none;
+    opacity: 0;
   }
 }

@@ -124,9 +124,12 @@ const HowItWorks = () => {
 
             {/* Interactive Coin Section */}
             <div className="relative mb-16">
-              <h2 className="text-2xl font-semibold mb-8">
+              <h2 className="text-2xl font-semibold mb-4">
                 {t('howItWorks.coinQuestion')}
               </h2>
+              <div className="text-lg text-muted-foreground mb-8 writing-text">
+                {t('howItWorks.pleaseChoose')}
+              </div>
               
               {/* Coin Container */}
               <div className="flex justify-center mb-8">
@@ -188,18 +191,18 @@ const HowItWorks = () => {
                   size="lg"
                   variant={selectedOption === 'cash' ? 'default' : 'outline'}
                   onClick={() => handleOptionSelect('cash')}
-                  className="px-8 py-4"
+                  className="px-12 py-6 text-lg"
                 >
-                  <CreditCard className="w-5 h-5 mr-2" />
+                  <CreditCard className="w-6 h-6 mr-3" />
                   {t('howItWorks.cashOption')}
                 </Button>
                 <Button
                   size="lg"
                   variant={selectedOption === 'financing' ? 'default' : 'outline'}
                   onClick={() => handleOptionSelect('financing')}
-                  className="px-8 py-4"
+                  className="px-12 py-6 text-lg"
                 >
-                  <Shield className="w-5 h-5 mr-2" />
+                  <Shield className="w-6 h-6 mr-3" />
                   {t('howItWorks.financingOption')}
                 </Button>
               </div>
