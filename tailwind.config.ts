@@ -72,6 +72,7 @@ export default {
 			fontFamily: {
 				'sans': ['Inter', 'system-ui', 'sans-serif'],
 				'heading': ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
+				'handwriting': ['Kalam', 'cursive'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -444,59 +444,89 @@ All colors MUST be HSL.
     inset 0 0 11.3px hsl(var(--glow-orange) / 0.113) !important;
 }
 
-/* Hand-written text animation */
-@keyframes writing {
+/* Handwritten neon animation */
+@keyframes handwriting-draw {
   0% {
-    width: 0;
-  }
-  100% {
-    width: 100%;
-  }
-}
-
-@keyframes cursor-blink {
-  0%, 50% {
-    opacity: 1;
-  }
-  51%, 100% {
+    stroke-dashoffset: 1000;
     opacity: 0;
   }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
 }
 
-.writing-text {
-  font-family: 'Courier New', monospace;
-  font-style: italic;
-  font-weight: 400;
-  position: relative;
+@keyframes neon-glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px #00ffff) drop-shadow(0 0 10px #00ffff) drop-shadow(0 0 15px #00ffff);
+  }
+  50% {
+    filter: drop-shadow(0 0 10px #00ffff) drop-shadow(0 0 20px #00ffff) drop-shadow(0 0 30px #00ffff);
+  }
+}
+
+@keyframes coin-flip {
+  0% { transform: rotateY(0deg) rotateX(0deg); }
+  25% { transform: rotateY(180deg) rotateX(90deg); }
+  50% { transform: rotateY(360deg) rotateX(180deg); }
+  75% { transform: rotateY(540deg) rotateX(270deg); }
+  100% { transform: rotateY(720deg) rotateX(360deg); }
+}
+
+.handwriting-neon {
+  font-family: 'Kalam', cursive;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #00ffff;
+  transform: rotate(-3deg);
   display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  animation: writing 2s steps(20) 0.5s forwards;
-  width: 0;
+  text-shadow: 
+    0 0 5px #00ffff,
+    0 0 10px #00ffff,
+    0 0 15px #00ffff,
+    0 0 20px #00ffff;
+  animation: neon-glow-pulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px #00ffff);
 }
 
-.writing-text::after {
-  content: '|';
-  position: absolute;
-  right: -2px;
-  animation: cursor-blink 1s infinite;
+.handwriting-svg {
+  width: 100%;
+  height: 120px;
+  overflow: visible;
+}
+
+.handwriting-path {
+  fill: none;
+  stroke: #00ffff;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  filter: drop-shadow(0 0 8px #00ffff) drop-shadow(0 0 15px #00ffff);
+  animation: handwriting-draw 4s ease-out forwards;
+}
+
+.coin-flip {
+  animation: coin-flip 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .apple-glow-inactive,
   .apple-glow-active,
-  .apple-glow-container::before {
+  .apple-glow-container::before,
+  .handwriting-neon,
+  .handwriting-path,
+  .coin-flip {
     animation: none;
   }
   
-  .writing-text {
-    animation: none;
-    width: 100%;
-  }
-  
-  .writing-text::after {
-    animation: none;
-    opacity: 0;
+  .handwriting-path {
+    stroke-dashoffset: 0;
+    opacity: 1;
   }
 }

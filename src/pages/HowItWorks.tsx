@@ -127,8 +127,38 @@ const HowItWorks = () => {
               <h2 className="text-2xl font-semibold mb-4">
                 {t('howItWorks.coinQuestion')}
               </h2>
-              <div className="text-lg text-muted-foreground mb-8 writing-text">
-                {t('howItWorks.pleaseChoose')}
+              {/* Handwritten "Please Choose" */}
+              <div className="mb-8 flex justify-center">
+                <svg 
+                  className="handwriting-svg"
+                  viewBox="0 0 400 80"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <defs>
+                    <filter id="neonGlow">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge> 
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  <path 
+                    className="handwriting-path"
+                    d="M20 50 Q25 30 35 40 Q45 55 55 45 Q65 30 75 40 Q85 55 95 45 Q105 30 115 40 Q125 50 135 40 Q145 25 155 35 Q165 50 175 40 Q185 25 195 35 Q205 50 215 40 Q225 25 235 35 Q245 50 255 40 Q265 25 275 35 Q285 50 295 40 Q305 25 315 35 Q325 50 335 40 Q345 25 355 35 Q365 50 375 40"
+                    filter="url(#neonGlow)"
+                  />
+                  <text 
+                    x="200" 
+                    y="50" 
+                    textAnchor="middle" 
+                    className="handwriting-neon"
+                    fontSize="24"
+                    transform="rotate(-3 200 50)"
+                  >
+                    {t('howItWorks.pleaseChoose')}
+                  </text>
+                </svg>
               </div>
               
               {/* Coin Container */}
@@ -136,7 +166,7 @@ const HowItWorks = () => {
                 <div 
                   className={`relative w-80 h-80 mx-auto transition-all duration-1000 ${
                     selectedOption ? 'scale-110' : 'scale-100'
-                  } ${isFlipping ? 'animate-spin' : ''}`}
+                  } ${isFlipping ? 'coin-flip' : ''}`}
                   style={{ 
                     perspective: '1000px'
                   }}
