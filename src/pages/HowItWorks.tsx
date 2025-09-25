@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useTranslation } from "@/hooks/useTranslation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,6 +10,8 @@ const HowItWorks = () => {
   const { t } = useTranslation()
   const [selectedOption, setSelectedOption] = useState<'cash' | 'financing' | null>(null)
   const [isFlipping, setIsFlipping] = useState(false)
+  const [animationKey, setAnimationKey] = useState(0)
+  const stepsRef = useRef<HTMLDivElement>(null)
 
   const handleOptionSelect = (option: 'cash' | 'financing') => {
     if (selectedOption === option) return
@@ -18,8 +20,16 @@ const HowItWorks = () => {
     setTimeout(() => {
       setSelectedOption(option)
       setIsFlipping(false)
-    }, 600)
+      // Smooth scroll to steps after animation
+      setTimeout(() => {
+        stepsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 100)
+    }, 400)
   }
+
+  useEffect(() => {
+    setAnimationKey(prev => prev + 1)
+  }, [t])
 
   const getCashSteps = () => [
     {
@@ -112,59 +122,39 @@ const HowItWorks = () => {
       <Header />
       
       {/* Hero Section with Interactive Coin */}
-      <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
+      <section className="py-12 sm:py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 text-foreground px-4">
               {t('howItWorks.title')}
             </h1>
-            <p className="text-xl text-muted-foreground mb-12">
+            <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12 px-4">
               {t('howItWorks.subtitle')}
             </p>
 
             {/* Interactive Coin Section */}
-            <div className="relative mb-16">
-              <h2 className="text-2xl font-semibold mb-4">
+            <div className="relative mb-12 sm:mb-16">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-4 px-4">
                 {t('howItWorks.coinQuestion')}
               </h2>
               {/* Handwritten "Please Choose" */}
-              <div className="mb-8 flex justify-center">
-                <svg 
-                  className="handwriting-svg"
-                  viewBox="0 0 400 80"
-                  xmlns="http://www.w3.org/2000/svg"
+              <div className="mb-8 flex justify-center px-4">
+                <div 
+                  key={animationKey}
+                  className="handwriting-neon text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-kalam transform -rotate-3 max-w-full overflow-hidden"
+                  style={{
+                    filter: 'drop-shadow(0 0 10px hsl(var(--primary)))',
+                    textShadow: '0 0 20px hsl(var(--primary)), 0 0 40px hsl(var(--primary)), 0 0 60px hsl(var(--primary))'
+                  }}
                 >
-                  <defs>
-                    <filter id="neonGlow">
-                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                      <feMerge> 
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
-                  </defs>
-                  <path 
-                    className="handwriting-path"
-                    d="M20 50 Q25 30 35 40 Q45 55 55 45 Q65 30 75 40 Q85 55 95 45 Q105 30 115 40 Q125 50 135 40 Q145 25 155 35 Q165 50 175 40 Q185 25 195 35 Q205 50 215 40 Q225 25 235 35 Q245 50 255 40 Q265 25 275 35 Q285 50 295 40 Q305 25 315 35 Q325 50 335 40 Q345 25 355 35 Q365 50 375 40"
-                    filter="url(#neonGlow)"
-                  />
-                  <text 
-                    x="200" 
-                    y="50" 
-                    textAnchor="middle" 
-                    className="handwriting-neon"
-                    fontSize="24"
-                    transform="rotate(-3 200 50)"
-                  >
-                    {t('howItWorks.pleaseChoose')}
-                  </text>
-                </svg>
+                  {t('howItWorks.pleaseChoose')}
+                </div>
               </div>
               
               {/* Coin Container */}
-              <div className="flex justify-center mb-8">
+              <div className="flex justify-center mb-6 sm:mb-8 px-4">
                 <div 
-                  className={`relative w-80 h-80 mx-auto transition-all duration-1000 ${
+                  className={`relative w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 mx-auto transition-all duration-1000 ${
                     selectedOption ? 'scale-110' : 'scale-100'
                   } ${isFlipping ? 'coin-flip' : ''}`}
                   style={{ 
@@ -216,23 +206,25 @@ const HowItWorks = () => {
               </div>
 
               {/* Option Buttons */}
-              <div className="flex justify-center gap-6 mb-8">
+              <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 mb-6 sm:mb-8 px-4 max-w-lg sm:max-w-none mx-auto">
                 <Button
                   size="lg"
                   variant={selectedOption === 'cash' ? 'default' : 'outline'}
                   onClick={() => handleOptionSelect('cash')}
-                  className="px-12 py-6 text-lg"
+                  className="px-8 sm:px-12 py-4 sm:py-6 text-base sm:text-lg w-full sm:w-auto"
+                  disabled={isFlipping}
                 >
-                  <CreditCard className="w-6 h-6 mr-3" />
+                  <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
                   {t('howItWorks.cashOption')}
                 </Button>
                 <Button
                   size="lg"
                   variant={selectedOption === 'financing' ? 'default' : 'outline'}
                   onClick={() => handleOptionSelect('financing')}
-                  className="px-12 py-6 text-lg"
+                  className="px-8 sm:px-12 py-4 sm:py-6 text-base sm:text-lg w-full sm:w-auto"
+                  disabled={isFlipping}
                 >
-                  <Shield className="w-6 h-6 mr-3" />
+                  <Shield className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
                   {t('howItWorks.financingOption')}
                 </Button>
               </div>
@@ -250,13 +242,13 @@ const HowItWorks = () => {
 
       {/* Steps Section */}
       {selectedOption && (
-        <section className="py-20">
+        <section ref={stepsRef} className="py-12 sm:py-20">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4 px-4">
                 {selectedOption === 'cash' ? t('howItWorks.cashStepsTitle') : t('howItWorks.financingStepsTitle')}
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground px-4">
                 {selectedOption === 'cash' ? t('howItWorks.cashStepsSubtitle') : t('howItWorks.financingStepsSubtitle')}
               </p>
             </div>
