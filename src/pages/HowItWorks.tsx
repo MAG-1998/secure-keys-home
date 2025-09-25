@@ -141,11 +141,7 @@ const HowItWorks = () => {
               <div className="mb-8 flex justify-center px-4">
                 <div 
                   key={animationKey}
-                  className="handwriting-neon text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-kalam transform -rotate-3 max-w-full overflow-hidden"
-                  style={{
-                    filter: 'drop-shadow(0 0 10px hsl(var(--primary)))',
-                    textShadow: '0 0 20px hsl(var(--primary)), 0 0 40px hsl(var(--primary)), 0 0 60px hsl(var(--primary))'
-                  }}
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-kalam transform -rotate-3 max-w-full overflow-hidden text-foreground"
                 >
                   {t('howItWorks.pleaseChoose')}
                 </div>
