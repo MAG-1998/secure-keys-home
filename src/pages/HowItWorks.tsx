@@ -141,7 +141,7 @@ const HowItWorks = () => {
               <div className="mb-8 flex justify-center px-4">
                 <div 
                   key={animationKey}
-                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-kalam transform -rotate-3 max-w-full overflow-hidden text-foreground"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-dancing transform -rotate-3 max-w-full overflow-hidden text-foreground font-bold"
                 >
                   {t('howItWorks.pleaseChoose')}
                 </div>

@@ -73,6 +73,9 @@ export default {
 				'sans': ['Inter', 'system-ui', 'sans-serif'],
 				'heading': ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
 				'handwriting': ['Kalam', 'cursive'],
+				'dancing': ['Dancing Script', 'cursive'],
+				'satisfy': ['Satisfy', 'cursive'],
+				'caveat': ['Caveat', 'cursive'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
