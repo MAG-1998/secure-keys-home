@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { MagitLogo } from "@/components/MagitLogo"
 import { FeatureCard } from "@/components/FeatureCard"
+import { PriceOdometer } from "@/components/PriceOdometer"
+import { supabase } from "@/integrations/supabase/client"
 import LazyMapSection from "@/components/LazyMapSection"
 import { SearchSection } from "@/components/SearchSection"
 import { Footer } from "@/components/Footer"
@@ -24,11 +26,31 @@ interface UnauthenticatedViewProps {
 
 export const UnauthenticatedView = ({ language, setLanguage, t }: UnauthenticatedViewProps) => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [propertyCount, setPropertyCount] = useState(1500);
   const navigate = useNavigate()
   const { scrollY, isScrolled } = useScroll()
   const isMobile = useIsMobile()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { isHalalMode, toggleHalalMode } = useGlobalHalalMode()
+
+  useEffect(() => {
+    const fetchPropertyCount = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('properties')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'active');
+        
+        if (!error && data !== null) {
+          setPropertyCount(data.length || 1500);
+        }
+      } catch (error) {
+        console.error('Error fetching property count:', error);
+      }
+    };
+    
+    fetchPropertyCount();
+  }, []);
 
   return (
     <>
@@ -284,7 +306,11 @@ export const UnauthenticatedView = ({ language, setLanguage, t }: Unauthenticate
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             <div className="text-center">
-              <div className="font-heading font-bold text-3xl md:text-4xl text-primary mb-2">1,500+</div>
+              <PriceOdometer 
+                value={propertyCount} 
+                className="font-heading font-bold text-3xl md:text-4xl text-primary mb-2"
+                prefix=""
+              />
               <div className="text-muted-foreground">{t('stats.verifiedHomes')}</div>
             </div>
             <div className="text-center">
