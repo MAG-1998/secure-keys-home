@@ -18,8 +18,9 @@ export const PriceOdometer: React.FC<PriceOdometerProps> = ({
     if (displayValue !== value) {
       setIsAnimating(true);
       
-      const duration = 300;
-      const steps = 20;
+      const difference = Math.abs(value - displayValue);
+      const duration = Math.min(Math.max(difference * 2, 300), 1500); // Dynamic duration based on difference
+      const steps = Math.min(Math.max(Math.floor(difference / 10), 15), 30); // Dynamic steps
       const stepValue = (value - displayValue) / steps;
       let currentStep = 0;
 

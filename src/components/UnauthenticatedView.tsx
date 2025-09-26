@@ -26,7 +26,7 @@ interface UnauthenticatedViewProps {
 
 export const UnauthenticatedView = ({ language, setLanguage, t }: UnauthenticatedViewProps) => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [propertyCount, setPropertyCount] = useState(1500);
+  const [propertyCount, setPropertyCount] = useState(0);
   const navigate = useNavigate()
   const { scrollY, isScrolled } = useScroll()
   const isMobile = useIsMobile()
@@ -36,16 +36,19 @@ export const UnauthenticatedView = ({ language, setLanguage, t }: Unauthenticate
   useEffect(() => {
     const fetchPropertyCount = async () => {
       try {
-        const { data, error } = await supabase
+        const { count, error } = await supabase
           .from('properties')
           .select('*', { count: 'exact', head: true })
-          .eq('status', 'active');
+          .in('status', ['active', 'approved']);
         
-        if (!error && data !== null) {
-          setPropertyCount(data.length || 1500);
+        if (!error && count !== null) {
+          setPropertyCount(count);
+        } else {
+          setPropertyCount(1500); // Fallback value
         }
       } catch (error) {
         console.error('Error fetching property count:', error);
+        setPropertyCount(1500); // Fallback value
       }
     };
     
@@ -311,6 +314,7 @@ export const UnauthenticatedView = ({ language, setLanguage, t }: Unauthenticate
                 className="font-heading font-bold text-3xl md:text-4xl text-primary mb-2"
                 prefix=""
               />
+              <span className="font-heading font-bold text-3xl md:text-4xl text-primary">+</span>
               <div className="text-muted-foreground">{t('stats.verifiedHomes')}</div>
             </div>
             <div className="text-center">
