@@ -10,6 +10,7 @@ import { FeatureCard } from "@/components/FeatureCard"
 import LazyMapSection from "@/components/LazyMapSection"
 import { SearchSection } from "@/components/SearchSection"
 import { Footer } from "@/components/Footer"
+import { StatsSection } from "@/components/StatsSection"
 import { useScroll } from "@/hooks/use-scroll"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useGlobalHalalMode } from "@/hooks/useGlobalHalalMode"
@@ -280,28 +281,7 @@ export const UnauthenticatedView = ({ language, setLanguage, t }: Unauthenticate
       </section>
 
       {/* Stats Section */}
-      <section id="financing" className="py-16 bg-gradient-card">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="font-heading font-bold text-3xl md:text-4xl text-primary mb-2">1,500+</div>
-              <div className="text-muted-foreground">{t('stats.verifiedHomes')}</div>
-            </div>
-            <div className="text-center">
-              <div className="font-heading font-bold text-3xl md:text-4xl text-primary mb-2">95%</div>
-              <div className="text-muted-foreground">{t('stats.trustRating')}</div>
-            </div>
-            <div className="text-center">
-              <div className="font-heading font-bold text-3xl md:text-4xl text-primary mb-2">0%</div>
-              <div className="text-muted-foreground">{t('stats.interestRate')}</div>
-            </div>
-            <div className="text-center">
-              <div className="font-heading font-bold text-3xl md:text-4xl text-primary mb-2">24/7</div>
-              <div className="text-muted-foreground">{t('stats.support')}</div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <StatsSection t={t} />
 
       {/* CTA Section */}
       <section className="py-20">
