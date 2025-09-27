@@ -29,7 +29,7 @@ export const StatsSection: React.FC<StatsSectionProps> = ({ t }) => {
                   prefix=""
                   suffix="+"
                   initialValue={0}
-                  startAnimation={isIntersecting}
+                  startAnimation={isIntersecting && !isLoading && count !== null}
                   className="inline-block"
                 />
               )}

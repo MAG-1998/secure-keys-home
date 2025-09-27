@@ -22,9 +22,15 @@ export const PriceOdometer: React.FC<PriceOdometerProps> = ({
   const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
-    if (startAnimation && !hasAnimated && displayValue !== value) {
-      setIsAnimating(true);
+    // Reset hasAnimated when startAnimation changes from false to true
+    if (startAnimation && !hasAnimated) {
       setHasAnimated(true);
+    }
+  }, [startAnimation, hasAnimated]);
+
+  useEffect(() => {
+    if (startAnimation && displayValue !== value && value > 0) {
+      setIsAnimating(true);
       
       const difference = Math.abs(value - displayValue);
       const duration = Math.min(2000, Math.max(800, difference * 2));
@@ -45,12 +51,12 @@ export const PriceOdometer: React.FC<PriceOdometerProps> = ({
 
       return () => clearInterval(timer);
     }
-  }, [value, displayValue, startAnimation, hasAnimated]);
+  }, [value, displayValue, startAnimation]);
 
   const formattedValue = Math.round(displayValue).toLocaleString();
 
   return (
-    <div className={`${className} ${isAnimating ? 'animate-pulse' : ''}`}>
+    <div className={className}>
       <span className="transition-all duration-75">
         {prefix}{formattedValue}{suffix}
       </span>
