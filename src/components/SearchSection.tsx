@@ -17,6 +17,7 @@ import { calculateHalalFinancing, formatCurrency, getPeriodOptions, calculatePro
 import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore";
 import { useNavigate } from "react-router-dom";
 import { useSearchStore } from "@/hooks/useSearchStore";
+import { usePropertyCount } from "@/hooks/usePropertyCount";
 interface SearchSectionProps {
   isHalalMode: boolean;
   onHalalModeChange: (enabled: boolean) => void;
@@ -50,6 +51,7 @@ export const SearchSection = ({
     performSearch
   } = useSearchStore();
   const [aiSuggestion, setAiSuggestion] = useState("");
+  const { count } = usePropertyCount();
 
   // Get period options for dropdown with translation support
   const periodOptions = getPeriodOptions(t);
@@ -233,7 +235,10 @@ export const SearchSection = ({
               {isHalalMode ? t('search.titleHalal') : t('search.titleStandard')}
             </h2>
             <p className="text-muted-foreground text-sm mt-1">
-              {isHalalMode ? t('search.descHalal') : t('search.descStandard')}
+              {isHalalMode 
+                ? t('search.descHalal').replace('1,500+', `${count ? (count > 1000 ? Math.floor(count/100)*100 + '+' : count + '+') : '1,500+'}`)
+                : t('search.descStandard').replace('1,500+', `${count ? (count > 1000 ? Math.floor(count/100)*100 + '+' : count + '+') : '1,500+'}`)
+              }
             </p>
           </div>
           
