@@ -3973,9 +3973,9 @@ const translations: Translations = {
 
   // Terms & Conditions Page
   'terms.title': {
-    en: 'Magit Terms & Conditions',
-    ru: 'Условия использования Magit',
-    uz: 'Magit foydalanish shartlari'
+    en: 'Terms & Conditions',
+    ru: 'Условия использования',
+    uz: 'Foydalanish shartlari'
   },
   'terms.subtitle': {
     en: 'Welcome to Magit! These Terms & Conditions ("Terms") govern your use of the Magit website, mobile application, and services ("Platform").',
@@ -4904,9 +4904,9 @@ const translations: Translations = {
 
   // Privacy Policy
   'privacy.title': {
-    en: 'Magit Privacy Policy',
-    ru: 'Политика конфиденциальности Magit',
-    uz: 'Magit maxfiylik siyosati'
+    en: 'Privacy Policy',
+    ru: 'Политика конфиденциальности',
+    uz: 'Maxfiylik siyosati'
   },
   'privacy.subtitle': {
     en: 'Your privacy matters to us',
