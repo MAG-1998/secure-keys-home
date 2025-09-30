@@ -52,28 +52,44 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
 
     setConfirmingSubmission(null);
     setUploading(docRequestId);
+    
     try {
       const uploadedUrls: string[] = [];
 
+      // Step 1: Upload files to Supabase storage
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const fileExt = file.name.split('.').pop();
-        const fileName = `${user?.id}/${docRequestId}/${Date.now()}.${fileExt}`;
+        const fileName = `${docRequestId}_${i}_${Date.now()}.${fileExt}`;
+        const filePath = `${user?.id}/${financingRequestId}/${fileName}`;
 
-        const { error: uploadError } = await supabase.storage
+        const { data, error: uploadError } = await supabase.storage
           .from('documents')
-          .upload(fileName, file);
+          .upload(filePath, file);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error(`Upload error for ${file.name}:`, uploadError, {
+            docRequestId,
+            financingRequestId,
+            filePath,
+            step: 'file_upload'
+          });
+          throw new Error(`Failed to upload ${file.name}: ${uploadError.message}`);
+        }
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('documents')
-          .getPublicUrl(fileName);
-
-        uploadedUrls.push(publicUrl);
+        if (data?.path) {
+          // For private buckets, construct authenticated URL path
+          uploadedUrls.push(`/storage/v1/object/authenticated/documents/${data.path}`);
+        }
       }
 
-      // Atomically mark the document as submitted via RPC (handles RLS and stage progression)
+      console.log('Files uploaded successfully, calling mark_doc_submitted RPC...', {
+        docRequestId,
+        financingRequestId,
+        uploadedUrls
+      });
+
+      // Step 2: Call RPC to mark document as submitted
       const { data: rpcRes, error: rpcError } = await supabase.rpc('mark_doc_submitted' as any, {
         doc_req_id: docRequestId,
         uploaded_urls: uploadedUrls,
@@ -81,72 +97,33 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
       });
 
       const rpcResult = rpcRes as { ok: boolean; err?: string } | null;
-      if (rpcError || rpcResult?.ok === false) {
-        const errorMessage = rpcError?.message || rpcResult?.err || 'Failed to finalize document upload';
-        throw new Error(errorMessage);
-      }
-
-      // Get the financing request to find responsible person
-      const { data: financingRequest } = await supabase
-        .from('halal_financing_requests')
-        .select('responsible_person_id, user_id')
-        .eq('id', financingRequestId)
-        .single();
-
-      // Log activity
-      await supabase
-        .from('halal_financing_activity_log')
-        .insert({
-          halal_financing_request_id: financingRequestId,
-          actor_id: user?.id,
-          action_type: 'doc_submitted',
-          details: { 
-            document_request_id: docRequestId, 
-            files_count: uploadedUrls.length,
-            response_notes: responseNotes[docRequestId] || null
-          }
+      if (rpcError) {
+        console.error('RPC error:', rpcError, {
+          docRequestId,
+          financingRequestId,
+          step: 'mark_doc_submitted'
         });
-
-      // Notify responsible person if assigned
-      if (financingRequest?.responsible_person_id && financingRequest.responsible_person_id !== user?.id) {
-        await supabase
-          .from('notifications')
-          .insert({
-            user_id: financingRequest.responsible_person_id,
-            type: 'financing:documents_submitted',
-            title: 'Documents Submitted',
-            body: `User has submitted requested documents for financing request`,
-            entity_type: 'halal_financing_request',
-            entity_id: financingRequestId,
-            data: {
-              document_request_id: docRequestId,
-              files_count: uploadedUrls.length,
-              user_id: financingRequest.user_id
-            }
-          });
+        throw new Error(rpcError.message || 'Failed to submit document');
       }
 
+      if (rpcResult?.ok === false) {
+        console.error('RPC result error:', rpcResult, {
+          docRequestId,
+          financingRequestId,
+          step: 'mark_doc_submitted_result'
+        });
+        throw new Error(rpcResult.err || 'Failed to submit document');
+      }
+
+      console.log('RPC call successful, updating UI...', { docRequestId, rpcResult });
+
+      // ✅ IMMEDIATE SUCCESS ACTIONS - these happen right after RPC success
       toast({
         title: "Success",
         description: "Documents uploaded successfully"
       });
 
-      // Check if this was the last pending document
-      const remainingPendingDocs = docRequests.filter(
-        doc => doc.id !== docRequestId && doc.status === 'pending'
-      );
-      
-      if (remainingPendingDocs.length === 0) {
-        // Show additional toast about automatic stage progression
-        setTimeout(() => {
-          toast({
-            title: "All documents submitted!",
-            description: "Your financing request has been automatically moved to review stage.",
-          });
-        }, 1000);
-      }
-
-      // Clear the form after successful submission
+      // Clear the form immediately
       setResponseNotes(prev => ({ ...prev, [docRequestId]: '' }));
       setSelectedFiles(prev => ({ ...prev, [docRequestId]: null }));
       
@@ -154,14 +131,96 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
       const input = document.getElementById(`upload-${docRequestId}`) as HTMLInputElement;
       if (input) input.value = '';
       
+      // Refresh data immediately
       onRefresh();
+
+      // ✅ POST-SUCCESS EXTRAS - these run in background and won't block UI if they fail
+      try {
+        // Get the financing request to find responsible person
+        const { data: financingRequest } = await supabase
+          .from('halal_financing_requests')
+          .select('responsible_person_id, user_id')
+          .eq('id', financingRequestId)
+          .single();
+
+        // Log activity
+        await supabase
+          .from('halal_financing_activity_log')
+          .insert({
+            halal_financing_request_id: financingRequestId,
+            actor_id: user?.id,
+            action_type: 'doc_submitted',
+            details: { 
+              document_request_id: docRequestId, 
+              files_count: uploadedUrls.length,
+              response_notes: responseNotes[docRequestId] || null
+            }
+          });
+
+        // Notify responsible person if assigned
+        if (financingRequest?.responsible_person_id && financingRequest.responsible_person_id !== user?.id) {
+          await supabase
+            .from('notifications')
+            .insert({
+              user_id: financingRequest.responsible_person_id,
+              type: 'financing:documents_submitted',
+              title: 'Documents Submitted',
+              body: `User has submitted requested documents for financing request`,
+              entity_type: 'halal_financing_request',
+              entity_id: financingRequestId,
+              data: {
+                document_request_id: docRequestId,
+                files_count: uploadedUrls.length,
+                user_id: financingRequest.user_id
+              }
+            });
+        }
+
+        // Check if this was the last pending document for additional messaging
+        const remainingPendingDocs = docRequests.filter(
+          doc => doc.id !== docRequestId && doc.status === 'pending'
+        );
+        
+        if (remainingPendingDocs.length === 0) {
+          // Show additional toast about automatic stage progression
+          setTimeout(() => {
+            toast({
+              title: "All documents submitted!",
+              description: "Your financing request has been automatically moved to review stage.",
+            });
+          }, 1000);
+        }
+
+        console.log('Activity logging and notifications completed successfully');
+      } catch (activityError) {
+        console.error('Failed to log activity or send notification (non-blocking):', activityError, {
+          docRequestId,
+          financingRequestId,
+          step: 'post_success_extras'
+        });
+        
+        // Show non-blocking warning toast but don't fail the main flow
+        toast({
+          title: "Partial Success",
+          description: "Document submitted but some notifications may have failed",
+          variant: "default",
+        });
+      }
+
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error('Document submission error:', error, {
+        docRequestId,
+        financingRequestId,
+        step: 'main_flow'
+      });
+      
+      const errorMessage = error instanceof Error ? error.message : "Failed to upload documents";
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to upload documents",
+        description: errorMessage,
         variant: "destructive"
       });
+      
       // Keep selected files for retry on error
     } finally {
       setUploading(null);
