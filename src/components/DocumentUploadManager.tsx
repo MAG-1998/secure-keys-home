@@ -30,6 +30,18 @@ interface DocumentUploadManagerProps {
   onRefresh: () => void;
 }
 
+const SUPABASE_URL = 'https://mvndmnkgtoygsvesktgw.supabase.co';
+
+const normalizeUrl = (url: string) => {
+  if (!url) return url;
+  if (url.startsWith('http')) return url;
+  if (url.startsWith('/storage/v1/object/authenticated/')) {
+    return `${SUPABASE_URL}${url.replace('/storage/v1/object/authenticated/', '/storage/v1/object/public/')}`;
+  }
+  if (url.startsWith('/storage/v1/')) return `${SUPABASE_URL}${url}`;
+  return url;
+};
+
 export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefresh }: DocumentUploadManagerProps) => {
   const [uploading, setUploading] = useState<string | null>(null);
   const [responseNotes, setResponseNotes] = useState<{ [key: string]: string }>({});
@@ -78,8 +90,11 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
         }
 
         if (data?.path) {
-          // For private buckets, construct authenticated URL path
-          uploadedUrls.push(`/storage/v1/object/authenticated/documents/${data.path}`);
+          // Get public URL for the uploaded file
+          const { data: pubData } = supabase.storage.from('documents').getPublicUrl(data.path);
+          const publicUrl = pubData?.publicUrl || `${SUPABASE_URL}/storage/v1/object/public/documents/${data.path}`;
+          console.log('Uploaded file public URL:', publicUrl);
+          uploadedUrls.push(publicUrl);
         }
       }
 
@@ -430,20 +445,24 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
                   <div>
                     <Label>Uploaded Files ({docRequest.user_file_urls.length})</Label>
                     <div className="space-y-1 mt-1">
-                      {docRequest.user_file_urls.map((url, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <FileText className="w-4 h-4" />
-                          <a 
-                            href={url} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-sm text-blue-600 hover:underline flex items-center gap-1"
-                          >
-                            Document {index + 1}
-                            <Download className="w-3 h-3" />
-                          </a>
-                        </div>
-                      ))}
+                      {docRequest.user_file_urls.map((url, index) => {
+                        const normalizedUrl = normalizeUrl(url);
+                        console.log('Rendering document link:', { original: url, normalized: normalizedUrl });
+                        return (
+                          <div key={index} className="flex items-center gap-2">
+                            <FileText className="w-4 h-4" />
+                            <a 
+                              href={normalizedUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+                            >
+                              Document {index + 1}
+                              <Download className="w-3 h-3" />
+                            </a>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
