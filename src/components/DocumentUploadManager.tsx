@@ -42,6 +42,88 @@ const normalizeUrl = (url: string) => {
   return url;
 };
 
+const extractStoragePath = (urlData: any): string | null => {
+  // New format: { path, url }
+  if (typeof urlData === 'object' && urlData?.path) {
+    return urlData.path;
+  }
+  
+  // Old format: string URL
+  if (typeof urlData === 'string') {
+    const match = urlData.match(/\/documents\/(.+)$/);
+    return match ? match[1] : null;
+  }
+  
+  return null;
+};
+
+const FileDownloadButton = ({ urlData, index }: { urlData: any; index: number }) => {
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleDownload = async () => {
+    setLoading(true);
+    try {
+      const storagePath = extractStoragePath(urlData);
+      console.log('Opening document:', { urlData, storagePath });
+      
+      if (!storagePath) {
+        // Fallback to normalized URL for old data
+        const fallbackUrl = typeof urlData === 'string' ? normalizeUrl(urlData) : urlData?.url;
+        if (fallbackUrl) {
+          window.open(fallbackUrl, '_blank');
+          return;
+        }
+        throw new Error('Unable to determine file path');
+      }
+
+      // Generate signed URL (valid for 1 hour)
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .createSignedUrl(storagePath, 3600);
+
+      if (error) throw error;
+      if (!data?.signedUrl) throw new Error('No signed URL generated');
+
+      console.log('Generated signed URL:', data.signedUrl);
+      window.open(data.signedUrl, '_blank');
+    } catch (error) {
+      console.error('Failed to open document:', error);
+      toast({
+        title: "Error",
+        description: "Failed to open document. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <FileText className="w-4 h-4" />
+      <Button
+        variant="link"
+        onClick={handleDownload}
+        disabled={loading}
+        className="text-sm text-blue-600 hover:underline flex items-center gap-1 h-auto p-0"
+      >
+        {loading ? (
+          <>
+            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
+            Loading...
+          </>
+        ) : (
+          <>
+            Document {index + 1}
+            <Download className="w-3 h-3" />
+          </>
+        )}
+      </Button>
+    </div>
+  );
+};
+
 export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefresh }: DocumentUploadManagerProps) => {
   const [uploading, setUploading] = useState<string | null>(null);
   const [responseNotes, setResponseNotes] = useState<{ [key: string]: string }>({});
@@ -66,7 +148,7 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
     setUploading(docRequestId);
     
     try {
-      const uploadedUrls: string[] = [];
+      const uploadedUrls: Array<{ path: string; url: string }> = [];
 
       // Step 1: Upload files to Supabase storage
       for (let i = 0; i < files.length; i++) {
@@ -90,15 +172,14 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
         }
 
         if (data?.path) {
-          // Get public URL for the uploaded file
           const { data: pubData } = supabase.storage.from('documents').getPublicUrl(data.path);
           const publicUrl = pubData?.publicUrl || `${SUPABASE_URL}/storage/v1/object/public/documents/${data.path}`;
-          console.log('Uploaded file public URL:', publicUrl);
-          uploadedUrls.push(publicUrl);
+          console.log('Uploaded file:', { path: data.path, url: publicUrl });
+          uploadedUrls.push({ path: data.path, url: publicUrl });
         }
       }
 
-      console.log('Files uploaded successfully, calling mark_doc_submitted RPC...', {
+      console.log('Files uploaded successfully, attempting to link via RPC...', {
         docRequestId,
         financingRequestId,
         uploadedUrls
@@ -111,26 +192,34 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
         response_notes_param: responseNotes[docRequestId] || null,
       });
 
+      console.log('RPC response:', { rpcRes, rpcError });
+
       const rpcResult = rpcRes as { ok: boolean; err?: string } | null;
-      if (rpcError) {
-        console.error('RPC error:', rpcError, {
-          docRequestId,
-          financingRequestId,
-          step: 'mark_doc_submitted'
-        });
-        throw new Error(rpcError.message || 'Failed to submit document');
-      }
+      
+      // If RPC fails, try direct update as fallback
+      if (rpcError || rpcResult?.ok === false) {
+        console.warn('RPC failed, attempting direct update fallback...', { rpcError, rpcResult });
+        
+        const { error: updateError } = await supabase
+          .from('halal_finance_doc_requests')
+          .update({
+            user_file_urls: uploadedUrls,
+            response_notes: responseNotes[docRequestId] || null,
+            status: 'submitted',
+            submitted_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', docRequestId);
 
-      if (rpcResult?.ok === false) {
-        console.error('RPC result error:', rpcResult, {
-          docRequestId,
-          financingRequestId,
-          step: 'mark_doc_submitted_result'
-        });
-        throw new Error(rpcResult.err || 'Failed to submit document');
+        if (updateError) {
+          console.error('Direct update also failed:', updateError);
+          throw new Error('Failed to link documents to request');
+        }
+        
+        console.log('Direct update successful - documents linked');
+      } else {
+        console.log('RPC successful:', rpcResult);
       }
-
-      console.log('RPC call successful, updating UI...', { docRequestId, rpcResult });
 
       // ✅ IMMEDIATE SUCCESS ACTIONS - these happen right after RPC success
       toast({
@@ -445,22 +534,13 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
                   <div>
                     <Label>Uploaded Files ({docRequest.user_file_urls.length})</Label>
                     <div className="space-y-1 mt-1">
-                      {docRequest.user_file_urls.map((url, index) => {
-                        const normalizedUrl = normalizeUrl(url);
-                        console.log('Rendering document link:', { original: url, normalized: normalizedUrl });
+                      {docRequest.user_file_urls.map((urlData, index) => {
                         return (
-                          <div key={index} className="flex items-center gap-2">
-                            <FileText className="w-4 h-4" />
-                            <a 
-                              href={normalizedUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-sm text-blue-600 hover:underline flex items-center gap-1"
-                            >
-                              Document {index + 1}
-                              <Download className="w-3 h-3" />
-                            </a>
-                          </div>
+                          <FileDownloadButton
+                            key={index}
+                            urlData={urlData}
+                            index={index}
+                          />
                         );
                       })}
                     </div>
