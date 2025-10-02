@@ -41,6 +41,35 @@ export interface Property {
   longitude?: number
 }
 
+// AI search detection - determines if query needs AI understanding
+const shouldUseAISearch = (query: string): boolean => {
+  if (!query || query.trim().length < 5) return false
+  
+  // Lifestyle and contextual terms that need AI understanding
+  const aiKeywords = [
+    'семь', 'семей', 'молодож', 'уютн', 'просторн', 'современн',
+    'тих', 'близко', 'рядом', 'школ', 'детс', 'парк', 'транспорт',
+    'бюджет', 'недорог', 'премиум', 'элитн', 'роскош',
+    'для', 'с детьми', 'молод', 'пенсион', 'студент',
+    'двор', 'сад', 'балкон', 'вид', 'этаж', 'парковк',
+    'ремонт', 'евро', 'дизайн', 'новый', 'свеж',
+    'family', 'cozy', 'modern', 'spacious', 'budget', 'premium',
+    'quiet', 'near', 'school', 'park', 'garden'
+  ]
+  
+  const lowerQuery = query.toLowerCase()
+  
+  // Check for AI keywords
+  const hasAIKeyword = aiKeywords.some(keyword => lowerQuery.includes(keyword))
+  
+  // Check for complex natural language (multiple words, questions)
+  const wordCount = query.trim().split(/\s+/).length
+  const isQuestion = /\?|как|где|какой|сколько|why|how|what|where/i.test(query)
+  const hasMultipleContext = wordCount > 3 || isQuestion
+  
+  return hasAIKeyword || hasMultipleContext
+}
+
 // Cache utility functions
 const getCacheKey = (query: string, filters: SearchFilters) => {
   return `${query}_${JSON.stringify(filters)}`
@@ -133,7 +162,52 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
       return
     }
 
+    // Detect if we need AI-powered search
+    const needsAI = shouldUseAISearch(searchFilters.q || '')
+    
     try {
+      // Use AI search for complex queries
+      if (needsAI && searchFilters.q?.trim()) {
+        console.log('🤖 Using AI-powered contextual search')
+        const { data, error: functionError } = await supabase.functions.invoke('ai-property-search', {
+          body: { q: searchFilters.q, pageSize: 20 }
+        })
+        
+        if (functionError) throw functionError
+        
+        if (data?.results) {
+          // Transform AI results to our Property format
+          const aiResults: Property[] = data.results.map((prop: any) => ({
+            id: prop.id,
+            title: prop.title,
+            location: prop.city + (prop.district ? `, ${prop.district}` : ''),
+            priceUsd: prop.priceUsd,
+            bedrooms: prop.bedrooms || 1,
+            bathrooms: prop.bathrooms || 1,
+            area: prop.sizeM2 || 50,
+            verified: prop.verified,
+            financingAvailable: prop.financingAvailable,
+            image_url: prop.thumbnailUrl || '/placeholder.svg',
+            latitude: 41.2995, // Default Tashkent
+            longitude: 69.2401,
+          }))
+          
+          setCachedResult(searchFilters.q, searchFilters, aiResults)
+          
+          set({ 
+            results: aiResults, 
+            loading: false,
+            lastSearchQuery: searchFilters.q,
+            error: null
+          })
+          
+          console.log(`✅ AI search found ${aiResults.length} results`)
+          if (data.aiSuggestion) {
+            console.log(`💡 AI Suggestion: ${data.aiSuggestion}`)
+          }
+          return
+        }
+      }
       // Build Supabase query
       let query = supabase
         .from('properties')
