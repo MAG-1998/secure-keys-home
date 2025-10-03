@@ -38,6 +38,24 @@ type ParsedFilters = {
   descriptionKeywords?: string[];
 };
 
+function extractJson(raw: string): string {
+  if (!raw) return '{}';
+  let s = raw.trim();
+  // Strip Markdown code fences ```json ... ```
+  if (s.startsWith('```')) {
+    s = s.replace(/^```[a-zA-Z]*\s*/,'');
+    if (s.endsWith('```')) s = s.slice(0, -3);
+    s = s.trim();
+  }
+  // Extract substring between first { and last }
+  const first = s.indexOf('{');
+  const last = s.lastIndexOf('}');
+  if (first !== -1 && last !== -1 && last > first) {
+    s = s.slice(first, last + 1);
+  }
+  return s;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -152,12 +170,29 @@ serve(async (req) => {
     const raw = parsedData?.choices?.[0]?.message?.content?.trim() || '{}';
 
     let filters: ParsedFilters = {};
-    try { 
-      filters = JSON.parse(raw); 
+    const extracted = extractJson(raw);
+    try {
+      filters = JSON.parse(extracted);
       console.log('✓ Parsed filters:', JSON.stringify(filters, null, 2));
-    } catch (e) { 
-      console.error('✗ Failed to parse AI response:', raw);
-      filters = {}; 
+    } catch (e) {
+      console.error('✗ Failed to parse AI response, raw:', raw);
+      console.error('Extracted:', extracted);
+      // Heuristic fallback for common queries
+      const lowerQ = (q || '').toLowerCase();
+      const fallback: ParsedFilters = {};
+      if (/(семь|семей)/.test(lowerQ)) {
+        fallback.bedroomsMin = 2;
+        fallback.areaMin = 60;
+        fallback.descriptionKeywords = ['семья','дети','школа','тихий'];
+      }
+      if (/(тремя|3)/.test(lowerQ)) {
+        fallback.bedroomsMin = Math.max(fallback.bedroomsMin || 0, 3);
+      }
+      if (/школ/.test(lowerQ)) {
+        fallback.districts = ['Yunusabad','Mirabad'];
+      }
+      filters = fallback;
+      console.log('✓ Using heuristic filters:', JSON.stringify(filters));
     }
 
     console.log('\n=== Executing Database Query ===');
