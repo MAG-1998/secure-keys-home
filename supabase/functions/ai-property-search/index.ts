@@ -20,17 +20,22 @@ type Property = {
   financingAvailable: boolean;
   tags?: string[];
   thumbnailUrl?: string;
+  description?: string;
 };
 
 type ParsedFilters = {
   priceMin?: number;
   priceMax?: number;
   bedroomsMin?: number;
+  bathroomsMin?: number;
+  areaMin?: number;
+  areaMax?: number;
   verifiedOnly?: boolean;
   financing?: boolean;
   districts?: string[];
   propertyType?: 'apartment' | 'house' | 'studio' | 'commercial';
-  lifestyle?: 'family' | 'newlyweds' | 'professional' | 'investment';
+  lifestyle?: string;
+  descriptionKeywords?: string[];
 };
 
 serve(async (req) => {
@@ -47,15 +52,27 @@ serve(async (req) => {
       q?: string; cursor?: string; pageSize?: number;
     };
 
+    console.log('=== AI Property Search ===');
+    console.log('Query:', q);
+    console.log('Page size:', pageSize);
+
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
     
     if (!LOVABLE_API_KEY) {
-      return new Response(JSON.stringify({ error: 'Missing LOVABLE_API_KEY' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      console.error('Missing LOVABLE_API_KEY');
+      return new Response(JSON.stringify({ error: 'Missing LOVABLE_API_KEY' }), { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
     }
     if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      return new Response(JSON.stringify({ error: 'Missing Supabase credentials' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      console.error('Missing Supabase credentials');
+      return new Response(JSON.stringify({ error: 'Missing Supabase credentials' }), { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
     }
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -65,31 +82,36 @@ serve(async (req) => {
 КОНТЕКСТ РЫНКА:
 - Основные районы Ташкента: Сергели, Юнусабад, Яккасарай, Мирабад, Алмазар, Чиланзар, Шайхантахур
 - Средняя цена: $40,000-$80,000 за квартиру
-- Семейные квартиры: обычно 2-3+ спальни
+- Семейные квартиры: обычно 2-3+ спальни, 60+ м²
 - Халяль финансирование: требуется минимум 50% предоплаты
 - "Близко к школам" = районы Юнусабад, Мирабад
 - "Тихий район" = Яккасарай, окраины
 - "Бюджетный" = до $50,000
 - "Премиум" = от $80,000
 
-ПОНИМАЙ ЗАПРОСЫ:
-- "для семьи" → 2+ спальни, тихий район, близко к школам
-- "молодожёны" → 1-2 спальни, доступная цена
-- "уютный" → средняя площадь, хорошее состояние
-- "просторный" → большая площадь (70+ м²)
-- "современный" → новостройка
-- "с двором" → дом или первый этаж
+ПОНИМАЙ ЗАПРОСЫ И ИЗВЛЕКАЙ КЛЮЧЕВЫЕ СЛОВА:
+- "для семьи/дети" → bedroomsMin: 2, areaMin: 60, districts: ["Yunusabad", "Chilanzar"], descriptionKeywords: ["семья", "дети", "школа", "детский", "тихий"]
+- "молодожёны/пара" → bedroomsMin: 1, priceMax: 50000, areaMax: 50, descriptionKeywords: ["молодожёны", "пара", "уютный", "компактный"]
+- "уютный" → descriptionKeywords: ["уютный", "комфортный", "тёплый", "светлый", "удобный"]
+- "просторный" → areaMin: 70, descriptionKeywords: ["просторный", "большой", "широкий"]
+- "современный/новый" → descriptionKeywords: ["современный", "новый", "ремонт", "евроремонт", "новостройка"]
+- "бюджетный/недорого" → priceMax: 50000, descriptionKeywords: ["недорого", "доступный", "выгодно"]
+- "премиум/элитный" → priceMin: 80000, verifiedOnly: true, descriptionKeywords: ["премиум", "элитный", "люкс", "элит"]
 
 Парсь запрос в JSON-объект:
 {
-  "priceMin": число,
-  "priceMax": число,
-  "bedroomsMin": число,
+  "priceMin": число или null,
+  "priceMax": число или null,
+  "bedroomsMin": число или null,
+  "bathroomsMin": число или null,
+  "areaMin": число (м²) или null,
+  "areaMax": число (м²) или null,
   "verifiedOnly": boolean,
   "financing": boolean,
-  "districts": ["район1", "район2"],
-  "propertyType": "apartment"|"house"|"studio"|"commercial",
-  "lifestyle": "family"|"newlyweds"|"professional"|"investment"
+  "districts": ["район1", "район2"] или null,
+  "propertyType": "apartment"|"house"|"studio"|"commercial" или null,
+  "lifestyle": "краткое описание потребности пользователя",
+  "descriptionKeywords": ["слово1", "слово2"] - ключевые слова для поиска в описаниях
 }
 
 Ответ строго в JSON без пояснений.`;
@@ -97,9 +119,10 @@ serve(async (req) => {
     const user = `Запрос пользователя: """${q}"""
 
 Примеры:
-- "уютная квартира для семьи" → {"bedroomsMin":2,"priceMax":70000,"lifestyle":"family"}
-- "бюджетный вариант в Сергели" → {"districts":["Sergeli"],"priceMax":50000}
-- "3 комнаты с финансированием" → {"bedroomsMin":3,"financing":true}`;
+- "уютная квартира для семьи" → {"bedroomsMin":2,"priceMax":70000,"areaMin":60,"lifestyle":"семейная квартира","descriptionKeywords":["уютный","семья","дети","комфортный"]}
+- "бюджетный вариант в Сергели" → {"districts":["Sergeli"],"priceMax":50000,"lifestyle":"бюджетный вариант","descriptionKeywords":["недорого","доступный"]}
+- "3 комнаты с финансированием" → {"bedroomsMin":3,"financing":true,"lifestyle":"квартира с финансированием"}
+- "просторный дом для большой семьи" → {"propertyType":"house","bedroomsMin":3,"areaMin":100,"lifestyle":"дом для большой семьи","descriptionKeywords":["просторный","большой","семья","дети"]}`;
 
     const parseResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -119,7 +142,10 @@ serve(async (req) => {
     if (!parseResp.ok) {
       const errText = await parseResp.text().catch(() => '');
       console.error('AI Gateway parse error:', parseResp.status, errText);
-      return new Response(JSON.stringify({ error: 'AI parse error', details: errText }), { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'AI parse error', details: errText }), { 
+        status: 502, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
     }
 
     const parsedData = await parseResp.json();
@@ -128,25 +154,40 @@ serve(async (req) => {
     let filters: ParsedFilters = {};
     try { 
       filters = JSON.parse(raw); 
-      console.log('Parsed filters:', filters);
+      console.log('✓ Parsed filters:', JSON.stringify(filters, null, 2));
     } catch (e) { 
-      console.error('Failed to parse AI response:', raw);
+      console.error('✗ Failed to parse AI response:', raw);
       filters = {}; 
     }
 
+    console.log('\n=== Executing Database Query ===');
     const strictResults: Property[] = await realDbQuery(supabase, filters, { cursor, pageSize });
+    console.log(`Strict query returned: ${strictResults.length} properties`);
 
     let mode: 'strict' | 'relaxed' = 'strict';
     let candidates: Property[] = strictResults;
 
-    if (strictResults.length === 0) {
+    // Only use relaxed mode if we got very few results
+    if (strictResults.length < 3) {
+      console.log('\n=== Using Relaxed Mode (< 3 results) ===');
       mode = 'relaxed';
       const relaxed = await realDbQuery(supabase, relaxFilters(filters), { cursor, pageSize: 100 });
-      candidates = relaxed
-        .map((p) => ({ p, score: scoreProperty(p, filters) }))
-        .sort((a, b) => a.score - b.score)
-        .slice(0, 10)
-        .map(({ p }) => p);
+      console.log(`Relaxed query returned: ${relaxed.length} properties`);
+      
+      // Score all relaxed results
+      const scored = relaxed.map((p) => ({ p, score: scoreProperty(p, filters) }));
+      scored.sort((a, b) => b.score - a.score); // Higher score = better match
+      
+      console.log('Top 5 scores:', scored.slice(0, 5).map(s => ({ 
+        id: s.p.id, 
+        score: s.score, 
+        title: s.p.title.substring(0, 30) 
+      })));
+      
+      // Only take properties with decent scores (>40)
+      const goodMatches = scored.filter(s => s.score > 40);
+      candidates = goodMatches.slice(0, pageSize).map(({ p }) => p);
+      console.log(`Final candidates: ${candidates.length} (score > 40)`);
     }
 
     const resultsWithWhy = candidates.map((p) => ({
@@ -187,6 +228,9 @@ serve(async (req) => {
       aiSuggestion = suggData?.choices?.[0]?.message?.content?.trim() || '';
     }
 
+    console.log('\n=== Search Complete ===');
+    console.log(`Returning ${resultsWithWhy.length} results in ${mode} mode`);
+
     return new Response(JSON.stringify({
       results: resultsWithWhy,
       aiSuggestion,
@@ -195,8 +239,13 @@ serve(async (req) => {
       nextCursor: null,
     }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Unknown error'
-    return new Response(JSON.stringify({ error: msg }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    const msg = e instanceof Error ? e.message : 'Unknown error';
+    console.error('✗ Search error:', msg);
+    console.error('Stack:', e instanceof Error ? e.stack : 'No stack');
+    return new Response(JSON.stringify({ error: msg }), { 
+      status: 500, 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    });
   }
 });
 
@@ -204,27 +253,54 @@ async function realDbQuery(supabase: any, f: ParsedFilters, opts: { cursor?: str
   try {
     let query = supabase
       .from('properties')
-      .select('id, title, price, location, district, bedrooms, bathrooms, area, property_type, is_verified, is_halal_available, halal_status, photos, latitude, longitude')
+      .select('id, title, price, location, district, bedrooms, bathrooms, area, property_type, is_verified, is_halal_available, halal_status, photos, latitude, longitude, description')
       .in('status', ['active', 'approved'])
       .not('latitude', 'is', null)
       .not('longitude', 'is', null);
 
-    // Apply filters
-    if (f.priceMin) query = query.gte('price', f.priceMin);
-    if (f.priceMax) query = query.lte('price', f.priceMax);
-    if (f.bedroomsMin) query = query.gte('bedrooms', f.bedroomsMin);
-    if (f.verifiedOnly) query = query.eq('is_verified', true);
+    // Apply filters with logging
+    if (f.priceMin) {
+      console.log(`  ✓ Filter: price >= ${f.priceMin}`);
+      query = query.gte('price', f.priceMin);
+    }
+    if (f.priceMax) {
+      console.log(`  ✓ Filter: price <= ${f.priceMax}`);
+      query = query.lte('price', f.priceMax);
+    }
+    if (f.bedroomsMin) {
+      console.log(`  ✓ Filter: bedrooms >= ${f.bedroomsMin}`);
+      query = query.gte('bedrooms', f.bedroomsMin);
+    }
+    if (f.bathroomsMin) {
+      console.log(`  ✓ Filter: bathrooms >= ${f.bathroomsMin}`);
+      query = query.gte('bathrooms', f.bathroomsMin);
+    }
+    if (f.areaMin) {
+      console.log(`  ✓ Filter: area >= ${f.areaMin} m²`);
+      query = query.gte('area', f.areaMin);
+    }
+    if (f.areaMax) {
+      console.log(`  ✓ Filter: area <= ${f.areaMax} m²`);
+      query = query.lte('area', f.areaMax);
+    }
+    if (f.verifiedOnly) {
+      console.log('  ✓ Filter: verified only');
+      query = query.eq('is_verified', true);
+    }
     
     // Halal financing: must be both available AND approved
     if (f.financing) {
+      console.log('  ✓ Filter: halal financing (available + approved)');
       query = query.eq('is_halal_available', true).eq('halal_status', 'approved');
     }
     
     if (f.districts?.length) {
+      console.log(`  ✓ Filter: districts in [${f.districts.join(', ')}]`);
       query = query.in('district', f.districts);
     }
     
     if (f.propertyType) {
+      console.log(`  ✓ Filter: property type = ${f.propertyType}`);
       if (f.propertyType === 'apartment') {
         query = query.in('property_type', ['apartment', 'studio']);
       } else {
@@ -237,12 +313,31 @@ async function realDbQuery(supabase: any, f: ParsedFilters, opts: { cursor?: str
     const { data, error } = await query;
     
     if (error) {
-      console.error('Supabase query error:', error);
+      console.error('✗ Supabase query error:', error);
       return [];
     }
 
+    console.log(`  Database returned: ${data?.length || 0} properties`);
+
+    // Apply description keyword filtering if specified
+    let filteredData = data || [];
+    if (f.descriptionKeywords?.length) {
+      console.log(`  ✓ Applying description filter: [${f.descriptionKeywords.join(', ')}]`);
+      const initialCount = filteredData.length;
+      filteredData = filteredData.filter(prop => {
+        const description = (prop.description || '').toLowerCase();
+        const title = (prop.title || '').toLowerCase();
+        const searchText = `${title} ${description}`;
+        
+        return f.descriptionKeywords!.some(keyword => 
+          searchText.includes(keyword.toLowerCase())
+        );
+      });
+      console.log(`  After description filter: ${filteredData.length} / ${initialCount} properties`);
+    }
+
     // Transform to Property format
-    return (data || []).map((prop: any) => ({
+    return filteredData.map((prop: any) => ({
       id: prop.id,
       title: prop.title || 'Property',
       priceUsd: Math.round(prop.price || 0),
@@ -255,110 +350,183 @@ async function realDbQuery(supabase: any, f: ParsedFilters, opts: { cursor?: str
       financingAvailable: prop.is_halal_available && prop.halal_status === 'approved',
       thumbnailUrl: Array.isArray(prop.photos) && prop.photos.length > 0 ? prop.photos[0] : '/placeholder.svg',
       tags: [],
+      description: prop.description,
     }));
   } catch (error) {
-    console.error('Database query failed:', error);
+    console.error('✗ Database query failed:', error);
     return [];
   }
 }
 
 function relaxFilters(f: ParsedFilters): ParsedFilters {
+  console.log('  Relaxing filters...');
   const r: ParsedFilters = { ...f };
-  if (f.priceMin) r.priceMin = Math.floor(f.priceMin * 0.8);
-  if (f.priceMax) r.praceMax = Math.ceil(f.priceMax * 1.2);
-  if (f.bedroomsMin) r.bedroomsMin = Math.max(1, f.bedroomsMin - 1);
+  
+  // Widen price range by 30%
+  if (f.priceMin) {
+    r.priceMin = Math.floor(f.priceMin * 0.7);
+    console.log(`    priceMin: ${f.priceMin} → ${r.priceMin}`);
+  }
+  if (f.priceMax) {
+    r.priceMax = Math.ceil(f.priceMax * 1.3);
+    console.log(`    priceMax: ${f.priceMax} → ${r.priceMax}`);
+  }
+  
+  // Reduce bedroom requirement by 1
+  if (f.bedroomsMin && f.bedroomsMin > 1) {
+    r.bedroomsMin = f.bedroomsMin - 1;
+    console.log(`    bedroomsMin: ${f.bedroomsMin} → ${r.bedroomsMin}`);
+  }
+  
+  // Reduce area requirement by 20%
+  if (f.areaMin) {
+    r.areaMin = Math.floor(f.areaMin * 0.8);
+    console.log(`    areaMin: ${f.areaMin} → ${r.areaMin}`);
+  }
+  
+  // Remove strict requirements
   r.verifiedOnly = false;
   r.financing = false;
   r.districts = undefined;
+  
+  // Keep description keywords for semantic matching
+  r.descriptionKeywords = f.descriptionKeywords;
+  
+  console.log('    Removed: verifiedOnly, financing, districts');
   return r;
 }
 
 function scoreProperty(p: Property, f: ParsedFilters): number {
-  let score = 0;
+  let score = 100;
   
-  // Price scoring
-  if (f.priceMax && p.priceUsd > f.priceMax) {
-    score += ((p.priceUsd - f.priceMax) / f.priceMax) * 100;
-  }
+  // Price matching (weighted 25%)
   if (f.priceMin && p.priceUsd < f.priceMin) {
-    score += ((f.priceMin - p.priceUsd) / f.priceMin) * 20;
+    const diff = ((f.priceMin - p.priceUsd) / f.priceMin) * 100;
+    score -= Math.min(25, diff / 2);
+  }
+  if (f.priceMax && p.priceUsd > f.priceMax) {
+    const diff = ((p.priceUsd - f.priceMax) / f.priceMax) * 100;
+    score -= Math.min(25, diff / 2);
+  } else if (f.priceMin && f.priceMax && p.priceUsd >= f.priceMin && p.priceUsd <= f.priceMax) {
+    score += 15; // Bonus for being in range
   }
   
-  // Bedroom scoring
-  if (typeof f.bedroomsMin === 'number' && typeof p.bedrooms === 'number' && p.bedrooms < f.bedroomsMin) {
-    score += (f.bedroomsMin - p.bedrooms) * 10;
+  // Bedrooms matching (weighted 20%)
+  if (f.bedroomsMin && (p.bedrooms || 0) < f.bedroomsMin) {
+    score -= (f.bedroomsMin - (p.bedrooms || 0)) * 10;
+  } else if (f.bedroomsMin && p.bedrooms === f.bedroomsMin) {
+    score += 10;
   }
   
-  // Financing and verification penalties
-  if (f.financing && !p.financingAvailable) score += 15;
-  if (f.verifiedOnly && !p.verified) score += 10;
+  // Bathrooms matching (weighted 10%)
+  if (f.bathroomsMin && (p.bathrooms || 0) < f.bathroomsMin) {
+    score -= 10;
+  }
   
-  // District mismatch
-  if (f.districts?.length && p.district && !f.districts.includes(p.district)) score += 8;
-
-  // Positive attributes
-  if (p.verified) score -= 2;
-  if (p.financingAvailable) score -= 2;
-  if (typeof f.bedroomsMin === 'number' && typeof p.bedrooms === 'number' && p.bedrooms >= f.bedroomsMin) score -= 2;
-
+  // Area matching (weighted 20%)
+  if (f.areaMin && (p.sizeM2 || 0) < f.areaMin) {
+    const diff = f.areaMin - (p.sizeM2 || 0);
+    score -= Math.min(20, diff / 5);
+  } else if (f.areaMin && (p.sizeM2 || 0) >= f.areaMin) {
+    score += 10;
+  }
+  if (f.areaMax && (p.sizeM2 || 0) > f.areaMax) {
+    score -= 10;
+  }
+  
+  // Verification bonus (weighted 15%)
+  if (p.verified) {
+    score += 15;
+  } else if (f.verifiedOnly) {
+    score -= 30;
+  }
+  
+  // Financing match (weighted 10%)
+  if (f.financing && !p.financingAvailable) {
+    score -= 20;
+  } else if (p.financingAvailable) {
+    score += 10;
+  }
+  
+  // Description keyword match bonus (semantic relevance)
+  if (f.descriptionKeywords?.length && p.description) {
+    const description = p.description.toLowerCase();
+    const title = p.title.toLowerCase();
+    const searchText = `${title} ${description}`;
+    const matchCount = f.descriptionKeywords.filter(kw => 
+      searchText.includes(kw.toLowerCase())
+    ).length;
+    score += matchCount * 8; // +8 per keyword match
+  }
+  
+  // District match bonus
+  if (f.districts?.length && p.district && f.districts.includes(p.district)) {
+    score += 12;
+  }
+  
   return Math.max(0, Math.round(score));
 }
 
 function buildWhyGood(p: Property, f: ParsedFilters, mode: 'strict'|'relaxed'): string {
   const pros: string[] = [];
-  const cons: string[] = [];
 
-  // Price evaluation
-  if (typeof f.priceMax === 'number' && p.priceUsd > f.priceMax) {
-    const perc = Math.round(((p.priceUsd - f.priceMax) / f.priceMax) * 100);
-    cons.push(`чуть выше бюджета (+${perc}%)`);
-  } else if (typeof f.priceMin === 'number' && p.priceUsd < f.priceMin) {
-    cons.push('ниже желаемого бюджета');
-  } else if (typeof f.priceMin === 'number' || typeof f.priceMax === 'number') {
-    pros.push('в пределах бюджета');
-  }
-
-  // Bedrooms evaluation
-  if (typeof f.bedroomsMin === 'number') {
-    if ((p.bedrooms ?? 0) < f.bedroomsMin) {
-      cons.push(`меньше спален (нужно ≥${f.bedroomsMin})`);
-    } else {
-      pros.push(`${p.bedrooms ?? 0} спален — соответствует запросу`);
+  // Lifestyle match
+  if (f.lifestyle) {
+    if (f.lifestyle.includes('семь') || f.lifestyle.includes('family') || f.lifestyle.includes('дети')) {
+      if (p.bedrooms && p.bedrooms >= 2 && p.sizeM2 && p.sizeM2 >= 60) {
+        pros.push('✓ Идеально для семьи');
+      } else if (p.bedrooms && p.bedrooms >= 2) {
+        pros.push('Подходит для семьи');
+      }
+    }
+    if (f.lifestyle.includes('молодожён') || f.lifestyle.includes('couple') || f.lifestyle.includes('пара')) {
+      if (p.bedrooms && p.bedrooms <= 2) {
+        pros.push('✓ Отлично для пары');
+      }
     }
   }
-
-  // Financing availability
-  if (f.financing && !p.financingAvailable) {
-    cons.push('без халяль‑финансирования');
+  
+  // Key features
+  if (p.verified) pros.push('✓ Верифицировано');
+  if (p.financingAvailable) pros.push('✓ Халяль финансирование');
+  
+  // Specs
+  const specs: string[] = [];
+  if (p.bedrooms) specs.push(`${p.bedrooms} спален`);
+  if (p.sizeM2) specs.push(`${p.sizeM2}м²`);
+  if (specs.length > 0) pros.push(specs.join(', '));
+  
+  // Price match
+  if (f.priceMin && f.priceMax && p.priceUsd >= f.priceMin && p.priceUsd <= f.priceMax) {
+    pros.push('В рамках бюджета');
   }
-  if (p.financingAvailable) {
-    pros.push('доступно халяль‑финансирование');
+  
+  // Location with context
+  if (p.district) {
+    const districtContext: Record<string, string> = {
+      'Yunusabad': 'близко к школам',
+      'Chilanzar': 'семейный район',
+      'Mirabad': 'центр города',
+      'Sergeli': 'доступные цены',
+      'Yakkasaray': 'тихий район',
+    };
+    const context = districtContext[p.district];
+    pros.push(context ? `${p.district} (${context})` : p.district);
   }
-
-  // Verification status
-  if (f.verifiedOnly && !p.verified) {
-    cons.push('без верификации');
-  }
-  if (p.verified) {
-    pros.push('верифицированное объявление');
-  }
-
-  // District matching
-  if (f.districts?.length) {
-    if (p.district && f.districts.includes(p.district)) {
-      pros.push('в желаемом районе');
-    } else {
-      cons.push('другой район');
+  
+  // Description matches
+  if (f.descriptionKeywords?.length && p.description) {
+    const matched = f.descriptionKeywords.filter(kw => 
+      p.description!.toLowerCase().includes(kw.toLowerCase())
+    );
+    if (matched.length >= 2) {
+      pros.push(`Совпадения: ${matched.slice(0, 2).join(', ')}`);
     }
-  } else if (p.district) {
-    pros.push(`район: ${p.district}`);
   }
-
-  if (mode === 'strict' && cons.length === 0) {
-    return 'Полное совпадение с запросом.';
+  
+  if (mode === 'relaxed' && pros.length < 2) {
+    pros.push('Близкое совпадение');
   }
-
-  const consStr = cons.length ? `Компромисс: ${cons.join(', ')}` : '';
-  const prosStr = pros.length ? `Плюсы: ${pros.join(', ')}` : '';
-  return [consStr, prosStr].filter(Boolean).join('; ');
+  
+  return pros.slice(0, 4).join(' • ') || (mode === 'strict' ? 'Точное совпадение' : 'Подходящий вариант');
 }
