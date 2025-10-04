@@ -133,19 +133,79 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
   const { user } = useUser();
 
   const handleFileSelection = (docRequestId: string, files: FileList | null) => {
+    console.log('🔵 [FILE_SELECTION] Starting file selection', { 
+      docRequestId, 
+      fileCount: files?.length || 0,
+      userId: user?.id,
+      financingRequestId 
+    });
+    
     if (!files || files.length === 0) {
+      console.log('⚠️ [FILE_SELECTION] No files selected, clearing', { docRequestId });
       setSelectedFiles(prev => ({ ...prev, [docRequestId]: null }));
       return;
     }
+    
+    console.log('✅ [FILE_SELECTION] Files selected successfully', {
+      docRequestId,
+      files: Array.from(files).map(f => ({ name: f.name, size: f.size, type: f.type }))
+    });
+    
     setSelectedFiles(prev => ({ ...prev, [docRequestId]: files }));
   };
 
   const handleDocumentSubmission = async (docRequestId: string) => {
+    console.log('🟢 [SUBMISSION_START] Document submission initiated', { 
+      docRequestId, 
+      financingRequestId,
+      userId: user?.id,
+      timestamp: new Date().toISOString()
+    });
+    
     const files = selectedFiles[docRequestId];
-    if (!files || files.length === 0) return;
+    
+    console.log('🔍 [VALIDATION] Checking files', { 
+      docRequestId,
+      hasFiles: !!files,
+      fileCount: files?.length || 0,
+      selectedFilesState: Object.keys(selectedFiles)
+    });
+    
+    if (!files || files.length === 0) {
+      console.error('❌ [VALIDATION] No files to submit', { docRequestId, selectedFiles });
+      toast({
+        title: "Error",
+        description: "Please select files to upload first",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    console.log('🔍 [USER_CHECK] Validating user authentication', {
+      hasUser: !!user,
+      userId: user?.id,
+      userEmail: user?.email
+    });
+    
+    if (!user?.id) {
+      console.error('❌ [USER_CHECK] User not authenticated', { user });
+      toast({
+        title: "Error",
+        description: "You must be logged in to upload documents",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setConfirmingSubmission(null);
     setUploading(docRequestId);
+    
+    console.log('📤 [UPLOAD_PHASE] Starting file upload phase', {
+      docRequestId,
+      financingRequestId,
+      fileCount: files.length,
+      userId: user.id
+    });
     
     try {
       const uploadedUrls: Array<{ path: string; url: string }> = [];
@@ -156,13 +216,27 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
         const fileExt = file.name.split('.').pop();
         const fileName = `${docRequestId}_${i}_${Date.now()}.${fileExt}`;
         const filePath = `${user?.id}/${financingRequestId}/${fileName}`;
+        
+        console.log(`📁 [FILE_${i+1}/${files.length}] Preparing upload`, {
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type,
+          generatedPath: filePath,
+          userId: user?.id,
+          financingRequestId,
+          docRequestId
+        });
 
         const { data, error: uploadError } = await supabase.storage
           .from('documents')
           .upload(filePath, file);
 
         if (uploadError) {
-          console.error(`Upload error for ${file.name}:`, uploadError, {
+          console.error(`❌ [FILE_${i+1}/${files.length}] Upload failed`, {
+            fileName: file.name,
+            error: uploadError,
+            errorMessage: uploadError.message,
+            errorCode: uploadError.name,
             docRequestId,
             financingRequestId,
             filePath,
@@ -170,19 +244,41 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
           });
           throw new Error(`Failed to upload ${file.name}: ${uploadError.message}`);
         }
+        
+        console.log(`✅ [FILE_${i+1}/${files.length}] Upload successful`, {
+          fileName: file.name,
+          storagePath: data?.path,
+          uploadData: data
+        });
 
         if (data?.path) {
           const { data: pubData } = supabase.storage.from('documents').getPublicUrl(data.path);
           const publicUrl = pubData?.publicUrl || `${SUPABASE_URL}/storage/v1/object/public/documents/${data.path}`;
-          console.log('Uploaded file:', { path: data.path, url: publicUrl });
+          console.log(`🔗 [FILE_${i+1}/${files.length}] Generated public URL`, { 
+            path: data.path, 
+            url: publicUrl 
+          });
           uploadedUrls.push({ path: data.path, url: publicUrl });
+        } else {
+          console.error(`❌ [FILE_${i+1}/${files.length}] No path returned from storage`, {
+            fileName: file.name,
+            data
+          });
         }
       }
+      
+      console.log('✅ [UPLOAD_PHASE] All files uploaded successfully', {
+        totalFiles: files.length,
+        uploadedCount: uploadedUrls.length,
+        uploadedUrls
+      });
 
-      console.log('Files uploaded successfully, attempting to link via RPC...', {
+      console.log('🔄 [RPC_PHASE] Starting RPC call to mark_doc_submitted', {
         docRequestId,
         financingRequestId,
-        uploadedUrls
+        uploadedUrlsCount: uploadedUrls.length,
+        uploadedUrls,
+        responseNotes: responseNotes[docRequestId] || null
       });
 
       // Step 2: Call RPC to mark document as submitted
@@ -192,33 +288,74 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
         response_notes_param: responseNotes[docRequestId] || null,
       });
 
-      console.log('RPC response:', { rpcRes, rpcError });
+      console.log('📊 [RPC_RESPONSE] RPC call completed', { 
+        rpcRes, 
+        rpcError,
+        rpcResType: typeof rpcRes,
+        rpcErrorDetails: rpcError ? {
+          message: rpcError.message,
+          code: rpcError.code,
+          details: rpcError.details,
+          hint: rpcError.hint
+        } : null
+      });
 
       const rpcResult = rpcRes as { ok: boolean; err?: string } | null;
       
+      console.log('🔍 [RPC_RESULT_CHECK] Analyzing RPC result', {
+        hasRpcError: !!rpcError,
+        rpcResult,
+        rpcResultOk: rpcResult?.ok,
+        rpcResultErr: rpcResult?.err
+      });
+      
       // If RPC fails, try direct update as fallback
       if (rpcError || rpcResult?.ok === false) {
-        console.warn('RPC failed, attempting direct update fallback...', { rpcError, rpcResult });
+        console.warn('⚠️ [FALLBACK] RPC failed, attempting direct database update...', { 
+          rpcError, 
+          rpcResult,
+          reason: rpcError ? 'RPC error' : 'RPC returned ok: false'
+        });
+        
+        const updatePayload = {
+          user_file_urls: uploadedUrls,
+          response_notes: responseNotes[docRequestId] || null,
+          status: 'submitted',
+          submitted_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        
+        console.log('📝 [FALLBACK] Preparing direct update', {
+          docRequestId,
+          updatePayload
+        });
         
         const { error: updateError } = await supabase
           .from('halal_finance_doc_requests')
-          .update({
-            user_file_urls: uploadedUrls,
-            response_notes: responseNotes[docRequestId] || null,
-            status: 'submitted',
-            submitted_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
+          .update(updatePayload)
           .eq('id', docRequestId);
 
         if (updateError) {
-          console.error('Direct update also failed:', updateError);
-          throw new Error('Failed to link documents to request');
+          console.error('❌ [FALLBACK] Direct update failed', {
+            error: updateError,
+            errorMessage: updateError.message,
+            errorCode: updateError.code,
+            errorDetails: updateError.details,
+            errorHint: updateError.hint,
+            docRequestId
+          });
+          throw new Error(`Failed to link documents to request: ${updateError.message}`);
         }
         
-        console.log('Direct update successful - documents linked');
+        console.log('✅ [FALLBACK] Direct update successful - documents linked', {
+          docRequestId,
+          uploadedUrlsCount: uploadedUrls.length
+        });
       } else {
-        console.log('RPC successful:', rpcResult);
+        console.log('✅ [RPC_SUCCESS] RPC completed successfully', { 
+          rpcResult,
+          docRequestId 
+        });
       }
 
       // ✅ IMMEDIATE SUCCESS ACTIONS - these happen right after RPC success
@@ -312,10 +449,16 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
       }
 
     } catch (error) {
-      console.error('Document submission error:', error, {
+      console.error('❌ [SUBMISSION_ERROR] Document submission failed', {
+        error,
+        errorType: error?.constructor?.name,
+        errorMessage: error instanceof Error ? error.message : String(error),
+        errorStack: error instanceof Error ? error.stack : undefined,
         docRequestId,
         financingRequestId,
-        step: 'main_flow'
+        userId: user?.id,
+        step: 'main_flow',
+        timestamp: new Date().toISOString()
       });
       
       const errorMessage = error instanceof Error ? error.message : "Failed to upload documents";
@@ -326,7 +469,16 @@ export const DocumentUploadManager = ({ docRequests, financingRequestId, onRefre
       });
       
       // Keep selected files for retry on error
+      console.log('💾 [ERROR_RECOVERY] Keeping selected files for retry', {
+        docRequestId,
+        fileCount: selectedFiles[docRequestId]?.length || 0
+      });
     } finally {
+      console.log('🏁 [SUBMISSION_END] Submission flow completed', {
+        docRequestId,
+        uploading: false,
+        timestamp: new Date().toISOString()
+      });
       setUploading(null);
     }
   };
