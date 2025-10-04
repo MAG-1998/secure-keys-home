@@ -152,9 +152,9 @@ const translations: Translations = {
     uz: '50,000+ foydalanuvchi ishonadi'
   },
   'hero.verifiedHomes': {
-    en: '1,500+ Verified Homes',
-    ru: '1,500+ проверенных домов',
-    uz: '1,500+ tekshirilgan uy'
+    en: 'Verified Homes',
+    ru: 'Проверенные дома',
+    uz: 'Tekshirilgan uylar'
   },
   'hero.financing': {
     en: 'Zero Interest Rates',
@@ -226,9 +226,9 @@ const translations: Translations = {
     uz: 'Halol moliyali uylar'
   },
   'search.descStandard': {
-    en: 'Scam-free marketplace with 1,500+ verified properties across Tashkent',
-    ru: 'Безопасная площадка с 1,500+ проверенными объектами в Ташкенте',
-    uz: 'Toshkentda 1,500+ tekshirilgan uy bilan xavfsiz platforma'
+    en: 'Scam-free marketplace with verified properties across Tashkent',
+    ru: 'Безопасная площадка с проверенными объектами в Ташкенте',
+    uz: 'Toshkentda tekshirilgan uylar bilan xavfsiz platforma'
   },
   'search.descHalal': {
     en: 'Discover verified homes with Sharia-compliant financing options across Tashkent',

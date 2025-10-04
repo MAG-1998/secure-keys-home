@@ -235,10 +235,7 @@ export const SearchSection = ({
               {isHalalMode ? t('search.titleHalal') : t('search.titleStandard')}
             </h2>
             <p className="text-muted-foreground text-sm mt-1">
-              {isHalalMode 
-                ? t('search.descHalal').replace('1,500+', `${count ? (count > 1000 ? Math.floor(count/100)*100 + '+' : count + '+') : '1,500+'}`)
-                : t('search.descStandard').replace('1,500+', `${count ? (count > 1000 ? Math.floor(count/100)*100 + '+' : count + '+') : '1,500+'}`)
-              }
+              {isHalalMode ? t('search.descHalal') : t('search.descStandard')}
             </p>
           </div>
           
