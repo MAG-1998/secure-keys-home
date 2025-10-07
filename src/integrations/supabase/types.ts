@@ -460,6 +460,7 @@ export type Database = {
           property_type: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          show_phone: boolean | null
           status: string | null
           title: string
           updated_at: string
@@ -494,6 +495,7 @@ export type Database = {
           property_type?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          show_phone?: boolean | null
           status?: string | null
           title: string
           updated_at?: string
@@ -528,6 +530,7 @@ export type Database = {
           property_type?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          show_phone?: boolean | null
           status?: string | null
           title?: string
           updated_at?: string

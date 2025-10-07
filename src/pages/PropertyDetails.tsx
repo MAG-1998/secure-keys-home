@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
-import { MapPin, Bed, Bath, Square, Calendar as CalendarIcon, MessageCircle, Heart, Maximize2, LogOut, Edit, Trash2, Flag, X } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Calendar as CalendarIcon, MessageCircle, Heart, Maximize2, LogOut, Edit, Trash2, Flag, X, Phone } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -52,7 +52,8 @@ interface PropertyDetail {
   property_type?: string;
   latitude?: number | null;
   longitude?: number | null;
-  profiles?: { full_name?: string | null; email?: string | null; user_id?: string } | null;
+  show_phone?: boolean;
+  profiles?: { full_name?: string | null; email?: string | null; user_id?: string; phone?: string | null } | null;
 }
 
 const PropertyDetails = () => {
@@ -256,7 +257,7 @@ const PropertyDetails = () => {
       try {
         const { data: prop, error } = await supabase
           .from("properties")
-          .select("*, profiles:user_id (full_name, email, user_id)")
+          .select("*, profiles:user_id (full_name, email, user_id, phone)")
           .eq("id", id)
           .maybeSingle();
         if (error) throw error;
@@ -740,6 +741,46 @@ const PropertyDetails = () => {
               {!canEdit && (
                 // Visitor view - show visit/message/report options
                 <>
+                  {/* Contact Seller - NEW */}
+                  <Card>
+                    <CardContent className="p-6 space-y-3">
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <Phone className="w-5 h-5" />
+                        Contact Seller
+                      </h3>
+                      {property.show_phone && property.profiles?.phone ? (
+                        <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <Phone className="w-5 h-5 text-green-600" />
+                            <div>
+                              <p className="text-sm text-muted-foreground">Seller's Phone</p>
+                              <a 
+                                href={`tel:+998${property.profiles.phone}`}
+                                className="text-lg font-semibold text-green-600 hover:text-green-700"
+                              >
+                                +998 {property.profiles.phone}
+                              </a>
+                            </div>
+                          </div>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => window.open(`tel:+998${property.profiles.phone}`, '_self')}
+                          >
+                            Call Now
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                          <MessageCircle className="w-5 h-5 text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">
+                            Seller prefers to be contacted via messages
+                          </p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
                   <Card>
                     <CardContent className="p-6 space-y-4">
                       <div className="flex items-center justify-between">

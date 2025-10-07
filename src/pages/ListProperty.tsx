@@ -91,7 +91,9 @@ const ListProperty = () => {
     // Visit Hours
     visitHours: [] as string[],
     // Halal Financing
-    halalFinancingRequested: false
+    halalFinancingRequested: false,
+    // Contact
+    showPhone: false
   });
   const totalSteps = 5;
 
@@ -213,7 +215,7 @@ const ListProperty = () => {
       updateStepInUrl(prevStepNum);
     }
   };
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -246,6 +248,7 @@ const ListProperty = () => {
         documents: [],
         photos: [],
         visitHours: [],
+        showPhone: false,
         
         halalFinancingRequested: false
       });
@@ -386,7 +389,8 @@ const ListProperty = () => {
         is_halal_available: formData.halalFinancingRequested,
         halal_status: formData.halalFinancingRequested ? 'pending_approval' : 'disabled',
         district: formData.district || extractDistrictFromText(formData.address),
-        status: 'pending'
+        status: 'pending',
+        show_phone: formData.showPhone
       };
 
       const { data: property, error } = await supabase
@@ -876,6 +880,39 @@ const ListProperty = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Contact Preferences - NEW */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Phone className="w-5 h-5" />
+                    Contact Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-start space-x-3 p-4 bg-muted rounded-lg">
+                    <Checkbox
+                      id="show_phone"
+                      checked={formData.showPhone}
+                      onCheckedChange={(checked) => 
+                        handleInputChange('showPhone', checked === true)
+                      }
+                    />
+                    <div className="space-y-1 flex-1">
+                      <Label 
+                        htmlFor="show_phone" 
+                        className="text-base font-medium cursor-pointer"
+                      >
+                        Display my phone number on this listing
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Your phone number will be visible to all users viewing this property. 
+                        If unchecked, buyers will see: "Seller prefers to be contacted via messages"
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               <div className="bg-gradient-card p-6 rounded-lg">
                 <h3 className="font-semibold mb-4">Application Summary</h3>
                 
@@ -902,6 +939,12 @@ const ListProperty = () => {
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Halal Financing:</span>
                       <span className="text-green-600">Requested ✓</span>
+                    </div>
+                  )}
+                  {formData.showPhone && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Phone Display:</span>
+                      <span className="text-green-600">Enabled ✓</span>
                     </div>
                   )}
                 </div>
