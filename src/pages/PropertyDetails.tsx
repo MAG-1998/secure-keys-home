@@ -664,15 +664,15 @@ const PropertyDetails = () => {
                     )}
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                    <span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {t('admin.dashboard.properties.location')}: {property.location}</span>
+                    <span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {t('property.location')}: {property.location}</span>
                     {property.is_verified && (<Badge variant="success">Verified</Badge>)}
                     {property.is_halal_available && property.halal_status === 'approved' && (<Badge variant="trust">Halal Financing</Badge>)}
                   </div>
                   <div className="flex items-center gap-6 text-muted-foreground">
                      {property.bedrooms != null && (<span className="inline-flex items-center"><Bed className="h-4 w-4 mr-1" /> {property.bedrooms} {property.bedrooms === 1 ? t('property.bed') : t('property.beds')}</span>)}
                      {property.bathrooms != null && (<span className="inline-flex items-center"><Bath className="h-4 w-4 mr-1" /> {property.bathrooms} {property.bathrooms === 1 ? t('property.bath') : t('property.baths')}</span>)}
-                     {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} m²</span>)}
-                     {property.property_type === 'house' && property.land_area_sotka != null && (<span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {property.land_area_sotka} sotka</span>)}
+                     {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} {t('property.sqm')}</span>)}
+                     {property.property_type === 'house' && property.land_area_sotka != null && (<span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {property.land_area_sotka} {t('property.sotka')}</span>)}
                    </div>
                    <PriceOdometer 
                      value={displayPrice}
@@ -706,30 +706,30 @@ const PropertyDetails = () => {
               {canEdit && (
                 <Card>
                   <CardContent className="p-6 space-y-4">
-                    <h3 className="font-semibold">Manage Property</h3>
+                    <h3 className="font-semibold">{t('property.manageProperty')}</h3>
                     <div className="space-y-3">
                       <Button 
                         className="w-full" 
                         onClick={() => setIsEditDialogOpen(true)}
                       >
                         <Edit className="h-4 w-4 mr-2" />
-                        Edit Property
+                        {t('property.editProperty')}
                       </Button>
                       {user?.id === property.user_id && (
                         <Button 
                           variant="destructive" 
                           className="w-full"
                           onClick={() => {
-                            if (confirm("Are you sure you want to delete this property? This action cannot be undone.")) {
+                            if (confirm(t('property.deleteConfirm'))) {
                               supabase.from('properties').delete().eq('id', property.id).then(() => {
-                                toast({ title: "Property deleted", description: "Your property has been removed" });
+                                toast({ title: t('property.deleted'), description: t('property.deletedDescription') });
                                 navigate('/my-properties');
                               });
                             }
                           }}
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
-                          Delete Property
+                          {t('property.deleteProperty')}
                         </Button>
                       )}
                     </div>

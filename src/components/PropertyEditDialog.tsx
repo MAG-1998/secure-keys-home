@@ -420,10 +420,10 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
             {property.halal_status === 'pending_approval' && (
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
                 <p className="text-sm text-amber-700 font-medium">
-                  Pending Admin Approval
+                  {t('property.halalPendingApproval')}
                 </p>
                 <p className="text-xs text-amber-600 mt-1">
-                  Your halal financing request is being reviewed by administrators.
+                  {t('property.halalPendingDescription')}
                 </p>
               </div>
             )}
@@ -431,10 +431,10 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
             {property.halal_status === 'approved' && property.is_halal_available && (
               <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                 <p className="text-sm text-green-700 font-medium">
-                  Halal Financing Active
+                  {t('property.halalFinancingActive')}
                 </p>
                 <p className="text-xs text-green-600 mt-1">
-                  Your property is listed with halal financing option.
+                  {t('property.halalFinancingActiveDescription')}
                 </p>
               </div>
             )}
@@ -442,10 +442,10 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
             {property.halal_status === 'approved' && !property.is_halal_available && (
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-700 font-medium">
-                  Halal Financing Approved
+                  {t('property.halalApproved')}
                 </p>
                 <p className="text-xs text-blue-600 mt-1">
-                  You can enable halal financing for this property anytime.
+                  {t('property.halalApprovedDescription')}
                 </p>
               </div>
             )}

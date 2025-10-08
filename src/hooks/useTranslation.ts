@@ -62,23 +62,23 @@ const translations: Translations = {
   },
   'property.bed': {
     en: 'bed',
-    ru: 'сп',
-    uz: 'kr'
+    ru: 'спальня',
+    uz: 'yotoq xona'
   },
   'property.beds': {
     en: 'beds',
-    ru: 'спд',
-    uz: 'krd'
+    ru: 'спален',
+    uz: 'yotoq xonalar'
   },
   'property.bath': {
     en: 'bath',
-    ru: 'вн',
-    uz: 'va'
+    ru: 'ванная',
+    uz: 'hammom'
   },
   'property.baths': {
     en: 'baths',
-    ru: 'вн',
-    uz: 'va'
+    ru: 'ванных',
+    uz: 'hammomlar'
   },
 
   // Halal financing
@@ -552,7 +552,110 @@ const translations: Translations = {
   'property.showPhoneDescription': {
     en: 'Allow buyers to see your phone number',
     ru: 'Разрешить покупателям видеть ваш номер телефона',
-    uz: "Xaridorlarga telefon raqamingizni ko'rsatish"
+    uz: 'Xaridorlarga telefon raqamingizni ko\'rsatish'
+  },
+  
+  // Units and measurements
+  'property.sqm': {
+    en: 'm²',
+    ru: 'м²',
+    uz: 'm²'
+  },
+  'property.sotka': {
+    en: 'sotka',
+    ru: 'соток',
+    uz: 'sotix'
+  },
+  'property.location': {
+    en: 'Location',
+    ru: 'Местоположение',
+    uz: 'Manzil'
+  },
+  'property.address': {
+    en: 'Address',
+    ru: 'Адрес',
+    uz: 'Manzil'
+  },
+  'property.descriptionPlaceholder': {
+    en: 'Describe your property...',
+    ru: 'Опишите вашу недвижимость...',
+    uz: 'Mulkingizni tasvirlab bering...'
+  },
+  'property.addressPlaceholder': {
+    en: 'Enter property address',
+    ru: 'Введите адрес недвижимости',
+    uz: 'Mulk manzilini kiriting'
+  },
+  
+  // Property management
+  'property.manageProperty': {
+    en: 'Manage Property',
+    ru: 'Управление объявлением',
+    uz: 'Mulkni boshqarish'
+  },
+  'property.editProperty': {
+    en: 'Edit Property',
+    ru: 'Редактировать',
+    uz: 'Tahrirlash'
+  },
+  'property.deleteProperty': {
+    en: 'Delete Property',
+    ru: 'Удалить',
+    uz: 'O\'chirish'
+  },
+  'property.deleteConfirm': {
+    en: 'Are you sure you want to delete this property? This action cannot be undone.',
+    ru: 'Вы уверены, что хотите удалить это объявление? Это действие нельзя отменить.',
+    uz: 'Ushbu mulkni o\'chirmoqchimisiz? Bu harakatni bekor qilib bo\'lmaydi.'
+  },
+  'property.deleted': {
+    en: 'Property deleted',
+    ru: 'Объявление удалено',
+    uz: 'Mulk o\'chirildi'
+  },
+  'property.deletedDescription': {
+    en: 'Your property has been removed',
+    ru: 'Ваше объявление было удалено',
+    uz: 'Mulkingiz o\'chirildi'
+  },
+  
+  // Halal financing status messages
+  'property.halalFinancingActive': {
+    en: 'Halal Financing Active',
+    ru: 'Халяльное финансирование активно',
+    uz: 'Halol moliyalashtirish faol'
+  },
+  'property.halalFinancingActiveDescription': {
+    en: 'Your property is listed with halal financing option.',
+    ru: 'Ваше объявление размещено с опцией халяльного финансирования.',
+    uz: 'Mulkingiz halol moliyalashtirish varianti bilan joylashtirilgan.'
+  },
+  'property.halalPendingApproval': {
+    en: 'Pending Admin Approval',
+    ru: 'Ожидает одобрения администратора',
+    uz: 'Administrator tasdig\'ini kutmoqda'
+  },
+  'property.halalPendingDescription': {
+    en: 'Your halal financing request is being reviewed by administrators.',
+    ru: 'Ваш запрос на халяльное финансирование проверяется администраторами.',
+    uz: 'Halol moliyalashtirish so\'rovingiz administratorlar tomonidan ko\'rib chiqilmoqda.'
+  },
+  'property.halalApproved': {
+    en: 'Halal Financing Approved',
+    ru: 'Халяльное финансирование одобрено',
+    uz: 'Halol moliyalashtirish tasdiqlandi'
+  },
+  'property.halalApprovedDescription': {
+    en: 'You can enable halal financing for this property anytime.',
+    ru: 'Вы можете включить халяльное финансирование для этого объявления в любое время.',
+    uz: 'Siz ushbu mulk uchun halol moliyalashtirishni istalgan vaqtda yoqishingiz mumkin.'
+  },
+  
+  // Filter labels
+  'filter.bathrooms': {
+    en: 'Bathrooms',
+    ru: 'Ванные комнаты',
+    uz: 'Hammomlar'
   },
   'common.error': {
     en: 'Error',
@@ -2947,13 +3050,11 @@ const translations: Translations = {
   'property.edit': { en: 'Edit', ru: 'Редактировать', uz: 'Tahrirlash' },
   'property.save': { en: 'Save Changes', ru: 'Сохранить изменения', uz: 'O\'zgarishlarni saqlash' },
   'property.generalInfo': { en: 'General Info', ru: 'Общая информация', uz: 'Umumiy ma\'lumot' },
-  'property.location': { en: 'Location', ru: 'Местоположение', uz: 'Joylashuv' },
   'property.photos': { en: 'Photos', ru: 'Фотографии', uz: 'Suratlar' },
   'property.financing': { en: 'Financing', ru: 'Финансирование', uz: 'Moliyalashtirish' },
   'property.displayName': { en: 'Display Name', ru: 'Отображаемое имя', uz: 'Ko\'rsatiladigan nom' },
   'property.displayNamePlaceholder': { en: 'Enter property name', ru: 'Введите название объекта', uz: 'Mulk nomini kiriting' },
   'property.price': { en: 'Price (USD)', ru: 'Цена (USD)', uz: 'Narx (USD)' },
-  'property.description': { en: 'Description', ru: 'Описание', uz: 'Tavsif' },
 
   // Photo management
   'photo.dragToReorder': { en: 'Drag to reorder • First photo will be the primary image', ru: 'Перетащите для изменения порядка • Первое фото станет главным', uz: 'Tartibni o\'zgartirish uchun sudrang • Birinchi surat asosiy bo\'ladi' },
