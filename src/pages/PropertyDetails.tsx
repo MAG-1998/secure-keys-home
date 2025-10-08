@@ -741,54 +741,15 @@ const PropertyDetails = () => {
               {!canEdit && (
                 // Visitor view - show visit/message/report options
                 <>
-                  {/* Contact Seller - NEW */}
-                  <Card>
-                    <CardContent className="p-6 space-y-3">
-                      <h3 className="font-semibold flex items-center gap-2">
-                        <Phone className="w-5 h-5" />
-                        Contact Seller
-                      </h3>
-                      {property.show_phone && property.profiles?.phone ? (
-                        <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
-                          <div className="flex items-center gap-3">
-                            <Phone className="w-5 h-5 text-green-600" />
-                            <div>
-                              <p className="text-sm text-muted-foreground">Seller's Phone</p>
-                              <a 
-                                href={`tel:+998${property.profiles.phone}`}
-                                className="text-lg font-semibold text-green-600 hover:text-green-700"
-                              >
-                                +998 {property.profiles.phone}
-                              </a>
-                            </div>
-                          </div>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => window.open(`tel:+998${property.profiles.phone}`, '_self')}
-                          >
-                            Call Now
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
-                          <MessageCircle className="w-5 h-5 text-muted-foreground" />
-                          <p className="text-sm text-muted-foreground">
-                            Seller prefers to be contacted via messages
-                          </p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-
+                  {/* Actions - Request Visit */}
                   <Card>
                     <CardContent className="p-6 space-y-4">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-semibold">Actions</h3>
+                        <h3 className="font-semibold">{t('actions.title')}</h3>
                       </div>
 
                       <div className="space-y-3">
-                        <label className="text-sm font-medium inline-flex items-center"><CalendarIcon className="h-4 w-4 mr-2" /> Request a visit</label>
+                        <label className="text-sm font-medium inline-flex items-center"><CalendarIcon className="h-4 w-4 mr-2" /> {t('actions.requestVisit')}</label>
 
                     {/* Step 1: Choose date */}
                     <div className="space-y-1">
@@ -894,6 +855,7 @@ const PropertyDetails = () => {
                     </CardContent>
                   </Card>
 
+                  {/* Message Owner */}
                   <Card>
                     <CardContent className="p-6 space-y-3">
                       <h3 className="font-semibold inline-flex items-center"><MessageCircle className="h-4 w-4 mr-2" /> {t('property.messageOwner')}</h3>
@@ -902,6 +864,69 @@ const PropertyDetails = () => {
                       <Button className="w-full" onClick={sendMessage}>Send Message</Button>
                     </CardContent>
                   </Card>
+
+                  {/* Contact Seller - Show only to authenticated users */}
+                  {user ? (
+                    <Card>
+                      <CardContent className="p-6 space-y-3">
+                        <h3 className="font-semibold flex items-center gap-2">
+                          <Phone className="w-5 h-5" />
+                          {t('contact.title')}
+                        </h3>
+                        {property.show_phone && property.profiles?.phone ? (
+                          <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <Phone className="w-5 h-5 text-green-600" />
+                              <div>
+                                <p className="text-sm text-muted-foreground">{t('contact.sellerPhone')}</p>
+                                <a 
+                                  href={`tel:+998${property.profiles.phone}`}
+                                  className="text-lg font-semibold text-green-600 hover:text-green-700"
+                                >
+                                  +998 {property.profiles.phone}
+                                </a>
+                              </div>
+                            </div>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => window.open(`tel:+998${property.profiles.phone}`, '_self')}
+                            >
+                              {t('contact.callNow')}
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
+                            <MessageCircle className="w-5 h-5 text-muted-foreground" />
+                            <p className="text-sm text-muted-foreground">
+                              {t('contact.preferMessages')}
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <Card>
+                      <CardContent className="p-6 space-y-3">
+                        <h3 className="font-semibold flex items-center gap-2">
+                          <Phone className="w-5 h-5" />
+                          {t('contact.title')}
+                        </h3>
+                        <div className="flex flex-col items-center gap-3 p-4 bg-muted rounded-lg">
+                          <p className="text-sm text-muted-foreground text-center">
+                            {t('contact.signInRequired')}
+                          </p>
+                          <Button 
+                            variant="default" 
+                            size="sm"
+                            onClick={() => navigate('/auth')}
+                          >
+                            {t('contact.signInButton')}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
                   {/* Halal Financing Breakdown - only show when halal mode is ON and property supports it */}
                   {isHalalMode && property.is_halal_available && property.halal_status === 'approved' && (

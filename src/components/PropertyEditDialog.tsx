@@ -330,6 +330,23 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
                 rows={3}
               />
             </div>
+
+            {/* Phone Sharing Toggle */}
+            <div className="flex items-center space-x-2 p-3 border rounded-lg">
+              <Switch
+                id="show_phone"
+                checked={formData.show_phone}
+                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, show_phone: checked }))}
+              />
+              <div className="space-y-1">
+                <Label htmlFor="show_phone" className="cursor-pointer">
+                  {t('property.showPhoneLabel')}
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  {t('property.showPhoneDescription')}
+                </p>
+              </div>
+            </div>
           </TabsContent>
           
            <TabsContent value="location" className="space-y-4">
@@ -387,23 +404,6 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
           
           <TabsContent value="financing" className="space-y-4">
             <div className="space-y-4">
-              {/* Phone Sharing Toggle */}
-              <div className="flex items-center space-x-2 p-3 border rounded-lg">
-                <Switch
-                  id="show_phone"
-                  checked={formData.show_phone}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, show_phone: checked }))}
-                />
-                <div className="space-y-1">
-                  <Label htmlFor="show_phone" className="cursor-pointer">
-                    Display my phone number on this listing
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Allow buyers to see your phone number
-                  </p>
-                </div>
-              </div>
-
               {/* Halal Financing Toggle */}
               <div className="flex items-center space-x-2">
                 <Switch

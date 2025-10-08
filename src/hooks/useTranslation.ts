@@ -498,6 +498,62 @@ const translations: Translations = {
     ru: 'Успех',
     uz: 'Muvaffaqiyat'
   },
+
+  // Contact section translations
+  'contact.title': {
+    en: 'Contact Seller',
+    ru: 'Связаться с продавцом',
+    uz: 'Sotuvchi bilan aloqa'
+  },
+  'contact.sellerPhone': {
+    en: "Seller's Phone",
+    ru: 'Телефон продавца',
+    uz: 'Sotuvchi telefoni'
+  },
+  'contact.callNow': {
+    en: 'Call Now',
+    ru: 'Позвонить',
+    uz: "Qo'ng'iroq qilish"
+  },
+  'contact.preferMessages': {
+    en: 'Seller prefers to be contacted via messages',
+    ru: 'Продавец предпочитает связь через сообщения',
+    uz: "Sotuvchi xabarlar orqali aloqani afzal ko'radi"
+  },
+  'contact.signInRequired': {
+    en: 'Sign in to see contact information',
+    ru: 'Войдите, чтобы увидеть контактную информацию',
+    uz: "Aloqa ma'lumotlarini ko'rish uchun kiring"
+  },
+  'contact.signInButton': {
+    en: 'Sign In',
+    ru: 'Войти',
+    uz: 'Kirish'
+  },
+
+  // Actions section
+  'actions.title': {
+    en: 'Actions',
+    ru: 'Действия',
+    uz: 'Amallar'
+  },
+  'actions.requestVisit': {
+    en: 'Request a visit',
+    ru: 'Запросить просмотр',
+    uz: "Ko'rib chiqish so'rash"
+  },
+
+  // Property edit - phone sharing
+  'property.showPhoneLabel': {
+    en: 'Display my phone number on this listing',
+    ru: 'Показывать мой номер телефона в этом объявлении',
+    uz: "Bu e'londa telefon raqamimni ko'rsatish"
+  },
+  'property.showPhoneDescription': {
+    en: 'Allow buyers to see your phone number',
+    ru: 'Разрешить покупателям видеть ваш номер телефона',
+    uz: "Xaridorlarga telefon raqamingizni ko'rsatish"
+  },
   'common.error': {
     en: 'Error',
     ru: 'Ошибка',
