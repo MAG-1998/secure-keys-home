@@ -140,7 +140,7 @@ export const PropertyCard = ({
           )}
           {actualIsHalalFinanced && (
             <Badge variant="trust" className="text-xs">
-              Halal Financing
+              {t('property.halalFinancing')}
             </Badge>
           )}
         </div>

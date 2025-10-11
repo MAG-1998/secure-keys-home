@@ -644,6 +644,11 @@ const translations: Translations = {
     ru: 'Удалено',
     uz: 'O\'chirildi'
   },
+  'property.halalFinancing': {
+    en: 'Halal Financing',
+    ru: 'Халяльное Финансирование',
+    uz: 'Halol Moliyalashtirish'
+  },
   'property.removedFromSaved': {
     en: 'Property removed from saved',
     ru: 'Объект удален из сохраненных',
