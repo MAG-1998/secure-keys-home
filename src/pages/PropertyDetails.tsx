@@ -335,7 +335,7 @@ const PropertyDetails = () => {
         if (error) throw error;
         setIsSaved(false);
         setSavedId(null);
-        toast({ title: "Removed", description: "Property removed from saved" });
+        toast({ title: t('property.removed'), description: t('property.removedFromSaved') });
       } else {
         const { data, error } = await supabase
           .from("saved_properties")
@@ -345,7 +345,7 @@ const PropertyDetails = () => {
         if (error) throw error;
         setIsSaved(true);
         setSavedId(data?.id || null);
-        toast({ title: "Saved", description: "Property saved for later" });
+        toast({ title: t('property.saved'), description: t('property.savedForLater') });
       }
     } catch (e: any) {
       console.error(e);
@@ -658,8 +658,8 @@ const PropertyDetails = () => {
                   <div className="flex items-start justify-between gap-2">
                     <h1 className="text-2xl font-heading font-bold">{property.title}</h1>
                     {user?.id !== property.user_id && (
-                      <Button variant={isSaved ? "success" : "outline"} size="sm" onClick={toggleSave} aria-label={isSaved ? "Saved" : "Save"}>
-                        <Heart className="h-4 w-4 mr-2" /> {isSaved ? "Saved" : "Save"}
+                      <Button variant={isSaved ? "success" : "outline"} size="sm" onClick={toggleSave} aria-label={isSaved ? t('property.saved') : t('property.save')}>
+                        <Heart className="h-4 w-4 mr-2" /> {isSaved ? t('property.saved') : t('property.save')}
                       </Button>
                     )}
                   </div>
@@ -688,7 +688,7 @@ const PropertyDetails = () => {
               {property.latitude && property.longitude && (
                 <Card>
                   <CardContent className="p-6 space-y-4">
-                    <h3 className="font-semibold">Location</h3>
+                    <h3 className="font-semibold">{t('property.locationHeading')}</h3>
                     <PropertyLocationMap
                       latitude={property.latitude}
                       longitude={property.longitude}
@@ -753,11 +753,11 @@ const PropertyDetails = () => {
 
                     {/* Step 1: Choose date */}
                     <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">1. Choose a date</div>
+                      <div className="text-xs text-muted-foreground">1. {t('actions.chooseDate')}</div>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button variant="outline" className="w-full justify-start font-normal">
-                            {dateOnly ? format(dateOnly, "PPP") : <span>Pick a date</span>}
+                            {dateOnly ? format(dateOnly, "PPP") : <span>{t('actions.pickDate')}</span>}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </PopoverTrigger>
@@ -778,7 +778,7 @@ const PropertyDetails = () => {
 
                     {/* Step 2: Choose available time */}
                     <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">2. Choose an available time</div>
+                      <div className="text-xs text-muted-foreground">2. {t('actions.chooseTime')}</div>
                       <div className="flex flex-wrap gap-2">
                         {dateOnly && availableTimesForDate.length > 0 ? (
                           availableTimesForDate.map((t, idx) => {
@@ -800,14 +800,14 @@ const PropertyDetails = () => {
                             );
                           })
                         ) : (
-                          <div className="text-xs text-muted-foreground">{dateOnly ? 'No predefined times for this date' : 'Pick a date to see available times'}</div>
+                          <div className="text-xs text-muted-foreground">{dateOnly ? t('actions.noTimesForDate') : t('actions.pickDateFirst')}</div>
                         )}
                       </div>
                     </div>
 
                     {/* Step 3: Request other time with deposit info */}
                     <div className="space-y-2">
-                      <div className="text-xs text-muted-foreground">3. Request other time (requires 200,000 UZS deposit)</div>
+                      <div className="text-xs text-muted-foreground">3. {t('actions.requestOtherTime')}</div>
                       <div className="flex items-start gap-3">
                         <Button
                           variant="outline"
@@ -817,7 +817,7 @@ const PropertyDetails = () => {
                             setShowCustomTime((v) => !v);
                           }}
                         >
-                          {showCustomTime ? 'Cancel other time' : 'Request other time'}
+                          {showCustomTime ? t('actions.cancelOtherTime') : t('actions.requestOtherTimeButton')}
                         </Button>
                         {showCustomTime && (
                           <div className="flex items-center gap-2">
@@ -828,12 +828,12 @@ const PropertyDetails = () => {
                               className="w-[140px]"
                               disabled={!dateOnly}
                             />
-                            <span className="text-xs text-muted-foreground">{dateOnly ? 'Pick your preferred time' : 'Pick a date first'}</span>
+                            <span className="text-xs text-muted-foreground">{dateOnly ? t('actions.pickPreferredTime') : t('actions.pickDateFirst')}</span>
                           </div>
                         )}
                       </div>
                       {showCustomTime && (
-                        <div className="text-xs text-muted-foreground">A refundable 200,000 UZS deposit is required for custom times to show seriousness.</div>
+                        <div className="text-xs text-muted-foreground">{t('actions.depositInfo')}</div>
                       )}
                     </div>
 
@@ -847,8 +847,8 @@ const PropertyDetails = () => {
                             className="w-full"
                             disabled={visitRequestSent}
                           >
-                            {visitRequestSent ? 'Request Sent ✓' : 
-                             (showCustomTime && timeOnly && dateOnly ? 'Send Request (200k deposit)' : 'Send Request')}
+                            {visitRequestSent ? t('actions.requestSent') : 
+                             (showCustomTime && timeOnly && dateOnly ? t('actions.sendRequestDeposit') : t('actions.sendRequest'))}
                           </Button>
                         </VisitLimitChecker>
                       </div>
@@ -860,8 +860,8 @@ const PropertyDetails = () => {
                     <CardContent className="p-6 space-y-3">
                       <h3 className="font-semibold inline-flex items-center"><MessageCircle className="h-4 w-4 mr-2" /> {t('property.messageOwner')}</h3>
                       <div className="text-sm text-muted-foreground">{property.profiles?.full_name || property.profiles?.email}</div>
-                      <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Write a message..." rows={4} />
-                      <Button className="w-full" onClick={sendMessage}>Send Message</Button>
+                      <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder={t('property.writeMessage')} rows={4} />
+                      <Button className="w-full" onClick={sendMessage}>{t('property.sendMessage')}</Button>
                     </CardContent>
                   </Card>
 

@@ -542,6 +542,71 @@ const translations: Translations = {
     ru: 'Запросить просмотр',
     uz: "Ko'rib chiqish so'rash"
   },
+  'actions.chooseDate': {
+    en: 'Choose a date',
+    ru: 'Выберите дату',
+    uz: 'Sanani tanlang'
+  },
+  'actions.pickDate': {
+    en: 'Pick a date',
+    ru: 'Выбрать дату',
+    uz: 'Sanani tanlash'
+  },
+  'actions.chooseTime': {
+    en: 'Choose an available time',
+    ru: 'Выберите доступное время',
+    uz: 'Mavjud vaqtni tanlang'
+  },
+  'actions.noTimesForDate': {
+    en: 'No predefined times for this date',
+    ru: 'Нет предустановленного времени для этой даты',
+    uz: 'Bu sana uchun oldindan belgilangan vaqt yo\'q'
+  },
+  'actions.pickDateFirst': {
+    en: 'Pick a date to see available times',
+    ru: 'Выберите дату, чтобы увидеть доступное время',
+    uz: 'Mavjud vaqtlarni ko\'rish uchun sanani tanlang'
+  },
+  'actions.requestOtherTime': {
+    en: 'Request other time (requires 200,000 UZS deposit)',
+    ru: 'Запросить другое время (требуется депозит 200,000 сум)',
+    uz: 'Boshqa vaqt so\'rash (200,000 so\'m depozit talab qilinadi)'
+  },
+  'actions.requestOtherTimeButton': {
+    en: 'Request other time',
+    ru: 'Запросить другое время',
+    uz: 'Boshqa vaqt so\'rash'
+  },
+  'actions.cancelOtherTime': {
+    en: 'Cancel other time',
+    ru: 'Отменить другое время',
+    uz: 'Boshqa vaqtni bekor qilish'
+  },
+  'actions.pickPreferredTime': {
+    en: 'Pick your preferred time',
+    ru: 'Выберите удобное время',
+    uz: 'Qulay vaqtni tanlang'
+  },
+  'actions.depositInfo': {
+    en: 'A refundable 200,000 UZS deposit is required for custom times to show seriousness.',
+    ru: 'Для выбора произвольного времени требуется возвратный депозит в размере 200,000 сум, чтобы показать серьезность намерений.',
+    uz: 'Jiddiylikni ko\'rsatish uchun maxsus vaqt uchun 200,000 so\'mlik qaytariladigan depozit talab qilinadi.'
+  },
+  'actions.sendRequest': {
+    en: 'Send Request',
+    ru: 'Отправить запрос',
+    uz: 'So\'rov yuborish'
+  },
+  'actions.sendRequestDeposit': {
+    en: 'Send Request (200k deposit)',
+    ru: 'Отправить запрос (депозит 200k)',
+    uz: 'So\'rov yuborish (200k depozit)'
+  },
+  'actions.requestSent': {
+    en: 'Request Sent ✓',
+    ru: 'Запрос отправлен ✓',
+    uz: 'So\'rov yuborildi ✓'
+  },
 
   // Property edit - phone sharing
   'property.showPhoneLabel': {
@@ -553,6 +618,46 @@ const translations: Translations = {
     en: 'Allow buyers to see your phone number',
     ru: 'Разрешить покупателям видеть ваш номер телефона',
     uz: 'Xaridorlarga telefon raqamingizni ko\'rsatish'
+  },
+  'property.writeMessage': {
+    en: 'Write a message...',
+    ru: 'Напишите сообщение...',
+    uz: 'Xabar yozing...'
+  },
+  'property.sendMessage': {
+    en: 'Send Message',
+    ru: 'Отправить сообщение',
+    uz: 'Xabar yuborish'
+  },
+  'property.save': {
+    en: 'Save',
+    ru: 'Сохранить',
+    uz: 'Saqlash'
+  },
+  'property.saved': {
+    en: 'Saved',
+    ru: 'Сохранено',
+    uz: 'Saqlangan'
+  },
+  'property.removed': {
+    en: 'Removed',
+    ru: 'Удалено',
+    uz: 'O\'chirildi'
+  },
+  'property.removedFromSaved': {
+    en: 'Property removed from saved',
+    ru: 'Объект удален из сохраненных',
+    uz: 'Mulk saqlanganlardan o\'chirildi'
+  },
+  'property.savedForLater': {
+    en: 'Property saved for later',
+    ru: 'Объект сохранен на потом',
+    uz: 'Mulk keyinroq uchun saqlandi'
+  },
+  'property.locationHeading': {
+    en: 'Location',
+    ru: 'Местоположение',
+    uz: 'Joylashuv'
   },
   
   // Units and measurements
@@ -3048,7 +3153,7 @@ const translations: Translations = {
 
   // Property Management
   'property.edit': { en: 'Edit', ru: 'Редактировать', uz: 'Tahrirlash' },
-  'property.save': { en: 'Save Changes', ru: 'Сохранить изменения', uz: 'O\'zgarishlarni saqlash' },
+  'property.saveChanges': { en: 'Save Changes', ru: 'Сохранить изменения', uz: 'O\'zgarishlarni saqlash' },
   'property.generalInfo': { en: 'General Info', ru: 'Общая информация', uz: 'Umumiy ma\'lumot' },
   'property.photos': { en: 'Photos', ru: 'Фотографии', uz: 'Suratlar' },
   'property.financing': { en: 'Financing', ru: 'Финансирование', uz: 'Moliyalashtirish' },
