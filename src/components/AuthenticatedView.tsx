@@ -41,11 +41,13 @@ export const AuthenticatedView = memo(({
   };
 
   return <>
-      {/* Welcome Back - Compact */}
-      <section className="py-4 bg-background/50">
+      {/* Welcome Back - Enhanced */}
+      <section className="py-8 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 border-b border-border/50">
         <div className="container mx-auto px-4">
-          <h1 className="font-heading font-bold text-xl text-foreground">
-            {`${t('hero.welcomeBack')}, ${getUserDisplayName()}!`}
+          <h1 className="font-heading font-bold text-2xl md:text-3xl text-foreground animate-fade-in">
+            {`${t('hero.welcomeBack')}, `}
+            <span className="text-primary">{getUserDisplayName()}</span>
+            <span className="inline-block ml-2 animate-[wave_1s_ease-in-out_infinite]">👋</span>
           </h1>
         </div>
       </section>
