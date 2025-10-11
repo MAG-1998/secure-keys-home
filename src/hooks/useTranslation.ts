@@ -2649,7 +2649,12 @@ const translations: Translations = {
   'features.halalFinancing': {
     en: 'Halal Financing',
     ru: 'Рассрочка',
-    uz: 'Halol moliyalashtirish'
+    uz: 'Bo\'lib to\'lash'
+  },
+  'features.halalFinancingTooltip': {
+    en: 'Halal financing is a Sharia-compliant payment system without traditional interest rates. Learn more about how it works.',
+    ru: 'Халяльное финансирование - это система платежей, соответствующая шариату, без традиционных процентных ставок. Узнайте больше о том, как это работает.',
+    uz: 'Halol moliyalashtirish - bu an\'anaviy foiz stavkalarsiz shariatga mos to\'lov tizimi. Bu qanday ishlashini bilib oling.'
   },
   'features.halalDesc': {
     en: 'Sharia-compliant buy-now-pay-later options with transparent terms and zero interest.',
@@ -2811,6 +2816,11 @@ const translations: Translations = {
     en: 'Learn More',
     ru: 'Узнать больше',
     uz: 'Batafsil'
+  },
+  'common.learnMore': {
+    en: 'Learn More',
+    ru: 'Узнать больше',
+    uz: 'Batafsil bilish'
   },
 
   // Actions

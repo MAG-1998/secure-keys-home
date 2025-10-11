@@ -4,9 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp, Clock, X, Star, BookmarkPlus, Calculator, ChevronDown, Home, Bath, Building } from "lucide-react";
+import { Search, MapPin, Bed, DollarSign, Sparkles, Filter, Square, Wallet, TrendingUp, Clock, X, Star, BookmarkPlus, Calculator, ChevronDown, Home, Bath, Building, HelpCircle } from "lucide-react";
 import { PropertyCard } from "@/components/PropertyCard";
 import { useScroll } from "@/hooks/use-scroll";
 import { toast } from "@/components/ui/use-toast";
@@ -28,6 +29,7 @@ export const SearchSection = ({
   onHalalModeChange,
   t
 }: SearchSectionProps) => {
+  const navigate = useNavigate();
   const [showSearchHistory, setShowSearchHistory] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const {
@@ -103,7 +105,6 @@ export const SearchSection = ({
   const debouncedFilterSearch = useMemo(() => debounce(() => {
     performSearch();
   }, 300), [performSearch]);
-  const navigate = useNavigate();
   const halalStore = useHalalFinancingStore();
 
   // Sync halal financing state with store and filters
@@ -247,6 +248,32 @@ export const SearchSection = ({
               <Label htmlFor="halal-mode" className={`text-sm font-medium whitespace-nowrap cursor-pointer transition-all duration-300 text-theme-contrast ${isHalalMode ? 'apple-text-glow-orange' : 'apple-text-glow-cyan'}`}>
                 {t('search.halalToggle')}
               </Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button 
+                      type="button"
+                      className="inline-flex items-center justify-center"
+                      onClick={(e) => e.preventDefault()}
+                    >
+                      <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs p-4 bg-popover text-popover-foreground">
+                    <p className="text-sm mb-2">{t('features.halalFinancingTooltip')}</p>
+                    <a 
+                      href="/how-it-works" 
+                      className="text-sm text-primary hover:underline inline-flex items-center"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/how-it-works');
+                      }}
+                    >
+                      {t('common.learnMore')} →
+                    </a>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <Switch id="halal-mode" checked={isHalalMode} onCheckedChange={onHalalModeChange} className={`transition-all duration-300 ${isHalalMode ? 'apple-switch-orange' : 'apple-switch-cyan'}`} />
             </div>
             {isHalalMode && <Badge variant="trust" className="text-xs whitespace-nowrap animate-fade-in hover:scale-105 transition-transform duration-200 shadow-md sm:hidden mt-2 self-center">
