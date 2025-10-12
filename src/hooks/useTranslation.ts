@@ -646,8 +646,8 @@ const translations: Translations = {
   },
   'property.halalFinancing': {
     en: 'Halal Financing',
-    ru: 'Халяльное Финансирование',
-    uz: 'Halol Moliyalashtirish'
+    ru: 'Рассрочка',
+    uz: 'Bo\'lib to\'lash'
   },
   'property.removedFromSaved': {
     en: 'Property removed from saved',
