@@ -666,7 +666,7 @@ const PropertyDetails = () => {
                   <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                     <span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {t('property.location')}: {property.location}</span>
                     {property.is_verified && (<Badge variant="success">Verified</Badge>)}
-                    {property.is_halal_available && property.halal_status === 'approved' && (<Badge variant="trust">Halal Financing</Badge>)}
+                    {property.is_halal_available && property.halal_status === 'approved' && (<Badge variant="trust">{t('property.halalFinancing')}</Badge>)}
                   </div>
                   <div className="flex items-center gap-6 text-muted-foreground">
                      {property.bedrooms != null && (<span className="inline-flex items-center"><Bed className="h-4 w-4 mr-1" /> {property.bedrooms} {property.bedrooms === 1 ? t('property.bed') : t('property.beds')}</span>)}
