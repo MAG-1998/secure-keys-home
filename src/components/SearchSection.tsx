@@ -240,7 +240,7 @@ export const SearchSection = ({
             </p>
           </div>
           
-          <div className="flex flex-col items-center space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-4 shrink-0">
+          <div className="flex flex-col items-center space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:space-x-2 shrink-0">
             {isHalalMode && <Badge variant="trust" className="text-xs whitespace-nowrap animate-fade-in hover:scale-105 transition-transform duration-200 shadow-md hidden sm:block">
                 {t('search.halalBadge')}
               </Badge>}
@@ -248,34 +248,34 @@ export const SearchSection = ({
               <Label htmlFor="halal-mode" className={`text-sm font-medium whitespace-nowrap cursor-pointer transition-all duration-300 text-theme-contrast ${isHalalMode ? 'apple-text-glow-orange' : 'apple-text-glow-cyan'}`}>
                 {t('search.halalToggle')}
               </Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button 
-                      type="button"
-                      className="inline-flex items-center justify-center"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs p-4 bg-popover text-popover-foreground">
-                    <p className="text-sm mb-2">{t('features.halalFinancingTooltip')}</p>
-                    <a 
-                      href="/how-it-works" 
-                      className="text-sm text-primary hover:underline inline-flex items-center"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate('/how-it-works');
-                      }}
-                    >
-                      {t('common.learnMore')} →
-                    </a>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
               <Switch id="halal-mode" checked={isHalalMode} onCheckedChange={onHalalModeChange} className={`transition-all duration-300 ${isHalalMode ? 'apple-switch-orange' : 'apple-switch-cyan'}`} />
             </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button 
+                    type="button"
+                    className="inline-flex items-center justify-center"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs p-4 bg-popover text-popover-foreground">
+                  <p className="text-sm mb-2">{t('features.halalFinancingTooltip')}</p>
+                  <a 
+                    href="/how-it-works" 
+                    className="text-sm text-primary hover:underline inline-flex items-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate('/how-it-works');
+                    }}
+                  >
+                    {t('common.learnMore')} →
+                  </a>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             {isHalalMode && <Badge variant="trust" className="text-xs whitespace-nowrap animate-fade-in hover:scale-105 transition-transform duration-200 shadow-md sm:hidden mt-2 self-center">
                 {t('search.halalBadge')}
               </Badge>}
