@@ -678,7 +678,7 @@ const ListProperty = () => {
                 )}
                 {formData.visitHours.some(time => (time >= "00:00" && time <= "08:00") || (time >= "21:00" && time <= "23:00")) && (
                   <p className="text-sm text-orange-600 dark:text-orange-400 mt-2 bg-orange-50 dark:bg-orange-950/20 p-2 rounded border border-orange-200 dark:border-orange-800">
-                    ⚠️ Late night/early morning hours may be inconvenient for visitors. Consider offering daytime hours as well.
+                    {t('listProperty.lateNightWarning')}
                   </p>
                 )}
               </div>
@@ -731,15 +731,15 @@ const ListProperty = () => {
                 </p>
                 {formData.photos.length < 5 && (
                   <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
-                    Upload at least {5 - formData.photos.length} more photo(s) to continue
+                    {t('listProperty.uploadMoreText').replace('{count}', (5 - formData.photos.length).toString())}
                   </p>
                 )}
               </div>
 
               {formData.photos.length > 0 && (
-                <div className="space-y-2">
+                  <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">
-                    Drag photos to reorder • {formData.photos.length}/20 photos
+                    {t('listProperty.dragPhotosToReorder').replace('{count}', formData.photos.length.toString())}
                   </p>
                   
                   <DndContext
@@ -765,12 +765,12 @@ const ListProperty = () => {
               )}
               
               <div className="bg-muted/50 p-4 rounded-lg">
-                <h4 className="font-semibold text-sm mb-2">Photo Guidelines</h4>
+                <h4 className="font-semibold text-sm mb-2">{t('listProperty.photoGuidelines')}</h4>
                 <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Include exterior and interior shots</li>
-                  <li>• Show all rooms and key features</li>
-                  <li>• Use good lighting and clean spaces</li>
-                  <li>• Maximum 20 photos, minimum 5</li>
+                  <li>{t('listProperty.includeExteriorInterior')}</li>
+                  <li>{t('listProperty.showAllRooms')}</li>
+                  <li>{t('listProperty.useGoodLighting')}</li>
+                  <li>{t('listProperty.photoLimits')}</li>
                 </ul>
               </div>
             </CardContent>
@@ -780,19 +780,19 @@ const ListProperty = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5" />
-                Required Documents
+                {t('listProperty.requiredDocuments')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
-                <div className="border rounded-lg p-4">
+                  <div className="border rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-semibold">Property Title/Deed</h4>
-                      <p className="text-sm text-muted-foreground">Proof of ownership</p>
+                      <h4 className="font-semibold">{t('listProperty.propertyTitle')}</h4>
+                      <p className="text-sm text-muted-foreground">{t('listProperty.proofOwnership')}</p>
                     </div>
                     <Button variant="outline" size="sm">
-                      Upload
+                      {t('listProperty.upload')}
                     </Button>
                   </div>
                 </div>
@@ -800,11 +800,11 @@ const ListProperty = () => {
                 <div className="border rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-semibold">Passport/ID</h4>
-                      <p className="text-sm text-muted-foreground">Owner identification</p>
+                      <h4 className="font-semibold">{t('listProperty.passportId')}</h4>
+                      <p className="text-sm text-muted-foreground">{t('listProperty.ownerIdentification')}</p>
                     </div>
                     <Button variant="outline" size="sm">
-                      Upload
+                      {t('listProperty.upload')}
                     </Button>
                   </div>
                 </div>
@@ -812,11 +812,11 @@ const ListProperty = () => {
                 <div className="border rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-semibold">Property Assessment</h4>
-                      <p className="text-sm text-muted-foreground">Official valuation (if available)</p>
+                      <h4 className="font-semibold">{t('listProperty.propertyAssessment')}</h4>
+                      <p className="text-sm text-muted-foreground">{t('listProperty.officialValuation')}</p>
                     </div>
                     <Button variant="outline" size="sm">
-                      Upload
+                      {t('listProperty.upload')}
                     </Button>
                   </div>
                 </div>
@@ -832,31 +832,40 @@ const ListProperty = () => {
                     onCheckedChange={(checked) => setFormData(prev => ({ ...prev, halalFinancingRequested: checked as boolean }))}
                   />
                   <div className="flex-1">
-                    <Label htmlFor="halalFinancing" className="font-semibold text-sm text-green-900 dark:text-green-100 cursor-pointer">Halal Financing Available</Label>
+                    <Label htmlFor="halalFinancing" className="font-semibold text-sm text-green-900 dark:text-green-100 cursor-pointer">{t('listProperty.halalFinancingAvailable')}</Label>
                     <p className="text-sm text-green-700 dark:text-green-200 mt-1">
-                      Request to make your property available for Sharia-compliant financing. 
-                      Our Islamic finance team will contact you within 1 week to discuss options.
+                      {t('listProperty.shariaCompliantDescription')}
                     </p>
+                    
+                    <div className="mt-2 p-2 bg-amber-50 dark:bg-amber-950/20 rounded border border-amber-200 dark:border-amber-800">
+                      <p className="text-sm text-amber-700 dark:text-amber-300">
+                        {t('listProperty.halalServiceFee')}
+                      </p>
+                    </div>
                     
                     {formData.halalFinancingRequested && formData.price && parseFloat(formData.price) > 0 && (
                       <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800">
-                        <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100 mb-2">💰 Pricing Impact</h4>
+                        <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100 mb-2">{t('listProperty.pricingImpact')}</h4>
                         <div className="space-y-1 text-sm">
                           <div className="flex justify-between">
-                            <span className="text-blue-700 dark:text-blue-300">Listed Price:</span>
+                            <span className="text-blue-700 dark:text-blue-300">{t('listProperty.listedPrice')}</span>
                             <span className="font-medium">${parseFloat(formData.price).toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-blue-700 dark:text-blue-300">Magit Fee (1%):</span>
+                            <span className="text-blue-700 dark:text-blue-300">{t('listProperty.magitFee')}</span>
                             <span className="text-red-600">-${(parseFloat(formData.price) * 0.01).toLocaleString()}</span>
                           </div>
+                          <div className="flex justify-between">
+                            <span className="text-blue-700 dark:text-blue-300">{t('listProperty.halalServiceFeeLabel')}</span>
+                            <span className="text-red-600">-${(parseFloat(formData.price) * 0.02).toLocaleString()}</span>
+                          </div>
                           <div className="flex justify-between font-semibold border-t border-blue-200 dark:border-blue-700 pt-1">
-                            <span className="text-blue-900 dark:text-blue-100">Your Net Proceeds:</span>
-                            <span className="text-green-600">${(parseFloat(formData.price) * 0.99).toLocaleString()}</span>
+                            <span className="text-blue-900 dark:text-blue-100">{t('listProperty.netProceeds')}</span>
+                            <span className="text-green-600">${(parseFloat(formData.price) * 0.97).toLocaleString()}</span>
                           </div>
                         </div>
                         <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
-                          When you enable halal financing, Magit covers the 1% transaction fee to make your property accessible to Islamic finance buyers.
+                          {t('listProperty.magitCoversFee')}
                         </p>
                       </div>
                     )}
@@ -876,7 +885,7 @@ const ListProperty = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
-                Review & Submit
+                {t('listProperty.reviewAndSubmit')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -885,7 +894,7 @@ const ListProperty = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Phone className="w-5 h-5" />
-                    Contact Information
+                    {t('listProperty.contactInformation')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -902,11 +911,10 @@ const ListProperty = () => {
                         htmlFor="show_phone" 
                         className="text-base font-medium cursor-pointer"
                       >
-                        Display my phone number on this listing
+                        {t('listProperty.displayPhoneNumber')}
                       </Label>
                       <p className="text-sm text-muted-foreground">
-                        Your phone number will be visible to all users viewing this property. 
-                        If unchecked, buyers will see: "Seller prefers to be contacted via messages"
+                        {t('listProperty.phoneNumberVisibility')}
                       </p>
                     </div>
                   </div>
@@ -914,37 +922,37 @@ const ListProperty = () => {
               </Card>
 
               <div className="bg-gradient-card p-6 rounded-lg">
-                <h3 className="font-semibold mb-4">Application Summary</h3>
+                <h3 className="font-semibold mb-4">{t('listProperty.applicationSummary')}</h3>
                 
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Property Type:</span>
-                    <span className="capitalize">{formData.propertyType || "Not specified"}</span>
+                    <span className="text-muted-foreground">{t('listProperty.propertyTypeLabel')}</span>
+                    <span className="capitalize">{formData.propertyType || t('listProperty.notSpecified')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Address:</span>
-                    <span>{formData.address || "Not specified"}</span>
+                    <span className="text-muted-foreground">{t('listProperty.addressLabel')}</span>
+                    <span>{formData.address || t('listProperty.notSpecified')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Price:</span>
-                    <span>{formData.price ? `$${formData.price}` : "Not specified"}</span>
+                    <span className="text-muted-foreground">{t('listProperty.priceLabel')}</span>
+                    <span>{formData.price ? `$${formData.price}` : t('listProperty.notSpecified')}</span>
                   </div>
                   {formData.latitude && formData.longitude && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Location:</span>
-                      <span>Coordinates set ✓</span>
+                      <span className="text-muted-foreground">{t('listProperty.location')}</span>
+                      <span>{t('listProperty.coordinatesSet')}</span>
                     </div>
                   )}
                   {formData.halalFinancingRequested && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Halal Financing:</span>
-                      <span className="text-green-600">Requested ✓</span>
+                      <span className="text-muted-foreground">{t('listProperty.halalFinancingLabel')}</span>
+                      <span className="text-green-600">{t('listProperty.requested')}</span>
                     </div>
                   )}
                   {formData.showPhone && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Phone Display:</span>
-                      <span className="text-green-600">Enabled ✓</span>
+                      <span className="text-muted-foreground">{t('listProperty.phoneDisplay')}</span>
+                      <span className="text-green-600">{t('listProperty.enabled')}</span>
                     </div>
                   )}
                 </div>
@@ -955,13 +963,13 @@ const ListProperty = () => {
                   <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
                   <div>
                     <h4 className="font-semibold text-sm text-green-900 dark:text-green-100 mb-2">
-                      What happens next?
+                      {t('listProperty.whatHappensNext')}
                     </h4>
                     <ul className="text-sm text-green-700 dark:text-green-200 space-y-1">
-                      <li>• Document review within 24 hours</li>
-                      <li>• Field agent visit scheduled</li>
-                      <li>• Property verification and photos</li>
-                      <li>• Listing goes live with verified badge</li>
+                      <li>{t('listProperty.documentReview')}</li>
+                      <li>{t('listProperty.fieldAgentVisit')}</li>
+                      <li>{t('listProperty.propertyVerification')}</li>
+                      <li>{t('listProperty.listingGoesLive')}</li>
                     </ul>
                   </div>
                 </div>
@@ -974,11 +982,10 @@ const ListProperty = () => {
                     <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
                     <div>
                       <h4 className="font-semibold text-sm text-green-900 dark:text-green-100 mb-2">
-                        Application Under Review
+                        {t('listProperty.applicationUnderReview')}
                       </h4>
                       <p className="text-sm text-green-700 dark:text-green-200">
-                        Your property listing application has been sent to our moderation team. 
-                        You'll receive an email notification once it's reviewed (typically within 24-48 hours).
+                        {t('listProperty.reviewNotification')}
                       </p>
                     </div>
                   </div>
@@ -1006,11 +1013,11 @@ const ListProperty = () => {
               {lastSaved && (
                 <span className="text-sm text-muted-foreground flex items-center gap-1">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  Saved {lastSaved}
+                  {t('listProperty.saved').replace('{time}', lastSaved)}
                 </span>
               )}
               <Button variant="ghost" onClick={() => navigate('/')}>
-                Back to Home
+                {t('listProperty.backToHome')}
               </Button>
             </div>
           </div>
