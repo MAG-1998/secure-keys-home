@@ -137,18 +137,14 @@ export const HalalFinancingBreakdown = ({
                   <span>Subtotal:</span>
                   <span>{formatCurrency(calculation.propertyPrice! + calculation.serviceFee + calculation.fixedFee + calculation.tax)}</span>
                 </div>
-                <div className="flex justify-between text-green-600">
-                  <span>- Magit Discount (1%):</span>
-                  <span>-{formatCurrency(calculation.magitDiscount)}</span>
-                </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t('halal.cashPayment')}:</span>
                   <span className="font-medium">{formatCurrency(parseFloat(cashAmount))}</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t">
-                  <span className="font-semibold">Total After Discount:</span>
+                  <span className="font-semibold">{t('halal.totalCost')}:</span>
                   <Badge variant="default" className="text-base px-3 py-1">
-                    {formatCurrency(calculation.finalPriceAfterDiscount)}
+                    {formatCurrency(calculation.totalCost)}
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center">
@@ -157,12 +153,6 @@ export const HalalFinancingBreakdown = ({
                     {formatCurrency(calculation.requiredMonthlyPayment)}
                   </Badge>
                 </div>
-              </div>
-              
-              <div className="bg-green-50 dark:bg-green-950/20 p-3 rounded-lg mt-3">
-                <p className="text-sm text-green-700 dark:text-green-300">
-                  💡 <strong>Magit covers the 1% sales fee</strong> and passes the savings directly to you as a discount on your financing.
-                </p>
               </div>
             </div>
 

@@ -1513,6 +1513,16 @@ const translations: Translations = {
     ru: 'Фото объекта {number}',
     uz: 'Mulk rasmi {number}'
   },
+  'halal.magitFee': {
+    en: 'Magit Marketplace Fee (1%)',
+    ru: 'Комиссия Magit (1%)',
+    uz: 'Magit bozor to\'lovi (1%)'
+  },
+  'halal.magitFeeExplanation': {
+    en: '💡 The 1% Magit marketplace fee is charged to the seller when property is sold with financing, helping us maintain and verify the platform.',
+    ru: '💡 Комиссия Magit в размере 1% взимается с продавца при продаже недвижимости с финансированием, что помогает нам поддерживать и проверять платформу.',
+    uz: '💡 1% Magit bozor to\'lovi sotuvchidan mulk moliyalashtirish bilan sotilganda olinadi, bu bizga platformani saqlash va tekshirishga yordam beradi.'
+  },
   'listProperty.paymentFees': {
     en: 'Payment & Fees',
     ru: 'Оплата и сборы',
@@ -1704,9 +1714,9 @@ const translations: Translations = {
     uz: 'Komissiyasiz'
   },
   'listProperty.zeroCommissionDescription': {
-    en: 'List your property for free. No hidden fees or commission charges.',
-    ru: 'Размещайте объект бесплатно. Никаких скрытых платежей или комиссий.',
-    uz: 'Mulkingizni bepul joylashtiring. Yashirin to\'lovlar yoki komissiya yo\'q.'
+    en: 'List your property for free. No hidden fees or commission charges.* (*For properties with Halal financing, Magit charges a 1% marketplace fee from the seller.)',
+    ru: 'Размещайте объект бесплатно. Никаких скрытых платежей или комиссий.* (*Для объектов с халяльным финансированием Magit взимает 1% комиссию с продавца.)',
+    uz: 'Mulkingizni bepul joylashtiring. Yashirin to\'lovlar yoki komissiya yo\'q.* (*Halol moliyalashtirish bilan mulklar uchun Magit sotuvchidan 1% bozor to\'lovini oladi.)'
   },
   'listProperty.premiumExposure': {
     en: 'Premium Exposure',
