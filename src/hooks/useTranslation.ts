@@ -2269,7 +2269,7 @@ const translations: Translations = {
     ru: 'Свидетельство о собственности',
     uz: 'Mulkchilik guvohnomasi'
   },
-  'listProperty.proofOwnership': {
+  'listProperty.proofOfOwnership': {
     en: 'Proof of ownership',
     ru: 'Подтверждение собственности',
     uz: 'Mulkchilik isboti'
@@ -2318,6 +2318,46 @@ const translations: Translations = {
     en: 'Request to make your property available for Sharia-compliant financing. Our Islamic finance team will contact you within 1 week to discuss options.',
     ru: 'Запросите, чтобы ваш объект стал доступен для финансирования, соответствующего шариату. Наша команда исламского финансирования свяжется с вами в течение 1 недели для обсуждения вариантов.',
     uz: 'Mulkingizni Shariatga mos moliyalashtirish uchun mavjud qilishni so\'rang. Bizning islom moliyasi jamoamiz imkoniyatlarni muhokama qilish uchun 1 hafta ichida siz bilan bog\'lanadi.'
+  },
+  'listProperty.halalFinancingDescription': {
+    en: 'Request to make your property available for Sharia-compliant financing. Our Islamic finance team will contact you within 1 week to discuss options.',
+    ru: 'Запросите, чтобы ваш объект стал доступен для финансирования, соответствующего шариату. Наша команда исламского финансирования свяжется с вами в течение 1 недели для обсуждения вариантов.',
+    uz: 'Mulkingizni Shariatga mos moliyalashtirish uchun mavjud qilishni so\'rang. Bizning islom moliyasi jamoamiz imkoniyatlarni muhokama qilish uchun 1 hafta ichida siz bilan bog\'lanadi.'
+  },
+  'listProperty.halalServiceFee': {
+    en: '⚠️ Please note: Enabling Halal financing includes a 1% service fee for facilitating Sharia-compliant transactions.',
+    ru: '⚠️ Обратите внимание: включение халяльного финансирования включает комиссию в размере 1% за содействие в сделках, соответствующих шариату.',
+    uz: '⚠️ Eslatma: Halol moliyalashtirishni yoqish Shariatga mos bitimlarni amalga oshirish uchun 1% xizmat to\'lovini o\'z ichiga oladi.'
+  },
+  'listProperty.pricingImpact': {
+    en: '💰 Pricing Impact',
+    ru: '💰 Влияние на цену',
+    uz: '💰 Narx ta\'siri'
+  },
+  'listProperty.listedPrice': {
+    en: 'Listed Price:',
+    ru: 'Указанная цена:',
+    uz: 'Ko\'rsatilgan narx:'
+  },
+  'listProperty.magitFee': {
+    en: 'Magit Fee (1%):',
+    ru: 'Комиссия Magit (1%):',
+    uz: 'Magit to\'lovi (1%):'
+  },
+  'listProperty.halalServiceFeeLabel': {
+    en: 'Halal Service Fee (1%):',
+    ru: 'Комиссия за халяльное обслуживание (1%):',
+    uz: 'Halol xizmat to\'lovi (1%):'
+  },
+  'listProperty.netProceeds': {
+    en: 'Your Net Proceeds:',
+    ru: 'Ваша чистая прибыль:',
+    uz: 'Sizning sof daromadingiz:'
+  },
+  'listProperty.feeExplanation': {
+    en: 'These fees help us maintain the platform and provide halal financing services. The Magit fee is charged when the property is sold with financing.',
+    ru: 'Эти комиссии помогают нам поддерживать платформу и предоставлять услуги халяльного финансирования. Комиссия Magit взимается при продаже недвижимости с финансированием.',
+    uz: 'Bu to\'lovlar platformani saqlashga va halol moliyalashtirish xizmatlarini taqdim etishga yordam beradi. Magit to\'lovi mulk moliyalashtirish bilan sotilganda olinadi.'
   },
 
   // AllResults page
