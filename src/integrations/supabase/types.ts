@@ -394,40 +394,67 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_type: string | null
+          company_description: string | null
+          company_license_url: string | null
+          company_logo_url: string | null
+          company_name: string | null
+          contact_person_name: string | null
           created_at: string
           email: string
           full_name: string | null
           id: string
+          is_verified: boolean
           language: string
+          number_of_properties: number | null
           phone: string | null
+          registration_number: string | null
           role: Database["public"]["Enums"]["app_role"]
           updated_at: string
           user_id: string
-          user_type: string | null
+          verification_status: string | null
         }
         Insert: {
+          account_type?: string | null
+          company_description?: string | null
+          company_license_url?: string | null
+          company_logo_url?: string | null
+          company_name?: string | null
+          contact_person_name?: string | null
           created_at?: string
           email: string
           full_name?: string | null
           id?: string
+          is_verified?: boolean
           language?: string
+          number_of_properties?: number | null
           phone?: string | null
+          registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id: string
-          user_type?: string | null
+          verification_status?: string | null
         }
         Update: {
+          account_type?: string | null
+          company_description?: string | null
+          company_license_url?: string | null
+          company_logo_url?: string | null
+          company_name?: string | null
+          contact_person_name?: string | null
           created_at?: string
           email?: string
           full_name?: string | null
           id?: string
+          is_verified?: boolean
           language?: string
+          number_of_properties?: number | null
           phone?: string | null
+          registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id?: string
-          user_type?: string | null
+          verification_status?: string | null
         }
         Relationships: []
       }
@@ -1120,19 +1147,19 @@ export type Database = {
       get_safe_profile_for_messaging: {
         Args: { target_user_id: string }
         Returns: {
+          account_type: string
           created_at: string
           display_name: string
           user_id: string
-          user_type: string
         }[]
       }
       get_visitor_profile_for_property_owner: {
         Args: { property_id_param: string; visitor_user_id: string }
         Returns: {
+          account_type: string
           created_at: string
           display_name: string
           user_id: string
-          user_type: string
         }[]
       }
       handle_no_show_penalty: {

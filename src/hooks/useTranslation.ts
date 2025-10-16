@@ -4147,6 +4147,86 @@ const translations: Translations = {
     ru: 'Тип аккаунта',
     uz: 'Akkaunt turi'
   },
+  'profile.verificationStatus': {
+    en: 'Verification Status',
+    ru: 'Статус проверки',
+    uz: 'Tekshiruv holati'
+  },
+  'profile.companyDetails': {
+    en: 'Company Details',
+    ru: 'Детали компании',
+    uz: 'Kompaniya tafsilotlari'
+  },
+  'auth.registerAsCompany': {
+    en: 'Are you registering as a company?',
+    ru: 'Регистрируетесь как компания?',
+    uz: 'Kompaniya sifatida ro\'yxatdan o\'tyapsizmi?'
+  },
+  'auth.signUpAsLegalEntity': {
+    en: 'Sign up as a Legal Entity',
+    ru: 'Зарегистрироваться как юридическое лицо',
+    uz: 'Yuridik shaxs sifatida ro\'yxatdan o\'ting'
+  },
+  'auth.accountTypeIndividual': {
+    en: 'Individual',
+    ru: 'Физическое лицо',
+    uz: 'Jismoniy shaxs'
+  },
+  'auth.accountTypeLegalEntity': {
+    en: 'Legal Entity',
+    ru: 'Юридическое лицо',
+    uz: 'Yuridik shaxs'
+  },
+  'auth.companyName': {
+    en: 'Company Name',
+    ru: 'Название компании',
+    uz: 'Kompaniya nomi'
+  },
+  'auth.registrationNumber': {
+    en: 'Registration Number',
+    ru: 'Регистрационный номер',
+    uz: 'Ro\'yxatga olish raqami'
+  },
+  'auth.companyLicense': {
+    en: 'Company License (Required)',
+    ru: 'Лицензия компании (обязательно)',
+    uz: 'Kompaniya litsenziyasi (majburiy)'
+  },
+  'auth.companyLogo': {
+    en: 'Company Logo (Optional)',
+    ru: 'Логотип компании (необязательно)',
+    uz: 'Kompaniya logotipi (ixtiyoriy)'
+  },
+  'auth.contactPersonName': {
+    en: 'Contact Person Name',
+    ru: 'Имя контактного лица',
+    uz: 'Aloqa shaxsining ismi'
+  },
+  'auth.companyDescription': {
+    en: 'Company Description',
+    ru: 'Описание компании',
+    uz: 'Kompaniya tavsifi'
+  },
+  'auth.numberOfProperties': {
+    en: 'Number of Properties (Optional)',
+    ru: 'Количество объектов (необязательно)',
+    uz: 'Mulklar soni (ixtiyoriy)'
+  },
+  'auth.pendingVerification': {
+    en: 'Pending Verification',
+    ru: 'Ожидает проверки',
+    uz: 'Tekshiruv kutilmoqda'
+  },
+  'auth.verified': {
+    en: 'Verified',
+    ru: 'Проверено',
+    uz: 'Tasdiqlangan'
+  },
+  'auth.verificationRejected': {
+    en: 'Verification Rejected - Please resubmit',
+    ru: 'Проверка отклонена - Пожалуйста, отправьте повторно',
+    uz: 'Tekshiruv rad etildi - Iltimos, qayta yuboring'
+  },
   'profile.identityVerification': {
     en: 'Identity Verification',
     ru: 'Подтверждение личности',
@@ -4161,11 +4241,6 @@ const translations: Translations = {
     en: 'Take Selfie',
     ru: 'Сделать селфи',
     uz: 'Selfi olish'
-  },
-  'profile.verificationStatus': {
-    en: 'Verification Status',
-    ru: 'Статус верификации',
-    uz: 'Tasdiqlash holati'
   },
   'profile.notVerified': {
     en: 'Not Verified',

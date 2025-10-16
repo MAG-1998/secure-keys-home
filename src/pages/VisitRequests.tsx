@@ -39,7 +39,7 @@ interface OwnerRequestRow {
   } | null;
   visitor_profile?: {
     display_name: string;
-    user_type: string;
+    account_type: string;
   } | null;
 }
 
@@ -117,7 +117,7 @@ const VisitRequestCard = ({
                     {t('visitRequests.requestedBy')}: {r.visitor_profile.display_name}
                   </span>
                   <Badge variant="outline" className="ml-2 text-xs">
-                    {r.visitor_profile.user_type}
+                    {r.visitor_profile.account_type}
                   </Badge>
                 </div>
                 <div className="text-xs text-muted-foreground">

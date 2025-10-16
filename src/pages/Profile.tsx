@@ -37,7 +37,7 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     full_name: "",
     phone: "",
-    user_type: "buyer"
+    account_type: "individual"
   })
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -66,7 +66,7 @@ const Profile = () => {
         setFormData({
           full_name: profileData.full_name || "",
           phone: profileData.phone || "",
-          user_type: profileData.user_type || "buyer"
+          account_type: profileData.account_type || "individual"
         })
       }
     }
@@ -82,7 +82,7 @@ const Profile = () => {
       .update({
         full_name: formData.full_name,
         phone: formData.phone,
-        user_type: formData.user_type
+        account_type: formData.account_type
       })
       .eq('user_id', user.id)
 
@@ -118,7 +118,7 @@ const Profile = () => {
     setFormData({
       full_name: profile?.full_name || "",
       phone: profile?.phone || "",
-      user_type: profile?.user_type || "buyer"
+      account_type: profile?.account_type || "individual"
     })
   }
 
@@ -161,8 +161,8 @@ const Profile = () => {
                       {profile?.full_name || t('profile.title')}
                     </h1>
                     <p className="text-muted-foreground">{user.email}</p>
-                    <Badge variant={profile?.user_type === 'seller' ? 'default' : 'secondary'} className="mt-1">
-                      {profile?.user_type || 'buyer'}
+                    <Badge variant={profile?.account_type === 'legal_entity' ? 'default' : 'secondary'} className="mt-1">
+                      {profile?.account_type === 'legal_entity' ? t('auth.accountTypeLegalEntity') : t('auth.accountTypeIndividual')}
                     </Badge>
                   </div>
                 </div>
@@ -247,19 +247,21 @@ const Profile = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="user_type">{t('profile.accountType')}</Label>
+                  <Label htmlFor="account_type">{t('profile.accountType')}</Label>
                   {isEditing ? (
                     <select
-                      id="user_type"
-                      value={formData.user_type}
-                      onChange={(e) => setFormData(prev => ({ ...prev, user_type: e.target.value }))}
+                      id="account_type"
+                      value={formData.account_type}
+                      onChange={(e) => setFormData(prev => ({ ...prev, account_type: e.target.value }))}
                       className="w-full p-2 border border-input bg-background rounded-md text-sm"
                     >
-                      <option value="buyer">Buyer</option>
-                      <option value="seller">Seller</option>
+                      <option value="individual">{t('auth.accountTypeIndividual')}</option>
+                      <option value="legal_entity">{t('auth.accountTypeLegalEntity')}</option>
                     </select>
                   ) : (
-                    <div className="p-2 text-sm capitalize">{profile?.user_type || 'buyer'}</div>
+                    <div className="p-2 text-sm">
+                      {profile?.account_type === 'legal_entity' ? t('auth.accountTypeLegalEntity') : t('auth.accountTypeIndividual')}
+                    </div>
                   )}
                 </div>
               </div>

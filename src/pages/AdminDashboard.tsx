@@ -23,7 +23,7 @@ interface UserWithRole {
   full_name: string;
   email: string;
   phone: string;
-  user_type: string;
+  account_type: string;
   role: 'user' | 'moderator' | 'admin';
   created_at: string;
 }
@@ -684,7 +684,7 @@ export default function AdminDashboard() {
                       </div>
                       <p className="text-sm text-muted-foreground">{user.email}</p>
                       <p className="text-sm">{user.phone}</p>
-                      <p className="text-sm">Type: {user.user_type}</p>
+                      <p className="text-sm">Type: {user.account_type}</p>
                       <p className="text-sm">Joined: {new Date(user.created_at).toLocaleDateString()}</p>
                     </div>
                     <div className="flex gap-2">

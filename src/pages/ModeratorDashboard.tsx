@@ -39,7 +39,7 @@ interface UserProfile {
   full_name: string;
   email: string;
   phone: string;
-  user_type: string;
+  account_type: string;
   created_at: string;
 }
 
@@ -53,7 +53,9 @@ export default function ModeratorDashboard() {
   const [halalAttachments, setHalalAttachments] = useState<Record<string, string[]>>({});
   const [halalNewAttachment, setHalalNewAttachment] = useState<Record<string, string>>({});
   const [reports, setReports] = useState<any[]>([]);
-  const { toast } = useToast();
+  const [pendingVerifications, setPendingVerifications] = useState<any[]>([]);
+  const [verificationNotes, setVerificationNotes] = useState<Record<string, string>>({});
+  const { toast} = useToast();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -90,6 +92,7 @@ export default function ModeratorDashboard() {
     fetchUsers();
     fetchHalalRequests();
     fetchReports();
+    fetchPendingVerifications();
   }, []);
 
   // Realtime updates for applications, users, halal requests, and reports
@@ -305,6 +308,75 @@ export default function ModeratorDashboard() {
     }
   };
 
+  // Fetch pending legal entity verifications
+  const fetchPendingVerifications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('verification_status', 'pending')
+        .eq('account_type', 'legal_entity')
+        .order('created_at', { ascending: true });
+      
+      if (error) throw error;
+      setPendingVerifications(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: `Failed to fetch verifications: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleVerificationDecision = async (userId: string, decision: 'approved' | 'rejected') => {
+    try {
+      const notes = verificationNotes[userId] || '';
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          verification_status: decision,
+          is_verified: decision === 'approved'
+        })
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      // Create notification for the user
+      await supabase
+        .from('notifications')
+        .insert({
+          user_id: userId,
+          type: decision === 'approved' ? 'verification:approved' : 'verification:rejected',
+          title: decision === 'approved' ? 'Company Verification Approved' : 'Company Verification Rejected',
+          body: notes || (decision === 'approved' 
+            ? 'Your company account has been verified' 
+            : 'Your company verification was rejected. Please review and resubmit.'),
+          entity_type: 'profile',
+          entity_id: userId
+        });
+
+      toast({
+        title: "Success",
+        description: `Verification ${decision}`,
+      });
+
+      fetchPendingVerifications();
+      setVerificationNotes(prev => {
+        const updated = { ...prev };
+        delete updated[userId];
+        return updated;
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: `Failed to ${decision} verification: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
   // Reports fetching and actions
   const fetchReports = async () => {
     try {
@@ -402,14 +474,18 @@ export default function ModeratorDashboard() {
               </div>
 
       <Tabs defaultValue="applications" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="applications" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
-            Property Applications
+            Properties
           </TabsTrigger>
           <TabsTrigger value="financing" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
-            Financing Requests
+            Financing
+          </TabsTrigger>
+          <TabsTrigger value="verifications" className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4" />
+            Verifications ({pendingVerifications.length})
           </TabsTrigger>
           <TabsTrigger value="reports" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
@@ -516,6 +592,108 @@ export default function ModeratorDashboard() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="verifications" className="space-y-6">
+          <div className="grid gap-6">
+            {pendingVerifications.length === 0 && (
+              <Card>
+                <CardContent className="p-6 text-center text-muted-foreground">
+                  No pending verifications
+                </CardContent>
+              </Card>
+            )}
+            {pendingVerifications.map((profile) => (
+              <Card key={profile.user_id}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-xl">{profile.company_name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{profile.email}</p>
+                    </div>
+                    <Badge variant="secondary">
+                      <Clock className="w-3 h-3 mr-1" />
+                      Pending
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <p><strong>Company Name:</strong> {profile.company_name}</p>
+                      <p><strong>Registration Number:</strong> {profile.registration_number}</p>
+                      <p><strong>Contact Person:</strong> {profile.contact_person_name}</p>
+                      <p><strong>Phone:</strong> {profile.phone}</p>
+                    </div>
+                    <div>
+                      <p><strong>Properties:</strong> {profile.number_of_properties || 'Not specified'}</p>
+                      <p><strong>Submitted:</strong> {new Date(profile.created_at).toLocaleDateString()}</p>
+                      {profile.company_license_url && (
+                        <p>
+                          <strong>License:</strong>{' '}
+                          <a 
+                            href={profile.company_license_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            View Document
+                          </a>
+                        </p>
+                      )}
+                      {profile.company_logo_url && (
+                        <p>
+                          <strong>Logo:</strong>{' '}
+                          <a 
+                            href={profile.company_logo_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            View Logo
+                          </a>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {profile.company_description && (
+                    <div>
+                      <strong>Description:</strong>
+                      <p className="mt-1 text-sm">{profile.company_description}</p>
+                    </div>
+                  )}
+
+                  <div className="space-y-3 pt-4 border-t">
+                    <Textarea
+                      placeholder="Add verification notes (optional for approval, required for rejection)"
+                      value={verificationNotes[profile.user_id] || ''}
+                      onChange={(e) => setVerificationNotes(prev => ({
+                        ...prev,
+                        [profile.user_id]: e.target.value
+                      }))}
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleVerificationDecision(profile.user_id, 'approved')}
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Approve
+                      </Button>
+                      <Button
+                        onClick={() => handleVerificationDecision(profile.user_id, 'rejected')}
+                        variant="destructive"
+                      >
+                        <XCircle className="w-4 h-4 mr-2" />
+                        Reject
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
         <TabsContent value="reports" className="space-y-6">
           <div className="grid gap-6">
             {reports.length === 0 && (
@@ -561,7 +739,7 @@ export default function ModeratorDashboard() {
                       <h3 className="font-semibold">{user.full_name}</h3>
                       <p className="text-sm text-muted-foreground">{user.email}</p>
                       <p className="text-sm">{user.phone}</p>
-                      <p className="text-sm">Type: {user.user_type}</p>
+                      <p className="text-sm">Type: {user.account_type}</p>
                       <p className="text-sm">Joined: {new Date(user.created_at).toLocaleDateString()}</p>
                     </div>
                     <div className="flex gap-2">

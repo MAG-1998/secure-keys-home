@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Textarea } from "@/components/ui/textarea"
 import { MagitLogo } from "@/components/MagitLogo"
 import { Footer } from "@/components/Footer"
 import { Header } from "@/components/Header"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
-import { Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { Eye, EyeOff, ArrowLeft, Upload, Building2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useTranslation } from "@/hooks/useTranslation"
 import type { User } from "@supabase/supabase-js"
@@ -19,6 +20,7 @@ const Auth = () => {
     const urlParams = new URLSearchParams(window.location.search)
     return !urlParams.has('signup')
   })
+  const [isLegalEntity, setIsLegalEntity] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [fullName, setFullName] = useState("")
@@ -28,15 +30,27 @@ const Auth = () => {
   const [error, setError] = useState("")
   const [showResetOption, setShowResetOption] = useState(false)
   const [user, setUser] = useState<User | null>(null)
+  
+  // Company-specific fields
+  const [companyData, setCompanyData] = useState({
+    companyName: "",
+    registrationNumber: "",
+    contactPersonName: "",
+    companyDescription: "",
+    numberOfProperties: ""
+  })
+  const [companyLicense, setCompanyLicense] = useState<File | null>(null)
+  const [companyLogo, setCompanyLogo] = useState<File | null>(null)
+  
   const navigate = useNavigate()
   const { toast } = useToast()
   const { t } = useTranslation()
+  
   // Check if user is already logged in
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        // Check for redirect parameter
         const urlParams = new URLSearchParams(window.location.search);
         const redirect = urlParams.get('redirect');
         navigate(redirect || "/");
@@ -44,10 +58,8 @@ const Auth = () => {
     }
     checkSession()
 
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session && event === 'SIGNED_IN') {
-        // Check for redirect parameter on sign in
         const urlParams = new URLSearchParams(window.location.search);
         const redirect = urlParams.get('redirect');
         navigate(redirect || "/");
@@ -57,17 +69,36 @@ const Auth = () => {
     return () => subscription.unsubscribe()
   }, [])
 
+  const uploadFile = async (file: File, bucket: string, folder: string) => {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${folder}/${Math.random()}.${fileExt}`
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(fileName, file)
+    
+    if (error) throw error
+    return data.path
+  }
+
   const handleSignUp = async () => {
-    if (!email || !password || !fullName || !phone) {
-      setError(t('auth.fillAllFields'))
-      return
+    if (isLegalEntity) {
+      if (!email || !password || !companyData.companyName || !companyData.registrationNumber || 
+          !companyData.contactPersonName || !companyLicense) {
+        setError(t('auth.fillAllFields'))
+        return
+      }
+    } else {
+      if (!email || !password || !fullName || !phone) {
+        setError(t('auth.fillAllFields'))
+        return
+      }
     }
 
     setLoading(true)
     setError("")
 
-    // Block sign up if email/phone is banned
     try {
+      // Block sign up if email/phone is banned
       const { data: banned } = await supabase
         .from('red_list')
         .select('id, reason')
@@ -78,37 +109,83 @@ const Auth = () => {
         setLoading(false)
         return
       }
-    } catch {}
 
-    const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-        data: {
-          full_name: fullName,
-          phone: phone
+      // Sign up the user
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: isLegalEntity ? {
+            full_name: companyData.companyName,
+            account_type: 'legal_entity'
+          } : {
+            full_name: fullName,
+            phone: phone,
+            account_type: 'individual'
+          }
+        }
+      })
+
+      if (signUpError) {
+        const msg = (signUpError as any)?.message || ''
+        if (/already\s*registered|already\s*exists/i.test(msg)) {
+          setError(t('auth.userExists'))
+          setShowResetOption(true)
+        } else {
+          setError(msg)
+        }
+        setLoading(false)
+        return
+      }
+
+      // If legal entity, upload documents and update profile
+      if (isLegalEntity && authData.user) {
+        const userId = authData.user.id
+        
+        // Upload company license
+        const licensePath = await uploadFile(companyLicense!, 'company-documents', userId)
+        
+        // Upload company logo if provided
+        let logoPath = null
+        if (companyLogo) {
+          logoPath = await uploadFile(companyLogo, 'company-documents', userId)
+        }
+
+        // Update profile with company data
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            company_name: companyData.companyName,
+            registration_number: companyData.registrationNumber,
+            company_license_url: `/storage/v1/object/public/company-documents/${licensePath}`,
+            company_logo_url: logoPath ? `/storage/v1/object/public/company-documents/${logoPath}` : null,
+            contact_person_name: companyData.contactPersonName,
+            company_description: companyData.companyDescription || null,
+            number_of_properties: companyData.numberOfProperties ? parseInt(companyData.numberOfProperties) : null,
+            verification_status: 'pending',
+            phone: phone
+          })
+          .eq('user_id', userId)
+
+        if (profileError) {
+          console.error('Profile update error:', profileError)
         }
       }
-    })
 
-    if (signUpError) {
-      const msg = (signUpError as any)?.message || ''
-      if (/already\s*registered|already\s*exists/i.test(msg)) {
-        setError(t('auth.userExists'))
-        setShowResetOption(true)
-      } else {
-        setError(msg)
-      }
-    } else {
       toast({
         title: t('auth.accountCreatedTitle'),
-        description: t('auth.accountCreatedDesc'),
+        description: isLegalEntity 
+          ? 'Your company account has been created and is pending verification.'
+          : t('auth.accountCreatedDesc'),
       })
       setShowResetOption(false)
       setIsLogin(true)
+    } catch (err: any) {
+      setError(err.message || 'An error occurred')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const handleSignIn = async () => {
@@ -120,7 +197,6 @@ const Auth = () => {
     setLoading(true)
     setError("")
 
-    // Check red list before sign in
     try {
       const { data: banned } = await supabase
         .from('red_list')
@@ -141,8 +217,6 @@ const Auth = () => {
 
     if (signInError) {
       setError(signInError.message)
-    } else {
-      // Redirect will be handled by auth state change listener
     }
     setLoading(false)
   }
@@ -177,7 +251,6 @@ const Auth = () => {
       <Header />
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          {/* Back to home button */}
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
@@ -193,7 +266,7 @@ const Auth = () => {
                 <MagitLogo size="lg" />
               </div>
               <CardTitle className="text-2xl font-heading">
-                {isLogin ? t('auth.titleLogin') : t('auth.titleSignup')}
+                {isLogin ? t('auth.titleLogin') : (isLegalEntity ? t('auth.accountTypeLegalEntity') + ' ' + t('auth.titleSignup') : t('auth.titleSignup'))}
               </CardTitle>
               <p className="text-muted-foreground">
                 {isLogin 
@@ -205,7 +278,7 @@ const Auth = () => {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                {!isLogin && (
+                {!isLogin && !isLegalEntity && (
                   <>
                     <div className="space-y-2">
                       <Label htmlFor="fullName">{t('auth.fullName')}</Label>
@@ -215,7 +288,7 @@ const Auth = () => {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder={t('auth.fullNamePlaceholder')}
-                        required={!isLogin}
+                        required
                       />
                     </div>
                     
@@ -232,9 +305,110 @@ const Auth = () => {
                           onChange={(e) => setPhone(e.target.value)}
                           placeholder={t('auth.phonePlaceholder')}
                           className="pl-16"
-                          required={!isLogin}
+                          required
                         />
                       </div>
+                    </div>
+                  </>
+                )}
+
+                {!isLogin && isLegalEntity && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="companyName">{t('auth.companyName')}</Label>
+                      <Input
+                        id="companyName"
+                        type="text"
+                        value={companyData.companyName}
+                        onChange={(e) => setCompanyData(prev => ({ ...prev, companyName: e.target.value }))}
+                        placeholder="Company LLC"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="registrationNumber">{t('auth.registrationNumber')}</Label>
+                      <Input
+                        id="registrationNumber"
+                        type="text"
+                        value={companyData.registrationNumber}
+                        onChange={(e) => setCompanyData(prev => ({ ...prev, registrationNumber: e.target.value }))}
+                        placeholder="123456789"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="contactPersonName">{t('auth.contactPersonName')}</Label>
+                      <Input
+                        id="contactPersonName"
+                        type="text"
+                        value={companyData.contactPersonName}
+                        onChange={(e) => setCompanyData(prev => ({ ...prev, contactPersonName: e.target.value }))}
+                        placeholder="John Doe"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">{t('auth.phoneNumber')}</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none">
+                          +998
+                        </span>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder={t('auth.phonePlaceholder')}
+                          className="pl-16"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="companyLicense">{t('auth.companyLicense')}</Label>
+                      <Input
+                        id="companyLicense"
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => setCompanyLicense(e.target.files?.[0] || null)}
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="companyLogo">{t('auth.companyLogo')}</Label>
+                      <Input
+                        id="companyLogo"
+                        type="file"
+                        accept=".jpg,.jpeg,.png"
+                        onChange={(e) => setCompanyLogo(e.target.files?.[0] || null)}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="companyDescription">{t('auth.companyDescription')}</Label>
+                      <Textarea
+                        id="companyDescription"
+                        value={companyData.companyDescription}
+                        onChange={(e) => setCompanyData(prev => ({ ...prev, companyDescription: e.target.value }))}
+                        placeholder="Brief company description..."
+                        rows={3}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="numberOfProperties">{t('auth.numberOfProperties')}</Label>
+                      <Input
+                        id="numberOfProperties"
+                        type="number"
+                        value={companyData.numberOfProperties}
+                        onChange={(e) => setCompanyData(prev => ({ ...prev, numberOfProperties: e.target.value }))}
+                        placeholder="10"
+                      />
                     </div>
                   </>
                 )}
@@ -309,7 +483,7 @@ const Auth = () => {
                   }
                 </Button>
 
-                <div className="text-center pt-4">
+                <div className="text-center pt-4 space-y-2">
                   <button
                     type="button"
                     onClick={() => {
@@ -317,6 +491,7 @@ const Auth = () => {
                       setError("")
                       setFullName("")
                       setPhone("")
+                      setIsLegalEntity(false)
                     }}
                     className="text-primary hover:text-primary/80 transition-colors"
                   >
@@ -325,6 +500,20 @@ const Auth = () => {
                       : t('auth.toggleToLogin')
                     }
                   </button>
+
+                  {!isLogin && (
+                    <div className="text-sm text-muted-foreground">
+                      {t('auth.registerAsCompany')}{' '}
+                      <button
+                        type="button"
+                        onClick={() => setIsLegalEntity(!isLegalEntity)}
+                        className="text-primary hover:text-primary/80 transition-colors font-medium inline-flex items-center gap-1"
+                      >
+                        <Building2 className="w-3 h-3" />
+                        {t('auth.signUpAsLegalEntity')}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </form>
             </CardContent>
