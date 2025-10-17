@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Switch } from "@/components/ui/switch"
 import { MagitLogo } from "@/components/MagitLogo"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
@@ -44,7 +45,8 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     full_name: "",
     phone: "",
-    account_type: "individual"
+    account_type: "individual",
+    show_phone: false,
   })
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -74,7 +76,8 @@ const Profile = () => {
         setFormData({
           full_name: profileData.full_name || "",
           phone: profileData.phone || "",
-          account_type: profileData.account_type || "individual"
+          account_type: profileData.account_type || "individual",
+          show_phone: profileData.show_phone || false,
         })
       }
     }
@@ -109,7 +112,8 @@ const Profile = () => {
       .update({
         full_name: formData.full_name,
         phone: formData.phone,
-        account_type: formData.account_type
+        account_type: formData.account_type,
+        show_phone: formData.show_phone,
       })
       .eq('user_id', user.id)
 
@@ -145,7 +149,8 @@ const Profile = () => {
     setFormData({
       full_name: profile?.full_name || "",
       phone: profile?.phone || "",
-      account_type: profile?.account_type || "individual"
+      account_type: profile?.account_type || "individual",
+      show_phone: profile?.show_phone || false,
     })
   }
 
@@ -434,6 +439,23 @@ const Profile = () => {
                       {profile?.account_type === 'legal_entity' ? t('auth.accountTypeLegalEntity') : t('auth.accountTypeIndividual')}
                     </div>
                   )}
+                </div>
+                
+                <div className="col-span-2 space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="show_phone"
+                      checked={formData.show_phone}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, show_phone: checked }))}
+                      disabled={!isEditing}
+                    />
+                    <Label htmlFor="show_phone" className="cursor-pointer">
+                      {t('profile.showPhoneNumber')}
+                    </Label>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {t('profile.showPhoneDescription')}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -755,7 +777,6 @@ const Profile = () => {
           </Card>
         </div>
       </div>
-      
       <Footer t={t} />
     </div>
   )

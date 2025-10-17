@@ -59,6 +59,7 @@ interface PropertyDetail {
     email?: string | null; 
     user_id: string; 
     phone?: string | null;
+    show_phone?: boolean;
     account_type?: string | null;
     company_name?: string | null;
     company_logo_url?: string | null;
@@ -277,6 +278,7 @@ const PropertyDetails = () => {
               email,
               user_id,
               phone,
+              show_phone,
               account_type,
               company_name,
               company_logo_url,
@@ -905,7 +907,7 @@ const PropertyDetails = () => {
                           <Phone className="w-5 h-5" />
                           {t('contact.title')}
                         </h3>
-                        {property.show_phone && property.profiles?.phone ? (
+                        {property.profiles?.show_phone && property.profiles?.phone ? (
                           <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
                             <div className="flex items-center gap-3">
                               <Phone className="w-5 h-5 text-green-600" />

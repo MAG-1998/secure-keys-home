@@ -409,6 +409,7 @@ export type Database = {
           phone: string | null
           registration_number: string | null
           role: Database["public"]["Enums"]["app_role"]
+          show_phone: boolean | null
           updated_at: string
           user_id: string
           verification_notes: string | null
@@ -430,6 +431,7 @@ export type Database = {
           phone?: string | null
           registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          show_phone?: boolean | null
           updated_at?: string
           user_id: string
           verification_notes?: string | null
@@ -451,6 +453,7 @@ export type Database = {
           phone?: string | null
           registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          show_phone?: boolean | null
           updated_at?: string
           user_id?: string
           verification_notes?: string | null
@@ -487,7 +490,6 @@ export type Database = {
           property_type: string | null
           reviewed_at: string | null
           reviewed_by: string | null
-          show_phone: boolean | null
           status: string | null
           title: string
           updated_at: string
@@ -522,7 +524,6 @@ export type Database = {
           property_type?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          show_phone?: boolean | null
           status?: string | null
           title: string
           updated_at?: string
@@ -557,7 +558,6 @@ export type Database = {
           property_type?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          show_phone?: boolean | null
           status?: string | null
           title?: string
           updated_at?: string

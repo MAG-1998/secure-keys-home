@@ -38,8 +38,7 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
     land_area_sotka: 0,
     bedrooms: 0,
     bathrooms: 0,
-    district: "",
-    show_phone: false
+    district: ""
   });
   const [photos, setPhotos] = useState<{ url: string; order_index: number }[]>([]);
 
@@ -58,8 +57,7 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
         land_area_sotka: property.land_area_sotka || 0,
         bedrooms: property.bedrooms || 0,
         bathrooms: property.bathrooms || 0,
-        district: property.district || "",
-        show_phone: property.show_phone || false
+        district: property.district || ""
       });
       
       // Load photos from property_photos table if exists, otherwise from photos field
@@ -113,8 +111,7 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
         bedrooms: !['land', 'commercial'].includes(formData.property_type) ? formData.bedrooms : null,
         bathrooms: formData.property_type !== 'land' ? formData.bathrooms : null,
         district: formData.district,
-        image_url: photos.length > 0 ? photos[0].url : null,
-        show_phone: formData.show_phone
+        image_url: photos.length > 0 ? photos[0].url : null
       };
 
       // Halal financing logic
@@ -331,22 +328,6 @@ export const PropertyEditDialog = ({ open, onOpenChange, property, onPropertyUpd
               />
             </div>
 
-            {/* Phone Sharing Toggle */}
-            <div className="flex items-center space-x-2 p-3 border rounded-lg">
-              <Switch
-                id="show_phone"
-                checked={formData.show_phone}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, show_phone: checked }))}
-              />
-              <div className="space-y-1">
-                <Label htmlFor="show_phone" className="cursor-pointer">
-                  {t('property.showPhoneLabel')}
-                </Label>
-                <p className="text-xs text-muted-foreground">
-                  {t('property.showPhoneDescription')}
-                </p>
-              </div>
-            </div>
           </TabsContent>
           
            <TabsContent value="location" className="space-y-4">

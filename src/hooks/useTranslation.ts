@@ -4197,6 +4197,21 @@ const translations: Translations = {
     ru: 'Номер телефона',
     uz: 'Telefon raqami'
   },
+  'profile.showPhoneNumber': {
+    en: 'Display phone number on listings',
+    ru: 'Показывать номер телефона в объявлениях',
+    uz: 'Eʼlonlarda telefon raqamini koʻrsatish'
+  },
+  'profile.showPhoneDescription': {
+    en: 'When enabled, your phone number will be visible to potential buyers on all your property listings',
+    ru: 'При включении ваш номер телефона будет виден потенциальным покупателям во всех ваших объявлениях',
+    uz: 'Yoqilganda, telefon raqamingiz barcha mulk eʼlonlaringizda potentsial xaridorlarga koʻrinadi'
+  },
+  'auth.showPhoneOnListings': {
+    en: 'Display my phone number on property listings',
+    ru: 'Показывать мой номер телефона в объявлениях',
+    uz: 'Mulk eʼlonlarida telefon raqamimni koʻrsatish'
+  },
   'profile.accountType': {
     en: 'Account Type',
     ru: 'Тип аккаунта',

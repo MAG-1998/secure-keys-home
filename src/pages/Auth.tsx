@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
 import { MagitLogo } from "@/components/MagitLogo"
 import { Footer } from "@/components/Footer"
 import { Header } from "@/components/Header"
@@ -30,6 +31,7 @@ const Auth = () => {
   const [error, setError] = useState("")
   const [showResetOption, setShowResetOption] = useState(false)
   const [user, setUser] = useState<User | null>(null)
+  const [showPhoneOnListings, setShowPhoneOnListings] = useState(false)
   
   // Company-specific fields
   const [companyData, setCompanyData] = useState({
@@ -302,16 +304,27 @@ const Auth = () => {
                           type="tel"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          placeholder={t('auth.phonePlaceholder')}
-                          className="pl-16"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
+                      placeholder={t('auth.phonePlaceholder')}
+                      className="pl-16"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="show_phone_signup"
+                    checked={showPhoneOnListings}
+                    onCheckedChange={(checked) => setShowPhoneOnListings(checked === true)}
+                  />
+                  <Label htmlFor="show_phone_signup" className="text-sm cursor-pointer">
+                    {t('auth.showPhoneOnListings')}
+                  </Label>
+                </div>
+              </>
+            )}
 
-                {!isLogin && isLegalEntity && (
+            {!isLogin && isLegalEntity && (
                   <>
                     <div className="space-y-2">
                       <Label htmlFor="companyName">{t('auth.companyName')}</Label>
@@ -406,13 +419,24 @@ const Auth = () => {
                         type="number"
                         value={companyData.numberOfProperties}
                         onChange={(e) => setCompanyData(prev => ({ ...prev, numberOfProperties: e.target.value }))}
-                        placeholder="10"
-                      />
-                    </div>
-                  </>
-                )}
+                      placeholder="10"
+                    />
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="show_phone_signup_legal"
+                      checked={showPhoneOnListings}
+                      onCheckedChange={(checked) => setShowPhoneOnListings(checked === true)}
+                    />
+                    <Label htmlFor="show_phone_signup_legal" className="text-sm cursor-pointer">
+                      {t('auth.showPhoneOnListings')}
+                    </Label>
+                  </div>
+                </>
+              )}
 
-                <div className="space-y-2">
+              <div className="space-y-2">
                   <Label htmlFor="email">{t('auth.email')}</Label>
                   <Input
                     id="email"

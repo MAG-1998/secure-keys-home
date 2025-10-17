@@ -91,9 +91,7 @@ const ListProperty = () => {
     // Visit Hours
     visitHours: [] as string[],
     // Halal Financing
-    halalFinancingRequested: false,
-    // Contact
-    showPhone: false
+    halalFinancingRequested: false
   });
   const totalSteps = 5;
 
@@ -248,8 +246,6 @@ const ListProperty = () => {
         documents: [],
         photos: [],
         visitHours: [],
-        showPhone: false,
-        
         halalFinancingRequested: false
       });
       setCurrentStep(1);
@@ -389,8 +385,7 @@ const ListProperty = () => {
         is_halal_available: formData.halalFinancingRequested,
         halal_status: formData.halalFinancingRequested ? 'pending_approval' : 'disabled',
         district: formData.district || extractDistrictFromText(formData.address),
-        status: 'pending',
-        show_phone: formData.showPhone
+        status: 'pending'
       };
 
       const { data: property, error } = await supabase
@@ -899,26 +894,6 @@ const ListProperty = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-start space-x-3 p-4 bg-muted rounded-lg">
-                    <Checkbox
-                      id="show_phone"
-                      checked={formData.showPhone}
-                      onCheckedChange={(checked) => 
-                        handleInputChange('showPhone', checked === true)
-                      }
-                    />
-                     <div className="space-y-1 flex-1">
-                      <Label 
-                        htmlFor="show_phone" 
-                        className="text-base font-medium cursor-pointer"
-                      >
-                        {t('listProperty.displayPhoneNumber')}
-                      </Label>
-                      <p className="text-sm text-muted-foreground">
-                        {t('listProperty.phoneNumberVisibility')}
-                      </p>
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
 
@@ -948,12 +923,6 @@ const ListProperty = () => {
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">{t('listProperty.halalFinancingLabel')}</span>
                       <span className="text-green-600">{t('listProperty.requested')}</span>
-                    </div>
-                  )}
-                  {formData.showPhone && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">{t('listProperty.phoneDisplay')}</span>
-                      <span className="text-green-600">{t('listProperty.enabled')}</span>
                     </div>
                   )}
                 </div>
