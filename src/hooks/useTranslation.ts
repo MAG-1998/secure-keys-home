@@ -4322,6 +4322,101 @@ const translations: Translations = {
     ru: 'Проверка отклонена',
     uz: 'Tekshirish rad etildi'
   },
+  'profile.entityVerification': {
+    en: 'Entity Verification',
+    ru: 'Верификация компании',
+    uz: 'Kompaniya tekshiruvi'
+  },
+  'profile.entityVerificationDesc': {
+    en: 'Upload documents to verify your company',
+    ru: 'Загрузите документы для верификации вашей компании',
+    uz: 'Kompaniyangizni tekshirish uchun hujjatlarni yuklang'
+  },
+  'profile.companyLicense': {
+    en: 'Company License',
+    ru: 'Лицензия компании',
+    uz: 'Kompaniya litsenziyasi'
+  },
+  'profile.uploadLicense': {
+    en: 'Upload License',
+    ru: 'Загрузить лицензию',
+    uz: 'Litsenziya yuklash'
+  },
+  'profile.uploadAdditional': {
+    en: 'Upload Additional Documents',
+    ru: 'Загрузить дополнительные документы',
+    uz: 'Qo\'shimcha hujjatlar yuklash'
+  },
+  'profile.licenseUploaded': {
+    en: 'License Uploaded',
+    ru: 'Лицензия загружена',
+    uz: 'Litsenziya yuklandi'
+  },
+  'profile.licenseDeleted': {
+    en: 'License Deleted',
+    ru: 'Лицензия удалена',
+    uz: 'Litsenziya o\'chirildi'
+  },
+  'profile.companyLogo': {
+    en: 'Company Logo',
+    ru: 'Логотип компании',
+    uz: 'Kompaniya logotipi'
+  },
+  'profile.uploadLogo': {
+    en: 'Upload Logo',
+    ru: 'Загрузить логотип',
+    uz: 'Logotip yuklash'
+  },
+  'profile.changeLogo': {
+    en: 'Change Logo',
+    ru: 'Изменить логотип',
+    uz: 'Logotipni o\'zgartirish'
+  },
+  'profile.logoUploaded': {
+    en: 'Logo Uploaded',
+    ru: 'Логотип загружен',
+    uz: 'Logotip yuklandi'
+  },
+  'profile.logoDeleted': {
+    en: 'Logo Deleted',
+    ru: 'Логотип удален',
+    uz: 'Logotip o\'chirildi'
+  },
+  'profile.verificationNotes': {
+    en: 'Moderator Comments',
+    ru: 'Комментарии модератора',
+    uz: 'Moderator izohlari'
+  },
+  'profile.cannotDeleteAfterVerification': {
+    en: 'Cannot delete document after verification',
+    ru: 'Нельзя удалить документ после верификации',
+    uz: 'Tekshiruvdan keyin hujjatni o\'chirish mumkin emas'
+  },
+  'profile.canAddAfterVerification': {
+    en: 'Additional documents can be added after verification',
+    ru: 'После верификации можно добавить дополнительные документы',
+    uz: 'Tekshiruvdan keyin qo\'shimcha hujjatlar qo\'shish mumkin'
+  },
+  'profile.approved': {
+    en: 'Approved',
+    ru: 'Одобрено',
+    uz: 'Tasdiqlandi'
+  },
+  'profile.rejected': {
+    en: 'Rejected',
+    ru: 'Отклонено',
+    uz: 'Rad etildi'
+  },
+  'profile.pending': {
+    en: 'Pending',
+    ru: 'В ожидании',
+    uz: 'Kutilmoqda'
+  },
+  'profile.notSubmitted': {
+    en: 'Not Submitted',
+    ru: 'Не отправлено',
+    uz: 'Yuborilmagan'
+  },
   'profile.thisWeekVisits': {
     en: "This Week's Visits",
     ru: 'Визиты на этой неделе',

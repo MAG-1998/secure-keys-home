@@ -412,6 +412,7 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"]
           updated_at: string
           user_id: string
+          verification_notes: string | null
           verification_status: string | null
         }
         Insert: {
@@ -433,6 +434,7 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id: string
+          verification_notes?: string | null
           verification_status?: string | null
         }
         Update: {
@@ -454,6 +456,7 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
           user_id?: string
+          verification_notes?: string | null
           verification_status?: string | null
         }
         Relationships: []

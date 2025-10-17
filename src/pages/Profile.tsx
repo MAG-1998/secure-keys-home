@@ -37,6 +37,10 @@ const Profile = () => {
   const [profile, setProfile] = useState<any>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
+  const [uploadingLicense, setUploadingLicense] = useState(false)
+  const [deletingLogo, setDeletingLogo] = useState(false)
+  const [deletingLicense, setDeletingLicense] = useState(false)
   const [formData, setFormData] = useState({
     full_name: "",
     phone: "",
@@ -136,6 +140,120 @@ const Profile = () => {
       phone: profile?.phone || "",
       account_type: profile?.account_type || "individual"
     })
+  }
+
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file || !user) return
+
+    setUploadingLogo(true)
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${user.id}/logo-${Date.now()}.${fileExt}`
+      const { error: uploadError } = await supabase.storage
+        .from('company-documents')
+        .upload(fileName, file, { upsert: true })
+
+      if (uploadError) throw uploadError
+
+      const publicPath = `/storage/v1/object/public/company-documents/${fileName}`
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ company_logo_url: publicPath })
+        .eq('user_id', user.id)
+
+      if (updateError) throw updateError
+
+      setProfile(prev => prev ? { ...prev, company_logo_url: publicPath } : null)
+      toast({ title: t('common.success'), description: t('profile.logoUploaded') })
+    } catch (error: any) {
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' })
+    } finally {
+      setUploadingLogo(false)
+    }
+  }
+
+  const handleLogoDelete = async () => {
+    if (!user || !profile?.company_logo_url) return
+
+    setDeletingLogo(true)
+    try {
+      const path = profile.company_logo_url.replace('/storage/v1/object/public/company-documents/', '')
+      await supabase.storage.from('company-documents').remove([path])
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ company_logo_url: null })
+        .eq('user_id', user.id)
+
+      if (error) throw error
+
+      setProfile(prev => prev ? { ...prev, company_logo_url: null } : null)
+      toast({ title: t('common.success'), description: t('profile.logoDeleted') })
+    } catch (error: any) {
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' })
+    } finally {
+      setDeletingLogo(false)
+    }
+  }
+
+  const handleLicenseUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file || !user) return
+
+    setUploadingLicense(true)
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${user.id}/license-${Date.now()}.${fileExt}`
+      const { error: uploadError } = await supabase.storage
+        .from('company-documents')
+        .upload(fileName, file, { upsert: true })
+
+      if (uploadError) throw uploadError
+
+      const publicPath = `/storage/v1/object/public/company-documents/${fileName}`
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ company_license_url: publicPath })
+        .eq('user_id', user.id)
+
+      if (updateError) throw updateError
+
+      setProfile(prev => prev ? { ...prev, company_license_url: publicPath } : null)
+      toast({ title: t('common.success'), description: t('profile.licenseUploaded') })
+    } catch (error: any) {
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' })
+    } finally {
+      setUploadingLicense(false)
+    }
+  }
+
+  const handleLicenseDelete = async () => {
+    if (!user || !profile?.company_license_url) return
+    if (profile.verification_status === 'approved') {
+      toast({ title: t('common.error'), description: t('profile.cannotDeleteAfterVerification'), variant: 'destructive' })
+      return
+    }
+
+    setDeletingLicense(true)
+    try {
+      const path = profile.company_license_url.replace('/storage/v1/object/public/company-documents/', '')
+      await supabase.storage.from('company-documents').remove([path])
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ company_license_url: null })
+        .eq('user_id', user.id)
+
+      if (error) throw error
+
+      setProfile(prev => prev ? { ...prev, company_license_url: null } : null)
+      toast({ title: t('common.success'), description: t('profile.licenseDeleted') })
+    } catch (error: any) {
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' })
+    } finally {
+      setDeletingLicense(false)
+    }
   }
 
   if (!user) {
@@ -352,98 +470,174 @@ const Profile = () => {
                     </div>
                   </div>
                   
-                  {profile?.company_license_url && (
-                    <div>
-                      <Label>{t('auth.companyLicense')}</Label>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(getCompanyPublicUrl(profile.company_license_url), '_blank')}
-                        className="mt-2"
-                      >
-                        <FileCheck className="w-4 h-4 mr-2" />
-                        View License
-                        <ExternalLink className="w-3 h-3 ml-2" />
-                      </Button>
-                    </div>
-                  )}
-                  
-                  {profile?.company_logo_url && (
-                    <div>
-                      <Label>{t('auth.companyLogo')}</Label>
-                      <div className="mt-2">
-                        <img
-                          src={getCompanyPublicUrl(profile.company_logo_url)}
-                          alt="Company logo"
-                          className="w-24 h-24 object-contain border rounded-lg p-2"
+                  {/* Company Logo Management */}
+                  <div className="md:col-span-2 border-t pt-4">
+                    <Label>{t('profile.companyLogo')}</Label>
+                    <div className="mt-2 space-y-3">
+                      {profile.company_logo_url && (
+                        <div className="flex items-center gap-4">
+                          <img
+                            src={getCompanyPublicUrl(profile.company_logo_url)}
+                            alt="Company logo"
+                            className="w-24 h-24 object-contain border rounded-lg p-2"
+                          />
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={handleLogoDelete}
+                            disabled={deletingLogo}
+                          >
+                            {deletingLogo ? t('common.deleting') : t('common.delete')}
+                          </Button>
+                        </div>
+                      )}
+                      <div>
+                        <input
+                          type="file"
+                          id="logo-upload"
+                          accept="image/*"
+                          onChange={handleLogoUpload}
+                          className="hidden"
                         />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => document.getElementById('logo-upload')?.click()}
+                          disabled={uploadingLogo}
+                        >
+                          {uploadingLogo ? t('common.uploading') : (profile.company_logo_url ? t('profile.changeLogo') : t('profile.uploadLogo'))}
+                        </Button>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
           )}
 
-          {/* ID Verification */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="w-5 h-5" />
-                {t('profile.identityVerification')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  Identity verification is required to list properties and make offers. This helps maintain our 95% trust rating.
-                </AlertDescription>
-              </Alert>
-              
-              <div className="space-y-3">
-                <div className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-semibold">Government ID</h4>
-                      <p className="text-sm text-muted-foreground">Upload your passport or ID card</p>
+            {/* Entity Verification for Legal Entities */}
+            {profile?.account_type === 'legal_entity' ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('profile.entityVerification')}</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-1">{t('profile.entityVerificationDesc')}</p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Verification Status */}
+                  <div className="space-y-3">
+                    <Label>{t('profile.verificationStatus')}</Label>
+                    <div className="flex items-center gap-2">
+                      <Badge 
+                        variant={
+                          profile.verification_status === 'approved' ? 'default' :
+                          profile.verification_status === 'rejected' ? 'destructive' :
+                          'secondary'
+                        }
+                      >
+                        {profile.verification_status === 'approved' ? t('profile.approved') :
+                         profile.verification_status === 'rejected' ? t('profile.rejected') :
+                         profile.verification_status === 'pending' ? t('profile.pending') :
+                         t('profile.notSubmitted')}
+                      </Badge>
                     </div>
-                    <Button variant="outline" size="sm">
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload ID
-                    </Button>
+                    
+                    {/* Verification Notes from Moderator/Admin */}
+                    {profile.verification_notes && (
+                      <div className="mt-3 p-3 bg-muted rounded-lg">
+                        <Label className="text-sm font-semibold">{t('profile.verificationNotes')}</Label>
+                        <p className="text-sm text-muted-foreground mt-1">{profile.verification_notes}</p>
+                      </div>
+                    )}
                   </div>
-                </div>
-                
-                <div className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between">
+
+                  {/* Company License Management */}
+                  <div className="space-y-3">
+                    <Label>{t('profile.companyLicense')}</Label>
+                    
+                    {profile.company_license_url && (
+                      <div className="flex items-center gap-3 p-3 border rounded-lg">
+                        <FileCheck className="w-8 h-8 text-primary" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{t('profile.licenseUploaded')}</p>
+                          <Button
+                            variant="link"
+                            size="sm"
+                            onClick={() => window.open(getCompanyPublicUrl(profile.company_license_url), '_blank')}
+                            className="h-auto p-0"
+                          >
+                            <ExternalLink className="w-3 h-3 mr-1" />
+                            {t('common.view')}
+                          </Button>
+                        </div>
+                        {profile.verification_status !== 'approved' && (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={handleLicenseDelete}
+                            disabled={deletingLicense}
+                          >
+                            {deletingLicense ? t('common.deleting') : t('common.delete')}
+                          </Button>
+                        )}
+                      </div>
+                    )}
+
                     <div>
-                      <h4 className="font-semibold">Selfie Verification</h4>
-                      <p className="text-sm text-muted-foreground">Take a selfie holding your ID</p>
+                      <input
+                        type="file"
+                        id="license-upload"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={handleLicenseUpload}
+                        className="hidden"
+                      />
+                      <Button
+                        variant="outline"
+                        onClick={() => document.getElementById('license-upload')?.click()}
+                        disabled={uploadingLicense}
+                      >
+                        {uploadingLicense ? t('common.uploading') : (profile.company_license_url ? t('profile.uploadAdditional') : t('profile.uploadLicense'))}
+                      </Button>
+                      {profile.verification_status === 'approved' && (
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {t('profile.canAddAfterVerification')}
+                        </p>
+                      )}
                     </div>
-                    <Button variant="outline" size="sm">
-                      <Upload className="w-4 h-4 mr-2" />
-                      Take Selfie
-                    </Button>
                   </div>
-                </div>
-              </div>
-              
-              <div className="bg-yellow-50 dark:bg-yellow-950/20 p-4 rounded-lg">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-sm text-yellow-900 dark:text-yellow-100">
-                      Verification Status: Pending
-                    </h4>
-                    <p className="text-sm text-yellow-700 dark:text-yellow-200 mt-1">
-                      {t('profile.verificationPrompt')}
+                </CardContent>
+              </Card>
+            ) : (
+              /* ID Verification for Individual Accounts */
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('profile.idVerification')}</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-1">{t('profile.idVerificationDesc')}</p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-3">
+                    <Label>{t('profile.governmentId')}</Label>
+                    <Button variant="outline" className="w-full">
+                      <Upload className="w-4 h-4 mr-2" />
+                      {t('profile.uploadId')}
+                    </Button>
+                    <p className="text-xs text-muted-foreground">
+                      {t('profile.acceptedFormats')}: Passport, National ID, Driver's License
                     </p>
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
+                  <div className="space-y-3">
+                    <Label>{t('profile.selfieVerification')}</Label>
+                    <Button variant="outline" className="w-full">
+                      <Upload className="w-4 h-4 mr-2" />
+                      {t('profile.takeSelfie')}
+                    </Button>
+                    <p className="text-xs text-muted-foreground">
+                      {t('profile.selfieDesc')}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
           {/* Visit Limits & Plan */}
           <Card>
