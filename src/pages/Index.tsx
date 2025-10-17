@@ -7,7 +7,7 @@ import { useUser } from "@/contexts/UserContext"
 import { useGlobalHalalMode } from "@/hooks/useGlobalHalalMode"
 
 const Index = () => {
-  const { user, loading } = useUser()
+  const { user, profileName, loading } = useUser()
   const { language, setLanguage, t } = useTranslation()
   const { isHalalMode } = useGlobalHalalMode()
 
@@ -40,6 +40,7 @@ const Index = () => {
             user={user}
             isHalalMode={isHalalMode}
             t={t}
+            profileName={profileName}
           />
           <Footer isHalalMode={isHalalMode} t={t} />
         </>

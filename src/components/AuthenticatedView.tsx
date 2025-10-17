@@ -18,12 +18,14 @@ interface AuthenticatedViewProps {
   user: User;
   isHalalMode: boolean;
   t: (key: string) => string;
+  profileName: string | null;
 }
 
 export const AuthenticatedView = memo(({
   user,
   isHalalMode,
-  t
+  t,
+  profileName
 }: AuthenticatedViewProps) => {
   const { toggleHalalMode } = useGlobalHalalMode();
   const navigate = useNavigate();
@@ -37,7 +39,7 @@ export const AuthenticatedView = memo(({
   
   
   const getUserDisplayName = () => {
-    return user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
+    return profileName || user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
   };
 
   return <>
