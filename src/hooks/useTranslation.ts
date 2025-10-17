@@ -520,6 +520,56 @@ const translations: Translations = {
     ru: 'Продавец предпочитает связь через сообщения',
     uz: "Sotuvchi xabarlar orqali aloqani afzal ko'radi"
   },
+  'seller.profile': {
+    en: 'Seller Profile',
+    ru: 'Профиль продавца',
+    uz: 'Sotuvchi profili'
+  },
+  'seller.memberSince': {
+    en: 'Member since',
+    ru: 'С нами с',
+    uz: 'A\'zo bo\'lgan'
+  },
+  'seller.totalProperties': {
+    en: 'Total properties',
+    ru: 'Всего объектов',
+    uz: 'Jami mulklar'
+  },
+  'seller.otherListings': {
+    en: 'Other listings by this seller',
+    ru: 'Другие объявления продавца',
+    uz: 'Sotuvchining boshqa e\'lonlari'
+  },
+  'seller.viewAll': {
+    en: 'View all {{count}} properties',
+    ru: 'Посмотреть все {{count}} объектов',
+    uz: 'Barcha {{count}} mulkni ko\'rish'
+  },
+  'seller.business': {
+    en: 'Business',
+    ru: 'Бизнес',
+    uz: 'Biznes'
+  },
+  'seller.individual': {
+    en: 'Individual',
+    ru: 'Частное лицо',
+    uz: 'Jismoniy shaxs'
+  },
+  'seller.verified': {
+    en: 'Verified',
+    ru: 'Проверено',
+    uz: 'Tasdiqlangan'
+  },
+  'seller.noOtherListings': {
+    en: 'No other listings',
+    ru: 'Нет других объявлений',
+    uz: 'Boshqa e\'lonlar yo\'q'
+  },
+  'seller.anonymous': {
+    en: 'Anonymous Seller',
+    ru: 'Анонимный продавец',
+    uz: 'Anonim sotuvchi'
+  },
   'contact.signInRequired': {
     en: 'Sign in to see contact information',
     ru: 'Войдите, чтобы увидеть контактную информацию',

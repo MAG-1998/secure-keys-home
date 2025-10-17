@@ -28,6 +28,7 @@ import { formatCurrency, calculateHalalFinancing } from "@/utils/halalFinancing"
 import { PriceOdometer } from "@/components/PriceOdometer";
 import { getImageUrl } from "@/lib/utils";
 import { PropertyLocationMap } from "@/components/PropertyLocationMap";
+import { SellerProfileCard } from "@/components/SellerProfileCard";
 
 interface PropertyDetail {
   id: string;
@@ -53,7 +54,20 @@ interface PropertyDetail {
   latitude?: number | null;
   longitude?: number | null;
   show_phone?: boolean;
-  profiles?: { full_name?: string | null; email?: string | null; user_id?: string; phone?: string | null } | null;
+  profiles?: { 
+    full_name?: string | null; 
+    email?: string | null; 
+    user_id: string; 
+    phone?: string | null;
+    account_type?: string | null;
+    company_name?: string | null;
+    company_logo_url?: string | null;
+    company_description?: string | null;
+    is_verified?: boolean;
+    verification_status?: string | null;
+    number_of_properties?: number | null;
+    created_at?: string;
+  } | null;
 }
 
 const PropertyDetails = () => {
@@ -257,7 +271,23 @@ const PropertyDetails = () => {
       try {
         const { data: prop, error } = await supabase
           .from("properties")
-          .select("*, profiles:user_id (full_name, email, user_id, phone)")
+          .select(`
+            *,
+            profiles:user_id (
+              full_name,
+              email,
+              user_id,
+              phone,
+              account_type,
+              company_name,
+              company_logo_url,
+              company_description,
+              is_verified,
+              verification_status,
+              number_of_properties,
+              created_at
+            )
+          `)
           .eq("id", id)
           .maybeSingle();
         if (error) throw error;
@@ -930,6 +960,14 @@ const PropertyDetails = () => {
                         </div>
                       </CardContent>
                     </Card>
+                  )}
+
+                  {/* Seller Profile */}
+                  {user && property.profiles && (
+                    <SellerProfileCard 
+                      profile={property.profiles} 
+                      currentPropertyId={id!}
+                    />
                   )}
 
                   {/* Halal Financing Breakdown - only show when halal mode is ON and property supports it */}
