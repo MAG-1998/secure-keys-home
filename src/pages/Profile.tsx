@@ -50,6 +50,7 @@ const Profile = () => {
   const { toast } = useToast()
   const { t } = useTranslation()
   const { freeVisitsUsed, canCreate, isRestricted, loading: limitsLoading } = useVisitLimits()
+  const [logoError, setLogoError] = useState(false)
 
   useEffect(() => {
     const getProfile = async () => {
@@ -81,17 +82,23 @@ const Profile = () => {
     getProfile()
   }, [navigate])
 
+  useEffect(() => {
+    setLogoError(false)
+  }, [profile?.company_logo_url])
+
   const getCompanyPublicUrl = (path?: string | null) => {
-    const base = 'https://mvndmnkgtoygsvesktgw.supabase.co';
     if (!path) return '';
     const p = String(path);
+    // If already absolute URL
     if (p.startsWith('http://') || p.startsWith('https://')) return p;
-    if (p.startsWith('/storage/v1/object/public/')) return `${base}${p}`;
-    if (p.startsWith('storage/v1/object/public/')) return `${base}/${p}`;
-    if (p.startsWith('/company-documents/')) return `${base}/storage/v1/object/public${p}`;
-    if (p.startsWith('company-documents/')) return `${base}/storage/v1/object/public/${p}`;
-    const clean = p.startsWith('/') ? p.slice(1) : p;
-    return `${base}/storage/v1/object/public/company-documents/${clean}`;
+    // Try to extract the path inside the company-documents bucket
+    const marker = 'company-documents/';
+    const idx = p.indexOf(marker);
+    const relative = idx >= 0
+      ? p.substring(idx + marker.length)
+      : (p.startsWith('/') ? p.slice(1) : p);
+    const { data } = supabase.storage.from('company-documents').getPublicUrl(relative);
+    return data.publicUrl;
   }
 
   const handleSave = async () => {
@@ -286,10 +293,12 @@ const Profile = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <Avatar className="w-16 h-16">
-                    {profile?.account_type === 'legal_entity' && profile?.company_logo_url ? (
+                    {profile?.account_type === 'legal_entity' && profile?.company_logo_url && !logoError ? (
                       <AvatarImage 
                         src={getCompanyPublicUrl(profile.company_logo_url)} 
                         alt={profile.company_name || 'Company logo'} 
+                        loading="lazy"
+                        onError={() => setLogoError(true)}
                       />
                     ) : null}
                     <AvatarFallback className="bg-primary text-primary-foreground text-lg">
