@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from '@/hooks/useTranslation';
-import { Building2, Calendar, Home, MapPin, ShieldCheck } from 'lucide-react';
+import { Building2, Calendar, Home, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -21,14 +22,6 @@ interface SellerProfile {
   created_at?: string;
 }
 
-interface OtherProperty {
-  id: string;
-  title: string;
-  price: number;
-  location: string;
-  image_url?: string | null;
-}
-
 interface SellerProfileCardProps {
   profile: SellerProfile;
   currentPropertyId: string;
@@ -36,9 +29,7 @@ interface SellerProfileCardProps {
 
 export const SellerProfileCard = ({ profile, currentPropertyId }: SellerProfileCardProps) => {
   const { t } = useTranslation();
-  const [otherProperties, setOtherProperties] = useState<OtherProperty[]>([]);
   const [propertyCount, setPropertyCount] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
 
   const displayName = profile.account_type === 'legal_entity' 
     ? profile.company_name 
@@ -52,22 +43,7 @@ export const SellerProfileCard = ({ profile, currentPropertyId }: SellerProfileC
     .slice(0, 2) || '?';
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      
-      // Fetch other properties
-      const { data } = await supabase
-        .from('properties')
-        .select('id, title, price, location, image_url')
-        .eq('user_id', profile.user_id)
-        .in('status', ['active', 'approved'])
-        .neq('id', currentPropertyId)
-        .order('created_at', { ascending: false })
-        .limit(4);
-      
-      if (data) setOtherProperties(data);
-      
-      // Fetch total property count
+    const fetchPropertyCount = async () => {
       const { count } = await supabase
         .from('properties')
         .select('*', { count: 'exact', head: true })
@@ -75,12 +51,10 @@ export const SellerProfileCard = ({ profile, currentPropertyId }: SellerProfileC
         .in('status', ['active', 'approved']);
       
       if (count !== null) setPropertyCount(count);
-      
-      setLoading(false);
     };
     
-    fetchData();
-  }, [profile.user_id, currentPropertyId]);
+    fetchPropertyCount();
+  }, [profile.user_id]);
 
   return (
     <Card className="overflow-hidden">
@@ -137,82 +111,28 @@ export const SellerProfileCard = ({ profile, currentPropertyId }: SellerProfileC
               </div>
             </div>
 
-            {/* View Details Link */}
-            <Link
-              to={`/properties?seller=${profile.user_id}`}
-              className="inline-flex items-center gap-1 text-sm text-primary hover:underline mt-3"
+            {/* View All Properties Button */}
+            <Button
+              asChild
+              variant="outline"
+              className="w-full mt-4"
             >
-              {t('seller.viewDetails')}
-              <Building2 className="h-4 w-4" />
-            </Link>
+              <Link to={`/properties?seller=${profile.user_id}`} className="gap-2">
+                <Building2 className="h-4 w-4" />
+                {t('seller.viewDetails')}
+              </Link>
+            </Button>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        {/* Company Description */}
-        {profile.account_type === 'legal_entity' && profile.company_description && (
-          <p className="text-sm text-muted-foreground line-clamp-3">
+      {profile.account_type === 'legal_entity' && profile.company_description && (
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
             {profile.company_description}
           </p>
-        )}
-
-
-        {/* Other Listings */}
-        <div className="pt-4 border-t">
-          <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
-            <Building2 className="h-4 w-4" />
-            {t('seller.otherListings')}
-          </h4>
-          
-          {loading ? (
-            <div className="text-sm text-muted-foreground">{t('common.loading')}</div>
-          ) : otherProperties.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t('seller.noOtherListings')}</p>
-          ) : (
-            <div className="space-y-2">
-              {otherProperties.map((property) => (
-                <Link
-                  key={property.id}
-                  to={`/property/${property.id}`}
-                  className="flex gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors group"
-                >
-                  <div className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden bg-muted">
-                    {property.image_url && (
-                      <img
-                        src={property.image_url}
-                        alt={property.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-                      />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h5 className="font-medium text-sm line-clamp-1 group-hover:text-primary transition-colors">
-                      {property.title}
-                    </h5>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <MapPin className="h-3 w-3" />
-                      {property.location}
-                    </p>
-                    <p className="font-semibold text-sm mt-1">
-                      {property.price.toLocaleString()} {t('common.currency')}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-              
-              {otherProperties.length >= 4 && (
-                <Link
-                  to={`/properties?seller=${profile.user_id}`}
-                  className="block text-sm text-primary hover:underline text-center pt-2"
-                >
-                  {t('seller.viewAll').replace('{{count}}', String(propertyCount))}
-                </Link>
-              )}
-            </div>
-          )}
-        </div>
-      </CardContent>
+        </CardContent>
+      )}
     </Card>
   );
 };

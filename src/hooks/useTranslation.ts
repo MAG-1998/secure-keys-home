@@ -565,6 +565,11 @@ const translations: Translations = {
     ru: 'Нет других объявлений',
     uz: 'Boshqa e\'lonlar yo\'q'
   },
+  'seller.viewDetails': {
+    en: 'View All Properties',
+    ru: 'Посмотреть все объекты',
+    uz: 'Barcha mulklarni ko\'rish'
+  },
   'seller.anonymous': {
     en: 'Anonymous Seller',
     ru: 'Анонимный продавец',

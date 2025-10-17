@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -42,6 +42,9 @@ interface Property {
 const Properties = () => {
   const navigate = useNavigate()
   const { t, language } = useTranslation()
+  const [searchParams] = useSearchParams()
+  const sellerIdFromUrl = searchParams.get('seller')
+  
   const [filters, setFilters] = useState({
     district: 'all',
     city: 'tashkent',
@@ -56,6 +59,7 @@ const Properties = () => {
     propertyType: 'all',
     searchText: '',
     halalOnly: false,
+    sellerId: sellerIdFromUrl || '',
   })
   
   const [currentPage, setCurrentPage] = useState(1)
@@ -94,6 +98,11 @@ const Properties = () => {
 
   const filtered = useMemo(() => {
     let f = all.filter(p => ['active','approved'].includes(p.status || 'active'))
+    
+    // Seller filter
+    if (filters.sellerId) {
+      f = f.filter(p => p.user_id === filters.sellerId)
+    }
     
     // District filter
     if (filters.district !== 'all') f = f.filter(p => p.district === filters.district)
@@ -364,6 +373,7 @@ const Properties = () => {
                       propertyType: 'all',
                       searchText: '',
                       halalOnly: false,
+                      sellerId: '',
                     })
                   }}
                 >
