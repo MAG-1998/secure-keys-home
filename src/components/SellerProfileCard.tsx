@@ -113,6 +113,38 @@ export const SellerProfileCard = ({ profile, currentPropertyId }: SellerProfileC
                   : t('seller.individual')}
               </Badge>
             </div>
+
+            {/* Stats - Member Since & Property Count */}
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              {profile.created_at && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <div>
+                    <div className="text-xs text-muted-foreground">{t('seller.memberSince')}</div>
+                    <div className="font-medium">
+                      {formatDistanceToNow(new Date(profile.created_at), { addSuffix: true })}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex items-center gap-2 text-sm">
+                <Home className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <div className="text-xs text-muted-foreground">{t('seller.totalProperties')}</div>
+                  <div className="font-medium">{propertyCount}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* View Details Link */}
+            <Link
+              to={`/properties?seller=${profile.user_id}`}
+              className="inline-flex items-center gap-1 text-sm text-primary hover:underline mt-3"
+            >
+              {t('seller.viewDetails')}
+              <Building2 className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </CardHeader>
@@ -125,28 +157,6 @@ export const SellerProfileCard = ({ profile, currentPropertyId }: SellerProfileC
           </p>
         )}
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3 pt-2 border-t">
-          {profile.created_at && (
-            <div className="flex items-center gap-2 text-sm">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <div className="text-xs text-muted-foreground">{t('seller.memberSince')}</div>
-                <div className="font-medium">
-                  {formatDistanceToNow(new Date(profile.created_at), { addSuffix: true })}
-                </div>
-              </div>
-            </div>
-          )}
-          
-          <div className="flex items-center gap-2 text-sm">
-            <Home className="h-4 w-4 text-muted-foreground" />
-            <div>
-              <div className="text-xs text-muted-foreground">{t('seller.totalProperties')}</div>
-              <div className="font-medium">{propertyCount}</div>
-            </div>
-          </div>
-        </div>
 
         {/* Other Listings */}
         <div className="pt-4 border-t">
