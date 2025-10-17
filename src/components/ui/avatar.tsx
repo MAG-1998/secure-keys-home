@@ -2,6 +2,7 @@ import * as React from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
 
 import { cn } from "@/lib/utils"
+import { supabase } from "@/integrations/supabase/client"
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -21,13 +22,28 @@ Avatar.displayName = AvatarPrimitive.Root.displayName
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Image
-    ref={ref}
-    className={cn("aspect-square h-full w-full", className)}
-    {...props}
-  />
-))
+>(({ className, src, ...props }, ref) => {
+  const finalSrc = React.useMemo(() => {
+    if (!src) return src as any
+    const p = String(src)
+    if (p.startsWith('http://') || p.startsWith('https://')) return p
+    // Normalize to path inside company-documents bucket
+    const cleaned = p
+      .replace(/^\/?storage\/v1\/object\/public\/company-documents\//, '')
+      .replace(/^\/?company-documents\//, '')
+    const { data } = supabase.storage.from('company-documents').getPublicUrl(cleaned)
+    return data.publicUrl || p
+  }, [src])
+
+  return (
+    <AvatarPrimitive.Image
+      ref={ref}
+      className={cn("aspect-square h-full w-full", className)}
+      src={finalSrc}
+      {...props}
+    />
+  )
+})
 AvatarImage.displayName = AvatarPrimitive.Image.displayName
 
 const AvatarFallback = React.forwardRef<
