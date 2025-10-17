@@ -7,6 +7,8 @@ const ROLE_CACHE_KEY = 'magit_user_role';
 const ROLE_CACHE_EXPIRY_KEY = 'magit_user_role_expiry';
 const PROFILE_NAME_CACHE_KEY = 'magit_user_profile_name';
 const PROFILE_NAME_CACHE_EXPIRY_KEY = 'magit_user_profile_name_expiry';
+const PROFILE_DATA_CACHE_KEY = 'magit_user_profile_data';
+const PROFILE_DATA_CACHE_EXPIRY_KEY = 'magit_user_profile_data_expiry';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 type UserRole = 'user' | 'moderator' | 'admin';
@@ -82,11 +84,48 @@ const clearCachedProfileName = () => {
   }
 };
 
+const setCachedProfileData = (data: { accountType: string | null; companyLogoUrl: string | null }) => {
+  try {
+    localStorage.setItem(PROFILE_DATA_CACHE_KEY, JSON.stringify(data));
+    localStorage.setItem(PROFILE_DATA_CACHE_EXPIRY_KEY, (Date.now() + CACHE_DURATION).toString());
+  } catch (error) {
+    console.warn('Failed to cache profile data:', error);
+  }
+};
+
+const getCachedProfileData = (): { accountType: string | null; companyLogoUrl: string | null } | null => {
+  try {
+    const expiry = localStorage.getItem(PROFILE_DATA_CACHE_EXPIRY_KEY);
+    if (!expiry || Date.now() > parseInt(expiry)) {
+      clearCachedProfileData();
+      return null;
+    }
+    const data = localStorage.getItem(PROFILE_DATA_CACHE_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.warn('Failed to get cached profile data:', error);
+    return null;
+  }
+};
+
+const clearCachedProfileData = () => {
+  try {
+    localStorage.removeItem(PROFILE_DATA_CACHE_KEY);
+    localStorage.removeItem(PROFILE_DATA_CACHE_EXPIRY_KEY);
+  } catch (error) {
+    console.warn('Failed to clear profile data cache:', error);
+  }
+};
+
 interface UserContextType {
   user: User | null;
   session: Session | null;
   role: UserRole;
   profileName: string | null;
+  profileData: {
+    accountType: string | null;
+    companyLogoUrl: string | null;
+  } | null;
   loading: boolean;
   authLoading: boolean;
   roleLoading: boolean;
@@ -111,6 +150,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [role, setRole] = useState<UserRole>('user');
   const [profileName, setProfileName] = useState<string | null>(null);
+  const [profileData, setProfileData] = useState<{
+    accountType: string | null;
+    companyLogoUrl: string | null;
+  } | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [roleLoading, setRoleLoading] = useState(true);
 
@@ -127,7 +170,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       
       const { data, error } = await supabase
         .from('profiles')
-        .select('role, full_name')
+        .select('role, full_name, account_type, company_logo_url')
         .eq('user_id', userId)
         .single();
 
@@ -138,17 +181,26 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           setRole('user');
           setCachedRole('user');
           setProfileName(null);
+          setProfileData(null);
         } else {
           throw error;
         }
       } else {
         const userRole = (data?.role as UserRole) || 'user';
         const fullName = data?.full_name || null;
-        console.log(`Profile data fetched: role=${userRole}, name=${fullName}`);
+        const accountType = data?.account_type || null;
+        const companyLogoUrl = data?.company_logo_url || null;
+        
+        console.log(`Profile data fetched: role=${userRole}, name=${fullName}, accountType=${accountType}, logo=${!!companyLogoUrl}`);
+        
         setRole(userRole);
         setCachedRole(userRole);
         setProfileName(fullName);
         if (fullName) setCachedProfileName(fullName);
+        
+        const profileDataObj = { accountType, companyLogoUrl };
+        setProfileData(profileDataObj);
+        setCachedProfileData(profileDataObj);
       }
     } catch (error) {
       console.error(`Error fetching profile data (attempt ${retryCount + 1}):`, error);
@@ -164,10 +216,12 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         // All retries failed - use cached role or default to user
         const cachedRole = getCachedRole();
         const cachedName = getCachedProfileName();
+        const cachedData = getCachedProfileData();
         const fallbackRole = cachedRole || 'user';
         console.warn(`All fetch attempts failed, using fallback: role=${fallbackRole}, name=${cachedName}`);
         setRole(fallbackRole);
         setProfileName(cachedName);
+        setProfileData(cachedData);
       }
     } finally {
       // Only set loading to false if this is the final attempt or successful
@@ -216,6 +270,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           // Try to use cached role and name first for immediate UI update
           const cachedRole = getCachedRole();
           const cachedName = getCachedProfileName();
+          const cachedData = getCachedProfileData();
           if (cachedRole) {
             console.log(`Using cached role for immediate display: ${cachedRole}`);
             setRole(cachedRole);
@@ -224,6 +279,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             console.log(`Using cached name for immediate display: ${cachedName}`);
             setProfileName(cachedName);
           }
+          if (cachedData) {
+            console.log(`Using cached profile data for immediate display`);
+            setProfileData(cachedData);
+          }
           
           // Fetch fresh role and profile data
           await fetchUserRole(session.user.id);
@@ -231,9 +290,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           console.log('No session found, clearing role and profile name');
           setRole('user');
           setProfileName(null);
+          setProfileData(null);
           setRoleLoading(false);
           clearCachedRole();
           clearCachedProfileName();
+          clearCachedProfileData();
         }
       } catch (error) {
         console.error('Error getting initial session:', error);
@@ -261,12 +322,16 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           // Try to use cached role and name first for immediate UI update
           const cachedRole = getCachedRole();
           const cachedName = getCachedProfileName();
+          const cachedData = getCachedProfileData();
           if (cachedRole) {
             console.log(`Using cached role after auth change: ${cachedRole}`);
             setRole(cachedRole);
           }
           if (cachedName) {
             setProfileName(cachedName);
+          }
+          if (cachedData) {
+            setProfileData(cachedData);
           }
           
           // Fetch fresh role and profile data
@@ -275,9 +340,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           console.log('Session ended, clearing role and profile name');
           setRole('user');
           setProfileName(null);
+          setProfileData(null);
           setRoleLoading(false);
           clearCachedRole();
           clearCachedProfileName();
+          clearCachedProfileData();
         }
       }
     );
@@ -293,6 +360,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     session,
     role,
     profileName,
+    profileData,
     loading,
     authLoading,
     roleLoading,

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { MagitLogo } from "@/components/MagitLogo"
@@ -15,6 +15,7 @@ import type { Language } from "@/hooks/useTranslation"
 import { forceLocalSignOut } from "@/lib/auth"
 import { NotificationBell } from "@/components/NotificationBell"
 import { useTranslation } from "@/hooks/useTranslation"
+import { useUser } from "@/contexts/UserContext"
 
 interface AuthenticatedHeaderProps {
   user: SupabaseUser
@@ -29,6 +30,7 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
   const { t } = useTranslation()
   const isMobile = useIsMobile()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { profileData } = useUser()
 
   const handleSignOut = async () => {
     try {
@@ -130,6 +132,9 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                 onClick={() => navigate('/profile')}
               >
                 <Avatar className="w-8 h-8">
+                  {profileData?.accountType === 'legal_entity' && profileData?.companyLogoUrl && (
+                    <AvatarImage src={profileData.companyLogoUrl} alt="Company Logo" />
+                  )}
                   <AvatarFallback className="bg-primary text-primary-foreground text-sm">
                     {getUserDisplayName().charAt(0).toUpperCase()}
                   </AvatarFallback>
@@ -167,6 +172,9 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                 onClick={() => navigate('/profile')}
               >
                 <Avatar className="w-7 h-7">
+                  {profileData?.accountType === 'legal_entity' && profileData?.companyLogoUrl && (
+                    <AvatarImage src={profileData.companyLogoUrl} alt="Company Logo" />
+                  )}
                   <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                     {getUserDisplayName().charAt(0).toUpperCase()}
                   </AvatarFallback>
@@ -192,6 +200,9 @@ export const AuthenticatedHeader = ({ user, language, setLanguage, isHalalMode }
                     {/* User Info */}
                     <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg">
                       <Avatar className="w-10 h-10">
+                        {profileData?.accountType === 'legal_entity' && profileData?.companyLogoUrl && (
+                          <AvatarImage src={profileData.companyLogoUrl} alt="Company Logo" />
+                        )}
                         <AvatarFallback className="bg-primary text-primary-foreground">
                           {getUserDisplayName().charAt(0).toUpperCase()}
                         </AvatarFallback>
