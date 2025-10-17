@@ -4302,6 +4302,26 @@ const translations: Translations = {
     ru: 'Завершите верификацию личности, чтобы разблокировать все функции и заслужить доверие других пользователей.',
     uz: 'Barcha imkoniyatlarni ochish va boshqa foydalanuvchilar ishonchini qozonish uchun shaxsni tasdiqlovni tugallang.'
   },
+  'profile.companyInfo': {
+    en: 'Company Information',
+    ru: 'Информация о компании',
+    uz: 'Kompaniya haqida maʼlumot'
+  },
+  'profile.verificationPending': {
+    en: 'Pending Verification',
+    ru: 'Ожидает проверки',
+    uz: 'Tekshiruv kutilmoqda'
+  },
+  'profile.verified': {
+    en: 'Verified',
+    ru: 'Проверено',
+    uz: 'Tasdiqlangan'
+  },
+  'profile.verificationRejected': {
+    en: 'Verification Rejected',
+    ru: 'Проверка отклонена',
+    uz: 'Tekshirish rad etildi'
+  },
   'profile.thisWeekVisits': {
     en: "This Week's Visits",
     ru: 'Визиты на этой неделе',

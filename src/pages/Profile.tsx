@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -22,7 +22,10 @@ import {
   Edit2,
   Save,
   X,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  Building2,
+  FileCheck,
+  ExternalLink
 } from "lucide-react"
 import { Footer } from "@/components/Footer"
 import { useToast } from "@/hooks/use-toast"
@@ -152,18 +155,46 @@ const Profile = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <Avatar className="w-16 h-16">
+                    {profile?.account_type === 'legal_entity' && profile?.company_logo_url ? (
+                      <AvatarImage 
+                        src={`https://mvndmnkgtoygsvesktgw.supabase.co${profile.company_logo_url}`} 
+                        alt={profile.company_name || 'Company logo'} 
+                      />
+                    ) : null}
                     <AvatarFallback className="bg-primary text-primary-foreground text-lg">
-                      {user.email?.charAt(0).toUpperCase()}
+                      {profile?.account_type === 'legal_entity' && profile?.company_name 
+                        ? profile.company_name.charAt(0).toUpperCase()
+                        : user.email?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <h1 className="text-2xl font-heading font-bold">
-                      {profile?.full_name || t('profile.title')}
+                      {profile?.account_type === 'legal_entity' && profile?.company_name 
+                        ? profile.company_name 
+                        : profile?.full_name || t('profile.title')}
                     </h1>
                     <p className="text-muted-foreground">{user.email}</p>
-                    <Badge variant={profile?.account_type === 'legal_entity' ? 'default' : 'secondary'} className="mt-1">
-                      {profile?.account_type === 'legal_entity' ? t('auth.accountTypeLegalEntity') : t('auth.accountTypeIndividual')}
-                    </Badge>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant={profile?.account_type === 'legal_entity' ? 'default' : 'secondary'}>
+                        {profile?.account_type === 'legal_entity' ? t('auth.accountTypeLegalEntity') : t('auth.accountTypeIndividual')}
+                      </Badge>
+                      {profile?.verification_status === 'pending' && (
+                        <Badge variant="warning">
+                          {t('profile.verificationPending')}
+                        </Badge>
+                      )}
+                      {profile?.verification_status === 'approved' && profile?.is_verified && (
+                        <Badge variant="success" className="flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" />
+                          {t('profile.verified')}
+                        </Badge>
+                      )}
+                      {profile?.verification_status === 'rejected' && (
+                        <Badge variant="destructive">
+                          {t('profile.verificationRejected')}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
                 
@@ -267,6 +298,79 @@ const Profile = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Company Information - Only for Legal Entities */}
+          {profile?.account_type === 'legal_entity' && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="w-5 h-5" />
+                  {t('profile.companyInfo')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label>{t('auth.companyName')}</Label>
+                    <div className="p-2 text-sm font-medium">{profile?.company_name || 'Not provided'}</div>
+                  </div>
+                  
+                  <div>
+                    <Label>{t('auth.registrationNumber')}</Label>
+                    <div className="p-2 text-sm">{profile?.registration_number || 'Not provided'}</div>
+                  </div>
+                  
+                  <div>
+                    <Label>{t('auth.contactPerson')}</Label>
+                    <div className="p-2 text-sm">{profile?.contact_person_name || 'Not provided'}</div>
+                  </div>
+                  
+                  {profile?.number_of_properties !== null && (
+                    <div>
+                      <Label>{t('auth.numberOfProperties')}</Label>
+                      <div className="p-2 text-sm">{profile.number_of_properties}</div>
+                    </div>
+                  )}
+                  
+                  <div className="md:col-span-2">
+                    <Label>{t('auth.companyDescription')}</Label>
+                    <div className="p-2 text-sm text-muted-foreground">
+                      {profile?.company_description || 'No description provided'}
+                    </div>
+                  </div>
+                  
+                  {profile?.company_license_url && (
+                    <div>
+                      <Label>{t('auth.companyLicense')}</Label>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(`https://mvndmnkgtoygsvesktgw.supabase.co${profile.company_license_url}`, '_blank')}
+                        className="mt-2"
+                      >
+                        <FileCheck className="w-4 h-4 mr-2" />
+                        View License
+                        <ExternalLink className="w-3 h-3 ml-2" />
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {profile?.company_logo_url && (
+                    <div>
+                      <Label>{t('auth.companyLogo')}</Label>
+                      <div className="mt-2">
+                        <img
+                          src={`https://mvndmnkgtoygsvesktgw.supabase.co${profile.company_logo_url}`}
+                          alt="Company logo"
+                          className="w-24 h-24 object-contain border rounded-lg p-2"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* ID Verification */}
           <Card>
