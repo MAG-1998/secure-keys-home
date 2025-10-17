@@ -65,7 +65,6 @@ interface PropertyDetail {
     company_description?: string | null;
     is_verified?: boolean;
     verification_status?: string | null;
-    number_of_properties?: number | null;
     created_at?: string;
   } | null;
 }
@@ -284,7 +283,6 @@ const PropertyDetails = () => {
               company_description,
               is_verified,
               verification_status,
-              number_of_properties,
               created_at
             )
           `)

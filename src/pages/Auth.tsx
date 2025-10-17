@@ -162,7 +162,6 @@ const Auth = () => {
             company_logo_url: logoPath ? `/storage/v1/object/public/company-documents/${logoPath}` : null,
             contact_person_name: companyData.contactPersonName,
             company_description: companyData.companyDescription || null,
-            number_of_properties: companyData.numberOfProperties ? parseInt(companyData.numberOfProperties) : null,
             verification_status: 'pending',
             phone: phone
           })
