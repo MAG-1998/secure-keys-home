@@ -77,6 +77,19 @@ const Profile = () => {
     getProfile()
   }, [navigate])
 
+  const getCompanyPublicUrl = (path?: string | null) => {
+    const base = 'https://mvndmnkgtoygsvesktgw.supabase.co';
+    if (!path) return '';
+    const p = String(path);
+    if (p.startsWith('http://') || p.startsWith('https://')) return p;
+    if (p.startsWith('/storage/v1/object/public/')) return `${base}${p}`;
+    if (p.startsWith('storage/v1/object/public/')) return `${base}/${p}`;
+    if (p.startsWith('/company-documents/')) return `${base}/storage/v1/object/public${p}`;
+    if (p.startsWith('company-documents/')) return `${base}/storage/v1/object/public/${p}`;
+    const clean = p.startsWith('/') ? p.slice(1) : p;
+    return `${base}/storage/v1/object/public/company-documents/${clean}`;
+  }
+
   const handleSave = async () => {
     setLoading(true)
     
@@ -157,7 +170,7 @@ const Profile = () => {
                   <Avatar className="w-16 h-16">
                     {profile?.account_type === 'legal_entity' && profile?.company_logo_url ? (
                       <AvatarImage 
-                        src={`https://mvndmnkgtoygsvesktgw.supabase.co${profile.company_logo_url}`} 
+                        src={getCompanyPublicUrl(profile.company_logo_url)} 
                         alt={profile.company_name || 'Company logo'} 
                       />
                     ) : null}
@@ -345,7 +358,7 @@ const Profile = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => window.open(`https://mvndmnkgtoygsvesktgw.supabase.co${profile.company_license_url}`, '_blank')}
+                        onClick={() => window.open(getCompanyPublicUrl(profile.company_license_url), '_blank')}
                         className="mt-2"
                       >
                         <FileCheck className="w-4 h-4 mr-2" />
@@ -360,7 +373,7 @@ const Profile = () => {
                       <Label>{t('auth.companyLogo')}</Label>
                       <div className="mt-2">
                         <img
-                          src={`https://mvndmnkgtoygsvesktgw.supabase.co${profile.company_logo_url}`}
+                          src={getCompanyPublicUrl(profile.company_logo_url)}
                           alt="Company logo"
                           className="w-24 h-24 object-contain border rounded-lg p-2"
                         />
