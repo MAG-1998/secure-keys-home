@@ -406,7 +406,6 @@ export type Database = {
           id: string
           is_verified: boolean
           language: string
-          number_of_properties: number | null
           phone: string | null
           registration_number: string | null
           role: Database["public"]["Enums"]["app_role"]
@@ -428,7 +427,6 @@ export type Database = {
           id?: string
           is_verified?: boolean
           language?: string
-          number_of_properties?: number | null
           phone?: string | null
           registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"]
@@ -450,7 +448,6 @@ export type Database = {
           id?: string
           is_verified?: boolean
           language?: string
-          number_of_properties?: number | null
           phone?: string | null
           registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"]

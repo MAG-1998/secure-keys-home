@@ -18,7 +18,6 @@ interface SellerProfile {
   company_description?: string | null;
   is_verified?: boolean;
   verification_status?: string | null;
-  number_of_properties?: number | null;
   created_at?: string;
 }
 
@@ -38,6 +37,7 @@ interface SellerProfileCardProps {
 export const SellerProfileCard = ({ profile, currentPropertyId }: SellerProfileCardProps) => {
   const { t } = useTranslation();
   const [otherProperties, setOtherProperties] = useState<OtherProperty[]>([]);
+  const [propertyCount, setPropertyCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   const displayName = profile.account_type === 'legal_entity' 
@@ -52,8 +52,10 @@ export const SellerProfileCard = ({ profile, currentPropertyId }: SellerProfileC
     .slice(0, 2) || '?';
 
   useEffect(() => {
-    const fetchOtherProperties = async () => {
+    const fetchData = async () => {
       setLoading(true);
+      
+      // Fetch other properties
       const { data } = await supabase
         .from('properties')
         .select('id, title, price, location, image_url')
@@ -64,10 +66,20 @@ export const SellerProfileCard = ({ profile, currentPropertyId }: SellerProfileC
         .limit(4);
       
       if (data) setOtherProperties(data);
+      
+      // Fetch total property count
+      const { count } = await supabase
+        .from('properties')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', profile.user_id)
+        .in('status', ['active', 'approved']);
+      
+      if (count !== null) setPropertyCount(count);
+      
       setLoading(false);
     };
     
-    fetchOtherProperties();
+    fetchData();
   }, [profile.user_id, currentPropertyId]);
 
   return (
@@ -131,7 +143,7 @@ export const SellerProfileCard = ({ profile, currentPropertyId }: SellerProfileC
             <Home className="h-4 w-4 text-muted-foreground" />
             <div>
               <div className="text-xs text-muted-foreground">{t('seller.totalProperties')}</div>
-              <div className="font-medium">{profile.number_of_properties || 0}</div>
+              <div className="font-medium">{propertyCount}</div>
             </div>
           </div>
         </div>
@@ -184,7 +196,7 @@ export const SellerProfileCard = ({ profile, currentPropertyId }: SellerProfileC
                   to={`/properties?seller=${profile.user_id}`}
                   className="block text-sm text-primary hover:underline text-center pt-2"
                 >
-                  {t('seller.viewAll').replace('{{count}}', String(profile.number_of_properties || otherProperties.length))}
+                  {t('seller.viewAll').replace('{{count}}', String(propertyCount))}
                 </Link>
               )}
             </div>
