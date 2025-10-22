@@ -631,30 +631,35 @@ export const SearchSection = ({
                     </Button>
                   </div>
 
-                  {/* Advanced Search Button */}
-                  <div className="flex flex-col items-center mt-4 space-y-2">
-                    <Button 
-                      variant="default" 
-                      size="lg" 
+                  {/* Advanced Search Link */}
+                  <div className="flex justify-center mt-2">
+                    <button 
                       onClick={() => navigate('/properties')} 
-                      className="px-8"
+                      className="text-xs text-muted-foreground hover:text-foreground underline transition-colors"
                     >
                       {t('search.advancedFilters')}
-                    </Button>
-                    <p className="text-xs text-muted-foreground text-center max-w-md">
-                      {t('search.advancedFiltersDesc')}
-                    </p>
+                    </button>
                   </div>
 
-                {aiSuggestion && <div className="mt-6 p-4 bg-muted/30 rounded-lg">
+                 {aiSuggestion && <div className="mt-6 p-4 bg-muted/30 rounded-lg">
                     <div className="flex items-start gap-3">
                       <Badge variant="warning" className="mt-1">
                         <Sparkles className="h-3 w-3 mr-1" />
                         AI
                       </Badge>
                       <p className="text-sm text-muted-foreground">{aiSuggestion}</p>
-                    </div>
-                  </div>}
+                   </div>
+               </div>}
+
+               {/* Advanced Search Link at bottom of filters */}
+               <div className="flex justify-center mt-4 pt-4 border-t border-border/40">
+                 <button 
+                   onClick={() => navigate('/properties')} 
+                   className="text-xs text-muted-foreground hover:text-foreground underline transition-colors"
+                 >
+                   {t('search.advancedFilters')}
+                 </button>
+               </div>
               </CardContent>
             </Card>}
         </div>

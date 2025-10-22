@@ -218,6 +218,8 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
         bedrooms: Number(prop.bedrooms) || 1,
         bathrooms: Number(prop.bathrooms) || 1,
         area: Number(prop.area) || 50,
+        land_area_sotka: prop.land_area_sotka ? Number(prop.land_area_sotka) : undefined,
+        property_type: prop.property_type,
         verified: prop.status === 'approved',
         financingAvailable: prop.is_halal_available && prop.halal_status === 'approved',
         image_url: Array.isArray(prop.photos) && prop.photos.length > 0 ? prop.photos[0] : '/placeholder.svg',
