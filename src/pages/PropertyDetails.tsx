@@ -706,7 +706,7 @@ const PropertyDetails = () => {
                      {property.bedrooms != null && (<span className="inline-flex items-center"><Bed className="h-4 w-4 mr-1" /> {property.bedrooms} {property.bedrooms === 1 ? t('property.bed') : t('property.beds')}</span>)}
                      {property.bathrooms != null && (<span className="inline-flex items-center"><Bath className="h-4 w-4 mr-1" /> {property.bathrooms} {property.bathrooms === 1 ? t('property.bath') : t('property.baths')}</span>)}
                      {property.area != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.area} {t('property.sqm')}</span>)}
-                     {property.property_type === 'house' && property.land_area_sotka != null && (<span className="inline-flex items-center"><MapPin className="h-4 w-4 mr-1" /> {property.land_area_sotka} {t('property.sotka')}</span>)}
+                     {property.land_area_sotka != null && (<span className="inline-flex items-center"><Square className="h-4 w-4 mr-1" /> {property.land_area_sotka} {t('property.sotka')}</span>)}
                    </div>
                    <PriceOdometer 
                      value={displayPrice}
