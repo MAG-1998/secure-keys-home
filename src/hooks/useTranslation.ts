@@ -250,6 +250,16 @@ const translations: Translations = {
     ru: 'Фильтры',
     uz: 'Filtrlar'
   },
+  'search.advancedFilters': {
+    en: 'Advanced Filters',
+    ru: 'Расширенный поиск',
+    uz: 'Kengaytirilgan qidiruv'
+  },
+  'search.advancedFiltersDesc': {
+    en: 'More filtering options including land area, price range, and more',
+    ru: 'Больше опций фильтрации: площадь участка, диапазон цен и другое',
+    uz: 'Qo\'shimcha filtrlash: er maydoni, narx oralig\'i va boshqalar'
+  },
   'search.halalFinancing': {
     en: '✓ Halal Financing',
     ru: '✓ Халяль финансы',

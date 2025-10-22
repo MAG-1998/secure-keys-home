@@ -253,6 +253,7 @@ const Properties = () => {
                     <SelectContent>
                       <SelectItem value="all">{t('filter.allTypes')}</SelectItem>
                       <SelectItem value="apartment">{t('propertyType.apartment')}</SelectItem>
+                      <SelectItem value="studio">{t('propertyType.studio')}</SelectItem>
                       <SelectItem value="house">{t('propertyType.house')}</SelectItem>
                       <SelectItem value="commercial">{t('propertyType.commercial')}</SelectItem>
                       <SelectItem value="land">{t('propertyType.land')}</SelectItem>

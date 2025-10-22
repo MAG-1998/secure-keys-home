@@ -36,6 +36,8 @@ export interface Property {
   bedrooms: number
   bathrooms: number
   area: number
+  land_area_sotka?: number
+  property_type?: string
   verified: boolean
   financingAvailable: boolean
   image_url: string

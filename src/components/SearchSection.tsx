@@ -511,6 +511,8 @@ export const SearchSection = ({
                         bedrooms={property.bedrooms} 
                         bathrooms={property.bathrooms} 
                         area={property.area} 
+                        landAreaSotka={property.land_area_sotka}
+                        propertyType={property.property_type}
                         imageUrl={property.image_url} 
                         isVerified={property.verified} 
                         isHalalFinanced={property.financingAvailable} 
@@ -533,6 +535,8 @@ export const SearchSection = ({
                           bedrooms={property.bedrooms} 
                           bathrooms={property.bathrooms} 
                           area={property.area} 
+                          landAreaSotka={property.land_area_sotka}
+                          propertyType={property.property_type}
                           imageUrl={property.image_url} 
                           isVerified={property.verified} 
                           isHalalFinanced={property.financingAvailable} 
@@ -556,6 +560,8 @@ export const SearchSection = ({
                           bedrooms={property.bedrooms} 
                           bathrooms={property.bathrooms} 
                           area={property.area} 
+                          landAreaSotka={property.land_area_sotka}
+                          propertyType={property.property_type}
                           imageUrl={property.image_url} 
                           isVerified={property.verified} 
                           isHalalFinanced={property.financingAvailable} 
@@ -579,6 +585,8 @@ export const SearchSection = ({
                           bedrooms={property.bedrooms} 
                           bathrooms={property.bathrooms} 
                           area={property.area} 
+                          landAreaSotka={property.land_area_sotka}
+                          propertyType={property.property_type}
                           imageUrl={property.image_url} 
                           isVerified={property.verified} 
                           isHalalFinanced={property.financingAvailable} 
@@ -602,6 +610,8 @@ export const SearchSection = ({
                           bedrooms={property.bedrooms} 
                           bathrooms={property.bathrooms} 
                           area={property.area} 
+                          landAreaSotka={property.land_area_sotka}
+                          propertyType={property.property_type}
                           imageUrl={property.image_url} 
                           isVerified={property.verified} 
                           isHalalFinanced={property.financingAvailable} 
@@ -619,6 +629,21 @@ export const SearchSection = ({
                     <Button variant="outline" size="lg" onClick={() => navigate('/properties')} className="px-8">
                       {t('common.viewAllProperties')}
                     </Button>
+                  </div>
+
+                  {/* Advanced Search Button */}
+                  <div className="flex flex-col items-center mt-4 space-y-2">
+                    <Button 
+                      variant="default" 
+                      size="lg" 
+                      onClick={() => navigate('/properties')} 
+                      className="px-8"
+                    >
+                      {t('search.advancedFilters')}
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center max-w-md">
+                      {t('search.advancedFiltersDesc')}
+                    </p>
                   </div>
 
                 {aiSuggestion && <div className="mt-6 p-4 bg-muted/30 rounded-lg">
