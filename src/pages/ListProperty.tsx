@@ -129,7 +129,7 @@ const ListProperty = () => {
     }
   }, [searchParams]);
 
-  // Debounced save function (reduced delay for faster saves)
+  // Debounced save function
   const saveToStorage = useCallback(
     debounce((data: typeof formData, step: number) => {
       try {
@@ -145,7 +145,7 @@ const ListProperty = () => {
       } catch (error) {
         console.warn('Failed to save draft:', error);
       }
-    }, 300), // Reduced from 1000ms to 300ms for faster saves
+    }, 5000), // Auto-save every 5 seconds
     []
   );
 

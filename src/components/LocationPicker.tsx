@@ -35,6 +35,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   const placemark = useRef<any>(null);
   const suggestView = useRef<any>(null);
   const cssInjectedRef = useRef(false);
+  const searchingRef = useRef(false);
 
   const [selectedAddress, setSelectedAddress] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -222,7 +223,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     }
   };
 
-  const geocodeAddress = (query: string) => {
+  const geocodeAddress = async (query: string) => {
     if (!query.trim()) {
       toast({
         title: t('address.searchError') || "Search error",
@@ -241,38 +242,40 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       return;
     }
 
+    // Prevent concurrent searches
+    if (searchingRef.current) return;
+
+    searchingRef.current = true;
     setIsSearching(true);
     
-    window.ymaps
-      .geocode(query)
-      .then((result: any) => {
-        const first = result?.geoObjects?.get?.(0);
-        if (first) {
-          const coords = first.geometry.getCoordinates();
-          const address = first.getAddressLine();
-          addPlacemark(coords[0], coords[1]);
-          setSelectedAddress(address);
-          onLocationSelect(coords[0], coords[1], address);
-          map.current?.setCenter(coords, 15, { duration: 300 });
-        } else {
-          toast({
-            title: t('address.notFound') || "Location not found",
-            description: t('address.tryDifferent') || "Try a different search term",
-            variant: "destructive"
-          });
-        }
-      })
-      .catch((error: any) => {
-        console.error('Error geocoding address:', error);
+    try {
+      const result = await window.ymaps.geocode(query);
+      const first = result?.geoObjects?.get?.(0);
+      if (first) {
+        const coords = first.geometry.getCoordinates();
+        const address = first.getAddressLine();
+        addPlacemark(coords[0], coords[1]);
+        setSelectedAddress(address);
+        onLocationSelect(coords[0], coords[1], address);
+        map.current?.setCenter(coords, 15, { duration: 300 });
+      } else {
         toast({
-          title: t('address.searchFailed') || "Search failed",
-          description: t('address.checkConnection') || "Please check your connection and try again",
+          title: t('address.notFound') || "Location not found",
+          description: t('address.tryDifferent') || "Try a different search term",
           variant: "destructive"
         });
-      })
-      .finally(() => {
-        setIsSearching(false);
+      }
+    } catch (error: any) {
+      console.error('Error geocoding address:', error);
+      toast({
+        title: t('address.searchFailed') || "Search failed",
+        description: t('address.checkConnection') || "Please check your connection and try again",
+        variant: "destructive"
       });
+    } finally {
+      searchingRef.current = false;
+      setIsSearching(false);
+    }
   };
 
   const handleMyLocation = () => {
@@ -300,6 +303,8 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       suggestView.current.events.add('select', (e: any) => {
         const value = e.get('item')?.value;
         if (value) {
+          // Ignore clicks if search is already in progress
+          if (searchingRef.current) return;
           setSearchQuery(value);
           geocodeAddress(value);
         }
