@@ -1283,6 +1283,11 @@ const translations: Translations = {
     ru: 'Информация об объекте',
     uz: 'Mulk ma\'lumotlari'
   },
+  'listProperty.contactInformation': {
+    en: 'Contact Information',
+    ru: 'Контактная информация',
+    uz: 'Aloqa ma\'lumotlari'
+  },
   'listProperty.propertyName': {
     en: 'Property Name',
     ru: 'Название объекта',
