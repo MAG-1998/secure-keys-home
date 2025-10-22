@@ -867,10 +867,6 @@ const ListProperty = () => {
                             <span className="text-blue-700 dark:text-blue-300">{t('listProperty.magitFee')}</span>
                             <span className="text-red-600">-${(parseFloat(formData.price) * 0.01).toLocaleString()}</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-blue-700 dark:text-blue-300">{t('listProperty.halalServiceFeeLabel')}</span>
-                            <span className="text-red-600">-${(parseFloat(formData.price) * 0.01).toLocaleString()}</span>
-                          </div>
                           <div className="flex justify-between font-semibold border-t border-blue-200 dark:border-blue-700 pt-1">
                             <span className="text-blue-900 dark:text-blue-100">{t('listProperty.netProceeds')}</span>
                             <span className="text-green-600">${(parseFloat(formData.price) * 0.98).toLocaleString()}</span>
