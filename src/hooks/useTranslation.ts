@@ -429,6 +429,16 @@ const translations: Translations = {
       ru: 'Город',
       uz: 'Shahar'
     },
+    'city.tashkent': {
+      en: 'Tashkent',
+      ru: 'Ташкент',
+      uz: 'Toshkent'
+    },
+    'city.kokand': {
+      en: 'Kokand',
+      ru: 'Коканд',
+      uz: 'Qo\'qon'
+    },
     'filter.allCities': {
       en: 'All Cities',
       ru: 'Все города',

@@ -14,6 +14,7 @@ import { toast } from "@/components/ui/use-toast";
 import { debounce } from "@/utils/debounce";
 import { useSearchHistory } from "@/hooks/useSearchHistory";
 import { getDistrictOptions } from "@/lib/districts";
+import { getCityOptions, type Language as CityLanguage } from "@/lib/cities";
 import { calculateHalalFinancing, formatCurrency, getPeriodOptions, calculatePropertyPriceFromCash, calculateCashFromMonthlyPayment } from "@/utils/halalFinancing";
 import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore";
 import { useNavigate } from "react-router-dom";
@@ -75,13 +76,20 @@ export const SearchSection = ({
     return calculateHalalFinancing(cashAvailable, propertyPrice, periodMonths);
   }, [filters.cashAvailable, filters.periodMonths]);
 
-  // District options for current language  
+  // District and city options for current language  
   const districtOptions = useMemo(() => {
     // Extract language from translation function - check if it returns Russian
     const testKey = 'common.signOut';
     const russianText = 'Выйти';
     const currentLang = t(testKey) === russianText ? 'ru' : t(testKey) === 'Chiqish' ? 'uz' : 'en';
     return getDistrictOptions(currentLang as any);
+  }, [t]);
+
+  const cityOptions = useMemo(() => {
+    const testKey = 'common.signOut';
+    const russianText = 'Выйти';
+    const currentLang = t(testKey) === russianText ? 'ru' : t(testKey) === 'Chiqish' ? 'uz' : 'en';
+    return getCityOptions(currentLang as CityLanguage);
   }, [t]);
 
   // Search suggestions based on input
@@ -369,7 +377,25 @@ export const SearchSection = ({
               <div className="space-y-6">
                 <h3 className="font-semibold text-lg">{t('search.filters')}</h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {/* City Filter - FIRST */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <MapPin className="h-4 w-4" />
+                      {t('filter.city')}
+                    </Label>
+                    <Select value={filters.city || 'Tashkent'} onValueChange={value => handleFilterChange('city', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('city.tashkent')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cityOptions.map(city => <SelectItem key={city.value} value={city.value}>
+                            {city.label}
+                          </SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   {/* District Filter */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium flex items-center gap-2">

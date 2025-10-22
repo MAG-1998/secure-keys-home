@@ -13,6 +13,7 @@ const STORAGE_KEY = 'magit_search_cache'
 
 export interface SearchFilters {
   q?: string
+  city?: string
   district?: string
   priceMin?: string
   priceMax?: string
@@ -108,7 +109,9 @@ interface SearchStore {
 }
 
 export const useSearchStore = create<SearchStore>((set, get) => ({
-  filters: {},
+  filters: {
+    city: 'Tashkent' // Default to Tashkent
+  },
   results: [],
   loading: false,
   error: null,
@@ -155,6 +158,18 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
       // Apply halal filtering - only show properties that are both available and approved
       if (searchFilters.halalMode) {
         query = query.eq('is_halal_available', true).eq('halal_status', 'approved')
+      }
+
+      // Filter by city if specified
+      if (searchFilters.city && searchFilters.city !== 'all') {
+        // Use ilike to match city name in location field with multiple synonyms
+        const citySearchTerms = searchFilters.city === 'Tashkent' 
+          ? ['Tashkent', 'Ташкент', 'Toshkent']
+          : ['Kokand', 'Коканд', "Qo'qon", 'Ферганская область, Коканд'];
+        
+        // Build OR condition for city synonyms
+        const cityConditions = citySearchTerms.map(term => `location.ilike.%${term}%`).join(',');
+        query = query.or(cityConditions);
       }
 
       // Apply other filters

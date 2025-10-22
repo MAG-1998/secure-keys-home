@@ -30,9 +30,10 @@ interface LazyMapSectionProps {
   language: Language
   searchResults?: any[]
   onSearchResultsChange?: (results: any[]) => void
+  selectedCity?: string
 }
 
-const LazyMapSection = memo(({ t, isHalalMode, language, searchResults, onSearchResultsChange }: LazyMapSectionProps) => {
+const LazyMapSection = memo(({ t, isHalalMode, language, searchResults, onSearchResultsChange, selectedCity }: LazyMapSectionProps) => {
   return (
     <div className="w-full h-[500px] md:h-[600px] border border-border rounded-lg overflow-hidden">
       <ErrorBoundary 
@@ -47,6 +48,7 @@ const LazyMapSection = memo(({ t, isHalalMode, language, searchResults, onSearch
           language={language}
           searchResults={searchResults}
           onSearchResultsChange={onSearchResultsChange}
+          selectedCity={selectedCity}
         />
       </ErrorBoundary>
     </div>

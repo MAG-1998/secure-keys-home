@@ -14,6 +14,7 @@ import { StatsSection } from "@/components/StatsSection"
 import { useScroll } from "@/hooks/use-scroll"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useGlobalHalalMode } from "@/hooks/useGlobalHalalMode"
+import { useSearchStore } from "@/hooks/useSearchStore"
 import { Shield, Home, Calculator, MapPin, Users, CheckCircle, Menu } from "lucide-react"
 import type { Language } from "@/hooks/useTranslation"
 
@@ -30,6 +31,7 @@ export const UnauthenticatedView = ({ language, setLanguage, t }: Unauthenticate
   const isMobile = useIsMobile()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { isHalalMode, toggleHalalMode } = useGlobalHalalMode()
+  const { filters } = useSearchStore()
 
   return (
     <>
@@ -221,6 +223,7 @@ export const UnauthenticatedView = ({ language, setLanguage, t }: Unauthenticate
             language={language}
             searchResults={searchResults}
             onSearchResultsChange={setSearchResults}
+            selectedCity={filters.city || 'Tashkent'}
           />
         </div>
       </section>

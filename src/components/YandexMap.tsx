@@ -7,6 +7,7 @@ import { useOptimizedQuery } from "@/hooks/useOptimizedQuery";
 import { useUser } from "@/contexts/UserContext";
 import type { Language } from "@/hooks/useTranslation";
 import { extractDistrictFromText, localizeDistrict as localizeDistrictLib } from "@/lib/districts";
+import { getCityCoordinates, type CityKey } from '@/lib/cities';
 import { useSearchStore } from "@/hooks/useSearchStore";
 import { toast } from "@/components/ui/use-toast";
 import { useMapLoader } from "@/hooks/useMapLoader";
@@ -18,6 +19,7 @@ interface YandexMapProps {
   language: Language;
   searchResults?: any[];
   onSearchResultsChange?: (results: any[]) => void;
+  selectedCity?: string;
 }
 
 interface Property {
@@ -44,7 +46,7 @@ declare global {
   }
 }
 
-const YandexMap: React.FC<YandexMapProps> = memo(({ isHalalMode = false, t, language, searchResults: propSearchResults, onSearchResultsChange }) => {
+const YandexMap: React.FC<YandexMapProps> = memo(({ isHalalMode = false, t, language, searchResults: propSearchResults, onSearchResultsChange, selectedCity = 'Tashkent' }) => {
   const navigate = useNavigate();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
@@ -225,12 +227,15 @@ useEffect(() => {
     }
 
     try {
+      // Get coordinates for selected city
+      const cityCoords = getCityCoordinates((selectedCity || 'Tashkent') as CityKey);
+      
       map.current = new window.ymaps.Map(mapContainer.current, {
-        center: [41.2995, 69.2401], // Tashkent coordinates
+        center: cityCoords, // Use city coordinates
         zoom: 11,
         controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
       });
-      console.log('[YandexMap] Map initialized successfully');
+      console.log('[YandexMap] Map initialized successfully at', selectedCity, cityCoords);
 
       // Suppress default Yandex POI balloons; only our placemarks should open balloons
       try {
@@ -301,6 +306,18 @@ useEffect(() => {
   useEffect(() => {
     memoizedUpdateMarkers();
   }, [memoizedUpdateMarkers]);
+
+  // Re-center map when selected city changes
+  useEffect(() => {
+    if (!map.current || !selectedCity) return;
+    
+    const newCoords = getCityCoordinates(selectedCity as CityKey);
+    map.current.setCenter(newCoords, 11, { 
+      duration: 500 // Smooth animation
+    });
+    
+    console.log(`[YandexMap] Map re-centered to ${selectedCity}:`, newCoords);
+  }, [selectedCity]);
 
   // User location functionality
   const getUserLocation = useCallback(() => {

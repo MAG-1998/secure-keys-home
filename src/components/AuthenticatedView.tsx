@@ -13,6 +13,7 @@ import type { User } from "@supabase/supabase-js";
 import { useTranslation } from "@/hooks/useTranslation";
 import { FinancingRequestsSection } from "@/components/FinancingRequestsSection";
 import { useGlobalHalalMode } from "@/hooks/useGlobalHalalMode";
+import { useSearchStore } from "@/hooks/useSearchStore";
 
 interface AuthenticatedViewProps {
   user: User;
@@ -36,6 +37,7 @@ export const AuthenticatedView = memo(({
 
   const { data: counts = { saved: 0, listed: 0, financingRequests: 0, myRequests: 0, incomingRequests: 0 } } = useUserCounts(user?.id);
   const { language } = useTranslation();
+  const { filters } = useSearchStore();
   
   
   const getUserDisplayName = () => {
@@ -72,6 +74,7 @@ export const AuthenticatedView = memo(({
               t={t} 
               isHalalMode={isHalalMode} 
               language={language}
+              selectedCity={filters.city || 'Tashkent'}
             />
           </div>
         </div>
