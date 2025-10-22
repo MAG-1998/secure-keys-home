@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { MapPin, Check, Search, LocateFixed } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useMapLoader } from "@/hooks/useMapLoader";
+import { useToast } from "@/hooks/use-toast";
 
 interface LocationPickerProps {
   onLocationSelect: (lat: number, lng: number, address?: string) => void;
@@ -27,6 +28,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 }) => {
   const { language, t } = useTranslation();
   const { mapLoaded, status } = useMapLoader(language as any);
+  const { toast } = useToast();
 
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
@@ -36,6 +38,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 
   const [selectedAddress, setSelectedAddress] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isSearching, setIsSearching] = useState<boolean>(false);
 
   // Unique input id to avoid collisions if multiple pickers are mounted
   const reactId = useId();
@@ -220,25 +223,56 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   };
 
   const geocodeAddress = (query: string) => {
-    if (!query) return;
-    try {
-      window.ymaps
-        .geocode(query)
-        .then((result: any) => {
-          const first = result?.geoObjects?.get?.(0);
-          if (first) {
-            const coords = first.geometry.getCoordinates();
-            const address = first.getAddressLine();
-            addPlacemark(coords[0], coords[1]);
-            setSelectedAddress(address);
-            onLocationSelect(coords[0], coords[1], address);
-            map.current?.setCenter(coords, 15, { duration: 300 });
-          }
-        })
-        .catch(() => {});
-    } catch (error) {
-      console.error('Error geocoding address:', error);
+    if (!query.trim()) {
+      toast({
+        title: t('address.searchError') || "Search error",
+        description: t('address.enterAddress') || "Please enter an address to search",
+        variant: "destructive"
+      });
+      return;
     }
+
+    if (!window.ymaps || !window.ymaps.geocode) {
+      toast({
+        title: t('address.mapNotReady') || "Map not ready",
+        description: t('address.tryAgain') || "Please wait for the map to load",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSearching(true);
+    
+    window.ymaps
+      .geocode(query)
+      .then((result: any) => {
+        const first = result?.geoObjects?.get?.(0);
+        if (first) {
+          const coords = first.geometry.getCoordinates();
+          const address = first.getAddressLine();
+          addPlacemark(coords[0], coords[1]);
+          setSelectedAddress(address);
+          onLocationSelect(coords[0], coords[1], address);
+          map.current?.setCenter(coords, 15, { duration: 300 });
+        } else {
+          toast({
+            title: t('address.notFound') || "Location not found",
+            description: t('address.tryDifferent') || "Try a different search term",
+            variant: "destructive"
+          });
+        }
+      })
+      .catch((error: any) => {
+        console.error('Error geocoding address:', error);
+        toast({
+          title: t('address.searchFailed') || "Search failed",
+          description: t('address.checkConnection') || "Please check your connection and try again",
+          variant: "destructive"
+        });
+      })
+      .finally(() => {
+        setIsSearching(false);
+      });
   };
 
   const handleMyLocation = () => {
@@ -308,10 +342,10 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
                   type="button"
                   size="sm"
                   onClick={() => geocodeAddress(searchQuery)}
-                  disabled={!searchQuery.trim()}
+                  disabled={!searchQuery.trim() || isSearching}
                   aria-label={t('address.searchAria')}
                 >
-                  <Search className="w-4 h-4" />
+                  <Search className={isSearching ? "w-4 h-4 animate-spin" : "w-4 h-4"} />
                 </Button>
                 <Button
                   type="button"

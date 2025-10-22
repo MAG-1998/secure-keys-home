@@ -129,7 +129,7 @@ const ListProperty = () => {
     }
   }, [searchParams]);
 
-  // Debounced save function
+  // Debounced save function (reduced delay for faster saves)
   const saveToStorage = useCallback(
     debounce((data: typeof formData, step: number) => {
       try {
@@ -145,7 +145,7 @@ const ListProperty = () => {
       } catch (error) {
         console.warn('Failed to save draft:', error);
       }
-    }, 1000),
+    }, 300), // Reduced from 1000ms to 300ms for faster saves
     []
   );
 
@@ -153,6 +153,18 @@ const ListProperty = () => {
   useEffect(() => {
     saveToStorage(formData, currentStep);
   }, [formData, currentStep, saveToStorage]);
+
+  // Save draft before page closes
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      saveToStorage.flush();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [saveToStorage]);
 
   // Update URL with current step
   const updateStepInUrl = (step: number) => {
@@ -202,12 +214,16 @@ const ListProperty = () => {
     }
 
     if (currentStep < totalSteps) {
+      // Immediately save before changing step
+      saveToStorage.flush();
       setCurrentStep(currentStep + 1);
       updateStepInUrl(currentStep + 1);
     }
   };
   const prevStep = () => {
     if (currentStep > 1) {
+      // Immediately save before changing step
+      saveToStorage.flush();
       const prevStepNum = currentStep - 1;
       setCurrentStep(prevStepNum);
       updateStepInUrl(prevStepNum);
