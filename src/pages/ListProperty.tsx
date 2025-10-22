@@ -949,7 +949,6 @@ const ListProperty = () => {
                     </h4>
                     <ul className="text-sm text-green-700 dark:text-green-200 space-y-1">
                       <li>{t('listProperty.documentReview')}</li>
-                      <li>{t('listProperty.fieldAgentVisit')}</li>
                       <li>{t('listProperty.propertyVerification')}</li>
                       <li>{t('listProperty.listingGoesLive')}</li>
                     </ul>

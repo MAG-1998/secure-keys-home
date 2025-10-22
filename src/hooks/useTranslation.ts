@@ -1669,9 +1669,9 @@ const translations: Translations = {
     uz: 'Keyin nima bo\'ladi?'
   },
   'listProperty.documentReview': {
-    en: '• Document review within 24 hours',
-    ru: '• Проверка документов в течение 24 часов',
-    uz: '• Hujjatlar 24 soat ichida ko\'rib chiqiladi'
+    en: '• Document review within 24-48 hours',
+    ru: '• Проверка документов в течение 24-48 часов',
+    uz: '• Hujjatlar 24-48 soat ichida ko\'rib chiqiladi'
   },
   'listProperty.fieldAgentVisit': {
     en: '• Field agent visit scheduled',
