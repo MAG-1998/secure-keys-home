@@ -191,7 +191,7 @@ const Properties = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
             <h1 className="font-heading font-bold text-3xl md:text-4xl mb-2">{t('map.viewAllProperties')}</h1>
-            <p className="text-muted-foreground">Browse all available properties with advanced filtering</p>
+            <p className="text-muted-foreground">{t('property.browseAll')}</p>
           </div>
 
           {/* Advanced Filters */}
@@ -201,9 +201,9 @@ const Properties = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 {/* Search Text */}
                 <div className="md:col-span-2">
-                  <label className="text-sm font-medium mb-2 block">Search by name</label>
+                  <label className="text-sm font-medium mb-2 block">{t('filter.searchByName')}</label>
                   <Input
-                    placeholder="Search properties..."
+                    placeholder={t('filter.searchPlaceholder')}
                     value={filters.searchText}
                     onChange={(e) => setFilters(prev => ({ ...prev, searchText: e.target.value }))}
                   />
@@ -211,14 +211,14 @@ const Properties = () => {
 
                 {/* City */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">City</label>
+                  <label className="text-sm font-medium mb-2 block">{t('filter.city')}</label>
                   <Select value={filters.city} onValueChange={(value) => setFilters(prev => ({ ...prev, city: value }))}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="tashkent">Tashkent</SelectItem>
-                      <SelectItem value="all">All Cities</SelectItem>
+                      <SelectItem value="all">{t('filter.allCities')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -234,7 +234,7 @@ const Properties = () => {
                       <SelectValue placeholder="All Districts" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Districts</SelectItem>
+                      <SelectItem value="all">{t('filter.allDistricts')}</SelectItem>
                       {getDistrictOptions(language).map(({ value, label }) => (
                         <SelectItem key={value} value={value}>{label}</SelectItem>
                       ))}
@@ -245,52 +245,52 @@ const Properties = () => {
 
                 {/* Property Type */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Property Type</label>
+                  <label className="text-sm font-medium mb-2 block">{t('filter.propertyType')}</label>
                   <Select value={filters.propertyType} onValueChange={(value) => setFilters(prev => ({ ...prev, propertyType: value }))}>
                     <SelectTrigger>
-                      <SelectValue placeholder="All Types" />
+                      <SelectValue placeholder={t('filter.allTypes')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="apartment">Apartment</SelectItem>
-                      <SelectItem value="house">House</SelectItem>
-                      <SelectItem value="commercial">Commercial</SelectItem>
-                      <SelectItem value="land">Land</SelectItem>
+                      <SelectItem value="all">{t('filter.allTypes')}</SelectItem>
+                      <SelectItem value="apartment">{t('propertyType.apartment')}</SelectItem>
+                      <SelectItem value="house">{t('propertyType.house')}</SelectItem>
+                      <SelectItem value="commercial">{t('propertyType.commercial')}</SelectItem>
+                      <SelectItem value="land">{t('propertyType.land')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Bedrooms */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Bedrooms</label>
+                  <label className="text-sm font-medium mb-2 block">{t('filter.bedrooms')}</label>
                   <Select value={filters.bedrooms} onValueChange={(value) => setFilters(prev => ({ ...prev, bedrooms: value }))}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Any" />
+                      <SelectValue placeholder={t('filter.any')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Any</SelectItem>
-                      <SelectItem value="1">1+ bed</SelectItem>
-                      <SelectItem value="2">2+ bed</SelectItem>
-                      <SelectItem value="3">3+ bed</SelectItem>
-                      <SelectItem value="4">4+ bed</SelectItem>
-                      <SelectItem value="5">5+ bed</SelectItem>
+                      <SelectItem value="all">{t('filter.any')}</SelectItem>
+                      <SelectItem value="1">1+ {t('filter.bed')}</SelectItem>
+                      <SelectItem value="2">2+ {t('filter.bed')}</SelectItem>
+                      <SelectItem value="3">3+ {t('filter.bed')}</SelectItem>
+                      <SelectItem value="4">4+ {t('filter.bed')}</SelectItem>
+                      <SelectItem value="5">5+ {t('filter.bed')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Bathrooms */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Bathrooms</label>
+                  <label className="text-sm font-medium mb-2 block">{t('filter.bathrooms')}</label>
                   <Select value={filters.bathrooms} onValueChange={(value) => setFilters(prev => ({ ...prev, bathrooms: value }))}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Any" />
+                      <SelectValue placeholder={t('filter.any')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Any</SelectItem>
-                      <SelectItem value="1">1+ bath</SelectItem>
-                      <SelectItem value="2">2+ bath</SelectItem>
-                      <SelectItem value="3">3+ bath</SelectItem>
-                      <SelectItem value="4">4+ bath</SelectItem>
+                      <SelectItem value="all">{t('filter.any')}</SelectItem>
+                      <SelectItem value="1">1+ {t('filter.bath')}</SelectItem>
+                      <SelectItem value="2">2+ {t('filter.bath')}</SelectItem>
+                      <SelectItem value="3">3+ {t('filter.bath')}</SelectItem>
+                      <SelectItem value="4">4+ {t('filter.bath')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -300,17 +300,17 @@ const Properties = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 {/* Price Range */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Price (USD)</label>
+                  <label className="text-sm font-medium mb-2 block">{t('filter.priceUSD')}</label>
                   <div className="grid grid-cols-2 gap-1">
                     <Input 
                       type="number" 
-                      placeholder="Min" 
+                      placeholder={t('filter.min')} 
                       value={filters.minPrice} 
                       onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))} 
                     />
                     <Input 
                       type="number" 
-                      placeholder="Max" 
+                      placeholder={t('filter.max')} 
                       value={filters.maxPrice} 
                       onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))} 
                     />
@@ -319,17 +319,17 @@ const Properties = () => {
 
                 {/* Living Area */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Living Area (m²)</label>
+                  <label className="text-sm font-medium mb-2 block">{t('filter.livingArea')}</label>
                   <div className="grid grid-cols-2 gap-1">
                     <Input 
                       type="number" 
-                      placeholder="Min" 
+                      placeholder={t('filter.min')} 
                       value={filters.minArea} 
                       onChange={(e) => setFilters(prev => ({ ...prev, minArea: e.target.value }))} 
                     />
                     <Input 
                       type="number" 
-                      placeholder="Max" 
+                      placeholder={t('filter.max')} 
                       value={filters.maxArea} 
                       onChange={(e) => setFilters(prev => ({ ...prev, maxArea: e.target.value }))} 
                     />
@@ -343,13 +343,13 @@ const Properties = () => {
                     <div className="grid grid-cols-2 gap-1">
                       <Input 
                         type="number" 
-                        placeholder="Min" 
+                        placeholder={t('filter.min')} 
                         value={filters.minLandArea} 
                         onChange={(e) => setFilters(prev => ({ ...prev, minLandArea: e.target.value }))} 
                       />
                       <Input 
                         type="number" 
-                        placeholder="Max" 
+                        placeholder={t('filter.max')} 
                         value={filters.maxLandArea} 
                         onChange={(e) => setFilters(prev => ({ ...prev, maxLandArea: e.target.value }))} 
                       />
@@ -365,7 +365,7 @@ const Properties = () => {
                       checked={filters.halalOnly} 
                       onChange={(e) => setFilters(prev => ({ ...prev, halalOnly: e.target.checked }))} 
                     />
-                    Halal financing available
+                    {t('filter.halalFinancing')}
                   </label>
                 </div>
               </div>
@@ -393,7 +393,7 @@ const Properties = () => {
                     })
                   }}
                 >
-                  Clear Filters
+                  {t('filter.clearFilters')}
                 </Button>
               </div>
             </CardContent>
@@ -404,21 +404,21 @@ const Properties = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="font-semibold text-lg">Properties Found</h3>
+                  <h3 className="font-semibold text-lg">{t('property.propertiesFound')}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Showing {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} properties
+                    {t('property.showing')} {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, filtered.length)} {t('property.of')} {filtered.length} {t('property.properties')}
                   </p>
                 </div>
-                <Badge variant="secondary" className="text-sm">{filtered.length} total</Badge>
+                <Badge variant="secondary" className="text-sm">{filtered.length} {t('property.total')}</Badge>
               </div>
 
               {loading ? (
                 <div className="text-center py-8">
-                  <div className="text-muted-foreground">Loading properties...</div>
+                  <div className="text-muted-foreground">{t('property.loadingProperties')}</div>
                 </div>
               ) : paginatedResults.length === 0 ? (
                 <div className="text-center py-8">
-                  <div className="text-muted-foreground">No properties found matching your criteria.</div>
+                  <div className="text-muted-foreground">{t('property.noPropertiesFound')}</div>
                 </div>
               ) : (
                 <>

@@ -389,21 +389,81 @@ const translations: Translations = {
     ru: 'Комнаты',
     uz: 'Xonalar'
   },
-  'filter.landArea': {
-    en: 'Land Area (hundred m²)',
-    ru: 'Площадь участка (соток)',
-    uz: 'Yer maydoni (sotix)'
-  },
-  'filter.minSotka': {
-    en: 'Min hundred m²',
-    ru: 'Мин соток',
-    uz: 'Min sotix'
-  },
-  'filter.maxSotka': {
-    en: 'Max hundred m²',
-    ru: 'Макс соток',
-    uz: 'Max sotix'
-  },
+    'filter.landArea': {
+      en: 'Land Area (hundred m²)',
+      ru: 'Площадь участка (соток)',
+      uz: 'Yer maydoni (sotix)'
+    },
+    'filter.minSotka': {
+      en: 'Min hundred m²',
+      ru: 'Мин соток',
+      uz: 'Min sotix'
+    },
+    'filter.maxSotka': {
+      en: 'Max hundred m²',
+      ru: 'Макс соток',
+      uz: 'Max sotix'
+    },
+    'filter.searchByName': {
+      en: 'Search by name',
+      ru: 'Поиск по названию',
+      uz: 'Nom bo\'yicha qidirish'
+    },
+    'filter.searchPlaceholder': {
+      en: 'Search properties...',
+      ru: 'Поиск недвижимости...',
+      uz: 'Mulkni qidirish...'
+    },
+    'filter.city': {
+      en: 'City',
+      ru: 'Город',
+      uz: 'Shahar'
+    },
+    'filter.allCities': {
+      en: 'All Cities',
+      ru: 'Все города',
+      uz: 'Barcha shaharlar'
+    },
+    'filter.allTypes': {
+      en: 'All Types',
+      ru: 'Все типы',
+      uz: 'Barcha turlar'
+    },
+    'filter.any': {
+      en: 'Any',
+      ru: 'Любой',
+      uz: 'Har qanday'
+    },
+    'filter.priceUSD': {
+      en: 'Price (USD)',
+      ru: 'Цена (USD)',
+      uz: 'Narx (USD)'
+    },
+    'filter.livingArea': {
+      en: 'Living Area (m²)',
+      ru: 'Жилая площадь (м²)',
+      uz: 'Yashash maydoni (m²)'
+    },
+    'filter.halalFinancing': {
+      en: 'Halal financing available',
+      ru: 'Доступно халяльное финансирование',
+      uz: 'Halol moliyalashtirish mavjud'
+    },
+    'filter.clearFilters': {
+      en: 'Clear Filters',
+      ru: 'Очистить фильтры',
+      uz: 'Filtrlarni tozalash'
+    },
+    'filter.bed': {
+      en: 'bed',
+      ru: 'комн',
+      uz: 'xona'
+    },
+    'filter.bath': {
+      en: 'bath',
+      ru: 'санузел',
+      uz: 'hojatxona'
+    },
   'filter.chooseBedrooms': {
     en: 'Choose bedrooms',
     ru: 'Выберите количество комнат',
@@ -770,6 +830,46 @@ const translations: Translations = {
     en: 'Description',
     ru: 'Описание',
     uz: 'Tavsif'
+  },
+  'property.browseAll': {
+    en: 'Browse all available properties with advanced filtering',
+    ru: 'Просмотр всей доступной недвижимости с расширенными фильтрами',
+    uz: 'Barcha mavjud mulklarni kengaytirilgan filtrlash bilan ko\'rish'
+  },
+  'property.propertiesFound': {
+    en: 'Properties Found',
+    ru: 'Найдено объектов',
+    uz: 'Topilgan mulklar'
+  },
+  'property.showing': {
+    en: 'Showing',
+    ru: 'Показано',
+    uz: 'Ko\'rsatilmoqda'
+  },
+  'property.of': {
+    en: 'of',
+    ru: 'из',
+    uz: 'dan'
+  },
+  'property.properties': {
+    en: 'properties',
+    ru: 'объектов',
+    uz: 'mulklar'
+  },
+  'property.total': {
+    en: 'total',
+    ru: 'всего',
+    uz: 'jami'
+  },
+  'property.loadingProperties': {
+    en: 'Loading properties...',
+    ru: 'Загрузка объектов...',
+    uz: 'Mulklar yuklanmoqda...'
+  },
+  'property.noPropertiesFound': {
+    en: 'No properties found matching your criteria.',
+    ru: 'Не найдено объектов, соответствующих вашим критериям.',
+    uz: 'Mezonlaringizga mos mulklar topilmadi.'
   },
   
   // Property management
