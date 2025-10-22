@@ -51,80 +51,6 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     return rect.width > 0 && rect.height > 0;
   }, []);
 
-  const addPlacemark = useCallback((lat: number, lng: number) => {
-    if (!map.current || !window.ymaps) return;
-
-    // Remove existing
-    if (placemark.current) {
-      try { map.current.geoObjects.remove(placemark.current); } catch {}
-    }
-
-    const composePinImage = () => {
-      const WIDTH = 44;
-      const HEIGHT = 60;
-      const canvas = document.createElement('canvas');
-      canvas.width = WIDTH;
-      canvas.height = HEIGHT;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return '';
-
-      // Draw teardrop pin shape
-      ctx.beginPath();
-      ctx.moveTo(22, 58);
-      ctx.quadraticCurveTo(44, 38, 22, 10);
-      ctx.quadraticCurveTo(0, 38, 22, 58);
-      ctx.closePath();
-      ctx.fillStyle = 'hsl(24 95% 53%)';
-      ctx.fill();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = 'hsl(0 0% 100% / 0.5)';
-      ctx.stroke();
-
-      // Inner circle for accent
-      ctx.beginPath();
-      ctx.arc(22, 22, 10, 0, Math.PI * 2);
-      ctx.fillStyle = 'hsl(0 0% 100% / 0.85)';
-      ctx.fill();
-
-      return canvas.toDataURL('image/png');
-    };
-
-    placemark.current = new window.ymaps.Placemark(
-      [lat, lng],
-      { balloonContent: 'Selected location' },
-      {
-        iconLayout: 'default#image',
-        iconImageHref: composePinImage(),
-        iconImageSize: [44, 60],
-        iconImageOffset: [-22, -60],
-        // Ensure above ground pane
-        zIndex: 700,
-        zIndexHover: 800,
-      }
-    );
-
-    map.current.geoObjects.add(placemark.current);
-    onLocationSelect(lat, lng);
-  }, [onLocationSelect]);
-
-  const getAddress = useCallback((lat: number, lng: number) => {
-    try {
-      window.ymaps
-        .geocode([lat, lng])
-        .then((result: any) => {
-          const first = result?.geoObjects?.get?.(0);
-          if (first) {
-            const address = first.getAddressLine();
-            setSelectedAddress(address);
-            onLocationSelect(lat, lng, address);
-          }
-        })
-        .catch(() => {});
-    } catch (error) {
-      console.error('Error getting address:', error);
-    }
-  }, [onLocationSelect]);
-
   // Initialize map when API is ready and container is measurable
   useEffect(() => {
     if (!mapLoaded || map.current) return;
@@ -220,9 +146,83 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       console.error('[LocationPicker] Failed to init map', e);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapLoaded, validateContainer, addPlacemark, getAddress, selectedLat, selectedLng, initialAddress, onLocationSelect]);
+  }, [mapLoaded, validateContainer]);
 
-  const geocodeAddress = useCallback((query: string) => {
+  const addPlacemark = (lat: number, lng: number) => {
+    if (!map.current || !window.ymaps) return;
+
+    // Remove existing
+    if (placemark.current) {
+      try { map.current.geoObjects.remove(placemark.current); } catch {}
+    }
+
+    const composePinImage = () => {
+      const WIDTH = 44;
+      const HEIGHT = 60;
+      const canvas = document.createElement('canvas');
+      canvas.width = WIDTH;
+      canvas.height = HEIGHT;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return '';
+
+      // Draw teardrop pin shape
+      ctx.beginPath();
+      ctx.moveTo(22, 58);
+      ctx.quadraticCurveTo(44, 38, 22, 10);
+      ctx.quadraticCurveTo(0, 38, 22, 58);
+      ctx.closePath();
+      ctx.fillStyle = 'hsl(24 95% 53%)';
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'hsl(0 0% 100% / 0.5)';
+      ctx.stroke();
+
+      // Inner circle for accent
+      ctx.beginPath();
+      ctx.arc(22, 22, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'hsl(0 0% 100% / 0.85)';
+      ctx.fill();
+
+      return canvas.toDataURL('image/png');
+    };
+
+    placemark.current = new window.ymaps.Placemark(
+      [lat, lng],
+      { balloonContent: 'Selected location' },
+      {
+        iconLayout: 'default#image',
+        iconImageHref: composePinImage(),
+        iconImageSize: [44, 60],
+        iconImageOffset: [-22, -60],
+        // Ensure above ground pane
+        zIndex: 700,
+        zIndexHover: 800,
+      }
+    );
+
+    map.current.geoObjects.add(placemark.current);
+    onLocationSelect(lat, lng);
+  };
+
+  const getAddress = (lat: number, lng: number) => {
+    try {
+      window.ymaps
+        .geocode([lat, lng])
+        .then((result: any) => {
+          const first = result?.geoObjects?.get?.(0);
+          if (first) {
+            const address = first.getAddressLine();
+            setSelectedAddress(address);
+            onLocationSelect(lat, lng, address);
+          }
+        })
+        .catch(() => {});
+    } catch (error) {
+      console.error('Error getting address:', error);
+    }
+  };
+
+  const geocodeAddress = (query: string) => {
     if (!query.trim()) {
       toast({
         title: t('address.searchError') || "Search error",
@@ -273,7 +273,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       .finally(() => {
         setIsSearching(false);
       });
-  }, [toast, t, onLocationSelect, addPlacemark]);
+  };
 
   const handleMyLocation = () => {
     if (!navigator.geolocation) return;
@@ -312,7 +312,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       try { suggestView.current?.destroy?.(); } catch {}
       suggestView.current = null;
     };
-  }, [mapLoaded, inputId, geocodeAddress]);
+  }, [mapLoaded, inputId]);
 
   const loadingState = !mapLoaded || status !== 'ready';
 
