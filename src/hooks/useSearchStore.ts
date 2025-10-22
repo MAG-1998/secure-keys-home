@@ -13,6 +13,7 @@ const STORAGE_KEY = 'magit_search_cache'
 
 export interface SearchFilters {
   q?: string
+  region?: string
   city?: string
   district?: string
   priceMin?: string
@@ -108,9 +109,10 @@ interface SearchStore {
   clearCache: () => void
 }
 
-export const useSearchStore = create<SearchStore>((set, get) => ({
+const useSearchStore = create<SearchStore>((set, get) => ({
   filters: {
-    city: 'Tashkent' // Default to Tashkent
+    region: 'Tashkent_Region',
+    city: 'Tashkent'
   },
   results: [],
   loading: false,
@@ -160,16 +162,9 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
         query = query.eq('is_halal_available', true).eq('halal_status', 'approved')
       }
 
-      // Filter by city if specified
+      // Filter by city using the new city column
       if (searchFilters.city && searchFilters.city !== 'all') {
-        // Use ilike to match city name in location field with multiple synonyms
-        const citySearchTerms = searchFilters.city === 'Tashkent' 
-          ? ['Tashkent', 'Ташкент', 'Toshkent']
-          : ['Kokand', 'Коканд', "Qo'qon", 'Ферганская область, Коканд'];
-        
-        // Build OR condition for city synonyms
-        const cityConditions = citySearchTerms.map(term => `location.ilike.%${term}%`).join(',');
-        query = query.or(cityConditions);
+        query = query.eq('city', searchFilters.city);
       }
 
       // Apply other filters
@@ -292,6 +287,8 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
   }
 }))
 
+export { useSearchStore }
+
 // Subscribe to financing store changes for one-way data flow
 let unsubscribeFromFinancing: (() => void) | null = null;
 
@@ -343,3 +340,5 @@ if (typeof window !== 'undefined') {
   
   setupFinancingSubscription();
 }
+
+export default useSearchStore;

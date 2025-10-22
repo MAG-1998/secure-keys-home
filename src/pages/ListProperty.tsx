@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import LocationPicker from "@/components/LocationPicker";
 import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail, Save, Trash2, GripVertical, X } from "lucide-react";
 import { extractDistrictFromText, getDistrictOptions } from "@/lib/districts";
+import { extractCityFromText } from "@/lib/cities";
 import { debounce } from "@/utils/debounce";
 import { convertImagesToJpeg } from "@/utils/imageConverter";
 import { SortablePhotoItem } from "@/components/SortablePhotoItem";
@@ -74,6 +75,7 @@ const ListProperty = () => {
     propertyType: "",
     address: "",
     district: "",
+    city: "Tashkent",
     price: "",
     bedrooms: "",
     customBedrooms: "",
@@ -249,6 +251,7 @@ const ListProperty = () => {
         propertyType: "",
         address: "",
         district: "",
+        city: "Tashkent",
         price: "",
         bedrooms: "",
         customBedrooms: "",
@@ -387,6 +390,7 @@ const ListProperty = () => {
         title: formData.displayName,
         display_name: formData.displayName,
         location: formData.address,
+        city: formData.city || extractCityFromText(formData.address) || 'Tashkent',
         property_type: formData.propertyType,
         price: parseFloat(formData.price),
         bedrooms: bedroomCount,
@@ -698,13 +702,15 @@ const ListProperty = () => {
       case 2:
         return <LocationPicker 
           onLocationSelect={(lat, lng, address) => {
-            const detected = extractDistrictFromText(address || '');
+            const detectedDistrict = extractDistrictFromText(address || '');
+            const detectedCity = extractCityFromText(address || '');
             setFormData(prev => ({
               ...prev,
               latitude: lat,
               longitude: lng,
               address: address || prev.address,
-              district: prev.district || (detected !== 'Other' ? detected : '')
+              district: prev.district || (detectedDistrict !== 'Other' ? detectedDistrict : ''),
+              city: detectedCity || prev.city || 'Tashkent'
             }));
           }}
           selectedLat={formData.latitude || undefined}

@@ -332,7 +332,7 @@ export type Database = {
           created_at: string
           currency: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           order_id: string | null
           payment_method: string
           status: string
@@ -344,7 +344,7 @@ export type Database = {
           created_at?: string
           currency?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           order_id?: string | null
           payment_method: string
           status: string
@@ -356,7 +356,7 @@ export type Database = {
           created_at?: string
           currency?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           order_id?: string | null
           payment_method?: string
           status?: string
@@ -467,6 +467,7 @@ export type Database = {
           bathrooms: number | null
           bedrooms: number | null
           cash_min_percent: number | null
+          city: string | null
           created_at: string
           description: string | null
           display_name: string
@@ -501,6 +502,7 @@ export type Database = {
           bathrooms?: number | null
           bedrooms?: number | null
           cash_min_percent?: number | null
+          city?: string | null
           created_at?: string
           description?: string | null
           display_name: string
@@ -535,6 +537,7 @@ export type Database = {
           bathrooms?: number | null
           bedrooms?: number | null
           cash_min_percent?: number | null
+          city?: string | null
           created_at?: string
           description?: string | null
           display_name?: string
@@ -612,21 +615,21 @@ export type Database = {
       property_views: {
         Row: {
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           property_id: string
           viewed_at: string
           viewer_id: string | null
         }
         Insert: {
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           property_id: string
           viewed_at?: string
           viewer_id?: string | null
         }
         Update: {
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           property_id?: string
           viewed_at?: string
           viewer_id?: string | null
@@ -828,7 +831,7 @@ export type Database = {
           changed_by: string
           created_at: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           new_role: string
           old_role: string | null
           target_user_id: string
@@ -840,7 +843,7 @@ export type Database = {
           changed_by: string
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_role: string
           old_role?: string | null
           target_user_id: string
@@ -852,7 +855,7 @@ export type Database = {
           changed_by?: string
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_role?: string
           old_role?: string | null
           target_user_id?: string
@@ -1087,16 +1090,13 @@ export type Database = {
         }
         Returns: boolean
       }
-      auto_expire_visits: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      auto_expire_visits: { Args: never; Returns: number }
       auto_update_financing_stage: {
         Args: { financing_request_id_param: string }
         Returns: boolean
       }
       backup_photo_urls: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           backup_id: string
           properties_backed_up: number
@@ -1106,17 +1106,25 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: number
       }
-      can_user_create_visit_request: {
-        Args:
-          | { property_id_param?: string; user_id_param: string }
-          | { user_id_param: string }
-        Returns: {
-          can_create: boolean
-          free_visits_used: number
-          is_restricted: boolean
-          reason: string
-        }[]
-      }
+      can_user_create_visit_request:
+        | {
+            Args: { property_id_param?: string; user_id_param: string }
+            Returns: {
+              can_create: boolean
+              free_visits_used: number
+              is_restricted: boolean
+              reason: string
+            }[]
+          }
+        | {
+            Args: { user_id_param: string }
+            Returns: {
+              can_create: boolean
+              free_visits_used: number
+              is_restricted: boolean
+              reason: string
+            }[]
+          }
       can_user_request_halal_financing: {
         Args: { user_id_param: string }
         Returns: {
@@ -1124,10 +1132,7 @@ export type Database = {
           reason: string
         }[]
       }
-      cleanup_old_notifications: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      cleanup_old_notifications: { Args: never; Returns: number }
       create_property_from_application: {
         Args: { application_id: string }
         Returns: string
@@ -1136,14 +1141,8 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: boolean
       }
-      fn_escalate_tickets: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      get_least_loaded_moderator: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      fn_escalate_tickets: { Args: never; Returns: number }
+      get_least_loaded_moderator: { Args: never; Returns: string }
       get_safe_profile_for_messaging: {
         Args: { target_user_id: string }
         Returns: {
@@ -1201,7 +1200,7 @@ export type Database = {
         Returns: Json
       }
       migrate_documents_to_new_bucket: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           doc_request_id: string
           migration_status: string
@@ -1209,12 +1208,9 @@ export type Database = {
           old_urls: Json
         }[]
       }
-      restore_photo_urls: {
-        Args: { backup_uuid: string }
-        Returns: number
-      }
+      restore_photo_urls: { Args: { backup_uuid: string }; Returns: number }
       standardize_photo_urls: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           property_id: string
           updated_image_url: boolean

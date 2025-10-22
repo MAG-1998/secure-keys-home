@@ -429,16 +429,31 @@ const translations: Translations = {
       ru: 'Город',
       uz: 'Shahar'
     },
-    'city.tashkent': {
-      en: 'Tashkent',
-      ru: 'Ташкент',
-      uz: 'Toshkent'
-    },
-    'city.kokand': {
-      en: 'Kokand',
-      ru: 'Коканд',
-      uz: 'Qo\'qon'
-    },
+  'city.tashkent': {
+    en: 'Tashkent',
+    ru: 'Ташкент',
+    uz: 'Toshkent'
+  },
+  'city.kokand': {
+    en: 'Kokand',
+    ru: 'Коканд',
+    uz: 'Qo\'qon'
+  },
+  'filter.region': {
+    en: 'Region',
+    ru: 'Область',
+    uz: 'Viloyat'
+  },
+  'region.tashkent': {
+    en: 'Tashkent Region',
+    ru: 'Ташкентская область',
+    uz: 'Toshkent viloyati'
+  },
+  'region.fergana': {
+    en: 'Fergana Region',
+    ru: 'Ферганская область',
+    uz: 'Fargʻona viloyati'
+  },
     'filter.allCities': {
       en: 'All Cities',
       ru: 'Все города',

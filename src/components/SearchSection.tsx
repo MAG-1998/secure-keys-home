@@ -14,7 +14,8 @@ import { toast } from "@/components/ui/use-toast";
 import { debounce } from "@/utils/debounce";
 import { useSearchHistory } from "@/hooks/useSearchHistory";
 import { getDistrictOptions } from "@/lib/districts";
-import { getCityOptions, type Language as CityLanguage } from "@/lib/cities";
+import { getCityOptions, type Language as CityLanguage, type CityKey } from "@/lib/cities";
+import { getRegionOptions, getCitiesForRegion, type RegionKey } from "@/lib/regions";
 import { calculateHalalFinancing, formatCurrency, getPeriodOptions, calculatePropertyPriceFromCash, calculateCashFromMonthlyPayment } from "@/utils/halalFinancing";
 import { useHalalFinancingStore } from "@/hooks/useHalalFinancingStore";
 import { useNavigate } from "react-router-dom";
@@ -90,6 +91,13 @@ export const SearchSection = ({
     const russianText = 'Выйти';
     const currentLang = t(testKey) === russianText ? 'ru' : t(testKey) === 'Chiqish' ? 'uz' : 'en';
     return getCityOptions(currentLang as CityLanguage);
+  }, [t]);
+
+  const regionOptions = useMemo(() => {
+    const testKey = 'common.signOut';
+    const russianText = 'Выйти';
+    const currentLang = t(testKey) === russianText ? 'ru' : t(testKey) === 'Chiqish' ? 'uz' : 'en';
+    return getRegionOptions(currentLang as CityLanguage);
   }, [t]);
 
   // Search suggestions based on input
@@ -377,21 +385,58 @@ export const SearchSection = ({
               <div className="space-y-6">
                 <h3 className="font-semibold text-lg">{t('search.filters')}</h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                  {/* City Filter - FIRST */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                  {/* Region Filter - FIRST */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <MapPin className="h-4 w-4" />
+                      {t('filter.region')}
+                    </Label>
+                    <Select 
+                      value={filters.region || 'Tashkent_Region'} 
+                      onValueChange={value => {
+                        handleFilterChange('region', value);
+                        // Auto-update city to first city in region
+                        const cities = getCitiesForRegion(value as RegionKey);
+                        if (cities.length > 0) {
+                          handleFilterChange('city', cities[0]);
+                        }
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('region.tashkent')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {regionOptions.map(({ value, label }) => (
+                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* City Filter - SECOND (filtered by region) */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
                       {t('filter.city')}
                     </Label>
-                    <Select value={filters.city || 'Tashkent'} onValueChange={value => handleFilterChange('city', value)}>
+                    <Select 
+                      value={filters.city || 'Tashkent'} 
+                      onValueChange={value => handleFilterChange('city', value)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder={t('city.tashkent')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {cityOptions.map(city => <SelectItem key={city.value} value={city.value}>
-                            {city.label}
-                          </SelectItem>)}
+                        {cityOptions
+                          .filter(city => {
+                            if (!filters.region) return true;
+                            const citiesInRegion = getCitiesForRegion(filters.region as RegionKey);
+                            return citiesInRegion.includes(city.value as CityKey);
+                          })
+                          .map(({ value, label }) => (
+                            <SelectItem key={value} value={value}>{label}</SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </div>

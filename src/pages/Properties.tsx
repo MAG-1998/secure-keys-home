@@ -10,6 +10,8 @@ import { supabase } from '@/integrations/supabase/client'
 import { useOptimizedQuery } from '@/hooks/useOptimizedQuery'
 import { useTranslation } from '@/hooks/useTranslation'
 import { extractDistrictFromText, getDistrictOptions, localizeDistrict as localizeDistrictLib } from '@/lib/districts'
+import { getCityOptions, type CityKey } from '@/lib/cities'
+import { getRegionOptions, getCitiesForRegion, type RegionKey } from '@/lib/regions'
 import { VirtualizedPropertyList } from '@/components/VirtualizedPropertyList'
 import { Header } from '@/components/Header'
 
@@ -47,8 +49,9 @@ const Properties = () => {
   const sellerIdFromUrl = searchParams.get('seller')
   
   const [filters, setFilters] = useState({
+    region: 'Tashkent_Region',
+    city: 'Tashkent',
     district: 'all',
-    city: 'tashkent',
     minPrice: '',
     maxPrice: '',
     minArea: '',
@@ -197,8 +200,8 @@ const Properties = () => {
           {/* Advanced Filters */}
           <Card className="mb-6">
             <CardContent className="p-6">
-              {/* Row 1: Search and Location */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              {/* Row 1: Search, Region, and City */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                 {/* Search Text */}
                 <div className="md:col-span-2">
                   <label className="text-sm font-medium mb-2 block">{t('filter.searchByName')}</label>
@@ -209,16 +212,47 @@ const Properties = () => {
                   />
                 </div>
 
-                {/* City */}
+                {/* Region */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">{t('filter.region')}</label>
+                  <Select 
+                    value={filters.region} 
+                    onValueChange={(value) => {
+                      setFilters(prev => ({ ...prev, region: value }));
+                      // Auto-update city
+                      const cities = getCitiesForRegion(value as RegionKey);
+                      if (cities.length > 0) {
+                        setFilters(prev => ({ ...prev, city: cities[0] }));
+                      }
+                    }}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {getRegionOptions(language).map(({ value, label }) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* City (filtered by region) */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">{t('filter.city')}</label>
-                  <Select value={filters.city} onValueChange={(value) => setFilters(prev => ({ ...prev, city: value }))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
+                  <Select 
+                    value={filters.city} 
+                    onValueChange={(value) => setFilters(prev => ({ ...prev, city: value }))}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="tashkent">Tashkent</SelectItem>
-                      <SelectItem value="all">{t('filter.allCities')}</SelectItem>
+                      {getCityOptions(language)
+                        .filter(city => {
+                          if (!filters.region) return true;
+                          const citiesInRegion = getCitiesForRegion(filters.region as RegionKey);
+                          return citiesInRegion.includes(city.value as CityKey);
+                        })
+                        .map(({ value, label }) => (
+                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -377,8 +411,9 @@ const Properties = () => {
                   variant="outline"
                   onClick={() => {
                     setFilters({
+                      region: 'Tashkent_Region',
+                      city: 'Tashkent',
                       district: 'all',
-                      city: 'tashkent',
                       minPrice: '',
                       maxPrice: '',
                       minArea: '',
