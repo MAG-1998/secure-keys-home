@@ -3145,6 +3145,56 @@ const translations: Translations = {
     ru: 'Найдите адрес, кликните по карте или используйте Моё местоположение. Маркер можно перетаскивать.',
     uz: 'Manzilingizni qidiring, xaritaga bosing yoki Joylashuvimdan foydalaning. Markerni sudrab sozlashingiz mumkin.'
   },
+  'address.notFound': {
+    en: 'Location not found',
+    ru: 'Местоположение не найдено',
+    uz: 'Manzil topilmadi'
+  },
+  'address.onlyUzbekistan': {
+    en: 'Only locations within Uzbekistan are supported',
+    ru: 'Поддерживаются только места в Узбекистане',
+    uz: 'Faqat Oʻzbekiston hududidagi joylar qoʻllab-quvvatlanadi'
+  },
+  'address.outOfBounds': {
+    en: 'Outside Uzbekistan',
+    ru: 'За пределами Узбекистана',
+    uz: 'Oʻzbekistondan tashqarida'
+  },
+  'address.searchError': {
+    en: 'Search error',
+    ru: 'Ошибка поиска',
+    uz: 'Qidiruv xatosi'
+  },
+  'address.enterAddress': {
+    en: 'Please enter an address to search',
+    ru: 'Введите адрес для поиска',
+    uz: 'Qidirish uchun manzil kiriting'
+  },
+  'address.mapNotReady': {
+    en: 'Map not ready',
+    ru: 'Карта не готова',
+    uz: 'Xarita tayyor emas'
+  },
+  'address.tryAgain': {
+    en: 'Please wait for the map to load',
+    ru: 'Подождите загрузки карты',
+    uz: 'Xarita yuklanishini kuting'
+  },
+  'address.tryDifferent': {
+    en: 'Try a different search term',
+    ru: 'Попробуйте другой запрос',
+    uz: 'Boshqa soʻrov kiriting'
+  },
+  'address.searchFailed': {
+    en: 'Search failed',
+    ru: 'Поиск не удался',
+    uz: 'Qidiruv muvaffaqiyatsiz'
+  },
+  'address.checkConnection': {
+    en: 'Please check your connection and try again',
+    ru: 'Проверьте подключение и повторите попытку',
+    uz: 'Internetni tekshiring va qayta urinib koʻring'
+  },
 
   'common.min': {
     en: 'Min',
