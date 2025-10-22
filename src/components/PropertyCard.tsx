@@ -176,9 +176,9 @@ export const PropertyCard = ({
           </div>
           <div className="flex items-center">
             <Square className="h-4 w-4 mr-1" />
-            {actualPropertyType === 'house' && actualLandArea ? 
-              `${actualArea}m² • ${actualLandArea} соток` : 
-              `${actualArea}m²`
+            {(actualPropertyType === 'house' || actualPropertyType === 'commercial') && actualLandArea ? 
+              `${actualArea}${t('property.sqm')} • ${actualLandArea} ${t('property.sotka')}` : 
+              `${actualArea}${t('property.sqm')}`
             }
           </div>
         </div>

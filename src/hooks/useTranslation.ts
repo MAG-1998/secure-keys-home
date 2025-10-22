@@ -389,6 +389,21 @@ const translations: Translations = {
     ru: 'Комнаты',
     uz: 'Xonalar'
   },
+  'filter.landArea': {
+    en: 'Land Area (hundred m²)',
+    ru: 'Площадь участка (соток)',
+    uz: 'Yer maydoni (sotix)'
+  },
+  'filter.minSotka': {
+    en: 'Min hundred m²',
+    ru: 'Мин соток',
+    uz: 'Min sotix'
+  },
+  'filter.maxSotka': {
+    en: 'Max hundred m²',
+    ru: 'Макс соток',
+    uz: 'Max sotix'
+  },
   'filter.chooseBedrooms': {
     en: 'Choose bedrooms',
     ru: 'Выберите количество комнат',
@@ -727,7 +742,7 @@ const translations: Translations = {
     uz: 'm²'
   },
   'property.sotka': {
-    en: 'sotka',
+    en: 'hundred m²',
     ru: 'соток',
     uz: 'sotix'
   },
@@ -750,6 +765,11 @@ const translations: Translations = {
     en: 'Enter property address',
     ru: 'Введите адрес недвижимости',
     uz: 'Mulk manzilini kiriting'
+  },
+  'property.description': {
+    en: 'Description',
+    ru: 'Описание',
+    uz: 'Tavsif'
   },
   
   // Property management

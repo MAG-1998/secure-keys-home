@@ -24,6 +24,8 @@ export interface SearchFilters {
   halalMode?: boolean
   cashAvailable?: string
   periodMonths?: string
+  landAreaMin?: string
+  landAreaMax?: string
 }
 
 export interface Property {
@@ -181,6 +183,21 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
         const bedroomCount = parseInt(searchFilters.bedrooms)
         if (!isNaN(bedroomCount)) {
           query = query.gte('bedrooms', bedroomCount)
+        }
+      }
+
+      // Filter by land area
+      if (searchFilters.landAreaMin) {
+        const minLandArea = parseFloat(searchFilters.landAreaMin)
+        if (!isNaN(minLandArea)) {
+          query = query.gte('land_area_sotka', minLandArea)
+        }
+      }
+
+      if (searchFilters.landAreaMax) {
+        const maxLandArea = parseFloat(searchFilters.landAreaMax)
+        if (!isNaN(maxLandArea)) {
+          query = query.lte('land_area_sotka', maxLandArea)
         }
       }
 

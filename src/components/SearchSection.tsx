@@ -441,10 +441,36 @@ export const SearchSection = ({
                        <Input placeholder={t('filter.min')} value={filters.priceMin || ''} onChange={e => handleFilterChange('priceMin', e.target.value)} className="flex-1" />
                        <Input placeholder={t('filter.max')} value={filters.priceMax || ''} onChange={e => handleFilterChange('priceMax', e.target.value)} className="flex-1" />
                      </div>
-                  </div>
-                </div>
+                   </div>
+                 </div>
 
-                {/* Halal Financing Section */}
+                 {/* Land Area Filter - Show for house, commercial, land */}
+                 {(filters.propertyType === 'house' || filters.propertyType === 'commercial' || filters.propertyType === 'land' || !filters.propertyType) && (
+                   <div className="space-y-2">
+                     <Label className="text-sm font-medium flex items-center gap-2">
+                       <Square className="h-4 w-4" />
+                       {t('filter.landArea')}
+                     </Label>
+                     <div className="flex gap-2">
+                       <Input 
+                         placeholder={t('filter.minSotka')} 
+                         value={filters.landAreaMin || ''} 
+                         onChange={e => handleFilterChange('landAreaMin', e.target.value)} 
+                         className="flex-1" 
+                         type="number"
+                       />
+                       <Input 
+                         placeholder={t('filter.maxSotka')} 
+                         value={filters.landAreaMax || ''} 
+                         onChange={e => handleFilterChange('landAreaMax', e.target.value)} 
+                         className="flex-1"
+                         type="number"
+                       />
+                     </div>
+                   </div>
+                 )}
+
+                 {/* Halal Financing Section */}
                 {isHalalMode && <div className="space-y-4 p-4 bg-magit-trust/5 rounded-lg border border-magit-trust/20">
                     <h4 className="font-medium text-magit-trust flex items-center gap-2">
                       <Calculator className="h-4 w-4" />
