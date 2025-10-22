@@ -111,7 +111,7 @@ interface SearchStore {
 
 const useSearchStore = create<SearchStore>((set, get) => ({
   filters: {
-    region: 'Tashkent_Region',
+    region: 'Tashkent_City',
     city: 'Tashkent'
   },
   results: [],

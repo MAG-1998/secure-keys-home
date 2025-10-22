@@ -444,15 +444,75 @@ const translations: Translations = {
     ru: 'Область',
     uz: 'Viloyat'
   },
-  'region.tashkent': {
-    en: 'Tashkent Region',
-    ru: 'Ташкентская область',
-    uz: 'Toshkent viloyati'
+  'region.tashkent_city': {
+    en: 'Tashkent',
+    ru: 'Ташкент',
+    uz: 'Toshkent'
+  },
+  'region.andijan': {
+    en: 'Andijan Region',
+    ru: 'Андижанская область',
+    uz: 'Andijon viloyati'
+  },
+  'region.bukhara': {
+    en: 'Bukhara Region',
+    ru: 'Бухарская область',
+    uz: 'Buxoro viloyati'
   },
   'region.fergana': {
     en: 'Fergana Region',
     ru: 'Ферганская область',
-    uz: 'Fargʻona viloyati'
+    uz: "Farg'ona viloyati"
+  },
+  'region.jizzakh': {
+    en: 'Jizzakh Region',
+    ru: 'Джизакская область',
+    uz: 'Jizzax viloyati'
+  },
+  'region.namangan': {
+    en: 'Namangan Region',
+    ru: 'Наманганская область',
+    uz: 'Namangan viloyati'
+  },
+  'region.navoiy': {
+    en: 'Navoiy Region',
+    ru: 'Навоийская область',
+    uz: 'Navoiy viloyati'
+  },
+  'region.qashqadaryo': {
+    en: 'Qashqadaryo Region',
+    ru: 'Кашкадарьинская область',
+    uz: 'Qashqadaryo viloyati'
+  },
+  'region.samarqand': {
+    en: 'Samarqand Region',
+    ru: 'Самаркандская область',
+    uz: 'Samarqand viloyati'
+  },
+  'region.sirdaryo': {
+    en: 'Sirdaryo Region',
+    ru: 'Сырдарьинская область',
+    uz: 'Sirdaryo viloyati'
+  },
+  'region.surxondaryo': {
+    en: 'Surxondaryo Region',
+    ru: 'Сурхандарьинская область',
+    uz: 'Surxondaryo viloyati'
+  },
+  'region.tashkent_region': {
+    en: 'Tashkent Region',
+    ru: 'Ташкентская область',
+    uz: 'Toshkent viloyati'
+  },
+  'region.xorazm': {
+    en: 'Xorazm Region',
+    ru: 'Хорезмская область',
+    uz: 'Xorazm viloyati'
+  },
+  'region.karakalpakstan': {
+    en: 'Republic of Karakalpakstan',
+    ru: 'Республика Каракалпакстан',
+    uz: "Qoraqalpog'iston Respublikasi"
   },
     'filter.allCities': {
       en: 'All Cities',

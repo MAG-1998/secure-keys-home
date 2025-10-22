@@ -49,7 +49,7 @@ const Properties = () => {
   const sellerIdFromUrl = searchParams.get('seller')
   
   const [filters, setFilters] = useState({
-    region: 'Tashkent_Region',
+    region: 'Tashkent_City',
     city: 'Tashkent',
     district: 'all',
     minPrice: '',
@@ -411,7 +411,7 @@ const Properties = () => {
                   variant="outline"
                   onClick={() => {
                     setFilters({
-                      region: 'Tashkent_Region',
+                      region: 'Tashkent_City',
                       city: 'Tashkent',
                       district: 'all',
                       minPrice: '',
