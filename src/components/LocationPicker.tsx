@@ -20,6 +20,9 @@ declare global {
   }
 }
 
+// Uzbekistan geographical bounds [Southwest corner, Northeast corner]
+const UZBEKISTAN_BOUNDS: [[number, number], [number, number]] = [[37.2, 55.9], [45.6, 73.2]];
+
 const LocationPicker: React.FC<LocationPickerProps> = ({
   onLocationSelect,
   selectedLat,
@@ -249,7 +252,11 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     setIsSearching(true);
     
     try {
-      const result = await window.ymaps.geocode(query);
+      const result = await window.ymaps.geocode(query, {
+        boundedBy: UZBEKISTAN_BOUNDS,
+        strictBounds: true, // Only return results within Uzbekistan
+        results: 1 // Optimize by getting only the best match
+      });
       const first = result?.geoObjects?.get?.(0);
       if (first) {
         const coords = first.geometry.getCoordinates();
@@ -299,7 +306,11 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     if (!mapLoaded || !window.ymaps || !window.ymaps.SuggestView) return;
 
     try {
-      suggestView.current = new window.ymaps.SuggestView(inputId, { results: 7 });
+      suggestView.current = new window.ymaps.SuggestView(inputId, {
+        results: 7,
+        boundedBy: UZBEKISTAN_BOUNDS,
+        strictBounds: true // Only suggest locations within Uzbekistan
+      });
       suggestView.current.events.add('select', (e: any) => {
         const value = e.get('item')?.value;
         if (value) {
