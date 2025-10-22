@@ -16,6 +16,7 @@ import { LiquidProgressButton } from "@/components/ui/liquid-progress-button";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useUser } from "@/contexts/UserContext";
 import LocationPicker from "@/components/LocationPicker";
 import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail, Save, Trash2, GripVertical, X } from "lucide-react";
 import { extractDistrictFromText, getDistrictOptions } from "@/lib/districts";
@@ -55,6 +56,7 @@ const ListProperty = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { t, language } = useTranslation();
   const { toast } = useToast();
+  const { user, session } = useUser();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
@@ -353,13 +355,13 @@ const ListProperty = () => {
     setSubmissionProgress(0);
     setSubmissionCurrentStep("Validating information");
     try {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) {
+      if (!user || !session) {
         toast({
           title: "Error",
           description: "You must be logged in to submit an application",
           variant: "destructive",
         });
+        setIsSubmitting(false);
         return;
       }
 
@@ -383,7 +385,7 @@ const ListProperty = () => {
         Number(formData.customBathrooms) : Number(formData.bathrooms);
 
       const insertPayload: any = {
-        user_id: user.user.id,
+        user_id: user.id,
         title: formData.displayName,
         display_name: formData.displayName,
         location: formData.address,
@@ -425,7 +427,7 @@ const ListProperty = () => {
           setSubmissionCurrentStep(`Uploading photo ${i + 1} of ${formData.photos.length}`);
           
           // All files are now JPEG, so use .jpg extension
-          const filePath = `${user.user.id}/${property.id}/${Date.now()}_${i}.jpg`;
+          const filePath = `${user.id}/${property.id}/${Date.now()}_${i}.jpg`;
           const { data: uploadData, error: uploadError } = await supabase
             .storage
             .from('properties')
@@ -458,7 +460,7 @@ const ListProperty = () => {
           .from('halal_financing_requests')
           .insert({
             property_id: property.id,
-            user_id: user.user.id,
+            user_id: user.id,
             request_notes: 'Halal financing requested during property listing'
           });
         
