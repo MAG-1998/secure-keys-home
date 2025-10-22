@@ -484,6 +484,16 @@ export const SearchSection = ({
                     </div>
                   </div>}
               </div>
+
+              {/* Advanced Search Link */}
+              <div className="flex justify-center pt-4 mt-4 border-t border-border/40">
+                <button 
+                  onClick={() => navigate('/properties')} 
+                  className="text-xs text-muted-foreground hover:text-foreground underline transition-colors"
+                >
+                  {t('search.advancedFilters')}
+                </button>
+              </div>
             </CardContent>
           </Card>
 
@@ -631,16 +641,6 @@ export const SearchSection = ({
                     </Button>
                   </div>
 
-                  {/* Advanced Search Link */}
-                  <div className="flex justify-center mt-2">
-                    <button 
-                      onClick={() => navigate('/properties')} 
-                      className="text-xs text-muted-foreground hover:text-foreground underline transition-colors"
-                    >
-                      {t('search.advancedFilters')}
-                    </button>
-                  </div>
-
                  {aiSuggestion && <div className="mt-6 p-4 bg-muted/30 rounded-lg">
                     <div className="flex items-start gap-3">
                       <Badge variant="warning" className="mt-1">
@@ -652,15 +652,7 @@ export const SearchSection = ({
                </div>}
 
                {/* Advanced Search Link at bottom of filters */}
-               <div className="flex justify-center mt-4 pt-4 border-t border-border/40">
-                 <button 
-                   onClick={() => navigate('/properties')} 
-                   className="text-xs text-muted-foreground hover:text-foreground underline transition-colors"
-                 >
-                   {t('search.advancedFilters')}
-                 </button>
-               </div>
-              </CardContent>
+               </CardContent>
             </Card>}
         </div>
       </div>
