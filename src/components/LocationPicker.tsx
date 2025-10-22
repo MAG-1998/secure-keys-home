@@ -23,6 +23,17 @@ declare global {
 // Uzbekistan geographical bounds [Southwest corner, Northeast corner]
 const UZBEKISTAN_BOUNDS: [[number, number], [number, number]] = [[37.2, 55.9], [45.6, 73.2]];
 
+// Default center (Tashkent)
+const TASHKENT_CENTER: [number, number] = [41.2995, 69.2401];
+
+// Helper to check if coordinates are within Uzbekistan
+const isWithinUzbekistan = (lat: number, lng: number): boolean => {
+  return lat >= UZBEKISTAN_BOUNDS[0][0] &&
+         lat <= UZBEKISTAN_BOUNDS[1][0] &&
+         lng >= UZBEKISTAN_BOUNDS[0][1] &&
+         lng <= UZBEKISTAN_BOUNDS[1][1];
+};
+
 const LocationPicker: React.FC<LocationPickerProps> = ({
   onLocationSelect,
   selectedLat,
@@ -114,11 +125,20 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
               const first = result?.geoObjects?.get?.(0);
               if (first) {
                 const coords = first.geometry.getCoordinates();
+                const [lat, lng] = [coords[0], coords[1]];
+                
+                // Validate initial address is within Uzbekistan
+                if (!isWithinUzbekistan(lat, lng)) {
+                  // Skip placing pin, center back to Tashkent
+                  try { map.current?.setCenter(TASHKENT_CENTER, 11, { duration: 300 }); } catch {}
+                  return;
+                }
+                
                 const address = first.getAddressLine();
-                addPlacemark(coords[0], coords[1]);
+                addPlacemark(lat, lng);
                 setSelectedAddress(address);
-                onLocationSelect(coords[0], coords[1], address);
-                map.current?.setCenter(coords, 15, { duration: 300 });
+                onLocationSelect(lat, lng, address);
+                map.current?.setCenter([lat, lng], 15, { duration: 300 });
               }
             })
             .catch(() => {});
@@ -128,8 +148,20 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       // Click to set placemark
       map.current.events.add('click', (e: any) => {
         const coords = e.get('coords');
-        addPlacemark(coords[0], coords[1]);
-        getAddress(coords[0], coords[1]);
+        const [lat, lng] = [coords[0], coords[1]];
+        
+        // Validate click location is within Uzbekistan
+        if (!isWithinUzbekistan(lat, lng)) {
+          toast({
+            title: t('address.outOfBounds') || 'Outside Uzbekistan',
+            description: t('address.onlyUzbekistan') || 'Only locations within Uzbekistan are supported.',
+            variant: 'destructive',
+          });
+          return;
+        }
+        
+        addPlacemark(lat, lng);
+        getAddress(lat, lng);
       });
 
       // Fit after container resizes (dialog open, viewport change)
@@ -260,11 +292,25 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       const first = result?.geoObjects?.get?.(0);
       if (first) {
         const coords = first.geometry.getCoordinates();
+        const [lat, lng] = [coords[0], coords[1]];
+
+        // Validate coordinates are within Uzbekistan
+        if (!isWithinUzbekistan(lat, lng)) {
+          toast({
+            title: t('address.notFound') || 'Location not allowed',
+            description: t('address.onlyUzbekistan') || 'Only locations within Uzbekistan are supported.',
+            variant: 'destructive',
+          });
+          // Recenter to Tashkent for feedback
+          try { map.current?.setCenter(TASHKENT_CENTER, 11, { duration: 300 }); } catch {}
+          return;
+        }
+
         const address = first.getAddressLine();
-        addPlacemark(coords[0], coords[1]);
+        addPlacemark(lat, lng);
         setSelectedAddress(address);
-        onLocationSelect(coords[0], coords[1], address);
-        map.current?.setCenter(coords, 15, { duration: 300 });
+        onLocationSelect(lat, lng, address);
+        map.current?.setCenter([lat, lng], 15, { duration: 300 });
       } else {
         toast({
           title: t('address.notFound') || "Location not found",
@@ -289,10 +335,23 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const { latitude, longitude } = pos.coords;
-        addPlacemark(latitude, longitude);
-        map.current?.setCenter([latitude, longitude], 15, { duration: 300 });
-        getAddress(latitude, longitude);
+        const { latitude: lat, longitude: lng } = pos.coords;
+        
+        // Validate current location is within Uzbekistan
+        if (!isWithinUzbekistan(lat, lng)) {
+          toast({
+            title: t('address.outOfBounds') || 'Outside Uzbekistan',
+            description: t('address.onlyUzbekistan') || 'Only locations within Uzbekistan are supported.',
+            variant: 'destructive',
+          });
+          // Recenter to Tashkent
+          try { map.current?.setCenter(TASHKENT_CENTER, 11, { duration: 300 }); } catch {}
+          return;
+        }
+        
+        addPlacemark(lat, lng);
+        map.current?.setCenter([lat, lng], 15, { duration: 300 });
+        getAddress(lat, lng);
       },
       (err) => {
         console.warn('Geolocation error:', err);
