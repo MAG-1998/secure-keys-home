@@ -36,6 +36,7 @@ interface Property {
   display_name?: string;
   is_verified?: boolean;
   property_photos?: any[];
+  created_at?: string;
   [key: string]: any; // For additional properties from Supabase
 }
 
@@ -125,11 +126,21 @@ const Properties = () => {
     if (minArea !== undefined) f = f.filter(p => Number(p.area) >= minArea)
     if (maxArea !== undefined) f = f.filter(p => Number(p.area) <= maxArea)
     
-    // Land area filters (for houses)
+    // Land area filters (for houses, commercial, and land)
     const minLandArea = filters.minLandArea ? Number(filters.minLandArea) : undefined
     const maxLandArea = filters.maxLandArea ? Number(filters.maxLandArea) : undefined
-    if (minLandArea !== undefined) f = f.filter(p => p.property_type === 'house' && Number(p.land_area_sotka || 0) >= minLandArea)
-    if (maxLandArea !== undefined) f = f.filter(p => p.property_type === 'house' && Number(p.land_area_sotka || 0) <= maxLandArea)
+    if (minLandArea !== undefined) {
+      f = f.filter(p => {
+        const hasLandArea = ['house', 'commercial', 'land'].includes(p.property_type || '')
+        return hasLandArea && Number(p.land_area_sotka || 0) >= minLandArea
+      })
+    }
+    if (maxLandArea !== undefined) {
+      f = f.filter(p => {
+        const hasLandArea = ['house', 'commercial', 'land'].includes(p.property_type || '')
+        return hasLandArea && Number(p.land_area_sotka || 0) <= maxLandArea
+      })
+    }
     
     // Bedrooms filter
     if (filters.bedrooms !== 'all') f = f.filter(p => Number(p.bedrooms) >= parseInt(filters.bedrooms))
@@ -153,7 +164,12 @@ const Properties = () => {
     // Halal filter
     if (filters.halalOnly) f = f.filter(p => p.isHalal)
     
-    return f
+    // Sort by newest first (same as main page)
+    return f.sort((a, b) => {
+      const dateA = new Date(a.created_at || 0).getTime()
+      const dateB = new Date(b.created_at || 0).getTime()
+      return dateB - dateA // Descending order (newest first)
+    })
   }, [all, filters])
   
   // Pagination
@@ -320,10 +336,10 @@ const Properties = () => {
                   </div>
                 </div>
 
-                {/* Land Area (for houses only) */}
-                {filters.propertyType === 'house' && (
+                {/* Land Area (for houses, commercial, and land) */}
+                {(filters.propertyType === 'house' || filters.propertyType === 'commercial' || filters.propertyType === 'land') && (
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Land Area (sotka)</label>
+                    <label className="text-sm font-medium mb-2 block">{t('filter.landArea')}</label>
                     <div className="grid grid-cols-2 gap-1">
                       <Input 
                         type="number" 
