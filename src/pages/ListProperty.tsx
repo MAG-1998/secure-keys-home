@@ -869,7 +869,7 @@ const ListProperty = () => {
                           </div>
                           <div className="flex justify-between font-semibold border-t border-blue-200 dark:border-blue-700 pt-1">
                             <span className="text-blue-900 dark:text-blue-100">{t('listProperty.netProceeds')}</span>
-                            <span className="text-green-600">${(parseFloat(formData.price) * 0.98).toLocaleString()}</span>
+                            <span className="text-green-600">${(parseFloat(formData.price) * 0.99).toLocaleString()}</span>
                           </div>
                         </div>
                         <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
