@@ -9,7 +9,7 @@ import { Search, Bed, Bath, ChevronLeft, ChevronRight } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 import { useOptimizedQuery } from '@/hooks/useOptimizedQuery'
 import { useTranslation } from '@/hooks/useTranslation'
-import { extractDistrictFromText, getDistrictOptions, localizeDistrict as localizeDistrictLib } from '@/lib/districts'
+import { extractDistrictFromText, getDistrictOptionsForCity, localizeDistrict as localizeDistrictLib } from '@/lib/districts'
 import { getCityOptions, type CityKey } from '@/lib/cities'
 import { getRegionOptions, getCitiesForRegion, type RegionKey } from '@/lib/regions'
 import { VirtualizedPropertyList } from '@/components/VirtualizedPropertyList'
@@ -22,6 +22,7 @@ interface Property {
   longitude: number;
   price: number;
   location: string;
+  city?: string;
   district?: string;
   property_type: string;
   bedrooms: number;
@@ -42,6 +43,18 @@ interface Property {
   [key: string]: any; // For additional properties from Supabase
 }
 
+// Load persisted filters from localStorage
+const loadPersistedFilters = (): { region?: string; city?: string } => {
+  try {
+    const stored = localStorage.getItem('magit_search_filters_v1');
+    if (!stored) return {};
+    const parsed = JSON.parse(stored);
+    return { region: parsed.region, city: parsed.city };
+  } catch {
+    return {};
+  }
+};
+
 const Properties = () => {
   const navigate = useNavigate()
   const { t, language } = useTranslation()
@@ -49,8 +62,9 @@ const Properties = () => {
   const sellerIdFromUrl = searchParams.get('seller')
   
   const [filters, setFilters] = useState({
-    region: 'Tashkent_City',
-    city: 'Tashkent',
+    // Load from localStorage for consistency
+    region: loadPersistedFilters().region || 'Tashkent_City',
+    city: loadPersistedFilters().city || 'Tashkent',
     district: 'all',
     minPrice: '',
     maxPrice: '',
@@ -111,10 +125,9 @@ const Properties = () => {
     // District filter
     if (filters.district !== 'all') f = f.filter(p => p.district === filters.district)
     
-    // City filter (for future expansion)
-    if (filters.city !== 'all') {
-      // Currently only Tashkent, but prepared for expansion
-      f = f.filter(p => p.location?.toLowerCase().includes('tashkent') || true)
+    // City filter - use the city column from database
+    if (filters.city && filters.city !== 'all') {
+      f = f.filter(p => p.city === filters.city);
     }
     
     // Price filters
@@ -240,10 +253,14 @@ const Properties = () => {
                   <label className="text-sm font-medium mb-2 block">{t('filter.city')}</label>
                   <Select 
                     value={filters.city} 
-                    onValueChange={(value) => setFilters(prev => ({ ...prev, city: value }))}
+                    onValueChange={(value) => {
+                      setFilters(prev => ({ ...prev, city: value, district: 'all' }));
+                    }}
                   >
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
+                      {/* Add "All Cities" option */}
+                      <SelectItem value="all">{t('filter.allCities')}</SelectItem>
                       {getCityOptions(language)
                         .filter(city => {
                           if (!filters.region) return true;
@@ -260,7 +277,7 @@ const Properties = () => {
 
               {/* Row 2: Property Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                {/* District */}
+                {/* District - now city-aware */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">{t('filter.district')}</label>
                   <Select value={filters.district} onValueChange={(value) => setFilters(prev => ({ ...prev, district: value }))}>
@@ -268,11 +285,12 @@ const Properties = () => {
                       <SelectValue placeholder="All Districts" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t('filter.allDistricts')}</SelectItem>
-                      {getDistrictOptions(language).map(({ value, label }) => (
-                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      {/* Get districts for the currently selected city */}
+                      {getDistrictOptionsForCity(filters.city || 'Tashkent', language).map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
                       ))}
-                      <SelectItem value="Other">{localizeDistrictLib('Other', language)}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

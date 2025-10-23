@@ -13,7 +13,7 @@ import { useScroll } from "@/hooks/use-scroll";
 import { toast } from "@/components/ui/use-toast";
 import { debounce } from "@/utils/debounce";
 import { useSearchHistory } from "@/hooks/useSearchHistory";
-import { getDistrictOptions } from "@/lib/districts";
+import { getDistrictOptionsForCity } from "@/lib/districts";
 import { getCityOptions, type Language as CityLanguage, type CityKey } from "@/lib/cities";
 import { getRegionOptions, getCitiesForRegion, type RegionKey } from "@/lib/regions";
 import { calculateHalalFinancing, formatCurrency, getPeriodOptions, calculatePropertyPriceFromCash, calculateCashFromMonthlyPayment } from "@/utils/halalFinancing";
@@ -77,13 +77,11 @@ export const SearchSection = ({
     return calculateHalalFinancing(cashAvailable, propertyPrice, periodMonths);
   }, [filters.cashAvailable, filters.periodMonths]);
 
-  // District and city options for current language  
-  const districtOptions = useMemo(() => {
-    // Extract language from translation function - check if it returns Russian
+  // Extract current language from translation function
+  const currentLanguage = useMemo(() => {
     const testKey = 'common.signOut';
     const russianText = 'Выйти';
-    const currentLang = t(testKey) === russianText ? 'ru' : t(testKey) === 'Chiqish' ? 'uz' : 'en';
-    return getDistrictOptions(currentLang as any);
+    return t(testKey) === russianText ? 'ru' : t(testKey) === 'Chiqish' ? 'uz' : 'en';
   }, [t]);
 
   const cityOptions = useMemo(() => {
@@ -422,12 +420,18 @@ export const SearchSection = ({
                     </Label>
                     <Select 
                       value={filters.city || 'Tashkent'} 
-                      onValueChange={value => handleFilterChange('city', value)}
+                      onValueChange={value => {
+                        handleFilterChange('city', value);
+                        // Reset district to 'all' when city changes
+                        handleFilterChange('district', '');
+                      }}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={t('city.tashkent')} />
                       </SelectTrigger>
                       <SelectContent>
+                        {/* Add "All Cities" option */}
+                        <SelectItem value="all">{t('filter.allCities')}</SelectItem>
                         {cityOptions
                           .filter(city => {
                             if (!filters.region) return true;
@@ -441,7 +445,7 @@ export const SearchSection = ({
                     </Select>
                   </div>
 
-                  {/* District Filter */}
+                  {/* District Filter - now city-aware */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
@@ -452,10 +456,12 @@ export const SearchSection = ({
                         <SelectValue placeholder={t('filter.chooseDistrict')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">{t('common.any')}</SelectItem>
-                        {districtOptions.map(district => <SelectItem key={district.value} value={district.value}>
-                            {district.label}
-                          </SelectItem>)}
+                        {/* Get districts for the currently selected city */}
+                        {getDistrictOptionsForCity(filters.city || 'Tashkent', currentLanguage as any).map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>

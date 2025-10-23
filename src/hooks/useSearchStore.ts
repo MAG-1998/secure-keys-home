@@ -10,6 +10,39 @@ interface SearchCacheItem {
 
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 const STORAGE_KEY = 'magit_search_cache'
+const FILTER_PERSISTENCE_KEY = 'magit_search_filters_v1'
+
+// Load persisted filters from localStorage
+const loadPersistedFilters = (): Partial<SearchFilters> => {
+  try {
+    const stored = localStorage.getItem(FILTER_PERSISTENCE_KEY);
+    if (!stored) return {};
+    
+    const parsed = JSON.parse(stored);
+    // Only persist region and city, not search queries or other filters
+    return {
+      region: parsed.region,
+      city: parsed.city
+    };
+  } catch (error) {
+    console.warn('Failed to load persisted filters:', error);
+    return {};
+  }
+};
+
+// Save filters to localStorage
+const persistFilters = (filters: SearchFilters) => {
+  try {
+    // Only persist region and city
+    const toPersist = {
+      region: filters.region,
+      city: filters.city
+    };
+    localStorage.setItem(FILTER_PERSISTENCE_KEY, JSON.stringify(toPersist));
+  } catch (error) {
+    console.warn('Failed to persist filters:', error);
+  }
+};
 
 export interface SearchFilters {
   q?: string
@@ -111,8 +144,9 @@ interface SearchStore {
 
 const useSearchStore = create<SearchStore>((set, get) => ({
   filters: {
-    region: 'Tashkent_City',
-    city: 'Tashkent'
+    // Load from localStorage, fallback to Tashkent_City
+    region: loadPersistedFilters().region || 'Tashkent_City',
+    city: loadPersistedFilters().city || 'Tashkent'
   },
   results: [],
   loading: false,
@@ -120,7 +154,16 @@ const useSearchStore = create<SearchStore>((set, get) => ({
   lastSearchQuery: '',
 
   setFilters: (newFilters) => {
-    set((state) => ({ filters: { ...state.filters, ...newFilters } }));
+    set((state) => {
+      const updatedFilters = { ...state.filters, ...newFilters };
+      
+      // Persist region/city changes to localStorage
+      if (newFilters.region !== undefined || newFilters.city !== undefined) {
+        persistFilters(updatedFilters);
+      }
+      
+      return { filters: updatedFilters };
+    });
   },
 
   performSearch: async (overrideFilters = {}) => {
