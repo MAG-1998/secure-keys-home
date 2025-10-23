@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { supabase } from '@/integrations/supabase/client'
 import { getCitiesForRegion, type RegionKey } from '@/lib/regions'
+import { CITIES } from '@/lib/cities'
 import type { CityKey } from '@/lib/cities'
 
 interface SearchCacheItem {
@@ -207,17 +208,24 @@ const useSearchStore = create<SearchStore>((set, get) => ({
         query = query.eq('is_halal_available', true).eq('halal_status', 'approved')
       }
 
-      // Filter by region and city
+      // Filter by region and city (city synonyms-aware)
       if (searchFilters.region) {
         if (searchFilters.city && searchFilters.city !== 'all') {
-          // Specific city selected - filter by city only
-          query = query.eq('city', searchFilters.city);
+          // Specific city selected - include known synonyms
+          const key = searchFilters.city as CityKey;
+          const syn = CITIES[key]?.synonyms || [];
+          const candidates = Array.from(new Set<string>([key, ...syn]));
+          query = query.in('city', candidates);
         } else {
-          // "All Cities" selected - filter by region
-          // Get all cities in the region and filter by them
+          // "All Cities" selected - include all cities in region and their synonyms
           const citiesInRegion = getCitiesForRegion(searchFilters.region as RegionKey);
           if (citiesInRegion.length > 0) {
-            query = query.in('city', citiesInRegion);
+            const regionCandidates = new Set<string>();
+            citiesInRegion.forEach((ck) => {
+              regionCandidates.add(ck);
+              (CITIES[ck]?.synonyms || []).forEach((s: string) => regionCandidates.add(s));
+            });
+            query = query.in('city', Array.from(regionCandidates));
           }
         }
       }

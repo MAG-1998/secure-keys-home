@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client'
 import { useOptimizedQuery } from '@/hooks/useOptimizedQuery'
 import { useTranslation } from '@/hooks/useTranslation'
 import { extractDistrictFromText, getDistrictOptionsForCity, localizeDistrict as localizeDistrictLib } from '@/lib/districts'
-import { getCityOptions, type CityKey } from '@/lib/cities'
+import { getCityOptions, CITIES, type CityKey } from '@/lib/cities'
 import { getRegionOptions, getCitiesForRegion, type RegionKey } from '@/lib/regions'
 import { VirtualizedPropertyList } from '@/components/VirtualizedPropertyList'
 import { Header } from '@/components/Header'
@@ -128,12 +128,20 @@ const Properties = () => {
     // Region + City filter
     if (filters.region) {
       if (filters.city && filters.city !== 'all') {
-        // Specific city selected
-        f = f.filter(p => p.city === filters.city);
+        // Specific city selected (include synonyms)
+        const key = filters.city as CityKey;
+        const syn = CITIES[key]?.synonyms || [];
+        const candidates = new Set<string>([key, ...syn]);
+        f = f.filter(p => candidates.has((p.city || '').toString()));
       } else {
-        // "All Cities" selected - filter by region
+        // "All Cities" selected - include all region cities and their synonyms
         const citiesInRegion = getCitiesForRegion(filters.region as RegionKey);
-        f = f.filter(p => citiesInRegion.includes(p.city as CityKey));
+        const regionCandidates = new Set<string>();
+        citiesInRegion.forEach((ck) => {
+          regionCandidates.add(ck);
+          (CITIES[ck]?.synonyms || []).forEach((s: string) => regionCandidates.add(s));
+        });
+        f = f.filter(p => regionCandidates.has((p.city || '').toString()));
       }
     }
     
