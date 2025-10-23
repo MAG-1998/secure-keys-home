@@ -64,7 +64,7 @@ const Properties = () => {
   const [filters, setFilters] = useState({
     // Load from localStorage for consistency
     region: loadPersistedFilters().region || 'Tashkent_City',
-    city: loadPersistedFilters().city || 'Tashkent',
+    city: loadPersistedFilters().city || 'all',
     district: 'all',
     minPrice: '',
     maxPrice: '',
@@ -125,9 +125,16 @@ const Properties = () => {
     // District filter
     if (filters.district !== 'all') f = f.filter(p => p.district === filters.district)
     
-    // City filter - use the city column from database
-    if (filters.city && filters.city !== 'all') {
-      f = f.filter(p => p.city === filters.city);
+    // Region + City filter
+    if (filters.region) {
+      if (filters.city && filters.city !== 'all') {
+        // Specific city selected
+        f = f.filter(p => p.city === filters.city);
+      } else {
+        // "All Cities" selected - filter by region
+        const citiesInRegion = getCitiesForRegion(filters.region as RegionKey);
+        f = f.filter(p => citiesInRegion.includes(p.city as CityKey));
+      }
     }
     
     // Price filters
@@ -231,12 +238,7 @@ const Properties = () => {
                   <Select 
                     value={filters.region} 
                     onValueChange={(value) => {
-                      setFilters(prev => ({ ...prev, region: value }));
-                      // Auto-update city
-                      const cities = getCitiesForRegion(value as RegionKey);
-                      if (cities.length > 0) {
-                        setFilters(prev => ({ ...prev, city: cities[0] }));
-                      }
+                      setFilters(prev => ({ ...prev, region: value, city: 'all' }));
                     }}
                   >
                     <SelectTrigger><SelectValue /></SelectTrigger>

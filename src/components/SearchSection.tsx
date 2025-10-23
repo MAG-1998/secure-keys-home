@@ -394,11 +394,8 @@ export const SearchSection = ({
                       value={filters.region || 'Tashkent_Region'} 
                       onValueChange={value => {
                         handleFilterChange('region', value);
-                        // Auto-update city to first city in region
-                        const cities = getCitiesForRegion(value as RegionKey);
-                        if (cities.length > 0) {
-                          handleFilterChange('city', cities[0]);
-                        }
+                        // Set to "All Cities" when region changes
+                        handleFilterChange('city', 'all');
                       }}
                     >
                       <SelectTrigger>

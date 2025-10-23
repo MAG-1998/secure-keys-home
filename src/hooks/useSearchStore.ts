@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 import { supabase } from '@/integrations/supabase/client'
+import { getCitiesForRegion, type RegionKey } from '@/lib/regions'
+import type { CityKey } from '@/lib/cities'
 
 interface SearchCacheItem {
   query: string
@@ -146,7 +148,7 @@ const useSearchStore = create<SearchStore>((set, get) => ({
   filters: {
     // Load from localStorage, fallback to Tashkent_City
     region: loadPersistedFilters().region || 'Tashkent_City',
-    city: loadPersistedFilters().city || 'Tashkent'
+    city: loadPersistedFilters().city || 'all'
   },
   results: [],
   loading: false,
@@ -205,9 +207,19 @@ const useSearchStore = create<SearchStore>((set, get) => ({
         query = query.eq('is_halal_available', true).eq('halal_status', 'approved')
       }
 
-      // Filter by city using the new city column
-      if (searchFilters.city && searchFilters.city !== 'all') {
-        query = query.eq('city', searchFilters.city);
+      // Filter by region and city
+      if (searchFilters.region) {
+        if (searchFilters.city && searchFilters.city !== 'all') {
+          // Specific city selected - filter by city only
+          query = query.eq('city', searchFilters.city);
+        } else {
+          // "All Cities" selected - filter by region
+          // Get all cities in the region and filter by them
+          const citiesInRegion = getCitiesForRegion(searchFilters.region as RegionKey);
+          if (citiesInRegion.length > 0) {
+            query = query.in('city', citiesInRegion);
+          }
+        }
       }
 
       // Apply other filters
