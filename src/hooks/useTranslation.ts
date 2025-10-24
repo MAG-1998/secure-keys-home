@@ -1518,10 +1518,50 @@ const translations: Translations = {
     ru: 'Адрес объекта',
     uz: 'Mulk manzili'
   },
+  'listProperty.region': {
+    en: 'Region',
+    ru: 'Регион',
+    uz: 'Viloyat'
+  },
+  'listProperty.selectRegion': {
+    en: 'Select Region',
+    ru: 'Выберите регион',
+    uz: 'Viloyatni tanlang'
+  },
+  'listProperty.city': {
+    en: 'City',
+    ru: 'Город',
+    uz: 'Shahar'
+  },
+  'listProperty.selectCity': {
+    en: 'Select City',
+    ru: 'Выберите город',
+    uz: 'Shaharni tanlang'
+  },
   'listProperty.district': {
     en: 'District',
     ru: 'Район',
     uz: 'Tuman'
+  },
+  'listProperty.selectDistrict': {
+    en: 'Select District',
+    ru: 'Выберите район',
+    uz: 'Tumanni tanlang'
+  },
+  'listProperty.districtOtherLabel': {
+    en: 'District Name (Other)',
+    ru: 'Название района (Другое)',
+    uz: 'Tuman nomi (Boshqa)'
+  },
+  'listProperty.districtOtherPlaceholder': {
+    en: 'Enter district name',
+    ru: 'Введите название района',
+    uz: 'Tuman nomini kiriting'
+  },
+  'listProperty.districtOtherNote': {
+    en: 'This information will help us expand our district list in the future',
+    ru: 'Эта информация поможет нам расширить список районов в будущем',
+    uz: 'Bu ma\'lumot kelajakda tuman ro\'yxatini kengaytirishga yordam beradi'
   },
   'listProperty.price': {
     en: 'Price (USD)',
@@ -1669,14 +1709,9 @@ const translations: Translations = {
     uz: 'Halol moliyalashtirish hozircha ushbu mulk turi uchun mavjud emas'
   },
   'listProperty.addressPlaceholder': {
-    en: 'Enter full address in Tashkent',
-    ru: 'Введите полный адрес в Ташкенте',
-    uz: 'Toshkentda to\'liq manzilni kiriting'
-  },
-  'listProperty.selectDistrict': {
-    en: 'Select or type district',
-    ru: 'Выберите или введите район',
-    uz: 'Tumanni tanlang yoki yozing'
+    en: 'Enter full address',
+    ru: 'Введите полный адрес',
+    uz: 'To\'liq manzilni kiriting'
   },
   'listProperty.other': {
     en: 'Other',
@@ -3409,6 +3444,21 @@ const translations: Translations = {
     en: 'Please check your connection and try again',
     ru: 'Проверьте подключение и повторите попытку',
     uz: 'Internetni tekshiring va qayta urinib koʻring'
+  },
+  'address.validationWarning': {
+    en: 'Location Validation Warning',
+    ru: 'Предупреждение о проверке местоположения',
+    uz: 'Manzil tekshirish ogohlantiruvi'
+  },
+  'address.cityMismatch': {
+    en: 'City mismatch detected',
+    ru: 'Обнаружено несоответствие города',
+    uz: 'Shahar nomuvofiqligi aniqlandi'
+  },
+  'address.districtMismatch': {
+    en: 'District mismatch detected',
+    ru: 'Обнаружено несоответствие района',
+    uz: 'Tuman nomuvofiqligi aniqlandi'
   },
 
   'common.min': {

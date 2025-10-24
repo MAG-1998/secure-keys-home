@@ -18,8 +18,9 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import LocationPicker from "@/components/LocationPicker";
 import { Home, Upload, FileText, Shield, Calendar, CheckCircle, ArrowRight, MapPin, Camera, User, Phone, Mail, Save, Trash2, GripVertical, X } from "lucide-react";
-import { extractDistrictFromText, getDistrictOptions } from "@/lib/districts";
-import { extractCityFromText } from "@/lib/cities";
+import { extractDistrictFromText, getDistrictOptionsForCity } from "@/lib/districts";
+import { extractCityFromText, getCityOptions, type CityKey } from "@/lib/cities";
+import { getRegionOptions, getCitiesForRegion, type RegionKey, localizeRegion } from "@/lib/regions";
 import { debounce } from "@/utils/debounce";
 import { convertImagesToJpeg } from "@/utils/imageConverter";
 import { SortablePhotoItem } from "@/components/SortablePhotoItem";
@@ -74,8 +75,10 @@ const ListProperty = () => {
     displayName: "",
     propertyType: "",
     address: "",
+    region: "",
+    city: "",
     district: "",
-    city: "Tashkent",
+    districtOther: "", // Manual district entry when "Other" is selected
     price: "",
     bedrooms: "",
     customBedrooms: "",
@@ -250,8 +253,10 @@ const ListProperty = () => {
         displayName: "",
         propertyType: "",
         address: "",
+        region: "",
+        city: "",
         district: "",
-        city: "Tashkent",
+        districtOther: "",
         price: "",
         bedrooms: "",
         customBedrooms: "",
@@ -404,7 +409,7 @@ const ListProperty = () => {
         longitude: formData.longitude,
         is_halal_available: formData.halalFinancingRequested,
         halal_status: formData.halalFinancingRequested ? 'pending_approval' : 'disabled',
-        district: formData.district || extractDistrictFromText(formData.address),
+        district: formData.district === 'Other' ? formData.districtOther : (formData.district || extractDistrictFromText(formData.address)),
         status: 'pending'
       };
 
@@ -546,6 +551,106 @@ const ListProperty = () => {
                 </Select>
               </div>
               
+              {/* Region Selection */}
+              <div>
+                <Label htmlFor="region">{t('listProperty.region')}</Label>
+                <Select 
+                  value={formData.region} 
+                  onValueChange={value => {
+                    handleInputChange("region", value);
+                    // Reset city and district when region changes
+                    handleInputChange("city", "");
+                    handleInputChange("district", "");
+                    handleInputChange("districtOther", "");
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('listProperty.selectRegion')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getRegionOptions(language).map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* City Selection */}
+              {formData.region && (
+                <div>
+                  <Label htmlFor="city">{t('listProperty.city')}</Label>
+                  <Select 
+                    value={formData.city} 
+                    onValueChange={value => {
+                      handleInputChange("city", value);
+                      // Reset district when city changes
+                      handleInputChange("district", "");
+                      handleInputChange("districtOther", "");
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('listProperty.selectCity')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getCitiesForRegion(formData.region as RegionKey).map(cityKey => {
+                        const cityOptions = getCityOptions(language);
+                        const cityOption = cityOptions.find(c => c.value === cityKey);
+                        return (
+                          <SelectItem key={cityKey} value={cityKey}>
+                            {cityOption?.label || cityKey}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* District Selection */}
+              {formData.city && (
+                <div>
+                  <Label htmlFor="district">{t('listProperty.district')}</Label>
+                  <Select 
+                    value={formData.district} 
+                    onValueChange={value => {
+                      handleInputChange("district", value);
+                      if (value !== 'Other') {
+                        handleInputChange("districtOther", "");
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('listProperty.selectDistrict')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getDistrictOptionsForCity(formData.city, language).map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Manual District Entry for "Other" */}
+              {formData.district === 'Other' && (
+                <div>
+                  <Label htmlFor="districtOther">{t('listProperty.districtOtherLabel')}</Label>
+                  <Input 
+                    id="districtOther" 
+                    placeholder={t('listProperty.districtOtherPlaceholder')} 
+                    value={formData.districtOther} 
+                    onChange={e => handleInputChange("districtOther", e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t('listProperty.districtOtherNote')}
+                  </p>
+                </div>
+              )}
+
               <div>
                 <Label htmlFor="address">{t('listProperty.propertyAddress')}</Label>
                 <Input 
@@ -716,6 +821,16 @@ const ListProperty = () => {
           selectedLat={formData.latitude || undefined}
           selectedLng={formData.longitude || undefined}
           initialAddress={formData.address}
+          expectedRegion={formData.region as RegionKey | undefined}
+          expectedCity={formData.city as CityKey | undefined}
+          expectedDistrict={formData.district || undefined}
+          onValidationError={(message) => {
+            toast({
+              title: t('address.validationWarning'),
+              description: message,
+              variant: "destructive",
+            });
+          }}
         />;
       case 3:
         return <Card>

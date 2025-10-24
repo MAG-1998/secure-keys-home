@@ -12,6 +12,10 @@ interface LocationPickerProps {
   selectedLat?: number;
   selectedLng?: number;
   initialAddress?: string;
+  expectedRegion?: string;
+  expectedCity?: string;
+  expectedDistrict?: string;
+  onValidationError?: (message: string) => void;
 }
 
 declare global {
@@ -39,6 +43,10 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   selectedLat,
   selectedLng,
   initialAddress,
+  expectedRegion,
+  expectedCity,
+  expectedDistrict,
+  onValidationError,
 }) => {
   const { language, t } = useTranslation();
   const { mapLoaded, status } = useMapLoader(language as any);
@@ -250,6 +258,39 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
             const address = first.getAddressLine();
             setSelectedAddress(address);
             onLocationSelect(lat, lng, address);
+            
+            // Validate against expected city and district if provided
+            if (expectedCity || expectedDistrict) {
+              const components = first.getAddressComponents();
+              let detectedCity = '';
+              let detectedDistrict = '';
+              
+              // Extract city and district from geocoder response
+              for (const comp of components) {
+                if (comp.kind === 'locality') {
+                  detectedCity = comp.name;
+                }
+                if (comp.kind === 'district') {
+                  detectedDistrict = comp.name;
+                }
+              }
+              
+              // Check city match
+              if (expectedCity && detectedCity && !detectedCity.toLowerCase().includes(expectedCity.toLowerCase()) && !expectedCity.toLowerCase().includes(detectedCity.toLowerCase())) {
+                onValidationError?.(
+                  t('address.cityMismatch') || 
+                  `The selected location appears to be in ${detectedCity}, but you selected ${expectedCity}. Please verify the location or update your city selection.`
+                );
+              }
+              
+              // Check district match (only if district is not "Other")
+              if (expectedDistrict && expectedDistrict !== 'Other' && detectedDistrict && !detectedDistrict.toLowerCase().includes(expectedDistrict.toLowerCase()) && !expectedDistrict.toLowerCase().includes(detectedDistrict.toLowerCase())) {
+                onValidationError?.(
+                  t('address.districtMismatch') || 
+                  `The selected location appears to be in ${detectedDistrict} district, but you selected ${expectedDistrict}. Please verify the location or update your district selection.`
+                );
+              }
+            }
           }
         })
         .catch(() => {});
