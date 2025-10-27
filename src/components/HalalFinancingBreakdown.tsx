@@ -130,8 +130,12 @@ export const HalalFinancingBreakdown = ({
                   <span className="font-medium">{formatCurrency(calculation.propertyPrice!)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">+ Financing Costs:</span>
-                  <span className="font-medium">{formatCurrency(calculation.serviceFee + calculation.fixedFee + calculation.tax)}</span>
+                  <span className="text-muted-foreground">+ {t('halal.platformManagementFee')}:</span>
+                  <span className="font-medium">{formatCurrency(calculation.magitManagementFee)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">+ {t('halal.totalFinancingCost')}:</span>
+                  <span className="font-medium">{formatCurrency(calculation.serviceFee - calculation.magitManagementFee + calculation.fixedFee + calculation.tax)}</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground border-t pt-2">
                   <span>Subtotal:</span>
@@ -142,7 +146,7 @@ export const HalalFinancingBreakdown = ({
                   <span className="font-medium">{formatCurrency(parseFloat(cashAmount))}</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t">
-                  <span className="font-semibold">{t('halal.totalCost')}:</span>
+                  <span className="font-semibold">{t('halal.totalToPay')}:</span>
                   <Badge variant="default" className="text-base px-3 py-1">
                     {formatCurrency(calculation.totalCost)}
                   </Badge>

@@ -7,8 +7,7 @@ export interface HalalFinancingCalculation {
   serviceFee: number;
   tax: number;
   overpay: number;
-  magitDiscount: number;
-  finalPriceAfterDiscount: number;
+  magitManagementFee: number;
 }
 
 export const calculateHalalFinancing = (
@@ -26,8 +25,7 @@ export const calculateHalalFinancing = (
       serviceFee: 0,
       tax: 0,
       overpay: 0,
-      magitDiscount: 0,
-      finalPriceAfterDiscount: 0
+      magitManagementFee: 0
     };
   }
 
@@ -43,24 +41,24 @@ export const calculateHalalFinancing = (
   // Fixed Fee calculation
   const FF = 0.2 * (x * k - (x / n) * (k * (k - 1) / 2) + (x - (x * k / n)) * f);
   
-  // Service Fee calculation
-  const SF = ((0.1 * x) / P - 0.01) * x;
+  // Service Fee calculation (original formula)
+  const baseSF = ((0.1 * x) / P - 0.01) * x;
   
-  // Tax calculation
+  // Magit platform management service fee (1% of property price) - paid by buyer
+  const magitManagementFee = P * 0.01;
+  
+  // New Service Fee = base SF + platform management fee
+  const SF = baseSF + magitManagementFee;
+  
+  // Tax calculation (includes management fee)
   const TAX = (FF + SF) * 0.20;
   
   // Overpay calculation
   const overpay = (SF + FF) * (1 + 0.20);
   
-  // Magit discount calculation (1% of property price)
-  const magitDiscount = P * 0.01;
-  
   // Total cost = loaned sum + overpay
   const totalCost = x + overpay;
   const requiredMonthlyPayment = totalCost / periodMonths;
-  
-  // Final price after Magit discount
-  const finalPriceAfterDiscount = totalCost - magitDiscount;
 
   return {
     totalCost,
@@ -71,8 +69,7 @@ export const calculateHalalFinancing = (
     serviceFee: SF,
     tax: TAX,
     overpay,
-    magitDiscount,
-    finalPriceAfterDiscount
+    magitManagementFee
   };
 };
 

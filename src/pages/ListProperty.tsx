@@ -969,36 +969,6 @@ const ListProperty = () => {
                       {t('listProperty.halalFinancingDescription')}
                     </p>
                     
-                    {/* Caution box */}
-                    <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-950/20 rounded border border-amber-200 dark:border-amber-800">
-                      <p className="text-sm text-amber-700 dark:text-amber-300">
-                        {t('listProperty.halalServiceFee')}
-                      </p>
-                    </div>
-                    
-                    {formData.halalFinancingRequested && formData.price && parseFloat(formData.price) > 0 && (
-                      <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800">
-                        <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100 mb-2">{t('listProperty.pricingImpact')}</h4>
-                        <div className="space-y-1 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-blue-700 dark:text-blue-300">{t('listProperty.listedPrice')}</span>
-                            <span className="font-medium">${parseFloat(formData.price).toLocaleString()}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-blue-700 dark:text-blue-300">{t('listProperty.magitFee')}</span>
-                            <span className="text-red-600">-${(parseFloat(formData.price) * 0.01).toLocaleString()}</span>
-                          </div>
-                          <div className="flex justify-between font-semibold border-t border-blue-200 dark:border-blue-700 pt-1">
-                            <span className="text-blue-900 dark:text-blue-100">{t('listProperty.netProceeds')}</span>
-                            <span className="text-green-600">${(parseFloat(formData.price) * 0.99).toLocaleString()}</span>
-                          </div>
-                        </div>
-                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
-                          {t('listProperty.feeExplanation')}
-                        </p>
-                      </div>
-                    )}
-                    
                     {(formData.propertyType === 'commercial' || formData.propertyType === 'land') && (
                       <p className="text-sm text-amber-700 dark:text-amber-300 mt-2 bg-amber-50 dark:bg-amber-950/20 p-2 rounded border border-amber-200 dark:border-amber-800">
                         ⚠️ {t('listProperty.halalFinancingNotAvailable')}

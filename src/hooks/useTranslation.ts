@@ -656,6 +656,26 @@ const translations: Translations = {
     ru: 'Финансирование не требуется - у вас достаточно наличных!',
     uz: 'Moliyalashtirish kerak emas - sizda yetarli naqd pul bor!'
   },
+  'halal.platformManagementFee': {
+    en: 'Platform Management Fee (1%)',
+    ru: 'Комиссия за управление платформой (1%)',
+    uz: 'Platforma boshqaruv to\'lovi (1%)'
+  },
+  'halal.totalFinancingCost': {
+    en: 'Financing Costs (FF + SF + Tax)',
+    ru: 'Расходы на финансирование (FF + SF + Налог)',
+    uz: 'Moliyalashtirish xarajatlari (FF + SF + Soliq)'
+  },
+  'halal.totalToPay': {
+    en: 'Total to Pay',
+    ru: 'Всего к оплате',
+    uz: 'Jami to\'lash kerak'
+  },
+  'halal.buyerResponsibility': {
+    en: 'All financing fees are paid by the buyer. Sellers receive 100% of the property price.',
+    ru: 'Все расходы на финансирование оплачиваются покупателем. Продавцы получают 100% стоимости недвижимости.',
+    uz: 'Barcha moliyalashtirish to\'lovlari xaridor tomonidan to\'lanadi. Sotuvchilar mulk narxining 100% ini oladilar.'
+  },
 
   // Common
   'common.any': {
@@ -2024,9 +2044,9 @@ const translations: Translations = {
     uz: 'Komissiyasiz'
   },
   'listProperty.zeroCommissionDescription': {
-    en: 'List your property for free. No hidden fees or commission charges.* (*For properties with Halal financing, Magit charges a 1% marketplace fee from the seller.)',
-    ru: 'Размещайте объект бесплатно. Никаких скрытых платежей или комиссий.* (*Для объектов с халяльным финансированием Magit взимает 1% комиссию с продавца.)',
-    uz: 'Mulkingizni bepul joylashtiring. Yashirin to\'lovlar yoki komissiya yo\'q.* (*Halol moliyalashtirish bilan mulklar uchun Magit sotuvchidan 1% bozor to\'lovini oladi.)'
+    en: 'Sellers pay 0% commission. List and sell completely free. When buyers use Halal financing, a 1% management fee is included in their financing costs.',
+    ru: 'Продавцы платят 0% комиссии. Размещайте и продавайте абсолютно бесплатно. Когда покупатели используют халяльное финансирование, 1% комиссия за управление включается в их затраты на финансирование.',
+    uz: 'Sotuvchilar 0% komissiya to\'laydi. Mutlaqo bepul joylashtiring va soting. Xaridorlar halol moliyalashtirishdan foydalanganda, 1% boshqaruv to\'lovi ularning moliyalashtirish xarajatlariga kiritiladi.'
   },
   'listProperty.premiumExposure': {
     en: 'Premium Exposure',
@@ -2630,44 +2650,14 @@ const translations: Translations = {
     uz: 'Mulkingizni Shariatga mos moliyalashtirish uchun mavjud qilishni so\'rang. Bizning islom moliyasi jamoamiz imkoniyatlarni muhokama qilish uchun 1 hafta ichida siz bilan bog\'lanadi.'
   },
   'listProperty.halalFinancingDescription': {
-    en: 'Request to make your property available for Sharia-compliant financing. Our Islamic finance team will contact you within 1 week to discuss options.',
-    ru: 'Запросите, чтобы ваш объект стал доступен для финансирования, соответствующего шариату. Наша команда исламского финансирования свяжется с вами в течение 1 недели для обсуждения вариантов.',
-    uz: 'Mulkingizni Shariatga mos moliyalashtirish uchun mavjud qilishni so\'rang. Bizning islom moliyasi jamoamiz imkoniyatlarni muhokama qilish uchun 1 hafta ichida siz bilan bog\'lanadi.'
-  },
-  'listProperty.halalServiceFee': {
-    en: '⚠️ Please note: Enabling Halal financing includes a 1% service fee for facilitating Sharia-compliant transactions.',
-    ru: '⚠️ Обратите внимание: включение халяльного финансирования включает комиссию в размере 1% за содействие в сделках, соответствующих шариату.',
-    uz: '⚠️ Eslatma: Halol moliyalashtirishni yoqish Shariatga mos bitimlarni amalga oshirish uchun 1% xizmat to\'lovini o\'z ichiga oladi.'
-  },
-  'listProperty.pricingImpact': {
-    en: '💰 Pricing Impact',
-    ru: '💰 Влияние на цену',
-    uz: '💰 Narx ta\'siri'
-  },
-  'listProperty.listedPrice': {
-    en: 'Listed Price:',
-    ru: 'Указанная цена:',
-    uz: 'Ko\'rsatilgan narx:'
-  },
-  'listProperty.magitFee': {
-    en: 'Magit Fee (1%):',
-    ru: 'Комиссия Magit (1%):',
-    uz: 'Magit to\'lovi (1%):'
-  },
-  'listProperty.halalServiceFeeLabel': {
-    en: 'Halal Service Fee (1%):',
-    ru: 'Комиссия за халяльное обслуживание (1%):',
-    uz: 'Halol xizmat to\'lovi (1%):'
-  },
-  'listProperty.netProceeds': {
-    en: 'Your Net Proceeds:',
-    ru: 'Ваша чистая прибыль:',
-    uz: 'Sizning sof daromadingiz:'
+    en: 'Make your property available for Sharia-compliant financing at no cost to you. Buyers cover all financing fees. Our Islamic finance team will contact you within 1 week to discuss options.',
+    ru: 'Сделайте свой объект доступным для финансирования, соответствующего шариату, без каких-либо затрат для вас. Покупатели покрывают все расходы на финансирование. Наша команда исламского финансирования свяжется с вами в течение 1 недели для обсуждения вариантов.',
+    uz: 'Mulkingizni Shariatga mos moliyalashtirish uchun hech qanday xarajatsiz mavjud qiling. Xaridorlar barcha moliyalashtirish to\'lovlarini qoplaydi. Bizning islom moliyasi jamoamiz imkoniyatlarni muhokama qilish uchun 1 hafta ichida siz bilan bog\'lanadi.'
   },
   'listProperty.feeExplanation': {
-    en: 'These fees help us maintain the platform and provide halal financing services. The Magit fee is charged when the property is sold with financing.',
-    ru: 'Эти комиссии помогают нам поддерживать платформу и предоставлять услуги халяльного финансирования. Комиссия Magit взимается при продаже недвижимости с финансированием.',
-    uz: 'Bu to\'lovlar platformani saqlashga va halol moliyalashtirish xizmatlarini taqdim etishga yordam beradi. Magit to\'lovi mulk moliyalashtirish bilan sotilganda olinadi.'
+    en: 'The 1% platform management fee is charged to buyers who use Halal financing. This fee covers property verification, Sharia compliance review, and ongoing support. Sellers keep 100% of the sale price.',
+    ru: '1% комиссия за управление платформой взимается с покупателей, использующих халяльное финансирование. Эта комиссия покрывает проверку недвижимости, проверку соответствия шариату и постоянную поддержку. Продавцы получают 100% продажной цены.',
+    uz: '1% platforma boshqaruv to\'lovi halol moliyalashtirishdan foydalanadigan xaridorlardan olinadi. Bu to\'lov mulkni tekshirish, Shariat talablariga muvofiqlikni tekshirish va doimiy yordamni qamrab oladi. Sotuvchilar sotuv narxining 100% ini saqlab qoladilar.'
   },
 
   // AllResults page
@@ -6586,9 +6576,9 @@ const translations: Translations = {
     uz: 'Komissiya to\'lovlari yo\'q'
   },
   'howItWorks.whyChoose.reason2.description': {
-    en: 'Sellers keep 100% of their sale price. Buyers pay no verification or platform fees.',
-    ru: 'Продавцы сохраняют 100% цены продажи. Покупатели не платят за проверку или использование платформы.',
-    uz: 'Sotuvchilar o\'z sotuv narxining 100% ini saqlab qoladilar. Xaridorlar tekshirish yoki platforma to\'lovlarini to\'lamaydilar.'
+    en: 'Sellers keep 100% of their sale price with zero commission or hidden fees. When buyers use Halal financing, they pay a transparent 1% platform management fee.',
+    ru: 'Продавцы сохраняют 100% цены продажи без комиссии или скрытых платежей. Когда покупатели используют халяльное финансирование, они платят прозрачную комиссию за управление платформой в размере 1%.',
+    uz: 'Sotuvchilar hech qanday komissiya yoki yashirin to\'lovsiz o\'z sotuv narxining 100% ini saqlab qoladilar. Xaridorlar halol moliyalashtirishdan foydalanganda, ular shaffof 1% platforma boshqaruv to\'lovini to\'laydilar.'
   },
   'howItWorks.whyChoose.reason3.title': {
     en: 'Halal Financing',
