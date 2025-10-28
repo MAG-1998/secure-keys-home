@@ -661,10 +661,10 @@ const translations: Translations = {
     ru: 'Комиссия за управление платформой (1%)',
     uz: 'Platforma boshqaruv to\'lovi (1%)'
   },
-  'halal.totalFinancingCost': {
-    en: 'Financing Costs (FF + SF + Tax)',
-    ru: 'Расходы на финансирование (FF + SF + Налог)',
-    uz: 'Moliyalashtirish xarajatlari (FF + SF + Soliq)'
+  'halal.financingCosts': {
+    en: 'Financing Costs',
+    ru: 'Расходы на финансирование',
+    uz: 'Moliyalashtirish xarajatlari'
   },
   'halal.totalToPay': {
     en: 'Total to Pay',
