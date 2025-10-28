@@ -130,12 +130,8 @@ export const HalalFinancingBreakdown = ({
                   <span className="font-medium">{formatCurrency(calculation.propertyPrice!)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">+ {t('halal.platformManagementFee')}:</span>
-                  <span className="font-medium">{formatCurrency(calculation.magitManagementFee)}</span>
-                </div>
-                <div className="flex justify-between">
                   <span className="text-muted-foreground">+ {t('halal.financingCosts')}:</span>
-                  <span className="font-medium">{formatCurrency(calculation.serviceFee - calculation.magitManagementFee + calculation.fixedFee)}</span>
+                  <span className="font-medium">{formatCurrency(calculation.fixedFee + calculation.serviceFee)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">+ {t('halal.tax')}:</span>
