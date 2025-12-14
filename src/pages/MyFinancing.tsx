@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,6 @@ interface FinancingRequest {
 
 const MyFinancing = () => {
   const [requests, setRequests] = useState<FinancingRequest[]>([]);
-  const [filteredRequests, setFilteredRequests] = useState<FinancingRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -48,6 +47,46 @@ const MyFinancing = () => {
   const { user } = useUser();
   const { t } = useTranslation();
 
+  // Memoize filtered requests with pre-computed financing calculations
+  const filteredRequests = useMemo(() => {
+    let filtered = requests;
+
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(request =>
+        request.properties.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        request.properties.location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(request =>
+        request.stage === statusFilter || request.status === statusFilter
+      );
+    }
+
+    // Pre-compute financing calculations to avoid duplicates in render
+    return filtered.map(request => {
+      if (request.cash_available != null && request.period_months != null) {
+        const calculation = calculateHalalFinancing(
+          request.cash_available || 0,
+          request.properties.price || 0,
+          request.period_months || 12
+        );
+        return {
+          ...request,
+          _calculations: {
+            totalCost: calculation.totalCost,
+            totalWithCash: calculation.totalCost + (request.cash_available || 0),
+            monthlyPayment: calculation.requiredMonthlyPayment
+          }
+        };
+      }
+      return request;
+    });
+  }, [requests, searchTerm, statusFilter]);
+
   useEffect(() => {
     if (!user) {
       navigate('/auth');
@@ -55,10 +94,6 @@ const MyFinancing = () => {
     }
     fetchRequests();
   }, [user]);
-
-  useEffect(() => {
-    filterRequests();
-  }, [requests, searchTerm, statusFilter]);
 
   const fetchRequests = async () => {
     try {
@@ -126,26 +161,8 @@ const MyFinancing = () => {
   };
 
   const canEditOrDelete = (request: FinancingRequest) => {
-    return !request.responsible_person_id && 
+    return !request.responsible_person_id &&
            (request.status === 'pending' || request.stage === 'submitted');
-  };
-  const filterRequests = () => {
-    let filtered = requests;
-
-    if (searchTerm) {
-      filtered = filtered.filter(request =>
-        request.properties.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        request.properties.location.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(request => 
-        request.stage === statusFilter || request.status === statusFilter
-      );
-    }
-
-    setFilteredRequests(filtered);
   };
 
   const getStatusBadge = (status: string, stage?: string) => {
@@ -309,15 +326,8 @@ const MyFinancing = () => {
                           <div className="font-medium text-sm">{request.properties.title}</div>
                           <div className="text-xs text-muted-foreground">{request.properties.location}</div>
                           <div className="text-sm font-bold">
-                            {request.cash_available != null && request.period_months != null
-                              ? (() => {
-                                  const calculation = calculateHalalFinancing(
-                                    request.cash_available || 0,
-                                    request.properties.price || 0,
-                                    request.period_months || 12
-                                  );
-                                  return formatCurrency(calculation.totalCost + (request.cash_available || 0));
-                                })()
+                            {(request as any)._calculations
+                              ? formatCurrency((request as any)._calculations.totalWithCash)
                               : formatCurrency(request.properties.price)
                             }
                           </div>
@@ -327,15 +337,8 @@ const MyFinancing = () => {
                           <div>
                             <div className="text-muted-foreground">{t('myFinancing.totalCost')}</div>
                             <div className="font-medium">
-                              {request.cash_available != null && request.period_months != null
-                                ? (() => {
-                                    const calculation = calculateHalalFinancing(
-                                      request.cash_available || 0,
-                                      request.properties.price || 0,
-                                      request.period_months || 12
-                                    );
-                                    return formatCurrency(calculation.totalCost);
-                                  })()
+                              {(request as any)._calculations
+                                ? formatCurrency((request as any)._calculations.totalCost)
                                 : t('myFinancing.notSpecified')
                               }
                             </div>
@@ -419,15 +422,8 @@ const MyFinancing = () => {
                              <div className="font-medium">{request.properties.title}</div>
                              <div className="text-sm text-muted-foreground">{request.properties.location}</div>
                              <div className="text-sm font-bold">
-                               {request.cash_available != null && request.period_months != null
-                                 ? (() => {
-                                     const calculation = calculateHalalFinancing(
-                                       request.cash_available || 0,
-                                       request.properties.price || 0,
-                                       request.period_months || 12
-                                     );
-                                     return formatCurrency(calculation.totalCost + (request.cash_available || 0));
-                                   })()
+                               {(request as any)._calculations
+                                 ? formatCurrency((request as any)._calculations.totalWithCash)
                                  : formatCurrency(request.properties.price)
                                }
                              </div>
@@ -436,15 +432,8 @@ const MyFinancing = () => {
                          <TableCell>
                            <div>
                              <div className="font-medium">
-                               {request.cash_available != null && request.period_months != null
-                                  ? (() => {
-                                      const calculation = calculateHalalFinancing(
-                                        request.cash_available || 0,
-                                        request.properties.price || 0,
-                                        request.period_months || 12
-                                      );
-                                      return formatCurrency(calculation.totalCost + (request.cash_available || 0));
-                                    })()
+                               {(request as any)._calculations
+                                  ? formatCurrency((request as any)._calculations.totalWithCash)
                                   : <span className="text-muted-foreground">{t('myFinancing.notSpecified')}</span>
                                 }
                               </div>
