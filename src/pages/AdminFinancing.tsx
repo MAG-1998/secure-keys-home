@@ -112,34 +112,39 @@ const AdminFinancing = () => {
       const sortedData = (data || []).sort((a, b) => {
         const aIsComplete = ['approved', 'denied'].includes(a.stage);
         const bIsComplete = ['approved', 'denied'].includes(b.stage);
-        
+
         // If both are complete or both are active, sort by date
         if (aIsComplete === bIsComplete) {
           const dateA = new Date(aIsComplete ? a.updated_at : a.created_at).getTime();
           const dateB = new Date(bIsComplete ? b.updated_at : b.created_at).getTime();
           return aIsComplete ? dateB - dateA : dateA - dateB; // Complete: newest first, Active: oldest first
         }
-        
+
         // Active stages come before completed ones
         return aIsComplete ? 1 : -1;
       });
 
-      // Manually fetch user profiles for each request
-      const requestsWithProfiles = await Promise.all(
-        sortedData.map(async (request) => {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('full_name, email')
-            .eq('user_id', request.user_id)
-            .single();
+      // Batch fetch user profiles for all requests
+      const userIds = sortedData.map(req => req.user_id).filter(Boolean);
+      const profilesByUserId: Record<string, any> = {};
 
-          return {
-            ...request,
-            properties: request.properties || { title: 'Unknown Property', location: 'Unknown', price: 0 },
-            profiles: profile || { full_name: null, email: 'Unknown' }
-          };
-        })
-      );
+      if (userIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('user_id, full_name, email')
+          .in('user_id', userIds);
+
+        (profilesData || []).forEach((profile: any) => {
+          profilesByUserId[profile.user_id] = profile;
+        });
+      }
+
+      // Attach profiles to requests
+      const requestsWithProfiles = sortedData.map(request => ({
+        ...request,
+        properties: request.properties || { title: 'Unknown Property', location: 'Unknown', price: 0 },
+        profiles: profilesByUserId[request.user_id] || { full_name: null, email: 'Unknown' }
+      }));
 
       setRequests(requestsWithProfiles as unknown as FinancingRequest[]);
     } catch (error) {

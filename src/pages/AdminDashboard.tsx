@@ -134,27 +134,32 @@ export default function AdminDashboard() {
 
       if (propertiesError) throw propertiesError;
 
-      // Fetch profiles for each property
-      const propertiesWithOwners = await Promise.all(
-        (propertiesData || []).map(async (property) => {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('full_name, email')
-            .eq('user_id', property.user_id)
-            .single();
+      // Batch fetch profiles for all property owners
+      const userIds = (propertiesData || []).map(p => p.user_id).filter(Boolean);
+      const profilesByUserId: Record<string, any> = {};
 
-          return {
-            ...property,
-            profiles: profileData
-          };
-        })
-      );
+      if (userIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('user_id, full_name, email')
+          .in('user_id', userIds);
+
+        (profilesData || []).forEach((profile: any) => {
+          profilesByUserId[profile.user_id] = profile;
+        });
+      }
+
+      // Attach profiles to properties
+      const propertiesWithOwners = (propertiesData || []).map(property => ({
+        ...property,
+        profiles: profilesByUserId[property.user_id]
+      }));
 
       // Separate properties and applications based on status
-      const activeProperties = propertiesWithOwners.filter(p => 
+      const activeProperties = propertiesWithOwners.filter(p =>
         ['active', 'suspended'].includes(p.status)
       );
-      const applicationData = propertiesWithOwners.filter(p => 
+      const applicationData = propertiesWithOwners.filter(p =>
         ['pending', 'approved', 'rejected'].includes(p.status)
       );
 

@@ -128,22 +128,27 @@ export default function ModeratorDashboard() {
 
       if (applicationsError) throw applicationsError;
 
-      // Then fetch user profiles for each application
-      const applicationsWithProfiles = await Promise.all(
-        (applicationsData || []).map(async (application) => {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('full_name, email')
-            .eq('user_id', application.user_id)
-            .single();
+      // Batch fetch user profiles for all applications
+      const userIds = (applicationsData || []).map(app => app.user_id).filter(Boolean);
+      const profilesByUserId: Record<string, any> = {};
 
-          return {
-            ...application,
-            address: application.location, // Map location to address for compatibility
-            profiles: profileData
-          };
-        })
-      );
+      if (userIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('user_id, full_name, email')
+          .in('user_id', userIds);
+
+        (profilesData || []).forEach((profile: any) => {
+          profilesByUserId[profile.user_id] = profile;
+        });
+      }
+
+      // Attach profiles to applications
+      const applicationsWithProfiles = (applicationsData || []).map(application => ({
+        ...application,
+        address: application.location, // Map location to address for compatibility
+        profiles: profilesByUserId[application.user_id]
+      }));
 
       setApplications(applicationsWithProfiles as any);
       console.log('Fetched applications with profiles:', applicationsWithProfiles);
