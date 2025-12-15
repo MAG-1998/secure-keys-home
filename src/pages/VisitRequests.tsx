@@ -277,26 +277,29 @@ const VisitRequests = () => {
         .neq('visitor_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      
-      // Fetch visitor profiles for each request
+
+      // Batch fetch visitor profiles for all requests
       const rows = (data as OwnerRequestRow[]) || [];
-      const requestsWithProfiles = await Promise.all(
-        rows.map(async (request) => {
-          try {
-            const { data: profileData } = await supabase.rpc('get_visitor_profile_for_property_owner', { 
-              visitor_user_id: request.visitor_id,
-              property_id_param: request.property_id
-            });
-            return {
-              ...request,
-              visitor_profile: profileData?.[0] || null
-            };
-          } catch (error) {
-            console.error('Error fetching visitor profile:', error);
-            return request;
-          }
-        })
-      );
+      const visitorIds = [...new Set(rows.map(r => r.visitor_id))].filter(Boolean);
+      const profilesByUserId: Record<string, any> = {};
+
+      if (visitorIds.length > 0) {
+        // Fetch profiles in a single batch query
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('user_id, full_name, email, phone')
+          .in('user_id', visitorIds);
+
+        (profilesData || []).forEach((profile: any) => {
+          profilesByUserId[profile.user_id] = profile;
+        });
+      }
+
+      // Attach profiles to requests
+      const requestsWithProfiles = rows.map(request => ({
+        ...request,
+        visitor_profile: profilesByUserId[request.visitor_id] || null
+      }));
       
       const sorted = requestsWithProfiles.sort((a, b) => {
         const group = (r: OwnerRequestRow) => (!r.status || r.status === 'pending') ? 0 : (r.status === 'confirmed' ? 1 : 2);

@@ -156,7 +156,7 @@ export const SearchSection = ({
   }, [filters, debouncedFilterSearch]);
 
   // Handle property click with halal validation
-  const handlePropertyClick = (property: any) => {
+  const handlePropertyClick = useCallback((property: any) => {
     if (isHalalMode && filters.cashAvailable) {
       const cashValue = parseFloat(filters.cashAvailable.replace(/,/g, '')) || 0;
       const propertyPrice = property.priceUsd || 0;
@@ -183,7 +183,7 @@ export const SearchSection = ({
     }
     const queryString = params.toString();
     navigate(`/property/${property.id}${queryString ? `?${queryString}` : ''}`);
-  };
+  }, [isHalalMode, filters.cashAvailable, filters.periodMonths, navigate]);
   const handleSearch = async (queryOverride?: string) => {
     const q = queryOverride || filters.q || "";
     setShowSuggestions(false);
@@ -234,11 +234,11 @@ export const SearchSection = ({
   };
 
   // Handle filter changes
-  const handleFilterChange = (key: string, value: any) => {
+  const handleFilterChange = useCallback((key: string, value: any) => {
     setFilters({
       [key]: value
     });
-  };
+  }, [setFilters]);
   const scrollProgress = Math.min(scrollY / 300, 1);
   return <div className="w-full">
       <div className={`transition-all duration-500 ${isHalalMode ? 'bg-gradient-to-br from-magit-trust/10 to-primary/10 rounded-lg' : 'bg-gradient-to-br from-background/50 to-muted/20 rounded-lg'} p-4 md:p-6`}>

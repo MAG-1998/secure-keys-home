@@ -58,6 +58,7 @@ export default function ChatWidget() {
   const myId = user?.id ?? null;
   const lastNotifId = useRef<string | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
+  const fetchedProfileIds = useRef<Set<string>>(new Set());
 
   const conversations: ConversationItem[] = useMemo(() => {
     if (!myId) return [];
@@ -72,8 +73,11 @@ export default function ChatWidget() {
   // Fetch profiles for conversation participants using secure function
   useEffect(() => {
     const ids = conversations.map((c) => c.otherUserId).filter(Boolean);
-    const missing = ids.filter((id) => !profilesById[id]);
+    const missing = ids.filter((id) => !fetchedProfileIds.current.has(id));
     if (!missing.length) return;
+
+    // Mark as fetching to prevent duplicate requests
+    missing.forEach(id => fetchedProfileIds.current.add(id));
 
     Promise.all(
       missing.map(async (userId) => {
@@ -81,36 +85,40 @@ export default function ChatWidget() {
         return { userId, data: data?.[0] };
       })
     ).then((results) => {
-      const map: Record<string, { full_name?: string | null; email?: string | null }> = { ...profilesById };
-      results.forEach(({ userId, data }) => {
-        if (data) {
-          map[userId] = { 
-            full_name: data.display_name, 
-            email: data.display_name // Using display_name since email is now protected
-          };
-        }
+      setProfilesById((prev) => {
+        const map = { ...prev };
+        results.forEach(({ userId, data }) => {
+          if (data) {
+            map[userId] = {
+              full_name: data.display_name,
+              email: data.display_name // Using display_name since email is now protected
+            };
+          }
+        });
+        return map;
       });
-      setProfilesById(map);
     });
-  }, [conversations, profilesById]);
+  }, [conversations]);
 
   // Ensure selected user's profile is loaded using secure function
   useEffect(() => {
-    if (!selectedOtherId || profilesById[selectedOtherId]) return;
+    if (!selectedOtherId || fetchedProfileIds.current.has(selectedOtherId)) return;
+
+    fetchedProfileIds.current.add(selectedOtherId);
     supabase
       .rpc('get_safe_profile_for_messaging', { target_user_id: selectedOtherId })
       .then(({ data }) => {
         if (data?.[0]) {
           setProfilesById((prev) => ({
             ...prev,
-            [selectedOtherId]: { 
-              full_name: data[0].display_name, 
+            [selectedOtherId]: {
+              full_name: data[0].display_name,
               email: data[0].display_name // Using display_name since email is now protected
             },
           }));
         }
       });
-  }, [selectedOtherId, profilesById]);
+  }, [selectedOtherId]);
 
   const markThreadAsRead = useCallback(async (otherId: string) => {
     if (!myId) return;

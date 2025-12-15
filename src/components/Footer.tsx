@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, memo } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { MagitLogo } from "@/components/MagitLogo"
@@ -12,7 +12,7 @@ interface FooterProps {
   t: (key: string) => string
 }
 
-export const Footer = ({ isHalalMode = false, t }: FooterProps) => {
+export const Footer = memo(({ isHalalMode = false, t }: FooterProps) => {
   const { theme, setTheme } = useTheme()
   const [isAutoMode, setIsAutoMode] = useState(true)
   const location = useLocation()
@@ -150,4 +150,4 @@ export const Footer = ({ isHalalMode = false, t }: FooterProps) => {
       </div>
     </footer>
   )
-}
+})
