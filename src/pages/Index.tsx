@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { AuthenticatedHeader } from "@/components/AuthenticatedHeader"
 import { AuthenticatedView } from "@/components/AuthenticatedView"
 import { UnauthenticatedView } from "@/components/UnauthenticatedView"
@@ -6,7 +7,7 @@ import { useTranslation } from "@/hooks/useTranslation"
 import { useUser } from "@/contexts/UserContext"
 import { useGlobalHalalMode } from "@/hooks/useGlobalHalalMode"
 
-const Index = () => {
+const Index = memo(() => {
   const { user, profileName, loading } = useUser()
   const { language, setLanguage, t } = useTranslation()
   const { isHalalMode } = useGlobalHalalMode()
@@ -53,6 +54,6 @@ const Index = () => {
       )}
     </div>
   )
-}
+})
 
 export default Index

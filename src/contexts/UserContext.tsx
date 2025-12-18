@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
@@ -355,7 +355,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     };
   }, []);
 
-  const value: UserContextType = {
+  const value = useMemo<UserContextType>(() => ({
     user,
     session,
     role,
@@ -364,7 +364,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     loading,
     authLoading,
     roleLoading,
-  };
+  }), [user, session, role, profileName, profileData, loading, authLoading, roleLoading]);
 
   return (
     <UserContext.Provider value={value}>

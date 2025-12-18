@@ -83,9 +83,30 @@ export interface Property {
   longitude?: number
 }
 
-// Cache utility functions
+// Cache utility functions - optimized for performance
 const getCacheKey = (query: string, filters: SearchFilters) => {
-  return `${query}_${JSON.stringify(filters)}`
+  // Build deterministic key from filter values in consistent order
+  // This is faster and more reliable than JSON.stringify
+  const parts = [
+    query || '',
+    filters.q || '',
+    filters.region || '',
+    filters.city || '',
+    filters.district || '',
+    filters.priceMin || '',
+    filters.priceMax || '',
+    filters.bedrooms || '',
+    filters.propertyType || '',
+    filters.hasParking ? '1' : '0',
+    filters.isNewConstruction ? '1' : '0',
+    filters.hasGarden ? '1' : '0',
+    filters.halalMode ? '1' : '0',
+    filters.cashAvailable || '',
+    filters.periodMonths || '',
+    filters.landAreaMin || '',
+    filters.landAreaMax || ''
+  ];
+  return parts.join('|');
 }
 
 const getCachedResult = (query: string, filters: SearchFilters): Property[] | null => {

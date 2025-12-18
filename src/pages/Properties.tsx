@@ -115,92 +115,94 @@ const Properties = () => {
   }
 
   const filtered = useMemo(() => {
-    let f = all.filter(p => ['active','approved'].includes(p.status || 'active'))
-    
-    // Seller filter
-    if (filters.sellerId) {
-      f = f.filter(p => p.user_id === filters.sellerId)
-    }
-    
-    // District filter
-    if (filters.district !== 'all') f = f.filter(p => p.district === filters.district)
-    
-    // Region + City filter
+    // Pre-compute filter values outside the loop
+    const minPrice = filters.minPrice ? Number(filters.minPrice) : undefined;
+    const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : undefined;
+    const minArea = filters.minArea ? Number(filters.minArea) : undefined;
+    const maxArea = filters.maxArea ? Number(filters.maxArea) : undefined;
+    const minLandArea = filters.minLandArea ? Number(filters.minLandArea) : undefined;
+    const maxLandArea = filters.maxLandArea ? Number(filters.maxLandArea) : undefined;
+    const searchLower = filters.searchText?.toLowerCase();
+
+    // Pre-compute city/region candidates
+    let cityCandidates: Set<string> | null = null;
     if (filters.region) {
       if (filters.city && filters.city !== 'all') {
-        // Specific city selected (include synonyms)
         const key = filters.city as CityKey;
         const syn = CITIES[key]?.synonyms || [];
-        const candidates = new Set<string>([key, ...syn]);
-        f = f.filter(p => candidates.has((p.city || '').toString()));
+        cityCandidates = new Set<string>([key, ...syn]);
       } else {
-        // "All Cities" selected - include all region cities and their synonyms
         const citiesInRegion = getCitiesForRegion(filters.region as RegionKey);
-        const regionCandidates = new Set<string>();
+        cityCandidates = new Set<string>();
         citiesInRegion.forEach((ck) => {
-          regionCandidates.add(ck);
-          (CITIES[ck]?.synonyms || []).forEach((s: string) => regionCandidates.add(s));
+          cityCandidates!.add(ck);
+          (CITIES[ck]?.synonyms || []).forEach((s: string) => cityCandidates!.add(s));
         });
-        f = f.filter(p => regionCandidates.has((p.city || '').toString()));
       }
     }
-    
-    // Price filters
-    const minPrice = filters.minPrice ? Number(filters.minPrice) : undefined
-    const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : undefined
-    if (minPrice !== undefined) f = f.filter(p => Number(p.price) >= minPrice)
-    if (maxPrice !== undefined) f = f.filter(p => Number(p.price) <= maxPrice)
-    
-    // Area filters
-    const minArea = filters.minArea ? Number(filters.minArea) : undefined
-    const maxArea = filters.maxArea ? Number(filters.maxArea) : undefined
-    if (minArea !== undefined) f = f.filter(p => Number(p.area) >= minArea)
-    if (maxArea !== undefined) f = f.filter(p => Number(p.area) <= maxArea)
-    
-    // Land area filters (for houses, commercial, and land)
-    const minLandArea = filters.minLandArea ? Number(filters.minLandArea) : undefined
-    const maxLandArea = filters.maxLandArea ? Number(filters.maxLandArea) : undefined
-    if (minLandArea !== undefined) {
-      f = f.filter(p => {
-        const hasLandArea = ['house', 'commercial', 'land'].includes(p.property_type || '')
-        return hasLandArea && Number(p.land_area_sotka || 0) >= minLandArea
-      })
-    }
-    if (maxLandArea !== undefined) {
-      f = f.filter(p => {
-        const hasLandArea = ['house', 'commercial', 'land'].includes(p.property_type || '')
-        return hasLandArea && Number(p.land_area_sotka || 0) <= maxLandArea
-      })
-    }
-    
-    // Bedrooms filter
-    if (filters.bedrooms !== 'all') f = f.filter(p => Number(p.bedrooms) >= parseInt(filters.bedrooms))
-    
-    // Bathrooms filter
-    if (filters.bathrooms !== 'all') f = f.filter(p => Number(p.bathrooms) >= parseInt(filters.bathrooms))
-    
-    // Property type filter
-    if (filters.propertyType !== 'all') f = f.filter(p => p.property_type === filters.propertyType)
-    
-    // Text search filter
-    if (filters.searchText) {
-      const searchLower = filters.searchText.toLowerCase()
-      f = f.filter(p => 
-        (p.title || p.display_name || '')?.toLowerCase().includes(searchLower) ||
-        (p.description || '')?.toLowerCase().includes(searchLower) ||
-        (p.location || '')?.toLowerCase().includes(searchLower)
-      )
-    }
-    
-    // Halal filter
-    if (filters.halalOnly) f = f.filter(p => p.isHalal)
-    
+
+    // Single-pass filter with all conditions
+    const filtered = all.filter(p => {
+      // Status filter
+      if (!['active', 'approved'].includes(p.status || 'active')) return false;
+
+      // Seller filter
+      if (filters.sellerId && p.user_id !== filters.sellerId) return false;
+
+      // District filter
+      if (filters.district !== 'all' && p.district !== filters.district) return false;
+
+      // Region/City filter
+      if (cityCandidates && !cityCandidates.has((p.city || '').toString())) return false;
+
+      // Price filters
+      if (minPrice !== undefined && Number(p.price) < minPrice) return false;
+      if (maxPrice !== undefined && Number(p.price) > maxPrice) return false;
+
+      // Area filters
+      if (minArea !== undefined && Number(p.area) < minArea) return false;
+      if (maxArea !== undefined && Number(p.area) > maxArea) return false;
+
+      // Land area filters
+      if (minLandArea !== undefined) {
+        const hasLandArea = ['house', 'commercial', 'land'].includes(p.property_type || '');
+        if (!hasLandArea || Number(p.land_area_sotka || 0) < minLandArea) return false;
+      }
+      if (maxLandArea !== undefined) {
+        const hasLandArea = ['house', 'commercial', 'land'].includes(p.property_type || '');
+        if (!hasLandArea || Number(p.land_area_sotka || 0) > maxLandArea) return false;
+      }
+
+      // Bedrooms filter
+      if (filters.bedrooms !== 'all' && Number(p.bedrooms) < parseInt(filters.bedrooms)) return false;
+
+      // Bathrooms filter
+      if (filters.bathrooms !== 'all' && Number(p.bathrooms) < parseInt(filters.bathrooms)) return false;
+
+      // Property type filter
+      if (filters.propertyType !== 'all' && p.property_type !== filters.propertyType) return false;
+
+      // Text search filter
+      if (searchLower) {
+        const matchesSearch =
+          (p.title || p.display_name || '')?.toLowerCase().includes(searchLower) ||
+          (p.description || '')?.toLowerCase().includes(searchLower) ||
+          (p.location || '')?.toLowerCase().includes(searchLower);
+        if (!matchesSearch) return false;
+      }
+
+      // Halal filter
+      if (filters.halalOnly && !p.isHalal) return false;
+
+      return true;
+    });
+
     // Sort by newest first (same as main page)
-    return f.sort((a, b) => {
-      const dateA = new Date(a.created_at || 0).getTime()
-      const dateB = new Date(b.created_at || 0).getTime()
-      return dateB - dateA // Descending order (newest first)
-    })
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.created_at || 0).getTime();
+      const dateB = new Date(b.created_at || 0).getTime();
+      return dateB - dateA; // Descending order (newest first)
+    });
   }, [all, filters])
   
   // Pagination

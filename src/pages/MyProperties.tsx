@@ -103,38 +103,59 @@ const MyProperties = () => {
 
       if (propertiesError) throw propertiesError
 
-      // Fetch view counts for each property
-      const propertiesWithAnalytics = await Promise.all(
-        (propertiesData || []).map(async (property) => {
-          const { count: viewsCount } = await supabase
-            .from('property_views')
-            .select('*', { count: 'exact', head: true })
-            .eq('property_id', property.id)
+      // Batch fetch analytics for all properties
+      const propertyIds = (propertiesData || []).map(p => p.id).filter(Boolean);
 
-          const { count: visitRequestsCount } = await supabase
-            .from('property_visits')
-            .select('*', { count: 'exact', head: true })
-            .eq('property_id', property.id)
+      // Fetch all views in a single query
+      const viewsByProperty: Record<string, number> = {};
+      if (propertyIds.length > 0) {
+        const { data: viewsData } = await supabase
+          .from('property_views')
+          .select('property_id')
+          .in('property_id', propertyIds);
 
-          const { data: upcomingVisits } = await supabase
-            .from('property_visits')
-            .select(`
-              *,
-              profiles:visitor_id (full_name, email)
-            `)
-            .eq('property_id', property.id)
-            .gte('visit_date', new Date().toISOString())
-            .order('visit_date', { ascending: true })
+        // Count views per property
+        (viewsData || []).forEach((view: any) => {
+          viewsByProperty[view.property_id] = (viewsByProperty[view.property_id] || 0) + 1;
+        });
+      }
 
-          return {
-            ...property,
-            visit_hours: Array.isArray(property.visit_hours) ? property.visit_hours : [],
-            views_count: viewsCount || 0,
-            visit_requests_count: visitRequestsCount || 0,
-            upcoming_visits: upcomingVisits || []
+      // Fetch all visits in a single query
+      const visitsByProperty: Record<string, any[]> = {};
+      const visitCountsByProperty: Record<string, number> = {};
+      if (propertyIds.length > 0) {
+        const { data: visitsData } = await supabase
+          .from('property_visits')
+          .select(`
+            *,
+            profiles:visitor_id (full_name, email)
+          `)
+          .in('property_id', propertyIds);
+
+        // Group visits by property
+        (visitsData || []).forEach((visit: any) => {
+          if (!visitsByProperty[visit.property_id]) {
+            visitsByProperty[visit.property_id] = [];
           }
-        })
-      )
+          visitsByProperty[visit.property_id].push(visit);
+          visitCountsByProperty[visit.property_id] = (visitCountsByProperty[visit.property_id] || 0) + 1;
+        });
+      }
+
+      // Attach analytics to properties
+      const propertiesWithAnalytics = (propertiesData || []).map(property => {
+        const upcomingVisits = (visitsByProperty[property.id] || [])
+          .filter(visit => new Date(visit.visit_date) >= new Date())
+          .sort((a, b) => new Date(a.visit_date).getTime() - new Date(b.visit_date).getTime());
+
+        return {
+          ...property,
+          visit_hours: Array.isArray(property.visit_hours) ? property.visit_hours : [],
+          views_count: viewsByProperty[property.id] || 0,
+          visit_requests_count: visitCountsByProperty[property.id] || 0,
+          upcoming_visits: upcomingVisits
+        };
+      });
 
       setProperties(propertiesWithAnalytics)
     } catch (error) {
