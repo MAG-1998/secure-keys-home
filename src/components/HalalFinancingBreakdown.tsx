@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -39,14 +39,18 @@ export const HalalFinancingBreakdown = ({
   });
 
   // Sync with store values when they change (from other components)
+  // Only update if store values differ from current state
   useEffect(() => {
-    if (financingStore.cashAvailable !== cashAmount) {
+    if (financingStore.cashAvailable && financingStore.cashAvailable !== cashAmount) {
       setCashAmount(financingStore.cashAvailable);
     }
-    if (financingStore.periodMonths !== financingPeriod) {
+  }, [financingStore.cashAvailable]);
+
+  useEffect(() => {
+    if (financingStore.periodMonths && financingStore.periodMonths !== financingPeriod) {
       setFinancingPeriod(financingStore.periodMonths);
     }
-  }, [financingStore.cashAvailable, financingStore.periodMonths]);
+  }, [financingStore.periodMonths]);
 
   const periodOptions = getPeriodOptions()
 
@@ -67,18 +71,18 @@ export const HalalFinancingBreakdown = ({
     return calculateHalalFinancing(cash, propertyPrice, period)
   }, [cashAmount, financingPeriod, propertyPrice])
 
-  const handleCashChange = (value: string) => {
+  const handleCashChange = useCallback((value: string) => {
     const sanitized = value.replace(/[^0-9.]/g, '');
     setCashAmount(sanitized);
     // Update the store so other components can see the change
     financingStore.updateState({ cashAvailable: sanitized });
-  }
+  }, [financingStore]);
 
-  const handlePeriodChange = (value: string) => {
+  const handlePeriodChange = useCallback((value: string) => {
     setFinancingPeriod(value);
     // Update the store so other components can see the change
     financingStore.updateState({ periodMonths: value });
-  }
+  }, [financingStore]);
 
   return (
     <Card className={className}>

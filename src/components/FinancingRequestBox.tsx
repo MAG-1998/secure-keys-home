@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -137,6 +137,16 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
   const isResponsiblePerson = request?.responsible_person_id === user?.id;
   const canManage = isAdmin || isResponsiblePerson;
 
+  // Memoize financing calculation to prevent recalculation on every render
+  const financingCalc = useMemo(() => {
+    if (!request) return null;
+    return calculateHalalFinancing(
+      request.cash_available,
+      request.properties.price,
+      request.period_months
+    );
+  }, [request?.cash_available, request?.properties.price, request?.period_months]);
+
   useEffect(() => {
     if (financingRequestId) {
       fetchData();
@@ -195,19 +205,25 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
       if (commError) throw commError;
 
-      // Manually fetch sender profiles for communications
-      const enrichedComms = await Promise.all((commData || []).map(async (comm) => {
-        const { data: senderProfile } = await supabase
-          .from('profiles')
-          .select('full_name, email')
-          .eq('user_id', comm.sender_id)
-          .single();
+      // Batch fetch sender profiles for communications
+      const senderIds = [...new Set((commData || []).map(c => c.sender_id))].filter(Boolean);
+      const profilesBySenderId: Record<string, any> = {};
 
-        return {
-          ...comm,
-          file_urls: Array.isArray(comm.file_urls) ? comm.file_urls : [],
-          sender: senderProfile || { email: '', full_name: '' }
-        };
+      if (senderIds.length > 0) {
+        const { data: senderProfiles } = await supabase
+          .from('profiles')
+          .select('user_id, full_name, email')
+          .in('user_id', senderIds);
+
+        (senderProfiles || []).forEach((profile: any) => {
+          profilesBySenderId[profile.user_id] = profile;
+        });
+      }
+
+      const enrichedComms = (commData || []).map(comm => ({
+        ...comm,
+        file_urls: Array.isArray(comm.file_urls) ? comm.file_urls : [],
+        sender: profilesBySenderId[comm.sender_id] || { email: '', full_name: '' }
       }));
 
       setCommunications(enrichedComms as Communication[]);
@@ -247,18 +263,24 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
 
       if (activityError) throw activityError;
 
-      // Manually fetch actor profiles for activity log
-      const enrichedActivity = await Promise.all((activityData || []).map(async (activity) => {
-        const { data: actorProfile } = await supabase
-          .from('profiles')
-          .select('full_name, email')
-          .eq('user_id', activity.actor_id)
-          .single();
+      // Batch fetch actor profiles for activity log
+      const actorIds = [...new Set((activityData || []).map(a => a.actor_id))].filter(Boolean);
+      const profilesByActorId: Record<string, any> = {};
 
-        return {
-          ...activity,
-          profiles: actorProfile || { full_name: null, email: '' }
-        };
+      if (actorIds.length > 0) {
+        const { data: actorProfiles } = await supabase
+          .from('profiles')
+          .select('user_id, full_name, email')
+          .in('user_id', actorIds);
+
+        (actorProfiles || []).forEach((profile: any) => {
+          profilesByActorId[profile.user_id] = profile;
+        });
+      }
+
+      const enrichedActivity = (activityData || []).map(activity => ({
+        ...activity,
+        profiles: profilesByActorId[activity.actor_id] || { full_name: null, email: '' }
       }));
 
       setActivity(enrichedActivity as unknown as ActivityItem[]);
@@ -555,33 +577,26 @@ export const FinancingRequestBox = ({ financingRequestId, onClose }: FinancingRe
                 <Label>Applicant</Label>
                 <p className="text-sm">{request.profiles.full_name || request.profiles.email}</p>
               </div>
-              {(() => {
-                const financingCalc = calculateHalalFinancing(
-                  request.cash_available,
-                  request.properties.price,
-                  request.period_months
-                );
-                return (
-                  <>
-                    <div>
-                      <Label>Total Cost</Label>
-                      <p className="text-sm font-bold">{formatHalalCurrency(financingCalc.totalCost)}</p>
-                    </div>
-                    <div>
-                      <Label>Monthly Payment</Label>
-                      <p className="text-sm">{formatHalalCurrency(financingCalc.requiredMonthlyPayment)}</p>
-                    </div>
-                    <div>
-                      <Label>Period</Label>
-                      <p className="text-sm">{request.period_months} months</p>
-                    </div>
-                    <div>
-                      <Label>Tax</Label>
-                      <p className="text-sm">{formatHalalCurrency(financingCalc.tax)}</p>
-                    </div>
-                  </>
-                );
-              })()}
+              {financingCalc && (
+                <>
+                  <div>
+                    <Label>Total Cost</Label>
+                    <p className="text-sm font-bold">{formatHalalCurrency(financingCalc.totalCost)}</p>
+                  </div>
+                  <div>
+                    <Label>Monthly Payment</Label>
+                    <p className="text-sm">{formatHalalCurrency(financingCalc.requiredMonthlyPayment)}</p>
+                  </div>
+                  <div>
+                    <Label>Period</Label>
+                    <p className="text-sm">{request.period_months} months</p>
+                  </div>
+                  <div>
+                    <Label>Tax</Label>
+                    <p className="text-sm">{formatHalalCurrency(financingCalc.tax)}</p>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Assignment and Actions */}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 
 interface PriceOdometerProps {
   value: number;
@@ -9,7 +9,7 @@ interface PriceOdometerProps {
   initialValue?: number;
 }
 
-export const PriceOdometer: React.FC<PriceOdometerProps> = ({ 
+export const PriceOdometer: React.FC<PriceOdometerProps> = memo(({ 
   value, 
   className = "", 
   prefix = "$",
@@ -62,4 +62,4 @@ export const PriceOdometer: React.FC<PriceOdometerProps> = ({
       </span>
     </div>
   );
-};
+});
