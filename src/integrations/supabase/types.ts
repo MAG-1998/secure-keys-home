@@ -1108,7 +1108,7 @@ export type Database = {
       }
       can_user_create_visit_request:
         | {
-            Args: { property_id_param?: string; user_id_param: string }
+            Args: { user_id_param: string }
             Returns: {
               can_create: boolean
               free_visits_used: number
@@ -1117,7 +1117,7 @@ export type Database = {
             }[]
           }
         | {
-            Args: { user_id_param: string }
+            Args: { property_id_param?: string; user_id_param: string }
             Returns: {
               can_create: boolean
               free_visits_used: number
